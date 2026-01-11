@@ -1,72 +1,118 @@
 # Build Progress - 002 Project Foundation & Core Data Model
 
-## Subtask 2.4: Create Decimal+Extensions - ✅ COMPLETED
+## Subtask 2.5: Create Formatters Utility - ✅ COMPLETED
 
-**Status:** COMPLETED (Previously implemented in commit 7147a48)
-**File:** Bodii/Shared/Extensions/Decimal+Extensions.swift
+**Status:** COMPLETED (Previously implemented in commit 1460379)
+**File:** Bodii/Shared/Utils/Formatters.swift
 
 ### Implementation Details
 
 All acceptance criteria have been met:
 
-✅ **doubleValue computed property**
-   - Converts Decimal to Double using NSDecimalNumber
-   - Used for calculations and UI chart libraries
-   - Example: `weight.doubleValue // 67.5`
+✅ **Shared DateFormatter instances for different formats**
+   - fullDate: "yyyy년 MM월 dd일" (2024년 01월 15일)
+   - shortDate: "M월 d일" (1월 15일)
+   - dateWithWeekday: "M월 d일 (E)" (1월 15일 (월))
+   - time: "HH:mm" (14:30)
+   - dateTime: "M월 d일 HH:mm" (1월 15일 14:30)
+   - iso8601: "yyyy-MM-dd'T'HH:mm:ss'Z'" (API communication)
 
-✅ **intValue computed property**
-   - Converts Decimal to Int (truncates decimal places)
-   - Used for displaying integers like calories
-   - Example: `calories.intValue // 2156`
+✅ **Shared NumberFormatter for calories, weight, etc.**
+   - weight: 1 decimal place, no grouping (67.5)
+   - bodyFat: 1 decimal place, no grouping (18.3)
+   - calories: integer, comma grouping (2,150)
+   - macros: integer, no grouping (250)
+   - percentage: 1 decimal place with % symbol (25.5%)
+   - decimal: 2 decimal places, general purpose (1.38)
 
-✅ **init(double:) initializer**
-   - Creates Decimal from Double value
-   - Used when saving UI input or calculations to Core Data
-   - Example: `Decimal(double: 67.5)`
+✅ **Korean locale configuration**
+   - All formatters use Locale(identifier: "ko_KR")
+   - ISO8601 uses en_US_POSIX for API standards
+   - TimeZone.current for local date/time
 
-✅ **rounded(scale:) method for decimal places**
-   - Rounds to specified decimal places using NSDecimalRound
-   - Uses .plain rounding mode (standard rounding)
-   - Example: `weight.rounded(scale: 1) // 67.5`
+✅ **Static lazy initialization for performance**
+   - All formatters are `static let` with lazy closure initialization
+   - Prevents expensive creation cost (hundreds of microseconds)
+   - Documentation includes ❌ bad vs ✅ good examples
 
-✅ **formatted(decimalPlaces:) for display strings**
-   - Formats Decimal as display string with specified decimal places
-   - No thousand separators (pure numbers)
-   - Example: `weight.formatted(decimalPlaces: 1) // "67.5"`
+### Bonus Features
+
+✅ **Convenience methods for Decimal formatting**
+   - `formatWeight(_ value: Decimal) -> String`
+   - `formatBodyFat(_ value: Decimal) -> String`
+   - `formatCalories(_ value: Decimal) -> String`
+   - `formatMacros(_ value: Decimal) -> String`
 
 ### Quality Attributes
 
 ✅ Follows established patterns (Korean docs, learning notes, MARK comments)
 ✅ No console.log/print debugging statements
-✅ Comprehensive documentation with examples
-✅ Explains Core Data Decimal usage for precision (avoiding floating-point errors)
-✅ Detailed usage scenarios for health data (체중, 체지방률)
+✅ Comprehensive documentation with usage examples
+✅ Performance optimization notes explaining formatter reuse benefits
+✅ Clear distinction between formatters (grouping, decimal places, etc.)
 ✅ Already committed with descriptive message
+
+### Performance Notes
+
+**Why Static Formatters?**
+- DateFormatter and NumberFormatter creation is expensive (hundreds of microseconds)
+- Creating in loops or repeated calls causes significant performance degradation
+- Static lazy initialization creates once, reuses forever
+- Documentation includes anti-patterns to avoid
+
+**Example:**
+```swift
+// ❌ Bad: Creates new formatter on every iteration
+for record in records {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    let text = formatter.string(from: record.weight)
+}
+
+// ✅ Good: Reuses shared instance
+for record in records {
+    let text = Formatters.weight.string(from: record.weight)
+}
+```
 
 ### Git Status
 
-- File committed in: 7147a48
-- Commit message: "auto-claude: 2.4 - Convenience extensions for Decimal type used in Core Data"
-- Implementation plan updated in: ec38dce
-- Working tree: clean (plan updated)
+- File committed in: 1460379
+- Commit message: "auto-claude: 2.5 - Centralized formatters for consistent number/date formatting"
+- Implementation plan updated to "completed"
+- Phase 2 status updated to "completed" (all 5 subtasks done)
 
 ### Notes
 
-This subtask was already completed in a previous session. The implementation provides essential type conversion methods between Core Data's Decimal type and Swift's native Double/Int types.
+This subtask was already completed in a previous session. The implementation provides centralized formatter instances for consistent number and date formatting throughout the app.
 
-**Why Decimal in Core Data?**
-- Prevents floating-point precision errors in health/financial data
-- Ensures accurate calculations for body measurements (weight, body fat %, etc.)
-- Example: 67.5kg stored as exact Decimal, not approximate binary floating-point
+**Key Benefits:**
+- Performance optimization through static reuse
+- Consistent formatting across entire app
+- Korean locale for user-facing strings
+- Specialized formatters for different data types
+- Convenience methods for Core Data Decimal types
 
-**Key Features:**
-- Bidirectional conversion: Decimal ↔ Double/Int
-- Rounding with configurable decimal places
-- UI formatting without thousand separators
-- Comprehensive Korean documentation explaining use cases
+**Formatter Categories:**
+
+1. **Number Formatters:**
+   - Body metrics: weight (1 decimal), bodyFat (1 decimal)
+   - Nutrition: calories (integer, grouped), macros (integer)
+   - General: percentage (1 decimal, %), decimal (2 decimals)
+
+2. **Date Formatters:**
+   - User display: fullDate, shortDate, dateWithWeekday
+   - Time display: time, dateTime
+   - API: iso8601 (UTC, POSIX locale)
 
 ---
 
-**Implementation Plan Status:** Updated to "completed"
-**Phase 2 Progress:** 4/5 subtasks completed (80%)
-**Next Subtask:** 2.5 - Create Formatters Utility
+**Phase 2 Progress:** ✅ COMPLETED (5/5 subtasks)
+- 2.1: DateUtils ✅
+- 2.2: ValidationService ✅
+- 2.3: Date+Extensions ✅
+- 2.4: Decimal+Extensions ✅
+- 2.5: Formatters ✅
+
+**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (Pending)
+**Next Phase:** Phase 3 - Domain Entities (9 subtasks)
