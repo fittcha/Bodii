@@ -1,5 +1,152 @@
 # Build Progress - 002 Project Foundation & Core Data Model
 
+## Subtask 3.6: Create ExerciseRecord Domain Entity - ✅ COMPLETED
+
+**Status:** COMPLETED
+**File:** Bodii/Domain/Entities/ExerciseRecord.swift
+**Commit:** 0b557cd
+
+### Implementation Details
+
+All acceptance criteria have been met:
+
+✅ **ExerciseRecord struct with Identifiable, Codable, Equatable**
+   - Identifiable: Uses UUID as id
+   - Codable: All properties are Codable-conforming types
+   - Equatable: Auto-synthesized by compiler
+
+✅ **All properties from ERD:**
+   - id: UUID (unique identifier)
+   - userId: UUID (foreign key to User)
+   - date: Date (운동 날짜, 02:00 sleep boundary logic)
+   - exerciseType: ExerciseType enum (walking/running/cycling/swimming/weight/crossfit/yoga/other)
+   - duration: Int (운동 시간, 분 단위, 1-480 range)
+   - intensity: Intensity enum (low/medium/high)
+   - caloriesBurned: Int (소모 칼로리, kcal, auto-calculated)
+   - note: String? (운동 메모, optional)
+   - createdAt: Date (creation timestamp)
+   - updatedAt: Date (modification timestamp)
+
+✅ **HealthKit integration properties:**
+   - fromHealthKit: Bool (HealthKit 연동 여부)
+   - healthKitId: String? (HealthKit 운동 고유 식별자, optional)
+
+✅ **MET-based calorie calculation:**
+   - Static calculateCaloriesBurned(exerciseType:intensity:duration:weight:) method
+   - Formula: MET × weight(kg) × (duration/60)
+   - MET values retrieved from ExerciseType.metValue(for: intensity.rawValue)
+   - Automatic calculation in factory methods
+
+### Bonus Features
+
+✅ **Factory methods for different creation scenarios**
+   - create() - Manual exercise record (user input)
+   - createFromHealthKit() - HealthKit integration record
+
+✅ **Update methods with calorie recalculation**
+   - updatingDuration(_:weight:) - Updates duration and recalculates calories
+   - updatingIntensity(_:weight:) - Updates intensity and recalculates calories
+   - updatingNote(_:) - Updates note only
+
+✅ **CustomStringConvertible protocol**
+   - Provides readable debug description
+   - Shows all key properties including Korean display names
+   - Indicates HealthKit source with [HealthKit] tag
+
+### Quality Attributes
+
+✅ Follows established patterns from FoodRecord and BodyRecord entities
+✅ Korean documentation with 학습 포인트 (MET-based Calorie Calculation)
+✅ Comprehensive doc comments with calculation formulas
+✅ MARK organization for code sections
+✅ Domain entity pattern (separated from Core Data)
+✅ No console.log/print debugging statements
+✅ Functional update pattern (returns new instances)
+
+### Documentation Highlights
+
+**학습 포인트 (Learning Point):**
+- Explains MET-based Calorie Calculation pattern
+- Compares to JPA @PrePersist for automatic calculation
+- Shows how Swift uses factory methods instead of lifecycle hooks
+
+**Key Concepts:**
+- MET (Metabolic Equivalent of Task) for exercise intensity measurement
+- Calorie calculation: MET × weight × hours
+- HealthKit integration for automatic exercise tracking
+- N:1 relationship with DailyLog for daily exercise totals
+- 02:00 sleep boundary for date assignment
+
+**Calculation Formula:**
+```
+1. MET 값 조회: exerciseType.metValue(for: intensity.rawValue)
+2. 운동 시간 변환: duration(분) / 60 = hours
+3. 칼로리 계산: MET × weight(kg) × hours
+```
+
+**Usage Examples:**
+```swift
+// 1. Manual exercise record
+let record = ExerciseRecord.create(
+    userId: userId,
+    date: Date(),
+    exerciseType: .running,
+    duration: 30,
+    intensity: .medium,
+    weight: 70.0,
+    note: "아침 조깅"
+)
+// record.caloriesBurned = 280 kcal (자동 계산)
+
+// 2. HealthKit integration
+let healthKitRecord = ExerciseRecord.createFromHealthKit(
+    userId: userId,
+    date: Date(),
+    exerciseType: .walking,
+    duration: 45,
+    intensity: .low,
+    weight: 70.0,
+    healthKitId: "HK-12345"
+)
+// healthKitRecord.fromHealthKit = true
+```
+
+### Git Status
+
+- File committed in: 0b557cd
+- Commit message: "auto-claude: 3.6 - Pure Swift struct for ExerciseRecord with calorie calculation"
+- Implementation plan updated to "completed"
+- Phase 3 status: 6/9 subtasks completed
+
+### Architecture Notes
+
+**MET-based Calorie Calculation:**
+- MET (Metabolic Equivalent of Task) represents exercise intensity
+- 1 MET = resting metabolic rate (约 1 kcal/kg/hour)
+- Different exercise types have different MET values
+- Intensity level (low/medium/high) affects MET value
+- Formula ensures accurate calorie tracking
+
+**HealthKit Integration Pattern:**
+- fromHealthKit flag distinguishes automatic vs manual records
+- healthKitId prevents duplicate imports
+- Supports both user-input and automatic exercise tracking
+- Unified data model for all exercise sources
+
+**Data Flow:**
+1. Manual record: User inputs exercise → create() factory method → Auto-calculate calories
+2. HealthKit: Fetch from HealthKit → createFromHealthKit() → Auto-calculate calories
+3. Both records aggregate into DailyLog for daily totals
+4. Dashboard displays total exercise time and calories burned
+
+**Why Separate fromHealthKit?**
+- Distinguish data sources for accuracy
+- Prevent duplicate entries (user shouldn't edit HealthKit records)
+- Enable selective data sync strategies
+- Support mixed manual + automatic tracking
+
+---
+
 ## Subtask 3.5: Create FoodRecord Domain Entity - ✅ COMPLETED
 
 **Status:** COMPLETED
@@ -513,19 +660,19 @@ print(user.age) // Automatically calculated
 
 ---
 
-**Phase 3 Progress:** 🚧 IN PROGRESS (5/9 subtasks)
+**Phase 3 Progress:** 🚧 IN PROGRESS (6/9 subtasks)
 - 3.1: User ✅
 - 3.2: BodyRecord ✅
 - 3.3: MetabolismSnapshot ✅
 - 3.4: Food ✅
 - 3.5: FoodRecord ✅
-- 3.6: ExerciseRecord (pending)
+- 3.6: ExerciseRecord ✅
 - 3.7: SleepRecord (pending)
 - 3.8: DailyLog (pending)
 - 3.9: Goal (pending)
 
-**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 5/9)
-**Next Subtask:** 3.6 - Create ExerciseRecord Domain Entity
+**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 6/9)
+**Next Subtask:** 3.7 - Create SleepRecord Domain Entity
 
 ---
 
