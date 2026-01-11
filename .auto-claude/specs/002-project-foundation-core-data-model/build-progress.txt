@@ -1,65 +1,72 @@
 # Build Progress - 002 Project Foundation & Core Data Model
 
-## Subtask 2.3: Create Date+Extensions - ✅ COMPLETED
+## Subtask 2.4: Create Decimal+Extensions - ✅ COMPLETED
 
-**Status:** COMPLETED (Previously implemented in commit 96c7cc6)
-**File:** Bodii/Shared/Extensions/Date+Extensions.swift
+**Status:** COMPLETED (Previously implemented in commit 7147a48)
+**File:** Bodii/Shared/Extensions/Decimal+Extensions.swift
 
 ### Implementation Details
 
 All acceptance criteria have been met:
 
-✅ **startOfDay computed property**
-   - Returns the start of day (00:00:00) for the date
-   - Delegates to DateUtils.startOfDay(for:)
+✅ **doubleValue computed property**
+   - Converts Decimal to Double using NSDecimalNumber
+   - Used for calculations and UI chart libraries
+   - Example: `weight.doubleValue // 67.5`
 
-✅ **endOfDay computed property**
-   - Returns the end of day (23:59:59) for the date
-   - Delegates to DateUtils.endOfDay(for:)
+✅ **intValue computed property**
+   - Converts Decimal to Int (truncates decimal places)
+   - Used for displaying integers like calories
+   - Example: `calories.intValue // 2156`
 
-✅ **age(from birthDate:) static method**
-   - Calculates age from birth date to reference date (default: now)
-   - Delegates to DateUtils.age(from:referenceDate:)
+✅ **init(double:) initializer**
+   - Creates Decimal from Double value
+   - Used when saving UI input or calculations to Core Data
+   - Example: `Decimal(double: 67.5)`
 
-✅ **isSameDay(as:) comparison method**
-   - Compares if two dates are on the same day
-   - Delegates to DateUtils.isSameDay(_:_:)
+✅ **rounded(scale:) method for decimal places**
+   - Rounds to specified decimal places using NSDecimalRound
+   - Uses .plain rounding mode (standard rounding)
+   - Example: `weight.rounded(scale: 1) // 67.5`
 
-✅ **isToday computed property**
-   - Checks if the date is today
-   - Delegates to DateUtils.isToday(_:)
-
-✅ **daysBetween(and:) method**
-   - Calculates the number of days between two dates
-   - Delegates to DateUtils.daysBetween(_:and:)
-
-✅ **formatted(style:) for Korean date formatting**
-   - Formats dates using FormatStyle enum
-   - Supports: .full, .short, .withWeekday, .time, .dateTime
-   - Delegates to DateUtils.format(_:format:)
+✅ **formatted(decimalPlaces:) for display strings**
+   - Formats Decimal as display string with specified decimal places
+   - No thousand separators (pure numbers)
+   - Example: `weight.formatted(decimalPlaces: 1) // "67.5"`
 
 ### Quality Attributes
 
 ✅ Follows established patterns (Korean docs, learning notes, MARK comments)
 ✅ No console.log/print debugging statements
 ✅ Comprehensive documentation with examples
-✅ Type-safe API with FormatStyle enum
-✅ Proper delegation to DateUtils for implementation
+✅ Explains Core Data Decimal usage for precision (avoiding floating-point errors)
+✅ Detailed usage scenarios for health data (체중, 체지방률)
 ✅ Already committed with descriptive message
 
 ### Git Status
 
-- File committed in: 96c7cc6
-- Commit message: "auto-claude: 2.3 - Convenience extensions for Date type"
-- Working tree: clean
+- File committed in: 7147a48
+- Commit message: "auto-claude: 2.4 - Convenience extensions for Decimal type used in Core Data"
+- Implementation plan updated in: ec38dce
+- Working tree: clean (plan updated)
 
 ### Notes
 
-This subtask was already completed in a previous session. The implementation provides convenient instance methods and computed properties that delegate to DateUtils, offering a more natural Swift API (e.g., `date.startOfDay` instead of `DateUtils.startOfDay(for: date)`).
+This subtask was already completed in a previous session. The implementation provides essential type conversion methods between Core Data's Decimal type and Swift's native Double/Int types.
 
-The implementation includes a bonus FormatStyle enum for type-safe date formatting with Korean locale support.
+**Why Decimal in Core Data?**
+- Prevents floating-point precision errors in health/financial data
+- Ensures accurate calculations for body measurements (weight, body fat %, etc.)
+- Example: 67.5kg stored as exact Decimal, not approximate binary floating-point
+
+**Key Features:**
+- Bidirectional conversion: Decimal ↔ Double/Int
+- Rounding with configurable decimal places
+- UI formatting without thousand separators
+- Comprehensive Korean documentation explaining use cases
 
 ---
 
 **Implementation Plan Status:** Updated to "completed"
-**Next Subtask:** 2.4 - Create Decimal+Extensions
+**Phase 2 Progress:** 4/5 subtasks completed (80%)
+**Next Subtask:** 2.5 - Create Formatters Utility
