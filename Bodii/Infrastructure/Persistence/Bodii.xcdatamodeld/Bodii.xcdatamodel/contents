@@ -68,6 +68,31 @@
         <relationship name="bodyRecord" maxCount="1" deletionRule="Nullify" destinationEntity="BodyRecord" inverseName="metabolismSnapshot" inverseEntity="BodyRecord"/>
         <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="metabolismSnapshots" inverseEntity="User"/>
     </entity>
+    <entity name="DailyLog" representedClassName="DailyLog" syncable="YES" codeGenerationType="class">
+        <attribute name="bmr" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bodyFatPct" optional="YES" attributeType="Decimal"/>
+        <attribute name="carbsRatio" optional="YES" attributeType="Decimal"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="exerciseCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="exerciseMinutes" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fatRatio" optional="YES" attributeType="Decimal"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="netCalories" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="proteinRatio" optional="YES" attributeType="Decimal"/>
+        <attribute name="sleepDuration" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <attribute name="sleepStatus" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="steps" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <attribute name="tdee" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="totalCaloriesIn" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="totalCaloriesOut" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="totalCarbs" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="totalFat" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="totalProtein" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="weight" optional="YES" attributeType="Decimal"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="dailyLogs" inverseEntity="User"/>
+    </entity>
     <entity name="SleepRecord" representedClassName="SleepRecord" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
@@ -94,6 +119,7 @@
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="bodyRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BodyRecord" inverseName="user" inverseEntity="BodyRecord"/>
         <relationship name="createdFoods" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Food" inverseName="createdByUser" inverseEntity="Food"/>
+        <relationship name="dailyLogs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DailyLog" inverseName="user" inverseEntity="DailyLog"/>
         <relationship name="exerciseRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ExerciseRecord" inverseName="user" inverseEntity="ExerciseRecord"/>
         <relationship name="foodRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="FoodRecord" inverseName="user" inverseEntity="FoodRecord"/>
         <relationship name="metabolismSnapshots" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MetabolismSnapshot" inverseName="user" inverseEntity="MetabolismSnapshot"/>
