@@ -1,37 +1,36 @@
 # Build Progress - 002-project-foundation-core-data-model
 
-## Subtask 1.6: Define FoodSource enum for food data sources
+## Subtask 1.7: Define GoalType enum for user goals
 
 ### Status: ✅ COMPLETED
 
 ### Summary
-The FoodSource enum was already implemented and committed (commit 14c5c79). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
+The GoalType enum was already implemented and committed (commit 3fab35a). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
 
 ### Implementation Details
-- **File**: `Bodii/Shared/Enums/FoodSource.swift`
+- **File**: `Bodii/Shared/Enums/GoalType.swift`
 - **Enum Type**: `Int16` rawValue for Core Data compatibility
 - **Cases**:
-  - `kfdaAPI = 0` - 식품의약품안전처 (Korea Food & Drug Administration)
-  - `usdaAPI = 1` - 미국 농무부 (USDA)
-  - `userCreated = 2` - 사용자 생성 (User Created)
+  - `lose = 0` - 감량 (Weight Loss)
+  - `maintain = 1` - 유지 (Maintain)
+  - `gain = 2` - 증량 (Weight Gain)
 - **Protocols**: CaseIterable, Codable, Identifiable
 - **Display Names**: Korean localized strings via `displayName` property
 
 ### Acceptance Criteria Verification
-✅ FoodSource enum with rawValue Int16
-✅ Cases: kfdaAPI (0), usdaAPI (1), userCreated (2)
+✅ GoalType enum with rawValue Int16
+✅ Cases: lose (0), maintain (1), gain (2)
 ✅ Korean localized display names
-✅ Follows project patterns (same structure as Gender, MealType, etc.)
+✅ Follows project patterns (same structure as Gender, MealType, FoodSource)
 ✅ Identifiable extension using rawValue as id
 ✅ CaseIterable and Codable conformance
 
 ### Commits
-- 14c5c79: auto-claude: 1.6 - Define FoodSource enum for food data sources
-- fcb3c83: auto-claude: Update subtask 1.6 status to completed - FoodSource enum already implemented
+- 3fab35a: auto-claude: 1.7 - Define GoalType enum for user goals
+- f25afd0: auto-claude: Mark subtask 1.7 (GoalType enum) as completed (earlier iteration)
 
 ### Next Steps
 The next pending subtasks in Phase 1 are:
-- 1.7: Create GoalType Enum
 - 1.8: Create SleepStatus Enum
 - 1.9: Create QuantityUnit Enum
 - 1.10: Create Constants File
