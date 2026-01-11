@@ -11,7 +11,7 @@
       "phase_id": 1,
       "title": "Enum Definitions & Type Safety",
       "description": "Create all required enums for Core Data entities to provide type-safe access to coded values",
-      "status": "pending",
+      "status": "completed",
       "subtasks": [
         {
           "subtask_id": "1.1",
@@ -131,8 +131,8 @@
             "Cases: serving (0), gram (1)",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "QuantityUnit enum implemented with Int16 rawValue, 2 cases (serving=0, gram=1), Korean localized display names (인분, 그램). Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in c4e96c6."
         },
         {
           "subtask_id": "1.10",
@@ -145,8 +145,8 @@
             "Default activity level, serving size defaults",
             "Calculation constants for BMR/TDEE"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "Constants file fully implemented with nested enum structure for organization. Includes all validation ranges (height 100-250cm, weight 20-300kg, body fat 3-60%, muscle mass 10-60kg, birth year 1900-current, name 1-20 chars, exercise duration 1-480 min, food quantity 0.1-100 servings or 1-10,000g), sleep boundary hour (2), default values (activity level=3/moderate, serving size=100g, goal type=1/maintain), and calculation constants (BMR coefficients for male/female using Mifflin-St Jeor equation, TDEE activity multipliers, calorie adjustment 7,700 kcal/kg, macro ratios 4/4/9 kcal/g for carbs/protein/fat). Uses enum as namespace to prevent instantiation. Korean documentation comments following project patterns. Committed in 386bd3c."
         }
       ]
     },

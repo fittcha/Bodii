@@ -31,6 +31,110 @@ The GoalType enum was already implemented and committed (commit 3fab35a). Verifi
 
 ### Next Steps
 The next pending subtasks in Phase 1 are:
-- 1.8: Create SleepStatus Enum
-- 1.9: Create QuantityUnit Enum
+- 1.8: Create SleepStatus Enum ✅ COMPLETED
+- 1.9: Create QuantityUnit Enum ✅ COMPLETED
 - 1.10: Create Constants File
+
+---
+
+## Subtask 1.9: Define QuantityUnit enum for food quantity units
+
+### Status: ✅ COMPLETED
+
+### Summary
+The QuantityUnit enum was already implemented and committed (commit c4e96c6). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
+
+### Implementation Details
+- **File**: `Bodii/Shared/Enums/QuantityUnit.swift`
+- **Enum Type**: `Int16` rawValue for Core Data compatibility
+- **Cases**:
+  - `serving = 0` - 인분 (Serving)
+  - `gram = 1` - 그램 (Gram)
+- **Protocols**: CaseIterable, Codable, Identifiable
+- **Display Names**: Korean localized strings via `displayName` property
+
+### Acceptance Criteria Verification
+✅ QuantityUnit enum with rawValue Int16
+✅ Cases: serving (0), gram (1)
+✅ Korean localized display names (인분, 그램)
+✅ Follows project patterns (same structure as Gender, MealType, GoalType)
+✅ Identifiable extension using rawValue as id
+✅ CaseIterable and Codable conformance
+
+### Commits
+- c4e96c6: auto-claude: 1.9 - Define QuantityUnit enum for food quantity units
+
+### Next Steps
+Phase 1 (Enum Definitions & Type Safety) is almost complete! Only one subtask remains:
+- 1.10: Create Constants File
+
+---
+
+## Subtask 1.10: Define app-wide constants for validation limits and default values
+
+### Status: ✅ COMPLETED
+
+### Summary
+The Constants file was already implemented and committed (commit 386bd3c). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status. **Phase 1 (Enum Definitions & Type Safety) is now 100% complete!**
+
+### Implementation Details
+- **File**: `Bodii/Shared/Utils/Constants.swift`
+- **Structure**: Nested enum namespaces to prevent instantiation
+- **Organized into categories**:
+  - **Validation**: Input validation ranges for all user inputs
+  - **Sleep**: Sleep boundary hour configuration
+  - **Defaults**: Default values for user preferences
+  - **BMR**: Basal Metabolic Rate calculation constants (Mifflin-St Jeor equation)
+  - **TDEE**: Total Daily Energy Expenditure references
+  - **CalorieAdjustment**: Weight change calculations
+  - **MacroRatios**: Macronutrient calorie conversions
+  - **BodyComposition**: Body composition formulas
+
+### Validation Ranges Implemented
+✅ **Height**: 100-250 cm (Constants.Validation.Height)
+✅ **Weight**: 20-300 kg (Constants.Validation.Weight)
+✅ **Body Fat Percent**: 3-60% (Constants.Validation.BodyFatPercent)
+✅ **Muscle Mass**: 10-60 kg (Constants.Validation.MuscleMass)
+✅ **Birth Year**: 1900-current year (Constants.Validation.BirthYear)
+✅ **Name**: 1-20 characters (Constants.Validation.Name)
+✅ **Exercise Duration**: 1-480 minutes (Constants.Validation.ExerciseDuration)
+✅ **Serving Quantity**: 0.1-100 servings (Constants.Validation.ServingQuantity)
+✅ **Gram Quantity**: 1-10,000 grams (Constants.Validation.GramQuantity)
+
+### Sleep Boundary
+✅ **Boundary Hour**: 2 (02:00) - times before 02:00 count as previous day
+
+### Default Values
+✅ **Activity Level**: 3 (ActivityLevel.moderate)
+✅ **Serving Size**: 100.0 grams
+✅ **Goal Type**: 1 (GoalType.maintain)
+
+### Calculation Constants
+✅ **BMR (Male)**: weight×10 + height×6.25 - age×5 + 5
+✅ **BMR (Female)**: weight×10 + height×6.25 - age×5 - 161
+✅ **TDEE**: References ActivityLevel.multiplier (1.2 to 1.9)
+✅ **Calorie/Weight**: 7,700 kcal per kg
+✅ **Safe Weight Change**: max loss 1kg/week, max gain 0.5kg/week
+✅ **Macro Calories**: carbs 4 kcal/g, protein 4 kcal/g, fat 9 kcal/g
+
+### Acceptance Criteria Verification
+✅ Validation ranges: height 100-250cm, weight 20-300kg, bodyFat 3-60%, etc.
+✅ Sleep boundary hour: 2
+✅ Default activity level, serving size defaults
+✅ Calculation constants for BMR/TDEE
+✅ Nested enum structure for organization
+✅ Korean documentation comments following project patterns
+✅ Static properties preventing modification
+
+### Commits
+- 386bd3c: auto-claude: 1.10 - Define app-wide constants for validation limits and default values
+
+### Next Steps
+🎉 **Phase 1 Complete!** All 10 subtasks in "Enum Definitions & Type Safety" are done.
+
+**Phase 2 (Utility Services)** can now begin with these pending subtasks:
+- 2.1: Create DateUtils (02:00 sleep boundary logic)
+- 2.2: Create ValidationService (uses Constants for validation ranges)
+- 2.3: Create Date+Extensions
+- 2.4: Create Decimal+Extensions
+- 2.5: Create Formatters Utility
