@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24C101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
+    <entity name="BodyRecord" representedClassName="BodyRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="bodyFatMass" optional="YES" attributeType="Decimal"/>
+        <attribute name="bodyFatPercent" optional="YES" attributeType="Decimal"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="name" attributeType="String"/>
-        <attribute name="gender" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="birthDate" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="height" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="muscleMass" optional="YES" attributeType="Decimal"/>
+        <attribute name="weight" attributeType="Decimal" defaultValueString="0.0"/>
+        <relationship name="metabolismSnapshot" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="MetabolismSnapshot" inverseName="bodyRecord" inverseEntity="MetabolismSnapshot"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="bodyRecords" inverseEntity="User"/>
+    </entity>
+    <entity name="MetabolismSnapshot" representedClassName="MetabolismSnapshot" syncable="YES" codeGenerationType="class">
         <attribute name="activityLevel" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
-        <attribute name="currentWeight" optional="YES" attributeType="Decimal"/>
+        <attribute name="bmr" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="bodyFatPct" optional="YES" attributeType="Decimal"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="tdee" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="weight" attributeType="Decimal" defaultValueString="0.0"/>
+        <relationship name="bodyRecord" maxCount="1" deletionRule="Nullify" destinationEntity="BodyRecord" inverseName="metabolismSnapshot" inverseEntity="BodyRecord"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="metabolismSnapshots" inverseEntity="User"/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
+        <attribute name="activityLevel" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
+        <attribute name="birthDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="currentBMR" optional="YES" attributeType="Decimal"/>
         <attribute name="currentBodyFatPct" optional="YES" attributeType="Decimal"/>
         <attribute name="currentMuscleMass" optional="YES" attributeType="Decimal"/>
-        <attribute name="currentBMR" optional="YES" attributeType="Decimal"/>
         <attribute name="currentTDEE" optional="YES" attributeType="Decimal"/>
+        <attribute name="currentWeight" optional="YES" attributeType="Decimal"/>
+        <attribute name="gender" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="height" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="metabolismUpdatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="bodyRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BodyRecord" inverseName="user" inverseEntity="BodyRecord"/>
+        <relationship name="metabolismSnapshots" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MetabolismSnapshot" inverseName="user" inverseEntity="MetabolismSnapshot"/>
     </entity>
 </model>
