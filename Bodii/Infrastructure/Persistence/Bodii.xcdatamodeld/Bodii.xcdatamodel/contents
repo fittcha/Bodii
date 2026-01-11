@@ -11,6 +11,38 @@
         <relationship name="metabolismSnapshot" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="MetabolismSnapshot" inverseName="bodyRecord" inverseEntity="MetabolismSnapshot"/>
         <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="bodyRecords" inverseEntity="User"/>
     </entity>
+    <entity name="Food" representedClassName="Food" syncable="YES" codeGenerationType="class">
+        <attribute name="apiCode" optional="YES" attributeType="String"/>
+        <attribute name="calories" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="carbohydrates" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="fat" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="fiber" optional="YES" attributeType="Decimal"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="protein" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="servingSize" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="servingUnit" optional="YES" attributeType="String"/>
+        <attribute name="sodium" optional="YES" attributeType="Decimal"/>
+        <attribute name="source" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="sugar" optional="YES" attributeType="Decimal"/>
+        <relationship name="createdByUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdFoods" inverseEntity="User"/>
+        <relationship name="foodRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="FoodRecord" inverseName="food" inverseEntity="FoodRecord"/>
+    </entity>
+    <entity name="FoodRecord" representedClassName="FoodRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="calculatedCalories" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="calculatedCarbs" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="calculatedFat" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="calculatedProtein" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="mealType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="quantity" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="quantityUnit" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="food" maxCount="1" deletionRule="Nullify" destinationEntity="Food" inverseName="foodRecords" inverseEntity="Food"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="foodRecords" inverseEntity="User"/>
+    </entity>
     <entity name="MetabolismSnapshot" representedClassName="MetabolismSnapshot" syncable="YES" codeGenerationType="class">
         <attribute name="activityLevel" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="bmr" attributeType="Decimal" defaultValueString="0.0"/>
@@ -39,6 +71,8 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="bodyRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BodyRecord" inverseName="user" inverseEntity="BodyRecord"/>
+        <relationship name="createdFoods" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Food" inverseName="createdByUser" inverseEntity="Food"/>
+        <relationship name="foodRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="FoodRecord" inverseName="user" inverseEntity="FoodRecord"/>
         <relationship name="metabolismSnapshots" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MetabolismSnapshot" inverseName="user" inverseEntity="MetabolismSnapshot"/>
     </entity>
 </model>
