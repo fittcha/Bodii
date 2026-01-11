@@ -111,6 +111,12 @@ final class PersistenceController {
             // 📚 학습 포인트: 자동 병합 설정
             // 백그라운드 컨텍스트의 변경사항을 viewContext에 자동 반영
             self?.container.viewContext.automaticallyMergesChangesFromParent = true
+
+            #if DEBUG
+            // 📚 학습 포인트: Core Data 모델 검증
+            // 앱 시작 시 모든 엔티티가 정상적으로 로드되었는지 확인
+            self?.verifyModelLoaded()
+            #endif
         }
     }
 
@@ -170,6 +176,61 @@ extension PersistenceController {
             return
         }
         print("Core Data store location: \(url)")
+    }
+
+    // 📚 학습 포인트: Core Data 모델 검증
+    // 앱 시작 시 모든 엔티티가 정상적으로 로드되었는지 확인
+    // 💡 이 메서드는 DEBUG 빌드에서만 실행됨
+    func verifyModelLoaded() {
+        // 📚 학습 포인트: NSManagedObjectModel
+        // Core Data 모델의 메타데이터에 접근하여 엔티티 목록 확인
+        guard let model = container.managedObjectModel as NSManagedObjectModel? else {
+            print("⚠️ [Core Data] Failed to access managed object model")
+            return
+        }
+
+        // 앱에서 필요한 9개 엔티티 목록
+        let expectedEntities: Set<String> = [
+            "User",
+            "BodyRecord",
+            "MetabolismSnapshot",
+            "Food",
+            "FoodRecord",
+            "ExerciseRecord",
+            "SleepRecord",
+            "DailyLog",
+            "Goal"
+        ]
+
+        // 모델에서 로드된 엔티티 이름 추출
+        let loadedEntities = Set(model.entities.compactMap { $0.name })
+
+        // 검증: 모든 필수 엔티티가 로드되었는지 확인
+        let missingEntities = expectedEntities.subtracting(loadedEntities)
+        let extraEntities = loadedEntities.subtracting(expectedEntities)
+
+        if missingEntities.isEmpty {
+            print("✅ [Core Data] Model loaded successfully with all 9 entities:")
+            for entity in expectedEntities.sorted() {
+                print("   - \(entity)")
+            }
+        } else {
+            print("❌ [Core Data] Missing entities: \(missingEntities.sorted().joined(separator: ", "))")
+        }
+
+        if !extraEntities.isEmpty {
+            print("ℹ️ [Core Data] Additional entities found: \(extraEntities.sorted().joined(separator: ", "))")
+        }
+
+        // 각 엔티티의 속성 수 출력 (모델 구조 확인용)
+        print("📊 [Core Data] Entity details:")
+        for entityName in expectedEntities.sorted() {
+            if let entity = model.entitiesByName[entityName] {
+                let attributeCount = entity.attributesByName.count
+                let relationshipCount = entity.relationshipsByName.count
+                print("   - \(entityName): \(attributeCount) attributes, \(relationshipCount) relationships")
+            }
+        }
     }
 }
 #endif
