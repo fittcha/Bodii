@@ -11,7 +11,7 @@
       "phase_id": 1,
       "title": "Enum Definitions & Type Safety",
       "description": "Create all required enums for Core Data entities to provide type-safe access to coded values",
-      "status": "completed",
+      "status": "pending",
       "subtasks": [
         {
           "subtask_id": "1.1",
@@ -23,8 +23,8 @@
             "Cases: male (0), female (1)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "Gender enum created with Int16 rawValue, male (0) and female (1) cases, and Korean localized display names. Includes Identifiable extension for SwiftUI compatibility."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.2",
@@ -37,8 +37,8 @@
             "multiplier property returning correct TDEE coefficient",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "ActivityLevel enum created with Int16 rawValue, 5 activity level cases (sedentary, light, moderate, active, veryActive) with corresponding TDEE multipliers (1.2, 1.375, 1.55, 1.725, 1.9), Korean localized display names, and Identifiable extension for SwiftUI compatibility."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.3",
@@ -50,8 +50,8 @@
             "Cases: breakfast (0), lunch (1), dinner (2), snack (3)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "MealType enum created with Int16 rawValue, four meal type cases (breakfast, lunch, dinner, snack) with Korean localized display names (아침, 점심, 저녁, 간식). Includes Identifiable extension for SwiftUI compatibility."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.4",
@@ -64,8 +64,8 @@
             "MET values for each exercise type by intensity level",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "ExerciseType enum created with Int16 rawValue, 8 exercise types with metValue(for:) method providing MET values by intensity (0: low, 1: medium, 2: high). All MET values match ERD specifications. Korean localized display names and Identifiable extension included."
+          "status": "pending",
+          "notes": "MET values per ERD: walking 3.5/4.0/5.0, running 7.0/8.0/10.0, etc."
         },
         {
           "subtask_id": "1.5",
@@ -77,8 +77,8 @@
             "Cases: low (0), medium (1), high (2)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "Intensity enum created with Int16 rawValue, three intensity level cases (low, medium, high) with Korean localized display names (낮음, 보통, 높음). Includes Identifiable extension for SwiftUI compatibility. Follows the exact pattern of existing enums."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.6",
@@ -90,8 +90,8 @@
             "Cases: kfdaAPI (0), usdaAPI (1), userCreated (2)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "FoodSource enum created with Int16 rawValue, three food source cases (kfdaAPI, usdaAPI, userCreated) with Korean localized display names (식품의약품안전처, 미국 농무부, 사용자 생성). Includes Identifiable extension for SwiftUI compatibility. Follows the exact pattern of existing enums."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.7",
@@ -103,8 +103,8 @@
             "Cases: lose (0), maintain (1), gain (2)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "GoalType enum created with Int16 rawValue, three goal type cases (lose, maintain, gain) with Korean localized display names (감량, 유지, 증량). Includes Identifiable extension for SwiftUI compatibility. Follows the exact pattern of existing enums."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.8",
@@ -118,8 +118,8 @@
             "Duration thresholds: bad<330, soso 330-389, good 390-449, excellent 450-540, oversleep>540",
             "Korean localized display names and emoji indicators"
           ],
-          "status": "completed",
-          "notes": "SleepStatus enum created with Int16 rawValue, 5 status cases (bad, soso, good, excellent, oversleep) with emoji indicators (🔴🟡🟢🔵🟠). Includes static from(durationMinutes:) factory method to determine status based on duration thresholds. Korean localized display names and Identifiable extension included."
+          "status": "pending",
+          "notes": "Per ERD: bad🔴, soso🟡, good🟢, excellent🔵, oversleep🟠"
         },
         {
           "subtask_id": "1.9",
@@ -131,8 +131,8 @@
             "Cases: serving (0), gram (1)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "QuantityUnit enum created with Int16 rawValue, two unit cases (serving, gram) with Korean localized display names (인분, 그램). Includes Identifiable extension for SwiftUI compatibility. Follows the exact pattern of existing enums."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.10",
@@ -145,8 +145,8 @@
             "Default activity level, serving size defaults",
             "Calculation constants for BMR/TDEE"
           ],
-          "status": "completed",
-          "notes": "Constants.swift created with nested enum namespaces for organization. Includes all validation ranges (height, weight, bodyFat, muscleMass, birthYear, name, exerciseDuration, serving/gram quantities), sleep boundary hour (2), default values (activityLevel=3, servingSize=100g, goalType=1), BMR calculation constants for Mifflin-St Jeor equation (male/female specific), TDEE multiplier references, calorie adjustment constants (7700 kcal/kg, safe weekly rates), and macro ratios (carb/protein 4 kcal/g, fat 9 kcal/g). Comprehensive Korean documentation included."
+          "status": "pending",
+          "notes": ""
         }
       ]
     },
@@ -168,8 +168,8 @@
             "Date formatting utilities for Korean locale",
             "Comprehensive documentation with examples"
           ],
-          "status": "completed",
-          "notes": "DateUtils.swift created with comprehensive 02:00 sleep boundary logic. Includes getLogicalDate(for:) returning previous day if hour < 2, isNewDayForSleep(at:) boundary check, startOfDay/endOfDay helpers, Korean locale formatting utilities (formatFullDate, formatShortDate, formatDateWithWeekday, formatTime, formatDateTime), date comparison methods (isSameDay, isToday, daysBetween), and age calculation. All methods thoroughly documented with Korean comments and examples."
+          "status": "pending",
+          "notes": "CRITICAL: 02:00 boundary means 01:59→prev day, 02:00→current day"
         },
         {
           "subtask_id": "2.2",
@@ -188,8 +188,8 @@
             "ValidationResult type with isValid, errorMessage properties",
             "Korean error messages"
           ],
-          "status": "completed",
-          "notes": "ValidationService.swift created with comprehensive input validation. Includes ValidationResult struct with isValid/errorMessage properties, all 8 validation methods covering height, weight, body fat, muscle mass, age, name, exercise duration, and food quantity (with unit-specific ranges). Added bonus validateBodyComposition for consistency checks. All error messages in Korean, uses Constants.Validation for ranges, comprehensive documentation with examples."
+          "status": "pending",
+          "notes": "All error messages should be user-friendly in Korean"
         },
         {
           "subtask_id": "2.3",
@@ -205,8 +205,8 @@
             "daysBetween(and:) method",
             "formatted(style:) for Korean date formatting"
           ],
-          "status": "completed",
-          "notes": "Date+Extensions.swift created with all convenience methods. Provides natural Swift API by delegating to DateUtils. Includes FormatStyle enum for type-safe Korean date formatting (.full, .short, .withWeekday, .time, .dateTime). All methods include comprehensive documentation with Korean comments and usage examples. Follows existing code patterns."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "2.4",
@@ -568,5 +568,5 @@
     "tests_passed": ""
   },
   "created_at": "2026-01-11T10:45:25.899Z",
-  "updated_at": "2026-01-11T20:00:00Z"
+  "updated_at": "2026-01-11T11:22:14.968Z"
 }
