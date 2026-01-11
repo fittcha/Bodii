@@ -336,8 +336,8 @@
             "Properties: id, userId, date, duration, status, createdAt, updatedAt",
             "Date uses 02:00 boundary logic"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "SleepRecord domain entity correctly implemented with all required protocols (Identifiable, Codable, Equatable, CustomStringConvertible), all properties (id, userId, date, duration, status, fromHealthKit, healthKitId, createdAt, updatedAt), auto-status calculation using SleepStatus.from(durationMinutes:), factory methods (create for manual records, createFromHealthKit for HealthKit integration), updatingDuration method with automatic status recalculation, computed durationInHours property, and comprehensive Korean documentation. Status calculation thresholds: bad<330, soso 330-389, good 390-449, excellent 450-540, oversleep>540. Includes 02:00 sleep boundary logic documentation. Committed in ba178c1."
         },
         {
           "subtask_id": "3.8",

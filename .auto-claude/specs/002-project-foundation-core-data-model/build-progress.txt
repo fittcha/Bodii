@@ -1,5 +1,156 @@
 # Build Progress - 002 Project Foundation & Core Data Model
 
+## Subtask 3.7: Create SleepRecord Domain Entity - ✅ COMPLETED
+
+**Status:** COMPLETED
+**File:** Bodii/Domain/Entities/SleepRecord.swift
+**Commit:** ba178c1
+
+### Implementation Details
+
+All acceptance criteria have been met:
+
+✅ **SleepRecord struct with Identifiable, Codable, Equatable**
+   - Identifiable: Uses UUID as id
+   - Codable: All properties are Codable-conforming types
+   - Equatable: Auto-synthesized by compiler
+
+✅ **All properties from ERD:**
+   - id: UUID (unique identifier)
+   - userId: UUID (foreign key to User)
+   - date: Date (수면 날짜, 02:00 sleep boundary logic)
+   - duration: Int (수면 시간, 분 단위)
+   - status: SleepStatus enum (bad/soso/good/excellent/oversleep, auto-calculated)
+   - createdAt: Date (creation timestamp)
+   - updatedAt: Date (modification timestamp)
+
+✅ **HealthKit integration properties:**
+   - fromHealthKit: Bool (HealthKit 연동 여부)
+   - healthKitId: String? (HealthKit 수면 고유 식별자, optional)
+
+✅ **Auto-status calculation:**
+   - Static SleepStatus.from(durationMinutes:) method for status determination
+   - Status thresholds: bad<330, soso 330-389, good 390-449, excellent 450-540, oversleep>540
+   - Automatic calculation in factory methods
+
+✅ **02:00 sleep boundary logic:**
+   - Date property uses logical date (not physical timestamp)
+   - Documentation explains 02:00 boundary rule
+   - 00:00-01:59 → previous day, 02:00-23:59 → current day
+
+### Bonus Features
+
+✅ **Factory methods for different creation scenarios**
+   - create() - Manual sleep record (user input)
+   - createFromHealthKit() - HealthKit integration record
+
+✅ **Update method with status recalculation**
+   - updatingDuration(_:) - Updates duration and recalculates status
+
+✅ **Computed property for convenience**
+   - durationInHours - Returns sleep duration in hours (Double)
+
+✅ **CustomStringConvertible protocol**
+   - Provides readable debug description
+   - Shows all key properties including Korean display names
+   - Indicates HealthKit source with [HealthKit] tag
+
+### Quality Attributes
+
+✅ Follows established patterns from ExerciseRecord and BodyRecord entities
+✅ Korean documentation with 학습 포인트 (Auto-Status Calculation)
+✅ Comprehensive doc comments with status determination thresholds
+✅ MARK organization for code sections
+✅ Domain entity pattern (separated from Core Data)
+✅ No console.log/print debugging statements
+✅ Functional update pattern (returns new instances)
+
+### Documentation Highlights
+
+**학습 포인트 (Learning Point):**
+- Explains Auto-Status Calculation pattern
+- Compares to JPA @PrePersist for automatic calculation
+- Shows how Swift uses factory methods instead of lifecycle hooks
+
+**Key Concepts:**
+- Sleep status determination based on duration
+- Duration thresholds for sleep quality assessment
+- HealthKit integration for automatic sleep tracking
+- N:1 relationship with DailyLog for daily sleep totals
+- 02:00 sleep boundary for date assignment
+
+**Status Determination Thresholds:**
+```
+나쁨 (bad): 0-329분 (0-5.5시간)
+보통 (soso): 330-389분 (5.5-6.5시간)
+좋음 (good): 390-449분 (6.5-7.5시간)
+매우 좋음 (excellent): 450-540분 (7.5-9시간)
+과수면 (oversleep): 541분 이상 (9시간 초과)
+```
+
+**Usage Examples:**
+```swift
+// 1. Manual sleep record
+let record = SleepRecord.create(
+    userId: userId,
+    date: Date(),
+    duration: 420
+)
+// record.duration = 420분 (7시간)
+// record.status = .good (자동 계산)
+
+// 2. HealthKit integration
+let healthKitRecord = SleepRecord.createFromHealthKit(
+    userId: userId,
+    date: Date(),
+    duration: 480,
+    healthKitId: "HK-SLEEP-12345"
+)
+// healthKitRecord.status = .excellent (자동 계산: 480분 = 8시간)
+// healthKitRecord.fromHealthKit = true
+```
+
+### Git Status
+
+- File committed in: ba178c1
+- Commit message: "auto-claude: 3.7 - Pure Swift struct for SleepRecord with auto-status"
+- Implementation plan updated to "completed"
+- Phase 3 status: 7/9 subtasks completed
+
+### Architecture Notes
+
+**Auto-Status Calculation:**
+- Sleep status automatically determined from duration
+- SleepStatus.from(durationMinutes:) encapsulates logic
+- Ensures consistent status determination across app
+- No manual status selection needed from user
+
+**02:00 Sleep Boundary Logic:**
+- Sleep ending before 02:00 counts as previous day
+- Matches natural sleep patterns (late night = previous day)
+- DateUtils.getLogicalDate() provides this functionality
+- Documentation clearly explains boundary behavior
+
+**HealthKit Integration Pattern:**
+- fromHealthKit flag distinguishes automatic vs manual records
+- healthKitId prevents duplicate imports
+- Supports both user-input and automatic sleep tracking
+- Unified data model for all sleep sources
+
+**Data Flow:**
+1. Manual record: User inputs sleep duration → create() factory method → Auto-calculate status
+2. HealthKit: Fetch from HealthKit → createFromHealthKit() → Auto-calculate status
+3. Both records aggregate into DailyLog for daily sleep totals
+4. Dashboard displays sleep duration and status
+
+**Why Separate fromHealthKit?**
+- Distinguish data sources for accuracy
+- Prevent duplicate entries (user shouldn't edit HealthKit records)
+- Enable selective data sync strategies
+- Support mixed manual + automatic tracking
+
+---
+
 ## Subtask 3.6: Create ExerciseRecord Domain Entity - ✅ COMPLETED
 
 **Status:** COMPLETED
@@ -660,19 +811,19 @@ print(user.age) // Automatically calculated
 
 ---
 
-**Phase 3 Progress:** 🚧 IN PROGRESS (6/9 subtasks)
+**Phase 3 Progress:** 🚧 IN PROGRESS (7/9 subtasks)
 - 3.1: User ✅
 - 3.2: BodyRecord ✅
 - 3.3: MetabolismSnapshot ✅
 - 3.4: Food ✅
 - 3.5: FoodRecord ✅
 - 3.6: ExerciseRecord ✅
-- 3.7: SleepRecord (pending)
+- 3.7: SleepRecord ✅
 - 3.8: DailyLog (pending)
 - 3.9: Goal (pending)
 
-**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 6/9)
-**Next Subtask:** 3.7 - Create SleepRecord Domain Entity
+**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 7/9)
+**Next Subtask:** 3.8 - Create DailyLog Domain Entity
 
 ---
 
