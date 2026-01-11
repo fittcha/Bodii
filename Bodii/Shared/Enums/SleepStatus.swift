@@ -42,15 +42,15 @@ enum SleepStatus: Int16, CaseIterable, Codable {
     var displayName: String {
         switch self {
         case .bad:
-            return "🔴 나쁨"
+            return "나쁨🔴"
         case .soso:
-            return "🟡 보통"
+            return "보통🟡"
         case .good:
-            return "🟢 좋음"
+            return "좋음🟢"
         case .excellent:
-            return "🔵 매우 좋음"
+            return "매우 좋음🔵"
         case .oversleep:
-            return "🟠 과수면"
+            return "과수면🟠"
         }
     }
 
