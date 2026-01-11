@@ -1,38 +1,187 @@
-# Build Progress - Project Foundation & Core Data Model
+# Build Progress: Project Foundation & Core Data Model
+# Spec ID: 002-project-foundation-core-data-model
+# Last Updated: 2026-01-11 21:00
 
-## Current Status
-- **Phase**: 1 - Enum Definitions & Type Safety
-- **Subtask**: 1.1 - Create Gender Enum
-- **Status**: ✅ COMPLETED
+## Current Status: IN PROGRESS - Phase 2 Complete ✅
 
-## Completed Tasks
-### Phase 1: Enum Definitions & Type Safety
-- [x] 1.1 - Create Gender Enum
-  - Gender enum with Int16 rawValue
-  - Cases: male (0), female (1)
-  - Korean localized display names (남성, 여성)
-  - Identifiable extension for SwiftUI
-  - Commit: c2faabc
+---
 
-## Next Steps
-- 1.2 - Create ActivityLevel Enum
-- 1.3 - Create MealType Enum
-- 1.4 - Create ExerciseType Enum
-- 1.5 - Create Intensity Enum
-- 1.6 - Create FoodSource Enum
-- 1.7 - Create GoalType Enum
-- 1.8 - Create SleepStatus Enum
-- 1.9 - Create QuantityUnit Enum
-- 1.10 - Create Constants File
+## ALREADY IMPLEMENTED ✅
 
-## Progress Summary
+### 1. Xcode Project Setup
+- iOS 17+ target with SwiftUI lifecycle
+- BodiiApp.swift with @main entry point
+- ContentView with tab-based navigation
+
+### 2. Core Data Model (Bodii.xcdatamodeld)
+All 9 entities defined with proper relationships:
+- User (14 attributes, 8 relationships)
+- BodyRecord (7 attributes, 2 relationships)
+- MetabolismSnapshot (8 attributes, 2 relationships)
+- Food (14 attributes, 2 relationships)
+- FoodRecord (10 attributes, 2 relationships)
+- ExerciseRecord (10 attributes, 1 relationship)
+- SleepRecord (6 attributes, 1 relationship)
+- DailyLog (22 attributes, 1 relationship)
+- Goal (17 attributes, 1 relationship)
+
+### 3. Folder Structure (Clean Architecture)
+- Bodii/App - Entry point and DI container
+- Bodii/Presentation/Features/* - Feature-based UI (Views, ViewModels)
+- Bodii/Domain - Use cases, entities, interfaces
+- Bodii/Data - Repositories, data sources, DTOs
+- Bodii/Infrastructure - Persistence, HealthKit, Network
+- Bodii/Shared - Enums, Utils, Extensions
+
+### 4. PersistenceController
+- Singleton with shared instance
+- Preview instance for SwiftUI
+- save(), newBackgroundContext(), performBackgroundTask()
+- Lightweight migration support
+- DEBUG verifyModelLoaded() helper
+
+---
+
+## COMPLETED WORK (15 Subtasks)
+
+### Phase 1: Enum Definitions & Type Safety (10 subtasks) ✅ COMPLETE
+- [x] 1.1 Gender enum (male=0, female=1) ✅
+- [x] 1.2 ActivityLevel enum (5 levels with TDEE multipliers) ✅
+- [x] 1.3 MealType enum (breakfast/lunch/dinner/snack) ✅
+- [x] 1.4 ExerciseType enum (8 types with MET values) ✅
+- [x] 1.5 Intensity enum (low/medium/high) ✅
+- [x] 1.6 FoodSource enum (kfdaAPI/usdaAPI/userCreated) ✅
+- [x] 1.7 GoalType enum (lose/maintain/gain) ✅
+- [x] 1.8 SleepStatus enum (5 statuses with duration thresholds) ✅
+- [x] 1.9 QuantityUnit enum (serving/gram) ✅
+- [x] 1.10 Constants file (validation ranges, defaults) ✅
+
+### Phase 2: Utility Services (5 subtasks) ✅ COMPLETE
+- [x] 2.1 DateUtils (02:00 sleep boundary logic) ✅
+- [x] 2.2 ValidationService (input range validation) ✅
+- [x] 2.3 Date+Extensions (convenience methods) ✅
+- [x] 2.4 Decimal+Extensions (Core Data helpers) ✅
+- [x] 2.5 Formatters utility (shared formatters) ✅ JUST COMPLETED
+
+---
+
+## REMAINING WORK (17 Subtasks)
+
+### Phase 3: Domain Entities (9 subtasks) ⭐ NEXT
+- [ ] 3.1 User domain entity
+- [ ] 3.2 BodyRecord domain entity
+- [ ] 3.3 MetabolismSnapshot domain entity
+- [ ] 3.4 Food domain entity
+- [ ] 3.5 FoodRecord domain entity
+- [ ] 3.6 ExerciseRecord domain entity
+- [ ] 3.7 SleepRecord domain entity
+- [ ] 3.8 DailyLog domain entity
+- [ ] 3.9 Goal domain entity
+
+### Phase 4: Core Data Entity Extensions (4 subtasks)
+- [ ] 4.1 UserEntity+Extensions
+- [ ] 4.2 BodyRecordEntity+Extensions
+- [ ] 4.3 DailyLogEntity+Extensions
+- [ ] 4.4 Remaining entity extensions (6 files)
+
+### Phase 5: Testing & Verification (4 subtasks)
+- [ ] 5.1 DateUtilsTests
+- [ ] 5.2 ValidationServiceTests
+- [ ] 5.3 SleepStatusTests
+- [ ] 5.4 Build and Core Data verification
+
+---
+
+## ACCEPTANCE CRITERIA STATUS
+
+| Criteria | Status |
+|----------|--------|
+| Xcode project with iOS 17+ and SwiftUI | ✅ DONE |
+| Core Data model with 9 entities | ✅ DONE |
+| MVVM folder structure | ✅ DONE |
+| PersistenceController with CRUD | ✅ DONE |
+| DateUtils with 02:00 boundary | ✅ DONE |
+| ValidationService for all ranges | ✅ DONE |
+
+---
+
+## PROGRESS SUMMARY
+
 - Total Subtasks: 32
-- Completed: 1
+- Completed: 15 (Phase 1 & 2)
 - In Progress: 0
-- Pending: 31
-- Progress: 3.1%
+- Pending: 17
+- Progress: 46.9%
 
-## Notes
-- Gender enum follows established project patterns
-- All enums use Int16 rawValue for Core Data compatibility
-- Korean localization implemented throughout
+---
+
+## LATEST COMPLETION (2.5 - Formatters Utility)
+
+### Created Formatters.swift with:
+**Number Formatters:**
+- weight: 1 decimal place, no grouping separator (e.g., "67.5")
+- bodyFat: 1 decimal place, no grouping (e.g., "18.3")
+- calories: integer with comma separator (e.g., "2,150")
+- macros: integer, no grouping (e.g., "250")
+- percentage: with % symbol (e.g., "25.5%")
+- decimal: 2 decimal places (e.g., "1.38")
+
+**Date Formatters:**
+- fullDate: "yyyy년 MM월 dd일" (e.g., "2024년 01월 15일")
+- shortDate: "M월 d일" (e.g., "1월 15일")
+- dateWithWeekday: "M월 d일 (E)" (e.g., "1월 15일 (월)")
+- time: "HH:mm" (e.g., "14:30")
+- dateTime: "M월 d일 HH:mm" (e.g., "1월 15일 14:30")
+- iso8601: For API communication (UTC)
+
+**Features:**
+- All formatters use static lazy initialization for performance
+- Korean locale (ko_KR) configuration
+- Convenience methods for Decimal formatting
+- Comprehensive documentation with usage examples
+- Prevents formatter creation in loops
+
+---
+
+## KEY REFERENCES
+
+### Validation Ranges (from spec.md and ERD.md)
+- Height: 100-250cm
+- Weight: 20-300kg
+- Body Fat: 3-60%
+- Muscle Mass: 10-60kg
+- Name: 1-20 characters
+- Exercise Duration: 1-480 minutes
+- Food Quantity: 0.1-100 servings or 1-10000 grams
+
+### Sleep Boundary Logic (02:00 = logical day boundary)
+```swift
+// 02:00 ~ 다음날 02:00 = 하루
+// 00:00 ~ 01:59 → previous day (수면은 전날에 속함)
+// 02:00 ~ 23:59 → current day
+func getLogicalDate(for date: Date) -> Date {
+    let hour = Calendar.current.component(.hour, from: date)
+    if hour < 2 {
+        return Calendar.current.date(byAdding: .day, value: -1, to: date)!.startOfDay
+    }
+    return date.startOfDay
+}
+```
+
+---
+
+## NOTES
+- Korean localization required for all display names (displayName 프로퍼티)
+- Error messages must be in Korean for user-facing validation
+- All enums use Int16 rawValue to match Core Data attributes
+- Domain entities should be pure Swift structs (Identifiable, Codable, Equatable)
+- Core Data entity extensions provide toDomain() and update(from:) methods
+- Formatters must be reused (static lazy) to avoid performance overhead
+
+---
+
+## ESTIMATED TIME REMAINING
+- Phase 3: ~180 minutes (9 domain entities)
+- Phase 4: ~115 minutes (Core Data extensions)
+- Phase 5: ~80 minutes (Testing)
+- Total Remaining: ~375 minutes (~6.25 hours)

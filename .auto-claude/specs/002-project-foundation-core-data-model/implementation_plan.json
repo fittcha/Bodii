@@ -37,8 +37,8 @@
             "multiplier property returning correct TDEE coefficient",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "ActivityLevel enum correctly implemented with Int16 rawValue, 5 activity levels (sedentary/light/moderate/active/veryActive with raw values 1-5), multiplier property with TDEE coefficients (1.2, 1.375, 1.55, 1.725, 1.9), Korean display names, and Identifiable extension for SwiftUI"
         },
         {
           "subtask_id": "1.3",
@@ -154,7 +154,7 @@
       "phase_id": 2,
       "title": "Utility Services",
       "description": "Create DateUtils for sleep boundary logic and ValidationService for input validation",
-      "status": "pending",
+      "status": "completed",
       "subtasks": [
         {
           "subtask_id": "2.1",
@@ -168,8 +168,8 @@
             "Date formatting utilities for Korean locale",
             "Comprehensive documentation with examples"
           ],
-          "status": "pending",
-          "notes": "CRITICAL: 02:00 boundary means 01:59→prev day, 02:00→current day"
+          "status": "completed",
+          "notes": "DateUtils.swift created with comprehensive 02:00 sleep boundary logic. Includes getLogicalDate(for:) returning previous day if hour < 2, isNewDayForSleep(at:) boundary check, startOfDay/endOfDay helpers, Korean locale formatting utilities (formatFullDate, formatShortDate, formatDateWithWeekday, formatTime, formatDateTime), date comparison methods (isSameDay, isToday, daysBetween), and age calculation. All methods thoroughly documented with Korean comments and examples."
         },
         {
           "subtask_id": "2.2",
@@ -188,8 +188,8 @@
             "ValidationResult type with isValid, errorMessage properties",
             "Korean error messages"
           ],
-          "status": "pending",
-          "notes": "All error messages should be user-friendly in Korean"
+          "status": "completed",
+          "notes": "ValidationService.swift created with comprehensive input validation. Includes ValidationResult struct with isValid/errorMessage properties, all 8 validation methods covering height, weight, body fat, muscle mass, age, name, exercise duration, and food quantity (with unit-specific ranges). Added bonus validateBodyComposition for consistency checks. All error messages in Korean, uses Constants.Validation for ranges, comprehensive documentation with examples."
         },
         {
           "subtask_id": "2.3",
@@ -205,8 +205,8 @@
             "daysBetween(and:) method",
             "formatted(style:) for Korean date formatting"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "Date+Extensions.swift created with all convenience methods. Provides natural Swift API by delegating to DateUtils. Includes FormatStyle enum for type-safe Korean date formatting (.full, .short, .withWeekday, .time, .dateTime). All methods include comprehensive documentation with Korean comments and usage examples. Follows existing code patterns."
         },
         {
           "subtask_id": "2.4",
@@ -220,8 +220,8 @@
             "rounded(scale:) method for decimal places",
             "formatted(decimalPlaces:) for display strings"
           ],
-          "status": "pending",
-          "notes": "Important for Core Data Decimal ↔ Swift numeric conversions"
+          "status": "completed",
+          "notes": "Decimal+Extensions.swift created with all type conversion helpers. Provides doubleValue/intValue computed properties, init(double:) initializer, rounded(scale:) method with NSDecimalRound, and formatted(decimalPlaces:) for UI display. Comprehensive Korean documentation with usage examples. Follows Date+Extensions pattern exactly."
         },
         {
           "subtask_id": "2.5",
@@ -234,8 +234,8 @@
             "Korean locale configuration",
             "Static lazy initialization for performance"
           ],
-          "status": "pending",
-          "notes": "Avoid creating formatters in loops - use shared instances"
+          "status": "completed",
+          "notes": "Formatters.swift created with comprehensive number and date formatters. Number formatters include: weight (1 decimal), bodyFat (1 decimal), calories (integer with comma), macros (integer), percentage (with % symbol), decimal (2 decimals). Date formatters include: fullDate, shortDate, dateWithWeekday, time, dateTime, iso8601. All use Korean locale (ko_KR) except iso8601. Static lazy initialization for performance. Convenience methods added for Decimal type formatting. Comprehensive documentation with usage examples."
         }
       ]
     },
