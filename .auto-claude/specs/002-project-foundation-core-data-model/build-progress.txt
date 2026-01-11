@@ -138,3 +138,64 @@ The Constants file was already implemented and committed (commit 386bd3c). Verif
 - 2.3: Create Date+Extensions
 - 2.4: Create Decimal+Extensions
 - 2.5: Create Formatters Utility
+
+---
+
+## Subtask 2.1: Create DateUtils
+
+### Status: ✅ COMPLETED
+
+### Summary
+The DateUtils utility was already fully implemented and committed (commit c39c4cd). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
+
+### Implementation Details
+- **File**: `Bodii/Shared/Utils/DateUtils.swift`
+- **Structure**: Static enum as namespace (prevents instantiation)
+- **Sleep Boundary Logic**: Implements 02:00 boundary for logical date calculation
+- **Key Methods**:
+  - `getLogicalDate(for:)` - Returns previous day if hour < 2, current day if hour ≥ 2
+  - `isNewDayForSleep(at:)` - Checks if time is past 02:00 boundary
+  - `startOfDay(for:)` - Returns 00:00:00 for a date
+  - `endOfDay(for:)` - Returns 23:59:59 for a date
+  - `format(_:format:)` - Formats date with Korean locale
+  - `formatFullDate(_:)` - "yyyy년 MM월 dd일" format
+  - `formatShortDate(_:)` - "M월 d일" format
+  - `formatDateWithWeekday(_:)` - "M월 d일 (E)" format
+  - `formatTime(_:)` - "HH:mm" format
+  - `formatDateTime(_:)` - "M월 d일 HH:mm" format
+  - `isSameDay(_:_:)` - Compares if two dates are same day
+  - `isToday(_:)` - Checks if date is today
+  - `daysBetween(_:and:)` - Calculates days between two dates
+  - `age(from:referenceDate:)` - Calculates age from birth date
+
+### Sleep Boundary Logic Details
+**Critical Implementation**: The 02:00 boundary logic correctly handles:
+- ✅ 00:00 ~ 01:59 → Returns **previous day** (still part of previous day's activity)
+- ✅ 02:00 ~ 23:59 → Returns **current day** (new day begins)
+
+**Examples**:
+```swift
+// 2024-01-02 01:59 → 2024-01-01 (previous day)
+// 2024-01-02 02:00 → 2024-01-02 (current day)
+// 2024-01-02 12:00 → 2024-01-02 (current day)
+```
+
+### Acceptance Criteria Verification
+✅ `getLogicalDate(for:)` returns previous day if hour < 2 (02:00)
+✅ `isNewDayForSleep(at:)` checks if time is past 02:00 boundary
+✅ `startOfDay(for:)` and `endOfDay(for:)` helpers
+✅ Date formatting utilities for Korean locale (multiple format methods)
+✅ Comprehensive documentation with examples (Korean docs throughout)
+✅ Uses Constants.Sleep.boundaryHour for maintainability
+✅ Static shared DateFormatter for performance optimization
+✅ Additional utility methods for date comparison and age calculation
+
+### Commits
+- c39c4cd: auto-claude: 2.1 - Utility for date handling with 02:00 sleep boundary logic
+
+### Next Steps
+**Phase 2 (Utility Services)** - Remaining subtasks:
+- 2.2: Create ValidationService ⏳ PENDING
+- 2.3: Create Date+Extensions ⏳ PENDING
+- 2.4: Create Decimal+Extensions ⏳ PENDING
+- 2.5: Create Formatters Utility ⏳ PENDING
