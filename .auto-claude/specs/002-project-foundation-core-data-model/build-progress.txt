@@ -1,5 +1,196 @@
 # Build Progress - 002 Project Foundation & Core Data Model
 
+## Subtask 3.9: Create Goal Domain Entity - ✅ COMPLETED
+
+**Status:** COMPLETED
+**File:** Bodii/Domain/Entities/Goal.swift
+**Commit:** 4f3229d
+
+### Implementation Details
+
+All acceptance criteria have been met:
+
+✅ **Goal struct with Identifiable, Codable, Equatable**
+   - Identifiable: Uses UUID as id
+   - Codable: All properties are Codable-conforming types
+   - Equatable: Auto-synthesized by compiler
+
+✅ **Target values:**
+   - targetWeight: Decimal (목표 체중, kg, 20-300kg range)
+   - targetBodyFatPct: Decimal (목표 체지방률, %, 3-60% range)
+   - targetMuscleMass: Decimal (목표 근육량, kg, 10-60kg range)
+
+✅ **Weekly change rates:**
+   - weeklyWeightRate: Decimal (주간 체중 변화율, kg/week)
+   - weeklyFatPctRate: Decimal (주간 체지방률 변화율, %/week)
+   - weeklyMuscleRate: Decimal (주간 근육량 변화율, kg/week)
+
+✅ **Start values (snapshots):**
+   - startWeight: Decimal (시작 체중)
+   - startBodyFatPct: Decimal (시작 체지방률)
+   - startMuscleMass: Decimal (시작 근육량)
+   - startBMR: Int (시작 기초대사량)
+   - startTDEE: Int (시작 일일 총 에너지 소비량)
+
+✅ **Additional properties:**
+   - goalType: GoalType enum (lose/maintain/gain)
+   - dailyCalorieTarget: Int (일일 칼로리 목표)
+   - isActive: Bool (목표 활성화 여부)
+   - startDate: Date (목표 시작일)
+   - targetDate: Date (목표 달성 예정일)
+   - createdAt, updatedAt: Date (timestamps)
+
+✅ **Physical consistency validation:**
+   - validatePhysicalConsistency() method
+   - Checks: 목표 제지방량 ≥ 목표 근육량
+   - Returns ValidationResult with error message
+   - Per ERD requirement: 제지방량 ≥ 목표근육량 validation
+
+### Bonus Features
+
+✅ **Computed properties for convenience**
+   - targetLeanBodyMass - 목표 제지방량 (kg)
+   - startLeanBodyMass - 시작 제지방량 (kg)
+   - targetWeightChange - 목표 체중 변화량 (kg)
+   - durationInDays - 목표 기간 (일)
+   - durationInWeeks - 목표 기간 (주)
+
+✅ **Factory method for creation**
+   - create() - Creates Goal with all required fields
+
+✅ **Update methods for functional programming**
+   - updatingTargets() - Updates target values with validation
+   - updatingWeeklyRates() - Updates weekly change rates
+   - updatingDailyCalorieTarget() - Updates calorie target
+   - updatingActiveStatus() - Activates/deactivates goal
+   - updatingTargetDate() - Updates target date
+
+✅ **CustomStringConvertible protocol**
+   - Provides readable debug description
+   - Shows all key properties including computed values
+   - Displays Korean labels for goal type and status
+
+### Quality Attributes
+
+✅ Follows established patterns from User, BodyRecord, DailyLog entities
+✅ Korean documentation with 학습 포인트 (Goal Target Validation)
+✅ Comprehensive doc comments with validation rules and formulas
+✅ MARK organization for code sections
+✅ Domain entity pattern (separated from Core Data)
+✅ No console.log/print debugging statements
+✅ Functional update pattern (returns new instances)
+✅ Validation prevents physically impossible goals
+
+### Documentation Highlights
+
+**학습 포인트 (Learning Point):**
+- Explains Goal Target Validation pattern
+- Compares to Bean Validation's custom validation logic
+- Shows how Swift uses methods instead of annotations
+
+**Key Concepts:**
+- Physical consistency validation for body composition goals
+- Lean body mass = weight - body fat mass
+- Muscle mass is part of lean body mass (must be ≤ LBM)
+- Weekly change rates for progress tracking
+- Daily calorie target calculation from weekly goals
+- Start values snapshot for progress comparison
+
+**Validation Logic:**
+```
+목표 체지방량 = 목표 체중 × (목표 체지방률 / 100)
+목표 제지방량 = 목표 체중 - 목표 체지방량
+검증: 목표 근육량 ≤ 목표 제지방량
+
+Example:
+목표 체중 70kg, 목표 체지방률 10%
+→ 목표 체지방량 = 70 × 0.1 = 7kg
+→ 목표 제지방량 = 70 - 7 = 63kg
+→ 목표 근육량은 최대 63kg까지만 가능
+```
+
+**Usage Examples:**
+```swift
+// 1. Create weight loss goal
+let goal = Goal.create(
+    userId: userId,
+    goalType: .lose,
+    targetWeight: 65.0,
+    targetBodyFatPct: 15.0,
+    targetMuscleMass: 30.0,
+    weeklyWeightRate: -0.5,
+    weeklyFatPctRate: -0.5,
+    weeklyMuscleRate: 0.0,
+    startWeight: 70.0,
+    startBodyFatPct: 20.0,
+    startMuscleMass: 30.0,
+    startBMR: 1650,
+    startTDEE: 2550,
+    dailyCalorieTarget: 2000,
+    targetDate: Date().addingTimeInterval(60 * 60 * 24 * 70)
+)
+
+// 2. Validate physical consistency
+let validation = goal.validatePhysicalConsistency()
+if !validation.isValid {
+    print("오류: \(validation.errorMessage ?? "")")
+}
+
+// 3. Update targets with validation
+if let updatedGoal = goal.updatingTargets(
+    targetWeight: 68.0,
+    targetBodyFatPct: 16.0,
+    targetMuscleMass: 31.0
+) {
+    // Valid update - use updatedGoal
+} else {
+    // Invalid - physically impossible goal
+}
+```
+
+### Git Status
+
+- File committed in: 4f3229d
+- Commit message: "auto-claude: 3.9 - Pure Swift struct for Goal with target validation"
+- Implementation plan updated to "completed"
+- Phase 3 status: 9/9 subtasks completed ✅
+- **Phase 3 COMPLETED!**
+
+### Architecture Notes
+
+**Goal Target Validation:**
+- Prevents physically impossible goals (muscle mass > lean body mass)
+- Validates at creation and update time
+- User-friendly Korean error messages
+- Ensures data integrity before persistence
+
+**Physical Consistency Rules:**
+- Lean body mass includes: muscle, bones, organs, water
+- Muscle mass is a subset of lean body mass
+- Therefore: muscle mass ≤ lean body mass always
+- Validation enforces this biological constraint
+
+**Why Separate Start Values?**
+- Snapshot approach: preserve goal starting point
+- Calculate progress: current vs start vs target
+- Track actual vs expected progress
+- Handle goal updates without losing history
+
+**Weekly Change Rates:**
+- Enable realistic goal planning
+- Calculate expected timeline
+- Adjust daily calorie targets
+- Monitor if progress matches plan
+
+**Data Flow:**
+1. User sets goal → create() with current body data as start values
+2. System validates → validatePhysicalConsistency()
+3. If valid → save to Core Data via GoalEntity
+4. Track progress → compare current BodyRecord to start values
+5. Adjust goal → updatingTargets() with validation
+
+---
+
 ## Subtask 3.8: Create DailyLog Domain Entity - ✅ COMPLETED
 
 **Status:** COMPLETED
@@ -985,7 +1176,7 @@ print(user.age) // Automatically calculated
 
 ---
 
-**Phase 3 Progress:** 🚧 IN PROGRESS (8/9 subtasks)
+**Phase 3 Progress:** ✅ COMPLETED (9/9 subtasks)
 - 3.1: User ✅
 - 3.2: BodyRecord ✅
 - 3.3: MetabolismSnapshot ✅
@@ -994,10 +1185,11 @@ print(user.age) // Automatically calculated
 - 3.6: ExerciseRecord ✅
 - 3.7: SleepRecord ✅
 - 3.8: DailyLog ✅
-- 3.9: Goal (pending)
+- 3.9: Goal ✅
 
-**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 8/9)
-**Next Subtask:** 3.9 - Create Goal Domain Entity
+**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (✅ Complete)
+**Next Phase:** Phase 4 - Core Data Entity Extensions
+**Next Subtask:** 4.1 - Create UserEntity+Extensions
 
 ---
 
