@@ -118,8 +118,8 @@
             "Duration thresholds: bad<330, soso 330-389, good 390-449, excellent 450-540, oversleep>540",
             "Korean localized display names and emoji indicators"
           ],
-          "status": "pending",
-          "notes": "Per ERD: bad🔴, soso🟡, good🟢, excellent🔵, oversleep🟠"
+          "status": "completed",
+          "notes": "SleepStatus enum implemented with Int16 rawValue, 5 cases (bad=0, soso=1, good=2, excellent=3, oversleep=4), static from(durationMinutes:) method for status determination from sleep duration, duration thresholds (bad<330, soso 330-389, good 390-449, excellent 450-540, oversleep>540), Korean display names with emoji indicators (나쁨🔴, 보통🟡, 좋음🟢, 매우 좋음🔵, 과수면🟠). Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in c0c11da."
         },
         {
           "subtask_id": "1.9",
