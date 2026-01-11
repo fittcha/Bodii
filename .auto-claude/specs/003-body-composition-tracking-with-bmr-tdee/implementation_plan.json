@@ -17,21 +17,27 @@
           "id": "1.1",
           "title": "Create ActivityLevel enum with TDEE multipliers",
           "description": "Define ActivityLevel enum with sedentary, light, moderate, active, very active levels and their corresponding TDEE multipliers (1.2-1.9)",
-          "status": "pending",
-          "file_paths": ["Bodii/Shared/Enums/ActivityLevel.swift"],
+          "status": "completed",
+          "file_paths": [
+            "Bodii/Shared/Enums/ActivityLevel.swift"
+          ],
           "acceptance_criteria": [
             "Enum has 5 activity levels",
             "Each level has correct TDEE multiplier",
             "Includes localized display names in Korean"
           ],
-          "estimated_complexity": "low"
+          "estimated_complexity": "low",
+          "notes": "ActivityLevel enum created with 5 levels and their TDEE multipliers. Includes computed properties for multiplier values (1.2, 1.375, 1.55, 1.725, 1.9), displayName, and description. Conforms to Int16, CaseIterable, Codable, and Identifiable protocols for Core Data storage and SwiftUI integration.",
+          "updated_at": "2026-01-11T23:45:57.552703+00:00"
         },
         {
           "id": "1.2",
           "title": "Create Gender enum for BMR calculations",
           "description": "Define Gender enum with male/female values for Mifflin-St Jeor formula differentiation",
           "status": "pending",
-          "file_paths": ["Bodii/Shared/Enums/Gender.swift"],
+          "file_paths": [
+            "Bodii/Shared/Enums/Gender.swift"
+          ],
           "acceptance_criteria": [
             "Enum has male and female cases",
             "Maps to Int16 for Core Data storage",
@@ -44,7 +50,9 @@
           "title": "Create BodyCompositionEntry domain entity",
           "description": "Define a domain entity for body composition data that is independent of Core Data",
           "status": "pending",
-          "file_paths": ["Bodii/Domain/Entities/BodyCompositionEntry.swift"],
+          "file_paths": [
+            "Bodii/Domain/Entities/BodyCompositionEntry.swift"
+          ],
           "acceptance_criteria": [
             "Contains id, date, weight, bodyFatPercent, muscleMass, bodyFatMass",
             "All measurements use Decimal for precision",
@@ -57,7 +65,9 @@
           "title": "Create MetabolismData domain entity",
           "description": "Define a domain entity for metabolism calculations (BMR/TDEE)",
           "status": "pending",
-          "file_paths": ["Bodii/Domain/Entities/MetabolismData.swift"],
+          "file_paths": [
+            "Bodii/Domain/Entities/MetabolismData.swift"
+          ],
           "acceptance_criteria": [
             "Contains bmr, tdee, weight, bodyFatPercent, activityLevel",
             "Uses Decimal for precision",
@@ -70,7 +80,9 @@
           "title": "Create UserProfile domain entity",
           "description": "Define domain entity for user profile data needed for BMR calculations",
           "status": "pending",
-          "file_paths": ["Bodii/Domain/Entities/UserProfile.swift"],
+          "file_paths": [
+            "Bodii/Domain/Entities/UserProfile.swift"
+          ],
           "acceptance_criteria": [
             "Contains height, birthDate, gender, activityLevel",
             "Includes computed property for age calculation",
@@ -83,7 +95,9 @@
           "title": "Implement CalculateBMRUseCase with Mifflin-St Jeor formula",
           "description": "Create use case that calculates BMR using Mifflin-St Jeor formula: Men: (10 x weight) + (6.25 x height) - (5 x age) + 5, Women: (10 x weight) + (6.25 x height) - (5 x age) - 161",
           "status": "pending",
-          "file_paths": ["Bodii/Domain/UseCases/CalculateBMRUseCase.swift"],
+          "file_paths": [
+            "Bodii/Domain/UseCases/CalculateBMRUseCase.swift"
+          ],
           "acceptance_criteria": [
             "Correctly implements Mifflin-St Jeor formula for both genders",
             "Takes weight (kg), height (cm), age (years), gender as inputs",
@@ -97,7 +111,9 @@
           "title": "Implement CalculateTDEEUseCase",
           "description": "Create use case that calculates TDEE by multiplying BMR with activity level multiplier",
           "status": "pending",
-          "file_paths": ["Bodii/Domain/UseCases/CalculateTDEEUseCase.swift"],
+          "file_paths": [
+            "Bodii/Domain/UseCases/CalculateTDEEUseCase.swift"
+          ],
           "acceptance_criteria": [
             "Takes BMR and ActivityLevel as inputs",
             "Returns TDEE as Decimal with kcal/day unit",
@@ -110,7 +126,9 @@
           "title": "Create BodyRepository protocol",
           "description": "Define repository interface for body composition data operations",
           "status": "pending",
-          "file_paths": ["Bodii/Domain/Interfaces/BodyRepositoryProtocol.swift"],
+          "file_paths": [
+            "Bodii/Domain/Interfaces/BodyRepositoryProtocol.swift"
+          ],
           "acceptance_criteria": [
             "Defines CRUD operations for body records",
             "Includes fetch by date range for trends",
@@ -132,7 +150,9 @@
           "title": "Create BodyRecordMapper for Core Data entity mapping",
           "description": "Implement mapper to convert between BodyRecord (Core Data) and BodyCompositionEntry (Domain)",
           "status": "pending",
-          "file_paths": ["Bodii/Data/Mappers/BodyRecordMapper.swift"],
+          "file_paths": [
+            "Bodii/Data/Mappers/BodyRecordMapper.swift"
+          ],
           "acceptance_criteria": [
             "Maps all fields correctly between entities",
             "Handles optional values safely",
@@ -145,7 +165,9 @@
           "title": "Create MetabolismSnapshotMapper",
           "description": "Implement mapper for MetabolismSnapshot Core Data entity to domain entity",
           "status": "pending",
-          "file_paths": ["Bodii/Data/Mappers/MetabolismSnapshotMapper.swift"],
+          "file_paths": [
+            "Bodii/Data/Mappers/MetabolismSnapshotMapper.swift"
+          ],
           "acceptance_criteria": [
             "Maps all fields correctly",
             "Handles ActivityLevel enum conversion",
@@ -158,7 +180,9 @@
           "title": "Implement BodyLocalDataSource",
           "description": "Create local data source for Core Data operations on BodyRecord and MetabolismSnapshot",
           "status": "pending",
-          "file_paths": ["Bodii/Data/DataSources/Local/BodyLocalDataSource.swift"],
+          "file_paths": [
+            "Bodii/Data/DataSources/Local/BodyLocalDataSource.swift"
+          ],
           "acceptance_criteria": [
             "CRUD operations for BodyRecord",
             "Auto-creates MetabolismSnapshot with each record",
@@ -173,7 +197,9 @@
           "title": "Implement BodyRepository",
           "description": "Implement the BodyRepositoryProtocol using the local data source",
           "status": "pending",
-          "file_paths": ["Bodii/Data/Repositories/BodyRepository.swift"],
+          "file_paths": [
+            "Bodii/Data/Repositories/BodyRepository.swift"
+          ],
           "acceptance_criteria": [
             "Implements all protocol methods",
             "Uses mappers for entity conversion",
@@ -187,7 +213,9 @@
           "title": "Create RecordBodyCompositionUseCase",
           "description": "Create use case that orchestrates saving a body composition record with automatic BMR/TDEE calculation",
           "status": "pending",
-          "file_paths": ["Bodii/Domain/UseCases/RecordBodyCompositionUseCase.swift"],
+          "file_paths": [
+            "Bodii/Domain/UseCases/RecordBodyCompositionUseCase.swift"
+          ],
           "acceptance_criteria": [
             "Takes body measurements as input",
             "Calculates BMR using user profile",
@@ -202,7 +230,9 @@
           "title": "Create FetchBodyTrendsUseCase",
           "description": "Create use case for fetching body composition trends for chart display",
           "status": "pending",
-          "file_paths": ["Bodii/Domain/UseCases/FetchBodyTrendsUseCase.swift"],
+          "file_paths": [
+            "Bodii/Domain/UseCases/FetchBodyTrendsUseCase.swift"
+          ],
           "acceptance_criteria": [
             "Supports 7, 30, 90 day periods",
             "Returns data sorted by date",
@@ -224,7 +254,9 @@
           "title": "Create BodyCompositionViewModel",
           "description": "Implement ViewModel for body composition input and history display",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Features/Body/BodyCompositionViewModel.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Features/Body/BodyCompositionViewModel.swift"
+          ],
           "acceptance_criteria": [
             "Manages input state for weight, body fat %, muscle mass",
             "Validates inputs with appropriate ranges",
@@ -239,7 +271,9 @@
           "title": "Create BodyTrendsViewModel",
           "description": "Implement ViewModel for body composition trends chart",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Features/Body/BodyTrendsViewModel.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Features/Body/BodyTrendsViewModel.swift"
+          ],
           "acceptance_criteria": [
             "Manages selected time period (7/30/90 days)",
             "Fetches and transforms data for charts",
@@ -253,7 +287,9 @@
           "title": "Create MetabolismViewModel for BMR/TDEE display",
           "description": "Implement ViewModel for displaying current BMR/TDEE on dashboard",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Features/Dashboard/MetabolismViewModel.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Features/Dashboard/MetabolismViewModel.swift"
+          ],
           "acceptance_criteria": [
             "Fetches current BMR/TDEE from user profile",
             "Calculates net calories (intake - expenditure)",
@@ -275,7 +311,9 @@
           "title": "Create BodyCompositionInputCard component",
           "description": "Reusable card component for inputting body measurements",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Components/Cards/BodyCompositionInputCard.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Components/Cards/BodyCompositionInputCard.swift"
+          ],
           "acceptance_criteria": [
             "Text fields for weight, body fat %, muscle mass",
             "Numeric keyboard with decimal support",
@@ -289,7 +327,9 @@
           "title": "Create MetabolismDisplayCard component",
           "description": "Card showing BMR/TDEE values with visual indicators",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Components/Cards/MetabolismDisplayCard.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Components/Cards/MetabolismDisplayCard.swift"
+          ],
           "acceptance_criteria": [
             "Displays BMR and TDEE prominently",
             "Shows activity level",
@@ -303,7 +343,9 @@
           "title": "Create WeightTrendChart component using Swift Charts",
           "description": "Line chart showing weight trend over selected period",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Components/Charts/WeightTrendChart.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Components/Charts/WeightTrendChart.swift"
+          ],
           "acceptance_criteria": [
             "Uses Swift Charts framework",
             "Displays weight data points as line graph",
@@ -318,7 +360,9 @@
           "title": "Create BodyFatTrendChart component using Swift Charts",
           "description": "Line chart showing body fat percentage trend",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Components/Charts/BodyFatTrendChart.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Components/Charts/BodyFatTrendChart.swift"
+          ],
           "acceptance_criteria": [
             "Uses Swift Charts framework",
             "Displays body fat % as line graph",
@@ -333,7 +377,9 @@
           "title": "Create TrendPeriodPicker component",
           "description": "Segmented control for selecting chart time period",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Components/Common/TrendPeriodPicker.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Components/Common/TrendPeriodPicker.swift"
+          ],
           "acceptance_criteria": [
             "Segmented picker with 7/30/90 day options",
             "Binding for selected period",
@@ -354,7 +400,9 @@
           "title": "Create BodyCompositionView main screen",
           "description": "Main view for body tab showing input form and recent records",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Features/Body/BodyCompositionView.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Features/Body/BodyCompositionView.swift"
+          ],
           "acceptance_criteria": [
             "Input section for new measurements",
             "Displays current BMR/TDEE",
@@ -369,7 +417,9 @@
           "title": "Create BodyTrendsView for chart display",
           "description": "View showing weight and body fat trends with period selection",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Features/Body/BodyTrendsView.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Features/Body/BodyTrendsView.swift"
+          ],
           "acceptance_criteria": [
             "Period selector (7/30/90 days)",
             "Weight trend chart",
@@ -384,7 +434,9 @@
           "title": "Create BodyRecordDetailView",
           "description": "Detail view for individual body composition record",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Features/Body/BodyRecordDetailView.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Features/Body/BodyRecordDetailView.swift"
+          ],
           "acceptance_criteria": [
             "Shows all recorded values",
             "Displays calculated BMR/TDEE for that record",
@@ -398,7 +450,9 @@
           "title": "Update DashboardView with metabolism display",
           "description": "Add BMR/TDEE card to dashboard with intake/expenditure comparison",
           "status": "pending",
-          "file_paths": ["Bodii/Presentation/Features/Dashboard/DashboardView.swift"],
+          "file_paths": [
+            "Bodii/Presentation/Features/Dashboard/DashboardView.swift"
+          ],
           "acceptance_criteria": [
             "Metabolism card showing BMR/TDEE",
             "Daily calorie balance display",
@@ -420,7 +474,9 @@
           "title": "Update DIContainer with body composition dependencies",
           "description": "Register all body composition related dependencies in DIContainer",
           "status": "pending",
-          "file_paths": ["Bodii/App/DIContainer.swift"],
+          "file_paths": [
+            "Bodii/App/DIContainer.swift"
+          ],
           "acceptance_criteria": [
             "Registers BodyLocalDataSource",
             "Registers BodyRepository",
@@ -434,7 +490,9 @@
           "title": "Update ContentView to use BodyCompositionView",
           "description": "Replace placeholder in body tab with actual BodyCompositionView",
           "status": "pending",
-          "file_paths": ["Bodii/App/ContentView.swift"],
+          "file_paths": [
+            "Bodii/App/ContentView.swift"
+          ],
           "acceptance_criteria": [
             "Body tab shows BodyCompositionView",
             "Dashboard tab shows updated DashboardView",
@@ -447,7 +505,9 @@
           "title": "Add preview sample data for body composition",
           "description": "Create sample data for SwiftUI previews",
           "status": "pending",
-          "file_paths": ["Bodii/Infrastructure/Persistence/PersistenceController.swift"],
+          "file_paths": [
+            "Bodii/Infrastructure/Persistence/PersistenceController.swift"
+          ],
           "acceptance_criteria": [
             "Sample BodyRecords with various dates",
             "Sample MetabolismSnapshots",
@@ -468,7 +528,9 @@
           "title": "Create BodyMeasurementValidator",
           "description": "Validation utility for body composition inputs",
           "status": "pending",
-          "file_paths": ["Bodii/Shared/Utils/BodyMeasurementValidator.swift"],
+          "file_paths": [
+            "Bodii/Shared/Utils/BodyMeasurementValidator.swift"
+          ],
           "acceptance_criteria": [
             "Weight range: 20-500 kg",
             "Body fat %: 1-60%",
@@ -483,7 +545,9 @@
           "title": "Create Decimal+Extensions for formatting",
           "description": "Extensions for Decimal formatting and display",
           "status": "pending",
-          "file_paths": ["Bodii/Shared/Extensions/Decimal+Extensions.swift"],
+          "file_paths": [
+            "Bodii/Shared/Extensions/Decimal+Extensions.swift"
+          ],
           "acceptance_criteria": [
             "Format to 1 decimal place for display",
             "Format to 0 decimal for calories",
@@ -504,7 +568,10 @@
           "title": "Create BMR/TDEE calculation tests",
           "description": "Unit tests for Mifflin-St Jeor formula implementation",
           "status": "pending",
-          "file_paths": ["BodiiTests/Domain/UseCases/CalculateBMRUseCaseTests.swift", "BodiiTests/Domain/UseCases/CalculateTDEEUseCaseTests.swift"],
+          "file_paths": [
+            "BodiiTests/Domain/UseCases/CalculateBMRUseCaseTests.swift",
+            "BodiiTests/Domain/UseCases/CalculateTDEEUseCaseTests.swift"
+          ],
           "acceptance_criteria": [
             "Test male and female calculations",
             "Test edge cases (low/high values)",
@@ -518,7 +585,9 @@
           "title": "Create repository and data source tests",
           "description": "Integration tests for data layer",
           "status": "pending",
-          "file_paths": ["BodiiTests/Data/Repositories/BodyRepositoryTests.swift"],
+          "file_paths": [
+            "BodiiTests/Data/Repositories/BodyRepositoryTests.swift"
+          ],
           "acceptance_criteria": [
             "Test CRUD operations",
             "Test date range queries",
@@ -532,7 +601,9 @@
           "title": "Create performance tests for queries",
           "description": "Performance tests to verify <0.5s query requirement",
           "status": "pending",
-          "file_paths": ["BodiiTests/Performance/BodyQueryPerformanceTests.swift"],
+          "file_paths": [
+            "BodiiTests/Performance/BodyQueryPerformanceTests.swift"
+          ],
           "acceptance_criteria": [
             "Query 1000+ records in <0.5s",
             "Trend data fetch in <0.5s",
@@ -544,22 +615,65 @@
     }
   ],
   "dependencies": {
-    "phase-2": ["phase-1"],
-    "phase-3": ["phase-1", "phase-2"],
-    "phase-4": ["phase-1"],
-    "phase-5": ["phase-3", "phase-4"],
-    "phase-6": ["phase-5"],
-    "phase-7": ["phase-1"],
-    "phase-8": ["phase-6"]
+    "phase-2": [
+      "phase-1"
+    ],
+    "phase-3": [
+      "phase-1",
+      "phase-2"
+    ],
+    "phase-4": [
+      "phase-1"
+    ],
+    "phase-5": [
+      "phase-3",
+      "phase-4"
+    ],
+    "phase-6": [
+      "phase-5"
+    ],
+    "phase-7": [
+      "phase-1"
+    ],
+    "phase-8": [
+      "phase-6"
+    ]
   },
   "acceptance_criteria_mapping": {
-    "Users can input height, weight, body fat %, muscle mass with validation": ["1.3", "4.1", "5.1", "7.1"],
-    "BMR calculated automatically using Mifflin-St Jeor formula": ["1.6", "2.5", "8.1"],
-    "TDEE calculated based on activity level multiplier": ["1.1", "1.7", "2.5"],
-    "MetabolismSnapshot saved with each body record for historical tracking": ["2.3", "2.5"],
-    "Swift Charts displays weight/body fat trends over 7/30/90 days": ["4.3", "4.4", "5.2"],
-    "Dashboard shows current BMR/TDEE alongside daily intake/expenditure": ["3.3", "4.2", "5.4"],
-    "Performance: queries complete in under 0.5 seconds": ["2.3", "8.3"]
+    "Users can input height, weight, body fat %, muscle mass with validation": [
+      "1.3",
+      "4.1",
+      "5.1",
+      "7.1"
+    ],
+    "BMR calculated automatically using Mifflin-St Jeor formula": [
+      "1.6",
+      "2.5",
+      "8.1"
+    ],
+    "TDEE calculated based on activity level multiplier": [
+      "1.1",
+      "1.7",
+      "2.5"
+    ],
+    "MetabolismSnapshot saved with each body record for historical tracking": [
+      "2.3",
+      "2.5"
+    ],
+    "Swift Charts displays weight/body fat trends over 7/30/90 days": [
+      "4.3",
+      "4.4",
+      "5.2"
+    ],
+    "Dashboard shows current BMR/TDEE alongside daily intake/expenditure": [
+      "3.3",
+      "4.2",
+      "5.4"
+    ],
+    "Performance: queries complete in under 0.5 seconds": [
+      "2.3",
+      "8.3"
+    ]
   },
   "total_subtasks": 31,
   "estimated_effort": "3-4 days",
@@ -567,5 +681,6 @@
     "status": "pending",
     "tests_passed": "",
     "issues": ""
-  }
+  },
+  "last_updated": "2026-01-11T23:45:57.552713+00:00"
 }
