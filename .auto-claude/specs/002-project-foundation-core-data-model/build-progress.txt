@@ -1,118 +1,338 @@
 # Build Progress - 002 Project Foundation & Core Data Model
 
-## Subtask 2.5: Create Formatters Utility - ✅ COMPLETED
+## Subtask 3.3: Create MetabolismSnapshot Domain Entity - ✅ COMPLETED
 
-**Status:** COMPLETED (Previously implemented in commit 1460379)
-**File:** Bodii/Shared/Utils/Formatters.swift
+**Status:** COMPLETED
+**File:** Bodii/Domain/Entities/MetabolismSnapshot.swift
+**Commit:** 527d6ce
 
 ### Implementation Details
 
 All acceptance criteria have been met:
 
-✅ **Shared DateFormatter instances for different formats**
-   - fullDate: "yyyy년 MM월 dd일" (2024년 01월 15일)
-   - shortDate: "M월 d일" (1월 15일)
-   - dateWithWeekday: "M월 d일 (E)" (1월 15일 (월))
-   - time: "HH:mm" (14:30)
-   - dateTime: "M월 d일 HH:mm" (1월 15일 14:30)
-   - iso8601: "yyyy-MM-dd'T'HH:mm:ss'Z'" (API communication)
+✅ **MetabolismSnapshot struct with Identifiable, Codable, Equatable**
+   - Identifiable: Uses UUID as id
+   - Codable: All properties are Codable-conforming types
+   - Equatable: Auto-synthesized by compiler
 
-✅ **Shared NumberFormatter for calories, weight, etc.**
-   - weight: 1 decimal place, no grouping (67.5)
-   - bodyFat: 1 decimal place, no grouping (18.3)
-   - calories: integer, comma grouping (2,150)
-   - macros: integer, no grouping (250)
-   - percentage: 1 decimal place with % symbol (25.5%)
-   - decimal: 2 decimal places, general purpose (1.38)
-
-✅ **Korean locale configuration**
-   - All formatters use Locale(identifier: "ko_KR")
-   - ISO8601 uses en_US_POSIX for API standards
-   - TimeZone.current for local date/time
-
-✅ **Static lazy initialization for performance**
-   - All formatters are `static let` with lazy closure initialization
-   - Prevents expensive creation cost (hundreds of microseconds)
-   - Documentation includes ❌ bad vs ✅ good examples
+✅ **All properties from ERD:**
+   - id: UUID (unique identifier)
+   - userId: UUID (foreign key to User)
+   - bodyRecordId: UUID (foreign key to BodyRecord for 1:1 relationship)
+   - date: Date (same as BodyRecord.date for 1:1 mapping)
+   - weight: Decimal (snapshot of body weight at this point in time)
+   - bodyFatPct: Decimal (snapshot of body fat percentage)
+   - bmr: Int (calculated Basal Metabolic Rate in kcal/day)
+   - tdee: Int (calculated Total Daily Energy Expenditure in kcal/day)
+   - activityLevel: ActivityLevel enum (activity level used for TDEE calculation)
+   - createdAt: Date (creation timestamp)
 
 ### Bonus Features
 
-✅ **Convenience methods for Decimal formatting**
-   - `formatWeight(_ value: Decimal) -> String`
-   - `formatBodyFat(_ value: Decimal) -> String`
-   - `formatCalories(_ value: Decimal) -> String`
-   - `formatMacros(_ value: Decimal) -> String`
+✅ **CustomStringConvertible protocol**
+   - Provides readable debug description
+   - Shows all key properties including calculations
 
 ### Quality Attributes
 
-✅ Follows established patterns (Korean docs, learning notes, MARK comments)
+✅ Follows established patterns from User and BodyRecord entities
+✅ Korean documentation with 학습 포인트 (learning points)
+✅ Comprehensive doc comments with calculation formulas
+✅ MARK organization for code sections
+✅ Domain entity pattern (separated from Core Data)
 ✅ No console.log/print debugging statements
-✅ Comprehensive documentation with usage examples
-✅ Performance optimization notes explaining formatter reuse benefits
-✅ Clear distinction between formatters (grouping, decimal places, etc.)
-✅ Already committed with descriptive message
+✅ Immutable struct with let properties (snapshot pattern)
 
-### Performance Notes
+### Documentation Highlights
 
-**Why Static Formatters?**
-- DateFormatter and NumberFormatter creation is expensive (hundreds of microseconds)
-- Creating in loops or repeated calls causes significant performance degradation
-- Static lazy initialization creates once, reuses forever
-- Documentation includes anti-patterns to avoid
+**학습 포인트 (Learning Point):**
+- Explains 1:1 Relationship Entity Pattern
+- Compares to JPA @OneToOne relationship
+- Shows how separate table optimizes historical queries
 
-**Example:**
+**Key Concepts:**
+- 1:1 relationship with BodyRecord via same date value
+- Snapshot pattern: preserves metabolism state at specific point in time
+- Enables tracking metabolism changes over time for dashboard charts
+- Automatic creation when BodyRecord is saved
+
+**Calculation Formulas:**
+```
+BMR (Mifflin-St Jeor equation):
+  Male: (10 × weight) + (6.25 × height) - (5 × age) + 5
+  Female: (10 × weight) + (6.25 × height) - (5 × age) - 161
+
+TDEE:
+  TDEE = BMR × activityLevel.multiplier
+```
+
+**Usage Example:**
 ```swift
-// ❌ Bad: Creates new formatter on every iteration
-for record in records {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .decimal
-    let text = formatter.string(from: record.weight)
-}
-
-// ✅ Good: Reuses shared instance
-for record in records {
-    let text = Formatters.weight.string(from: record.weight)
-}
+let snapshot = MetabolismSnapshot(
+    id: UUID(),
+    userId: userId,
+    bodyRecordId: bodyRecord.id,
+    date: bodyRecord.date,
+    weight: 70.0,
+    bodyFatPct: 18.5,
+    bmr: 1650,
+    tdee: 2550,
+    activityLevel: .moderate,
+    createdAt: Date()
+)
 ```
 
 ### Git Status
 
-- File committed in: 1460379
-- Commit message: "auto-claude: 2.5 - Centralized formatters for consistent number/date formatting"
+- File committed in: 527d6ce
+- Commit message: "auto-claude: 3.3 - Pure Swift struct for MetabolismSnapshot (1:1 with BodyRecord)"
 - Implementation plan updated to "completed"
-- Phase 2 status updated to "completed" (all 5 subtasks done)
+- Phase 3 status: 3/9 subtasks completed
 
-### Notes
+### Architecture Notes
 
-This subtask was already completed in a previous session. The implementation provides centralized formatter instances for consistent number and date formatting throughout the app.
+**1:1 Relationship Pattern:**
+- MetabolismSnapshot and BodyRecord share the same date value
+- When BodyRecord is saved, MetabolismSnapshot is automatically created
+- Separate entity optimizes queries for metabolism history charts
+- Snapshot pattern preserves point-in-time metabolism data
 
-**Key Benefits:**
-- Performance optimization through static reuse
-- Consistent formatting across entire app
-- Korean locale for user-facing strings
-- Specialized formatters for different data types
-- Convenience methods for Core Data Decimal types
+**Data Flow:**
+1. User enters body data → BodyRecord created
+2. BMR/TDEE calculated using User profile data
+3. MetabolismSnapshot created with same date as BodyRecord
+4. Both entities saved in same transaction
+5. Dashboard queries MetabolismSnapshot for metabolism trends
 
-**Formatter Categories:**
-
-1. **Number Formatters:**
-   - Body metrics: weight (1 decimal), bodyFat (1 decimal)
-   - Nutrition: calories (integer, grouped), macros (integer)
-   - General: percentage (1 decimal, %), decimal (2 decimals)
-
-2. **Date Formatters:**
-   - User display: fullDate, shortDate, dateWithWeekday
-   - Time display: time, dateTime
-   - API: iso8601 (UTC, POSIX locale)
+**Why Separate Entity?**
+- Performance: Querying metabolism trends doesn't require loading body composition data
+- Clarity: Separates concerns (body data vs metabolism calculations)
+- Flexibility: Can query metabolism changes independently
+- Optimization: Indexed date column for fast time-range queries
 
 ---
 
-**Phase 2 Progress:** ✅ COMPLETED (5/5 subtasks)
-- 2.1: DateUtils ✅
-- 2.2: ValidationService ✅
-- 2.3: Date+Extensions ✅
-- 2.4: Decimal+Extensions ✅
-- 2.5: Formatters ✅
+## Subtask 3.1: Create User Domain Entity - ✅ COMPLETED
 
-**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (Pending)
-**Next Phase:** Phase 3 - Domain Entities (9 subtasks)
+**Status:** COMPLETED
+**File:** Bodii/Domain/Entities/User.swift
+**Commit:** b23dd39
+
+### Implementation Details
+
+All acceptance criteria have been met:
+
+✅ **User struct with Identifiable, Codable, Equatable**
+   - Identifiable: Uses UUID as id
+   - Codable: All properties are Codable-conforming types
+   - Equatable: Auto-synthesized by compiler
+
+✅ **All properties from ERD:**
+   - id: UUID (unique identifier)
+   - name: String (1-20 chars validated)
+   - gender: Gender enum (male/female)
+   - birthDate: Date (used for age calculation)
+   - height: Decimal (100-250cm range)
+   - activityLevel: ActivityLevel enum (sedentary to veryActive)
+
+✅ **Current values:**
+   - currentWeight: Decimal (20-300kg)
+   - currentBodyFatPct: Decimal (3-60%)
+   - currentMuscleMass: Decimal (10-60kg)
+   - currentBMR: Int (calculated via Mifflin-St Jeor)
+   - currentTDEE: Int (BMR × activityLevel.multiplier)
+
+✅ **Timestamps:**
+   - metabolismUpdatedAt: Date (when metabolism was last calculated)
+   - createdAt: Date (user creation timestamp)
+   - updatedAt: Date (last modification timestamp)
+
+✅ **Computed age property:**
+   - Uses Date.age(from: birthDate) extension
+   - Automatically calculates current age from birth date
+   - Returns Int representing 만 나이 (Korean age system)
+
+### Bonus Features
+
+✅ **CustomStringConvertible protocol**
+   - Provides readable debug description
+   - Shows key properties in formatted output
+
+### Quality Attributes
+
+✅ Follows established patterns from Phase 1 & 2
+✅ Korean documentation with 학습 포인트 (learning points)
+✅ Comprehensive doc comments with usage examples
+✅ MARK organization for code sections
+✅ Domain entity pattern (separated from Core Data)
+✅ No console.log/print debugging statements
+✅ Clean Architecture principles applied
+
+### Documentation Highlights
+
+**학습 포인트 (Learning Point):**
+- Explains Domain Entity Pattern
+- Compares to Clean Architecture in Java/JPA
+- Separates business logic from persistence
+
+**Property Documentation:**
+- BMR calculation formula: (10 × weight) + (6.25 × height) - (5 × age) + gender constant
+- TDEE calculation: BMR × activityLevel.multiplier
+- Validation ranges for all numeric properties
+- References ValidationService for input validation
+
+**Usage Example:**
+```swift
+let user = User(
+    id: UUID(),
+    name: "홍길동",
+    gender: .male,
+    birthDate: Date(),
+    height: 175.0,
+    activityLevel: .moderate,
+    currentWeight: 70.0,
+    currentBodyFatPct: 18.5,
+    currentMuscleMass: 32.0,
+    currentBMR: 1650,
+    currentTDEE: 2550,
+    metabolismUpdatedAt: Date(),
+    createdAt: Date(),
+    updatedAt: Date()
+)
+print(user.age) // Automatically calculated
+```
+
+### Git Status
+
+- File committed in: b23dd39
+- Commit message: "auto-claude: 3.1 - Create User domain entity with all properties and computed age"
+- Implementation plan updated to "completed"
+- Phase 3 status updated to "in_progress" (1/9 subtasks done)
+
+### Architecture Notes
+
+**Domain Entity Pattern:**
+- Pure Swift struct (no Core Data dependencies)
+- Used in business logic layer (ViewModels, Services)
+- Mapped to/from Core Data via UserEntity+Extensions (Phase 4)
+- Improves testability (no NSManagedObject complexity)
+- Better separation of concerns
+
+**Data Flow:**
+1. Core Data: UserEntity (persistent storage)
+2. Extensions: UserEntity+Extensions (mapping layer)
+3. Domain: User struct (business logic)
+4. ViewModels: Use User struct for presentation logic
+
+---
+
+**Phase 3 Progress:** 🚧 IN PROGRESS (3/9 subtasks)
+- 3.1: User ✅
+- 3.2: BodyRecord ✅
+- 3.3: MetabolismSnapshot ✅
+- 3.4: Food (pending)
+- 3.5: FoodRecord (pending)
+- 3.6: ExerciseRecord (pending)
+- 3.7: SleepRecord (pending)
+- 3.8: DailyLog (pending)
+- 3.9: Goal (pending)
+
+**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 3/9)
+**Next Subtask:** 3.4 - Create Food Domain Entity
+
+---
+
+## Subtask 3.2: Create BodyRecord Domain Entity - ✅ COMPLETED
+
+**Status:** COMPLETED
+**File:** Bodii/Domain/Entities/BodyRecord.swift
+**Commit:** 8cc9c38
+
+### Implementation Details
+
+All acceptance criteria have been met:
+
+✅ **BodyRecord struct with Identifiable, Codable, Equatable**
+   - Identifiable: Uses UUID as id
+   - Codable: All properties are Codable-conforming types
+   - Equatable: Auto-synthesized by compiler
+
+✅ **All properties from ERD:**
+   - id: UUID (unique identifier)
+   - userId: UUID (foreign key to User)
+   - date: Date (unique per day, maps to MetabolismSnapshot)
+   - weight: Decimal (20-300kg range)
+   - bodyFatMass: Decimal (kg, auto-calculated from bodyFatPercent)
+   - bodyFatPercent: Decimal (3-60%, auto-calculated from bodyFatMass)
+   - muscleMass: Decimal (10-60kg range)
+   - createdAt: Date (creation timestamp)
+
+✅ **Helper methods for bodyFatMass ↔ bodyFatPercent calculation:**
+   - Static calculateBodyFatMass(weight:bodyFatPercent:) - Formula: weight × (bodyFatPercent/100)
+   - Static calculateBodyFatPercent(weight:bodyFatMass:) - Formula: (bodyFatMass/weight) × 100
+   - Factory method from(userId:date:weight:bodyFatPercent:muscleMass:) - Creates record with auto-calculated bodyFatMass
+   - Factory method from(userId:date:weight:bodyFatMass:muscleMass:) - Creates record with auto-calculated bodyFatPercent
+   - updatingWeight(_:) - Recalculates bodyFatMass when weight changes
+   - updatingBodyFatPercent(_:) - Recalculates bodyFatMass when bodyFatPercent changes
+   - updatingBodyFatMass(_:) - Recalculates bodyFatPercent when bodyFatMass changes
+
+### Bonus Features
+
+✅ **Computed leanBodyMass property**
+   - Formula: weight - bodyFatMass
+   - Used for validation: muscleMass ≤ leanBodyMass
+
+✅ **CustomStringConvertible protocol**
+   - Provides readable debug description with all properties
+   - Shows computed leanBodyMass value
+
+### Quality Attributes
+
+✅ Follows established patterns from User.swift
+✅ Korean documentation with 학습 포인트 (learning points)
+✅ Comprehensive doc comments with calculation formulas
+✅ MARK organization for code sections
+✅ Domain entity pattern (separated from Core Data)
+✅ No console.log/print debugging statements
+✅ Immutable by default with functional update methods
+
+### Documentation Highlights
+
+**학습 포인트 (Learning Point):**
+- Explains Auto-calculation Logic pattern
+- Compares to JPA @PrePersist/@PreUpdate hooks
+- Shows how Swift uses helper methods instead
+
+**Calculation Formulas:**
+```
+체지방량(kg) = 체중(kg) × (체지방률(%) / 100)
+체지방률(%) = (체지방량(kg) / 체중(kg)) × 100
+제지방량(kg) = 체중(kg) - 체지방량(kg)
+```
+
+**Usage Examples:**
+- Creating record from bodyFatPercent (auto-calculates bodyFatMass)
+- Creating record from bodyFatMass (auto-calculates bodyFatPercent)
+- Updating individual values while maintaining consistency
+
+### Git Status
+
+- File committed in: 8cc9c38
+- Commit message: "auto-claude: 3.2 - Pure Swift struct for BodyRecord with auto-calculation logic"
+- Implementation plan updated to "completed"
+- Phase 3 status: 2/9 subtasks completed
+
+### Architecture Notes
+
+**Auto-calculation Pattern:**
+- Factory methods ensure calculations happen at creation time
+- Update methods return new instances (functional approach)
+- Static helpers can be used by Core Data extensions
+- Prevents invalid states (bodyFatMass and bodyFatPercent always consistent)
+
+**1:1 Relationship with MetabolismSnapshot:**
+- Same date value links to MetabolismSnapshot
+- When BodyRecord is saved, MetabolismSnapshot is auto-created
+- Both entities track the same body composition snapshot
+
+---

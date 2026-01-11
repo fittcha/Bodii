@@ -243,7 +243,7 @@
       "phase_id": 3,
       "title": "Domain Entities",
       "description": "Create pure Swift domain models that mirror Core Data entities for business logic",
-      "status": "pending",
+      "status": "in_progress",
       "subtasks": [
         {
           "subtask_id": "3.1",
@@ -257,8 +257,8 @@
             "metabolismUpdatedAt, createdAt, updatedAt",
             "Computed age property from birthDate"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "User domain entity correctly implemented with all required protocols (Identifiable, Codable, Equatable, CustomStringConvertible), all profile properties (id, name, gender, birthDate, height, activityLevel), current body data (currentWeight, currentBodyFatPct, currentMuscleMass), current metabolism data (currentBMR, currentTDEE), timestamps (metabolismUpdatedAt, createdAt, updatedAt), and computed age property using Date.age(from:). Includes comprehensive Korean documentation explaining domain entity pattern, BMR/TDEE calculation formulas, validation ranges, and usage examples. Follows established patterns with 학습 포인트 notes and MARK organization. Committed in b23dd39."
         },
         {
           "subtask_id": "3.2",
@@ -270,8 +270,8 @@
             "Properties: id, userId, date, weight, bodyFatMass, bodyFatPercent, muscleMass, createdAt",
             "Helper methods for bodyFatMass ↔ bodyFatPercent calculation"
           ],
-          "status": "pending",
-          "notes": "Per ERD: bodyFatMass = weight × (bodyFatPercent/100)"
+          "status": "completed",
+          "notes": "BodyRecord domain entity correctly implemented with all required protocols (Identifiable, Codable, Equatable, CustomStringConvertible), all properties (id, userId, date, weight, bodyFatMass, bodyFatPercent, muscleMass, createdAt), auto-calculation logic with factory methods (from with bodyFatPercent, from with bodyFatMass), static calculation helpers (calculateBodyFatMass, calculateBodyFatPercent), update methods (updatingWeight, updatingBodyFatPercent, updatingBodyFatMass) for maintaining consistency when values change, computed leanBodyMass property for validation purposes, and comprehensive Korean documentation. Calculation formulas: bodyFatMass = weight × (bodyFatPercent/100), bodyFatPercent = (bodyFatMass/weight) × 100, leanBodyMass = weight - bodyFatMass. Committed in 8cc9c38."
         },
         {
           "subtask_id": "3.3",
@@ -282,8 +282,8 @@
             "MetabolismSnapshot struct with Identifiable, Codable, Equatable",
             "Properties: id, userId, bodyRecordId, date, weight, bodyFatPct, bmr, tdee, activityLevel, createdAt"
           ],
-          "status": "pending",
-          "notes": "Created automatically when BodyRecord is saved"
+          "status": "completed",
+          "notes": "MetabolismSnapshot domain entity correctly implemented with all required protocols (Identifiable, Codable, Equatable, CustomStringConvertible), all properties (id, userId, bodyRecordId, date, weight, bodyFatPct, bmr, tdee, activityLevel, createdAt), comprehensive Korean documentation explaining 1:1 relationship with BodyRecord, BMR/TDEE calculation formulas (Mifflin-St Jeor equation), and usage examples showing automatic creation when BodyRecord is saved. Follows established patterns from User and BodyRecord entities. Committed in 527d6ce."
         },
         {
           "subtask_id": "3.4",
