@@ -1,5 +1,143 @@
 # Build Progress - 002 Project Foundation & Core Data Model
 
+## Subtask 3.5: Create FoodRecord Domain Entity - ✅ COMPLETED
+
+**Status:** COMPLETED
+**File:** Bodii/Domain/Entities/FoodRecord.swift
+**Commit:** 829cb63
+
+### Implementation Details
+
+All acceptance criteria have been met:
+
+✅ **FoodRecord struct with Identifiable, Codable, Equatable**
+   - Identifiable: Uses UUID as id
+   - Codable: All properties are Codable-conforming types
+   - Equatable: Auto-synthesized by compiler
+
+✅ **All properties from ERD:**
+   - id: UUID (unique identifier)
+   - userId: UUID (foreign key to User)
+   - foodId: UUID (foreign key to Food, N:1 relationship)
+   - date: Date (섭취 날짜, 02:00 sleep boundary logic)
+   - mealType: MealType enum (breakfast/lunch/dinner/snack)
+   - quantity: Decimal (섭취량)
+   - quantityUnit: QuantityUnit enum (serving/gram)
+   - createdAt: Date (creation timestamp)
+
+✅ **CalculatedNutrition nested struct**
+   - calories: Int (계산된 섭취 칼로리)
+   - carbohydrates: Decimal (계산된 탄수화물)
+   - protein: Decimal (계산된 단백질)
+   - fat: Decimal (계산된 지방)
+   - sodium: Decimal? (계산된 나트륨, optional)
+   - fiber: Decimal? (계산된 식이섬유, optional)
+   - sugar: Decimal? (계산된 당류, optional)
+
+✅ **calculateNutrition(from:) method**
+   - Takes Food parameter and calculates actual nutrition consumed
+   - Formula: multiplier = quantity / Food.servingSize
+   - Returns CalculatedNutrition with all values × multiplier
+   - Uses Decimal.rounded(scale:) for proper rounding
+
+### Bonus Features
+
+✅ **Update methods for functional programming**
+   - updatingQuantity(_:unit:) - Updates quantity and optionally unit
+   - updatingMealType(_:) - Updates meal type classification
+
+✅ **CustomStringConvertible protocol**
+   - Provides readable debug description
+   - Shows all key properties in formatted output
+   - Displays mealType and quantityUnit with Korean names
+
+### Quality Attributes
+
+✅ Follows established patterns from Food and BodyRecord entities
+✅ Korean documentation with 학습 포인트 (Transactional Record Pattern)
+✅ Comprehensive doc comments with calculation formulas
+✅ MARK organization for code sections
+✅ Domain entity pattern (separated from Core Data)
+✅ No console.log/print debugging statements
+✅ Functional update pattern (returns new instances)
+
+### Documentation Highlights
+
+**학습 포인트 (Learning Point):**
+- Explains Transactional Record Pattern
+- Compares to JPA @ManyToOne relationship (OrderItem - Product pattern)
+- FoodRecord is transactional data that references Food master data
+
+**Key Concepts:**
+- N:1 relationship with Food (many records can reference same food)
+- Aggregation into DailyLog for daily nutrition totals
+- Meal type classification for pattern analysis
+- Quantity-based nutrition calculation
+- 02:00 sleep boundary for date assignment
+
+**Calculation Formula:**
+```
+multiplier = quantity / Food.servingSize
+섭취 칼로리 = Food.calories × multiplier
+섭취 탄수화물 = Food.carbohydrates × multiplier
+섭취 단백질 = Food.protein × multiplier
+섭취 지방 = Food.fat × multiplier
+```
+
+**Usage Example:**
+```swift
+// 1. Select food and record intake
+let rice = Food(name: "백미밥", calories: 130, servingSize: 100.0, ...)
+let record = FoodRecord(
+    userId: userId,
+    foodId: rice.id,
+    date: Date(),
+    mealType: .lunch,
+    quantity: 200.0,
+    quantityUnit: .gram,
+    ...
+)
+
+// 2. Calculate nutrition
+let nutrition = record.calculateNutrition(from: rice)
+// nutrition.calories = 260 kcal (130 × 2.0)
+// nutrition.carbohydrates = 57.4g (28.7 × 2.0)
+```
+
+### Git Status
+
+- File committed in: 829cb63
+- Commit message: "auto-claude: 3.5 - Pure Swift struct for FoodRecord (meal log entry)"
+- Implementation plan updated to "completed"
+- Phase 3 status: 5/9 subtasks completed
+
+### Architecture Notes
+
+**Transactional Record Pattern:**
+- FoodRecord stores actual consumption events
+- References immutable Food master data
+- Enables consistent nutrition calculations
+- Supports meal pattern analysis
+
+**Data Relationships:**
+1. **Food (N:1):**
+   - Many FoodRecords reference same Food
+   - Food is master data, FoodRecord is transactional
+   - Avoids duplicating nutrition information
+
+2. **DailyLog (N:1):**
+   - Multiple FoodRecords per date aggregate into DailyLog
+   - DailyLog calculates daily nutrition totals
+   - Grouped by date for dashboard display
+
+**Calculation Strategy:**
+- Client-side calculation for immediate feedback
+- Server/Core Data stores raw quantity values
+- Recalculate when Food nutrition data changes
+- Flexible for future unit conversion support
+
+---
+
 ## Subtask 3.4: Create Food Domain Entity - ✅ COMPLETED
 
 **Status:** COMPLETED
@@ -375,19 +513,19 @@ print(user.age) // Automatically calculated
 
 ---
 
-**Phase 3 Progress:** 🚧 IN PROGRESS (4/9 subtasks)
+**Phase 3 Progress:** 🚧 IN PROGRESS (5/9 subtasks)
 - 3.1: User ✅
 - 3.2: BodyRecord ✅
 - 3.3: MetabolismSnapshot ✅
 - 3.4: Food ✅
-- 3.5: FoodRecord (pending)
+- 3.5: FoodRecord ✅
 - 3.6: ExerciseRecord (pending)
 - 3.7: SleepRecord (pending)
 - 3.8: DailyLog (pending)
 - 3.9: Goal (pending)
 
-**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 4/9)
-**Next Subtask:** 3.5 - Create FoodRecord Domain Entity
+**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 5/9)
+**Next Subtask:** 3.6 - Create ExerciseRecord Domain Entity
 
 ---
 
