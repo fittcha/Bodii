@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24C101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="BodyRecord" representedClassName="BodyRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="bodyFatMass" optional="YES" attributeType="Decimal"/>
+        <attribute name="bodyFatPercent" optional="YES" attributeType="Decimal"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="muscleMass" optional="YES" attributeType="Decimal"/>
+        <attribute name="weight" attributeType="Decimal" defaultValueString="0.0"/>
+        <relationship name="metabolismSnapshot" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="MetabolismSnapshot" inverseName="bodyRecord" inverseEntity="MetabolismSnapshot"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="bodyRecords" inverseEntity="User"/>
+    </entity>
+    <entity name="ExerciseRecord" representedClassName="ExerciseRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="caloriesBurned" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="duration" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="exerciseType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fromHealthKit" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="healthKitId" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="intensity" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="exerciseRecords" inverseEntity="User"/>
+    </entity>
+    <entity name="Food" representedClassName="Food" syncable="YES" codeGenerationType="class">
+        <attribute name="apiCode" optional="YES" attributeType="String"/>
+        <attribute name="calories" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="carbohydrates" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="fat" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="fiber" optional="YES" attributeType="Decimal"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="protein" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="servingSize" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="servingUnit" optional="YES" attributeType="String"/>
+        <attribute name="sodium" optional="YES" attributeType="Decimal"/>
+        <attribute name="source" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="sugar" optional="YES" attributeType="Decimal"/>
+        <relationship name="createdByUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdFoods" inverseEntity="User"/>
+        <relationship name="foodRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="FoodRecord" inverseName="food" inverseEntity="FoodRecord"/>
+    </entity>
+    <entity name="FoodRecord" representedClassName="FoodRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="calculatedCalories" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="calculatedCarbs" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="calculatedFat" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="calculatedProtein" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="mealType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="quantity" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="quantityUnit" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="food" maxCount="1" deletionRule="Nullify" destinationEntity="Food" inverseName="foodRecords" inverseEntity="Food"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="foodRecords" inverseEntity="User"/>
+    </entity>
+    <entity name="MetabolismSnapshot" representedClassName="MetabolismSnapshot" syncable="YES" codeGenerationType="class">
+        <attribute name="activityLevel" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
+        <attribute name="bmr" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="bodyFatPct" optional="YES" attributeType="Decimal"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="tdee" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="weight" attributeType="Decimal" defaultValueString="0.0"/>
+        <relationship name="bodyRecord" maxCount="1" deletionRule="Nullify" destinationEntity="BodyRecord" inverseName="metabolismSnapshot" inverseEntity="BodyRecord"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="metabolismSnapshots" inverseEntity="User"/>
+    </entity>
+    <entity name="Goal" representedClassName="Goal" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dailyCalorieTarget" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <attribute name="goalType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isActive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="startBMR" optional="YES" attributeType="Decimal"/>
+        <attribute name="startBodyFatPct" optional="YES" attributeType="Decimal"/>
+        <attribute name="startMuscleMass" optional="YES" attributeType="Decimal"/>
+        <attribute name="startTDEE" optional="YES" attributeType="Decimal"/>
+        <attribute name="startWeight" optional="YES" attributeType="Decimal"/>
+        <attribute name="targetBodyFatPct" optional="YES" attributeType="Decimal"/>
+        <attribute name="targetMuscleMass" optional="YES" attributeType="Decimal"/>
+        <attribute name="targetWeight" optional="YES" attributeType="Decimal"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="weeklyFatPctRate" optional="YES" attributeType="Decimal"/>
+        <attribute name="weeklyMuscleRate" optional="YES" attributeType="Decimal"/>
+        <attribute name="weeklyWeightRate" optional="YES" attributeType="Decimal"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="goals" inverseEntity="User"/>
+    </entity>
+    <entity name="DailyLog" representedClassName="DailyLog" syncable="YES" codeGenerationType="class">
+        <attribute name="bmr" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bodyFatPct" optional="YES" attributeType="Decimal"/>
+        <attribute name="carbsRatio" optional="YES" attributeType="Decimal"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="exerciseCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="exerciseMinutes" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fatRatio" optional="YES" attributeType="Decimal"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="netCalories" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="proteinRatio" optional="YES" attributeType="Decimal"/>
+        <attribute name="sleepDuration" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <attribute name="sleepStatus" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="steps" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <attribute name="tdee" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="totalCaloriesIn" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="totalCaloriesOut" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="totalCarbs" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="totalFat" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="totalProtein" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="weight" optional="YES" attributeType="Decimal"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="dailyLogs" inverseEntity="User"/>
+    </entity>
+    <entity name="SleepRecord" representedClassName="SleepRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="duration" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="status" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="sleepRecords" inverseEntity="User"/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
+        <attribute name="activityLevel" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
+        <attribute name="birthDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="currentBMR" optional="YES" attributeType="Decimal"/>
+        <attribute name="currentBodyFatPct" optional="YES" attributeType="Decimal"/>
+        <attribute name="currentMuscleMass" optional="YES" attributeType="Decimal"/>
+        <attribute name="currentTDEE" optional="YES" attributeType="Decimal"/>
+        <attribute name="currentWeight" optional="YES" attributeType="Decimal"/>
+        <attribute name="gender" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="height" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="metabolismUpdatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="bodyRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BodyRecord" inverseName="user" inverseEntity="BodyRecord"/>
+        <relationship name="createdFoods" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Food" inverseName="createdByUser" inverseEntity="Food"/>
+        <relationship name="dailyLogs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DailyLog" inverseName="user" inverseEntity="DailyLog"/>
+        <relationship name="exerciseRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ExerciseRecord" inverseName="user" inverseEntity="ExerciseRecord"/>
+        <relationship name="foodRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="FoodRecord" inverseName="user" inverseEntity="FoodRecord"/>
+        <relationship name="goals" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Goal" inverseName="user" inverseEntity="Goal"/>
+        <relationship name="metabolismSnapshots" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MetabolismSnapshot" inverseName="user" inverseEntity="MetabolismSnapshot"/>
+        <relationship name="sleepRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SleepRecord" inverseName="user" inverseEntity="SleepRecord"/>
+    </entity>
+</model>
