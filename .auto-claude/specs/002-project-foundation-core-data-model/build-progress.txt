@@ -1,5 +1,154 @@
 # Build Progress - 002 Project Foundation & Core Data Model
 
+## Subtask 3.4: Create Food Domain Entity - ✅ COMPLETED
+
+**Status:** COMPLETED
+**File:** Bodii/Domain/Entities/Food.swift
+**Commit:** 050ec5d
+
+### Implementation Details
+
+All acceptance criteria have been met:
+
+✅ **Food struct with Identifiable, Codable, Equatable**
+   - Identifiable: Uses UUID as id
+   - Codable: All properties are Codable-conforming types
+   - Equatable: Auto-synthesized by compiler
+
+✅ **Nutritional info: calories, carbs, protein, fat, sodium, fiber, sugar**
+   - calories: Int (kcal, required)
+   - carbohydrates: Decimal (g, required)
+   - protein: Decimal (g, required)
+   - fat: Decimal (g, required)
+   - sodium: Decimal? (mg, optional - API may not provide)
+   - fiber: Decimal? (g, optional - API may not provide)
+   - sugar: Decimal? (g, optional - API may not provide)
+
+✅ **Serving info: servingSize, servingUnit**
+   - servingSize: Decimal (기준 제공량)
+   - servingUnit: QuantityUnit? (.gram or .serving, optional)
+
+✅ **Source tracking: source, apiCode, createdByUserId**
+   - source: FoodSource enum (.kfdaAPI, .usdaAPI, .userCreated)
+   - apiCode: String? (API 고유 코드, optional for user-created foods)
+   - createdByUserId: UUID? (사용자 생성 음식의 생성자 ID, optional)
+
+### Bonus Features
+
+✅ **CustomStringConvertible protocol**
+   - Provides readable debug description
+   - Shows key nutritional info and source
+   - Smart servingUnit display (shows displayName if present)
+
+✅ **Master Data Pattern**
+   - Immutable nutritional reference data
+   - Referenced by multiple FoodRecord entries
+   - Optimized for search and reuse
+
+### Quality Attributes
+
+✅ Follows established patterns from User, BodyRecord, MetabolismSnapshot entities
+✅ Korean documentation with 학습 포인트 (learning points)
+✅ Comprehensive doc comments with usage examples
+✅ MARK organization for code sections
+✅ Domain entity pattern (separated from Core Data)
+✅ No console.log/print debugging statements
+✅ Detailed property documentation with value ranges
+
+### Documentation Highlights
+
+**학습 포인트 (Learning Point):**
+- Explains Master Data Pattern
+- Compares to JPA @OneToMany relationship (Product - OrderItem pattern)
+- Food is immutable reference data referenced by many FoodRecord entries
+
+**Key Concepts:**
+- Master data vs transactional data separation
+- Multiple data sources: KFDA API, USDA API, user-created
+- Nutritional information per serving size
+- Optional fields for incomplete API data
+- Reusable food definitions for meal logging
+
+**Usage Examples:**
+```swift
+// 1. API food (from KFDA)
+let rice = Food(
+    id: UUID(),
+    name: "백미밥",
+    calories: 130,
+    carbohydrates: 28.7,
+    protein: 2.5,
+    fat: 0.2,
+    sodium: 0,
+    fiber: 0.3,
+    sugar: 0.1,
+    servingSize: 100.0,
+    servingUnit: .gram,
+    source: .kfdaAPI,
+    apiCode: "KFDA_12345",
+    createdByUserId: nil,
+    createdAt: Date()
+)
+
+// 2. User-created food
+let customMeal = Food(
+    id: UUID(),
+    name: "엄마표 된장찌개",
+    calories: 120,
+    servingSize: 1.0,
+    servingUnit: .serving,
+    source: .userCreated,
+    apiCode: nil,
+    createdByUserId: userId,
+    ...
+)
+```
+
+### Git Status
+
+- File committed in: 050ec5d
+- Commit message: "auto-claude: 3.4 - Pure Swift struct for Food master data"
+- Implementation plan updated to "completed"
+- Phase 3 status: 4/9 subtasks completed
+
+### Architecture Notes
+
+**Master Data Pattern:**
+- Food entities are master data (reference data)
+- Reused across multiple FoodRecord entries
+- Immutable after creation (var for potential updates in Core Data sync)
+- Optimized for search and selection in UI
+
+**Data Sources:**
+1. **KFDA API** (식품의약품안전처)
+   - Korean food database
+   - Official nutritional data
+   - apiCode stores KFDA food code
+
+2. **USDA API** (미국 농무부)
+   - International food database
+   - Comprehensive nutritional data
+   - apiCode stores USDA food ID
+
+3. **User Created**
+   - Custom food entries
+   - createdByUserId tracks creator
+   - No apiCode (user-generated)
+
+**Data Flow:**
+1. API sync: Fetch food data from KFDA/USDA → Create Food entities
+2. User creates: User inputs nutritional info → Create Food entity with .userCreated source
+3. Meal logging: User selects Food → Create FoodRecord with quantity
+4. Nutrition calculation: FoodRecord uses Food nutritional data × quantity
+
+**Why Separate Entity from FoodRecord?**
+- Avoid duplication: Same food used in multiple meals
+- Data integrity: Nutritional info defined once
+- Efficiency: Search and select from master data
+- Updates: Fix nutritional data in one place affects all records (if needed)
+
+---
+
 ## Subtask 3.3: Create MetabolismSnapshot Domain Entity - ✅ COMPLETED
 
 **Status:** COMPLETED
@@ -226,19 +375,19 @@ print(user.age) // Automatically calculated
 
 ---
 
-**Phase 3 Progress:** 🚧 IN PROGRESS (3/9 subtasks)
+**Phase 3 Progress:** 🚧 IN PROGRESS (4/9 subtasks)
 - 3.1: User ✅
 - 3.2: BodyRecord ✅
 - 3.3: MetabolismSnapshot ✅
-- 3.4: Food (pending)
+- 3.4: Food ✅
 - 3.5: FoodRecord (pending)
 - 3.6: ExerciseRecord (pending)
 - 3.7: SleepRecord (pending)
 - 3.8: DailyLog (pending)
 - 3.9: Goal (pending)
 
-**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 3/9)
-**Next Subtask:** 3.4 - Create Food Domain Entity
+**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 4/9)
+**Next Subtask:** 3.5 - Create FoodRecord Domain Entity
 
 ---
 
