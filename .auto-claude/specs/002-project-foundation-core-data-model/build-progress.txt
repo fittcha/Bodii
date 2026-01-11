@@ -1,5 +1,179 @@
 # Build Progress - 002 Project Foundation & Core Data Model
 
+## Subtask 3.8: Create DailyLog Domain Entity - ✅ COMPLETED
+
+**Status:** COMPLETED
+**File:** Bodii/Domain/Entities/DailyLog.swift
+**Commit:** 83d12c6
+
+### Implementation Details
+
+All acceptance criteria have been met:
+
+✅ **DailyLog struct with Identifiable, Codable, Equatable**
+   - Identifiable: Uses UUID as id
+   - Codable: All properties are Codable-conforming types
+   - Equatable: Auto-synthesized by compiler
+
+✅ **Intake section: totalCaloriesIn, totalCarbs, totalProtein, totalFat, macro ratios**
+   - totalCaloriesIn: Int (일일 총 섭취 칼로리)
+   - totalCarbs: Decimal (일일 총 섭취 탄수화물)
+   - totalProtein: Decimal (일일 총 섭취 단백질)
+   - totalFat: Decimal (일일 총 섭취 지방)
+   - Computed properties: carbsRatio, proteinRatio, fatRatio (%)
+
+✅ **Metabolism section: bmr, tdee, netCalories**
+   - bmr: Int (기초대사량, kcal/day)
+   - tdee: Int (일일 총 에너지 소비량, kcal/day)
+   - netCalories: Computed property (섭취 - 소모 - TDEE)
+
+✅ **Exercise section: totalCaloriesOut, exerciseMinutes, exerciseCount, steps**
+   - totalCaloriesOut: Int (일일 총 소모 칼로리)
+   - exerciseMinutes: Int (일일 총 운동 시간)
+   - exerciseCount: Int (일일 운동 횟수)
+   - steps: Int? (일일 걸음 수, optional)
+
+✅ **Body section: weight, bodyFatPct**
+   - weight: Decimal? (당일 체중, optional)
+   - bodyFatPct: Decimal? (당일 체지방률, optional)
+
+✅ **Sleep section: sleepDuration, sleepStatus**
+   - sleepDuration: Int? (일일 총 수면 시간, optional)
+   - sleepStatus: SleepStatus? (수면 상태, optional)
+
+### Bonus Features
+
+✅ **Computed macro ratios with proper calorie conversion**
+   - carbsRatio: (탄수화물g × 4kcal/g) / 총 섭취 칼로리 × 100
+   - proteinRatio: (단백질g × 4kcal/g) / 총 섭취 칼로리 × 100
+   - fatRatio: (지방g × 9kcal/g) / 총 섭취 칼로리 × 100
+
+✅ **Factory method for initial creation**
+   - empty(userId:date:) - Creates DailyLog with all aggregation values at 0 or nil
+
+✅ **Update methods for functional programming**
+   - withNutrition() - Updates intake section
+   - withExercise() - Updates exercise section
+   - withMetabolism() - Updates metabolism section
+   - withBody() - Updates body section
+   - withSleep() - Updates sleep section
+
+✅ **CustomStringConvertible protocol**
+   - Provides readable debug description
+   - Shows all key sections with Korean labels
+   - Displays computed values (netCalories, macro ratios)
+
+### Quality Attributes
+
+✅ Follows established patterns from SleepRecord, ExerciseRecord, FoodRecord entities
+✅ Korean documentation with 학습 포인트 (Daily Aggregation Pattern)
+✅ Comprehensive doc comments with calculation formulas
+✅ MARK organization for code sections
+✅ Domain entity pattern (separated from Core Data)
+✅ No console.log/print debugging statements
+✅ Functional update pattern (returns new instances)
+
+### Documentation Highlights
+
+**학습 포인트 (Learning Point):**
+- Explains Daily Aggregation Pattern
+- Compares to JPA @Formula or View Entity
+- DailyLog stores aggregated data for dashboard optimization
+
+**Key Concepts:**
+- Central entity for dashboard display
+- Aggregates data from FoodRecord, ExerciseRecord, SleepRecord, BodyRecord
+- One DailyLog per date per user (unique constraint)
+- 02:00 sleep boundary logic applied to date
+- Optimized for read-heavy dashboard queries
+
+**Calculation Formulas:**
+```
+순 칼로리 = 섭취 칼로리 - 소모 칼로리 - TDEE
+탄수화물 비율 = (totalCarbs × 4) / totalCaloriesIn × 100
+단백질 비율 = (totalProtein × 4) / totalCaloriesIn × 100
+지방 비율 = (totalFat × 9) / totalCaloriesIn × 100
+```
+
+**Usage Examples:**
+```swift
+// 1. Create empty DailyLog
+let emptyLog = DailyLog.empty(userId: userId, date: Date())
+
+// 2. Update with nutrition data
+let withFood = emptyLog.withNutrition(
+    totalCaloriesIn: 2000,
+    totalCarbs: 250.0,
+    totalProtein: 120.0,
+    totalFat: 60.0
+)
+
+// 3. Update with exercise data
+let withExercise = withFood.withExercise(
+    totalCaloriesOut: 300,
+    exerciseMinutes: 60,
+    exerciseCount: 2
+)
+
+// 4. Check net calories
+print(withExercise.netCalories) // -100 (deficit)
+print(withExercise.carbsRatio) // 50.0%
+```
+
+### Git Status
+
+- File committed in: 83d12c6
+- Commit message: "auto-claude: 3.8 - Pure Swift struct for DailyLog (daily aggregation)"
+- Implementation plan updated to "completed"
+- Phase 3 status: 8/9 subtasks completed
+
+### Architecture Notes
+
+**Daily Aggregation Pattern:**
+- DailyLog aggregates multiple Records for efficient dashboard queries
+- Reduces need for complex joins and aggregations on every page load
+- Updated when underlying Records change (FoodRecord, ExerciseRecord, etc.)
+- Enables fast historical data retrieval
+
+**Data Relationships:**
+1. **FoodRecord (N:1):**
+   - Multiple FoodRecords per date aggregate into DailyLog
+   - DailyLog stores totalCaloriesIn, totalCarbs, totalProtein, totalFat
+
+2. **ExerciseRecord (N:1):**
+   - Multiple ExerciseRecords per date aggregate into DailyLog
+   - DailyLog stores totalCaloriesOut, exerciseMinutes, exerciseCount
+
+3. **SleepRecord (N:1):**
+   - Multiple SleepRecords per date aggregate into DailyLog
+   - DailyLog stores sleepDuration (sum), sleepStatus (primary sleep)
+
+4. **BodyRecord (1:1):**
+   - One BodyRecord per date links to DailyLog
+   - DailyLog stores weight, bodyFatPct snapshots
+
+5. **MetabolismSnapshot (1:1):**
+   - One MetabolismSnapshot per date links to DailyLog
+   - DailyLog stores bmr, tdee for calorie calculations
+
+**Update Strategy:**
+- When Record is created/updated/deleted → Recalculate DailyLog aggregates
+- Use Repository pattern to handle cascading updates
+- Ensures DailyLog always reflects current Record data
+
+**Computed Properties:**
+- netCalories: Real-time calculation (no storage needed)
+- Macro ratios: Real-time calculation with proper calorie conversions
+- Zero division handling (returns 0.0 if no intake)
+
+**Why Separate Entity?**
+- Performance: Dashboard loads one DailyLog instead of joining many Records
+- Simplicity: ViewModels work with single aggregated entity
+- Flexibility: Can add computed fields without changing Record entities
+- Scalability: Fast queries even with thousands of Records
+
+---
+
 ## Subtask 3.7: Create SleepRecord Domain Entity - ✅ COMPLETED
 
 **Status:** COMPLETED
@@ -811,7 +985,7 @@ print(user.age) // Automatically calculated
 
 ---
 
-**Phase 3 Progress:** 🚧 IN PROGRESS (7/9 subtasks)
+**Phase 3 Progress:** 🚧 IN PROGRESS (8/9 subtasks)
 - 3.1: User ✅
 - 3.2: BodyRecord ✅
 - 3.3: MetabolismSnapshot ✅
@@ -819,11 +993,11 @@ print(user.age) // Automatically calculated
 - 3.5: FoodRecord ✅
 - 3.6: ExerciseRecord ✅
 - 3.7: SleepRecord ✅
-- 3.8: DailyLog (pending)
+- 3.8: DailyLog ✅
 - 3.9: Goal (pending)
 
-**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 7/9)
-**Next Subtask:** 3.8 - Create DailyLog Domain Entity
+**Overall Progress:** Phase 1 (✅ Complete), Phase 2 (✅ Complete), Phase 3 (🚧 In Progress - 8/9)
+**Next Subtask:** 3.9 - Create Goal Domain Entity
 
 ---
 
