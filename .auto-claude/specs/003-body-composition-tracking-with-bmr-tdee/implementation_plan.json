@@ -34,7 +34,7 @@
           "id": "1.2",
           "title": "Create Gender enum for BMR calculations",
           "description": "Define Gender enum with male/female values for Mifflin-St Jeor formula differentiation",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Shared/Enums/Gender.swift"
           ],
@@ -43,13 +43,15 @@
             "Maps to Int16 for Core Data storage",
             "Includes localized display names"
           ],
-          "estimated_complexity": "low"
+          "estimated_complexity": "low",
+          "notes": "Gender enum created with male/female cases. Includes Int16 raw values for Core Data storage, displayName property for UI, and bmrAdjustment property (5.0 for male, -161.0 for female) for Mifflin-St Jeor formula calculations. Conforms to CaseIterable, Codable, and Identifiable protocols.",
+          "updated_at": "2026-01-11T23:48:22.106082+00:00"
         },
         {
           "id": "1.3",
           "title": "Create BodyCompositionEntry domain entity",
           "description": "Define a domain entity for body composition data that is independent of Core Data",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Domain/Entities/BodyCompositionEntry.swift"
           ],
@@ -58,13 +60,15 @@
             "All measurements use Decimal for precision",
             "Includes computed properties for derived values"
           ],
-          "estimated_complexity": "low"
+          "estimated_complexity": "low",
+          "notes": "BodyCompositionEntry domain entity created with id, date, weight, bodyFatPercent, muscleMass, and bodyFatMass properties. All measurements use Decimal for precision. Includes computed properties (leanBodyMass, musclePercentage, calculateBMI) and helper methods (calculateBodyFatMass, estimateMuscleMass). Conforms to Codable, Identifiable, and Equatable protocols. Comprehensive Korean documentation with learning points and Java comparisons added.",
+          "updated_at": "2026-01-11T23:50:17.247801+00:00"
         },
         {
           "id": "1.4",
           "title": "Create MetabolismData domain entity",
           "description": "Define a domain entity for metabolism calculations (BMR/TDEE)",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Domain/Entities/MetabolismData.swift"
           ],
@@ -73,13 +77,15 @@
             "Uses Decimal for precision",
             "Includes date for historical tracking"
           ],
-          "estimated_complexity": "low"
+          "estimated_complexity": "low",
+          "notes": "MetabolismData domain entity created with id, date, bmr, tdee, weight, bodyFatPercent, and activityLevel properties. All measurements use Decimal for precision. Includes computed properties (activityCalories) and helper methods (calculateCalorieBalance, estimatedWeeklyWeightChange) for business logic. Conforms to Codable, Identifiable, and Equatable protocols. Comprehensive Korean documentation with learning points and Java comparisons added. Sample data included for previews and testing.",
+          "updated_at": "2026-01-11T23:52:23.614734+00:00"
         },
         {
           "id": "1.5",
           "title": "Create UserProfile domain entity",
           "description": "Define domain entity for user profile data needed for BMR calculations",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Domain/Entities/UserProfile.swift"
           ],
@@ -88,7 +94,9 @@
             "Includes computed property for age calculation",
             "Height in cm, supports conversion"
           ],
-          "estimated_complexity": "low"
+          "estimated_complexity": "low",
+          "notes": "UserProfile domain entity created with height, birthDate, gender, and activityLevel properties. Includes computed property for age calculation from birthDate. Height stored in cm with conversion helpers to meters and feet/inches. Follows established patterns from BodyCompositionEntry and MetabolismData. Comprehensive Korean documentation with learning points and Java comparisons included. Sample data provided for previews and testing.",
+          "updated_at": "2026-01-11T23:55:01.285491+00:00"
         },
         {
           "id": "1.6",
@@ -682,5 +690,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-11T23:45:57.552713+00:00"
+  "last_updated": "2026-01-11T23:55:01.285495+00:00"
 }

@@ -13,9 +13,9 @@ Estimated Effort: 3-4 days
 
 ### Phase 1: Domain Layer - Entities & Business Logic (8 subtasks)
 - [x] 1.1 - Create ActivityLevel enum with TDEE multipliers ✅
-- [ ] 1.2 - Create Gender enum for BMR calculations
-- [ ] 1.3 - Create BodyCompositionEntry domain entity
-- [ ] 1.4 - Create MetabolismData domain entity
+- [x] 1.2 - Create Gender enum for BMR calculations ✅
+- [x] 1.3 - Create BodyCompositionEntry domain entity ✅
+- [x] 1.4 - Create MetabolismData domain entity ✅
 - [ ] 1.5 - Create UserProfile domain entity
 - [ ] 1.6 - Implement CalculateBMRUseCase (Mifflin-St Jeor)
 - [ ] 1.7 - Implement CalculateTDEEUseCase
@@ -76,6 +76,24 @@ Estimated Effort: 3-4 days
   - Added Int16 raw values for Core Data storage compatibility
   - Includes displayName and description properties for UI
   - Conforms to CaseIterable, Codable, and Identifiable protocols
+- ✅ **Completed 1.2**: Created Gender enum for BMR calculations
+  - Defined male and female cases with Int16 raw values
+  - Added bmrAdjustment property for Mifflin-St Jeor formula (5.0 for male, -161.0 for female)
+  - Includes displayName property for UI
+  - Conforms to CaseIterable, Codable, and Identifiable protocols
+- ✅ **Completed 1.3**: Created BodyCompositionEntry domain entity
+  - Defined properties: id, date, weight, bodyFatPercent, muscleMass, bodyFatMass
+  - Uses Decimal for all measurements to ensure precision
+  - Added computed properties: leanBodyMass, musclePercentage
+  - Helper methods: calculateBMI, calculateBodyFatMass, estimateMuscleMass
+  - Conforms to Codable, Identifiable, and Equatable protocols
+- ✅ **Completed 1.4**: Created MetabolismData domain entity
+  - Defined properties: id, date, bmr, tdee, weight, bodyFatPercent, activityLevel
+  - Uses Decimal for all measurements to ensure precision
+  - Added computed property: activityCalories
+  - Helper methods: calculateCalorieBalance, estimatedWeeklyWeightChange
+  - Conforms to Codable, Identifiable, and Equatable protocols
+  - Includes comprehensive documentation and sample data
 
 ---
 
@@ -83,9 +101,9 @@ Estimated Effort: 3-4 days
 
 | Criteria | Subtasks | Status |
 |----------|----------|--------|
-| Input height, weight, body fat %, muscle mass with validation | 1.3, 4.1, 5.1, 7.1 | Pending |
+| Input height, weight, body fat %, muscle mass with validation | 1.3✅, 4.1, 5.1, 7.1 | In Progress |
 | BMR calculated using Mifflin-St Jeor formula | 1.6, 2.5, 8.1 | Pending |
-| TDEE calculated based on activity level | 1.1, 1.7, 2.5 | Pending |
+| TDEE calculated based on activity level | 1.1✅, 1.7, 2.5 | In Progress |
 | MetabolismSnapshot saved with each body record | 2.3, 2.5 | Pending |
 | Swift Charts weight/body fat trends 7/30/90 days | 4.3, 4.4, 5.2 | Pending |
 | Dashboard shows BMR/TDEE with intake/expenditure | 3.3, 4.2, 5.4 | Pending |
