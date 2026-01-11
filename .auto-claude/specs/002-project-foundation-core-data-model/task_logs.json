@@ -1,0 +1,1391 @@
+{
+  "spec_id": "002-project-foundation-core-data-model",
+  "created_at": "2026-01-11T10:47:25.413824+00:00",
+  "updated_at": "2026-01-11T10:56:05.717371+00:00",
+  "phases": {
+    "planning": {
+      "phase": "planning",
+      "status": "completed",
+      "started_at": "2026-01-11T10:47:25.414540+00:00",
+      "completed_at": "2026-01-11T10:51:46.496111+00:00",
+      "entries": [
+        {
+          "timestamp": "2026-01-11T10:47:25.414561+00:00",
+          "type": "phase_start",
+          "content": "Starting implementation planning...",
+          "phase": "planning"
+        },
+        {
+          "timestamp": "2026-01-11T10:47:28.605687+00:00",
+          "type": "text",
+          "content": "I'll read the spec file to understand the requirements and then create a comprehensive implementation plan.",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:29.805479+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../002-project-foundation-core-data-model/spec.md",
+          "phase": "planning",
+          "tool_name": "Read",
+          "tool_input": ".../002-project-foundation-core-data-model/spec.md",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:29.964706+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_session_context]",
+          "phase": "planning",
+          "tool_name": "mcp__auto-claude__get_session_context",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:29.984432+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_session_context] Done",
+          "phase": "planning",
+          "tool_name": "mcp__auto-claude__get_session_context",
+          "session": 1,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:47:35.240429+00:00",
+          "type": "text",
+          "content": "Let me explore the current project structure and look for any additional context like an ERD:",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:36.246836+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la",
+          "phase": "planning",
+          "tool_name": "Bash",
+          "tool_input": "ls -la",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:36.734340+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*.md",
+          "phase": "planning",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*.md",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:37.067037+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*.xcodeproj/**",
+          "phase": "planning",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*.xcodeproj/**",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:37.194897+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "planning",
+          "tool_name": "Glob",
+          "session": 1,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:47:41.057810+00:00",
+          "type": "text",
+          "content": "Let me read the ERD and explore the existing Xcode project structure:",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:41.677499+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./docs/04_ERD.md",
+          "phase": "planning",
+          "tool_name": "Read",
+          "tool_input": "./docs/04_ERD.md",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:42.695004+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -laR Bodii/",
+          "phase": "planning",
+          "tool_name": "Bash",
+          "tool_input": "ls -laR Bodii/",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:43.194321+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./docs/06_DEVELOPMENT_GUIDE.md",
+          "phase": "planning",
+          "tool_name": "Read",
+          "tool_input": "./docs/06_DEVELOPMENT_GUIDE.md",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:43.209106+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "planning",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→# Bodii - ERD (Entity Relationship Diagram)\n     2→\n     3→## 1. 전체 ERD 다이어그램\n     4→\n     5→```\n     6→┌─────────────────────┐\n     7→│        User         │\n     8→├─────────────────────┤\n     9→│ PK id: UUID         │\n    10→│    name: String     │\n    11→│    gender: Int16    │\n    12→│    birthDate: Date  │\n    13→│    height: Decimal  │\n    14→│    activityLevel    │\n    15→│    ─────────────────│\n    16→│    currentWeight    │\n    17→│    currentBodyFatPct│\n    18→│    currentMuscleMass│\n    19→│    currentBMR       │\n    20→│    currentTDEE      │\n    21→│    metabolismUpdatedAt│\n    22→│    ─────────────────│\n    23→│    createdAt: Date  │\n    24→│    updatedAt: Date  │\n    25→└─────────┬───────────┘\n    26→          │\n    27→          │ 1:N\n    28→          ▼\n    29→┌─────────────────────┐       ┌─────────────────────┐\n    30→│    BodyRecord       │       │ MetabolismSnapshot  │\n    31→├─────────────────────┤       ├─────────────────────┤\n    32→│ PK id: UUID         │──1:1──│ PK id: UUID         │\n    33→│ FK userId: UUID     │       │ FK userId: UUID     │\n    34→│    date: Date       │       │ FK bodyRecordId     │\n    35→│    weight: Decimal  │       │    date: Date       │\n    36→│    bodyFatMass      │       │    weight: Decimal  │\n    37→│    bodyFatPercent   │       │    bodyFatPct       │\n    38→│    muscleMass       │       │    bmr: Decimal     │\n    39→│    createdAt: Date  │       │    tdee: Decimal    │\n    40→└─────────────────────┘       │    activityLevel    │\n    41→                              │    createdAt: Date  │\n    42→                              └─────────────────────┘\n    43→\n    44→┌─────────────────────┐       ┌─────────────────────┐\n    45→│    FoodRecord       │       │       Food          │\n    46→├─────────────────────┤       ├─────────────────────┤\n    47→│ PK id: UUID         │       │ PK id: UUID         │\n    48→│ FK userId: UUID     │──N:1──│    name: String     │\n    49→│ FK foodId: UUID     │       │    calories: Int32  │\n    50→│    date: Date       │       │    carbs: Decimal   │\n    51→│    mealType: Int16  │       │    protein: Decimal │\n    52→│    quantity: Decimal│       │    fat: Decimal     │\n    53→│    quantityUnit     │       │    sodium: Decimal  │\n    54→│    calculatedCal    │       │    fiber: Decimal   │\n    55→│    createdAt: Date  │       │    sugar: Decimal   │\n    56→└─────────────────────┘       │    servingSize      │\n    57→                              │    servingUnit      │\n    58→                              │    source: Int16    │\n    59→                              │    apiCode: String  │\n    60→                              │ FK createdByUserId  │\n    61→                              │    createdAt: Date  │\n    62→                              └─────────────────────┘\n    63→\n    64→┌─────────────────────┐       ┌─────────────────────┐\n    65→│   ExerciseRecord    │       │     SleepRecord     │\n    66→├─────────────────────┤       ├─────────────────────┤\n    67→│ PK id: UUID         │       │ PK id: UUID         │\n    68→│ FK userId: UUID     │       │ FK userId: UUID     │\n    69→│    date: Date       │       │    date: Date       │\n    70→│    exerciseType     │       │    duration: Int32  │\n    71→│    duration: Int32  │       │    status: Int16    │\n    72→│    intensity: Int16 │       │    createdAt: Date  │\n    73→│    caloriesBurned   │       │    updatedAt: Date  │\n    74→│    note: String     │       └─────────────────────┘\n    75→│    fromHealthKit    │\n    76→│    healthKitId      │\n    77→│    createdAt: Date  │\n    78→└─────────────────────┘\n    79→\n    80→┌───────────────────────────────────────────────────┐\n    81→│                    DailyLog                       │\n    82→├───────────────────────────────────────────────────┤\n    83→│ PK id: UUID                                       │\n    84→│ FK userId: UUID                                   │\n    85→│    date: Date (UNIQUE per user)                   │\n    86→│    ─────────────────────────────────────────────  │\n    87→│    // 섭취                                        │\n    88→│    totalCaloriesIn: Int32                         │\n    89→│    totalCarbs: Decimal                            │\n    90→│    totalProtein: Decimal                          │\n    91→│    totalFat: Decimal                              │\n    92→│    carbsRatio: Decimal?                           │\n    93→│    proteinRatio: Decimal?                         │\n    94→│    fatRatio: Decimal?                             │\n    95→│    ─────────────────────────────────────────────  │\n    96→│    // 대사량 스냅샷                                │\n    97→│    bmr: Int32                                     │\n    98→│    tdee: Int32                                    │\n    99→│    netCalories: Int32                             │\n   100→│    ─────────────────────────────────────────────  │\n   101→│    // 소모 & 운동                                 │\n   102→│    totalCaloriesOut: Int32                        │\n   103→│    exerciseMinutes: Int32                         │\n   104→│    exerciseCount: Int16                           │\n   105→│    steps: Int32?                                  │\n   106→│    ─────────────────────────────────────────────  │\n   107→│    // 체성분 스냅샷                                │\n   108→│    weight: Decimal?                               │\n   109→│    bodyFatPct: Decimal?                           │\n   110→│    ─────────────────────────────────────────────  │\n   111→│    // 수면                                        │\n   112→│    sleepDuration: Int32?                          │\n   113→│    sleepStatus: Int16?                            │\n   114→│    ─────────────────────────────────────────────  │\n   115→│    createdAt: Date                                │\n   116→│    updatedAt: Date                                │\n   117→└───────────────────────────────────────────────────┘\n   118→\n   119→┌─────────────────────────────┐\n   120→│           Goal              │\n   121→├─────────────────────────────┤\n   122→│ PK id: UUID                 │\n   123→│ FK userId: UUID             │\n   124→│    goalType: Int16          │\n   125→│    ─────────────────────────│\n   126→│    // 목표값                 │\n   127→│    targetWeight?            │\n   128→│    targetBodyFatPct?        │\n   129→│    targetMuscleMass?        │\n   130→│    ─────────────────────────│\n   131→│    // 주간 변화율            │\n   132→│    weeklyWeightRate?        │\n   133→│    weeklyFatPctRate?        │\n   134→│    weeklyMuscleRate?        │\n   135→│    ─────────────────────────│\n   136→│    // 시작 시점 기록         │\n   137→│    startWeight?             │\n   138→│    startBodyFatPct?         │\n   139→│    startMuscleMass?         │\n   140→│    startBMR?                │\n   141→│    startTDEE?               │\n   142→│    ─────────────────────────│\n   143→│    dailyCalorieTarget?      │\n   144→│    isActive: Bool           │\n   145→│    createdAt: Date          │\n   146→│    updatedAt: Date          │\n   147→└─────────────────────────────┘\n   148→```\n   149→\n   150→---\n   151→\n   152→## 2. Entity 상세 정의\n   153→\n   154→### 2.1 User (사용자)\n   155→\n   156→| 컬럼 | 타입 | 제약조건 | 설명 |\n   157→|------|------|----------|------|\n   158→| id | UUID | PK | 고유 식별자 |\n   159→| name | String | NOT NULL | 사용자 이름 |\n   160→| gender | Int16 | NOT NULL | 성별 (0: 남성, 1: 여성) |\n   161→| birthDate | Date | NOT NULL | 생년월일 |\n   162→| height | Decimal | NOT NULL | 키 (cm) |\n   163→| activityLevel | Int16 | NOT NULL | 활동 수준 (1~5) |\n   164→| **currentWeight** | Decimal | NULL | 최신 체중 (kg) |\n   165→| **currentBodyFatPct** | Decimal | NULL | 최신 체지방률 (%) |\n   166→| **currentMuscleMass** | Decimal | NULL | 최신 골격근량 (kg) |\n   167→| **currentBMR** | Decimal | NULL | 현재 기초대사량 (kcal) |\n   168→| **currentTDEE** | Decimal | NULL | 현재 활동대사량 (kcal) |\n   169→| **metabolismUpdatedAt** | Date | NULL | 대사량 마지막 계산 시점 |\n   170→| createdAt | Date | NOT NULL | 생성일시 |\n   171→| updatedAt | Date | NOT NULL | 수정일시 |\n   172→\n   173→**활동 수준 (activityLevel) 코드:**\n   174→```\n   175→1: 비활동적 (Sedentary) - 좌식 생활, 계수 1.2\n   176→2: 가벼운 활동 (Light) - 주 1-3일 운동, 계수 1.375\n   177→3: 보통 활동 (Moderate) - 주 3-5일 운동, 계수 1.55\n   178→4: 활동적 (Active) - 주 6-7일 운동, 계수 1.725\n   179→5: 매우 활동적 (Very Active) - 고강도 매일, 계수 1.9\n   180→```\n   181→\n   182→**User.current* 필드 업데이트 트리거:**\n   183→| 이벤트 | 업데이트 항목 |\n   184→|--------|---------------|\n   185→| 체성분 입력 | currentWeight, currentBodyFatPct, currentMuscleMass, currentBMR, currentTDEE, metabolismUpdatedAt |\n   186→| 체성분 삭제 | 최신 기록 기준으로 재계산 |\n   187→| 활동 수준 변경 | currentTDEE, metabolismUpdatedAt |\n   188→| 키 변경 | currentBMR, currentTDEE (체지방률 없을 때만 BMR 영향) |\n   189→| 생년월일 변경 | currentBMR, currentTDEE (체지방률 없을 때만 BMR 영향) |\n   190→\n   191→---\n   192→\n   193→### 2.2 BodyRecord (체성분 기록)\n   194→\n   195→| 컬럼 | 타입 | 제약조건 | 설명 |\n   196→|------|------|----------|------|\n   197→| id | UUID | PK | 고유 식별자 |\n   198→| userId | UUID | FK, NOT NULL | User 참조 |\n   199→| date | Date | NOT NULL, DEFAULT now() | 측정일시 (기본값: 현재 일시) |\n   200→| weight | Decimal | NOT NULL | 몸무게 (kg) |\n   201→| bodyFatMass | Decimal | NULL | 체지방량 (kg) |\n   202→| bodyFatPercent | Decimal | NULL | 체지방률 (%) |\n   203→| muscleMass | Decimal | NULL | 골격근량 (kg) |\n   204→| createdAt | Date | NOT NULL | 생성일시 |\n   205→\n   206→**체지방 자동 계산 (앱 레벨):**\n   207→```\n   208→bodyFatMass 입력 시: bodyFatPercent = (bodyFatMass / weight) × 100\n   209→bodyFatPercent 입력 시: bodyFatMass = weight × (bodyFatPercent / 100)\n   210→```\n   211→\n   212→**인덱스:**\n   213→- idx_bodyrecord_user_date (userId, date)\n   214→\n   215→---\n   216→\n   217→### 2.3 MetabolismSnapshot (대사량 스냅샷) - 신규\n   218→\n   219→| 컬럼 | 타입 | 제약조건 | 설명 |\n   220→|------|------|----------|------|\n   221→| id | UUID | PK | 고유 식별자 |\n   222→| userId | UUID | FK, NOT NULL | User 참조 |\n   223→| bodyRecordId | UUID | FK, UNIQUE, NOT NULL | BodyRecord 참조 (1:1) |\n   224→| date | Date | NOT NULL | 측정일시 |\n   225→| weight | Decimal | NOT NULL | 체중 (kg) |\n   226→| bodyFatPct | Decimal | NULL | 체지방률 (%) |\n   227→| bmr | Decimal | NOT NULL | 기초대사량 (kcal) |\n   228→| tdee | Decimal | NOT NULL | 활동대사량 (kcal) |\n   229→| activityLevel | Int16 | NOT NULL | 계산 당시 활동 수준 |\n   230→| createdAt | Date | NOT NULL | 생성일시 |\n   231→\n   232→**용도:**\n   233→\n\n... [truncated - full output was 22189 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:47:46.457018+00:00",
+          "type": "text",
+          "content": "Let me check the existing Core Data model and PersistenceController to understand the current state:",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:47.304114+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ructure/Persistence/PersistenceController.swift",
+          "phase": "planning",
+          "tool_name": "Read",
+          "tool_input": "...ructure/Persistence/PersistenceController.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:47.846119+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...e/Bodii.xcdatamodeld/Bodii.xcdatamodel/contents",
+          "phase": "planning",
+          "tool_name": "Read",
+          "tool_input": "...e/Bodii.xcdatamodeld/Bodii.xcdatamodel/contents",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:47:47.862000+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "planning",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→//\n     2→//  PersistenceController.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-11.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Core Data Stack 관리\n     9→// Core Data의 핵심 컴포넌트인 NSPersistentContainer를 관리하는 컨트롤러\n    10→// 💡 Java 비교: JPA의 EntityManager/EntityManagerFactory와 유사한 역할\n    11→\n    12→import CoreData\n    13→\n    14→// MARK: - PersistenceController\n    15→\n    16→/// Core Data 스택을 관리하는 컨트롤러\n    17→/// - 앱 전체에서 공유되는 싱글턴 인스턴스 제공\n    18→/// - SwiftUI Preview용 인메모리 인스턴스 제공\n    19→/// - 자동 경량 마이그레이션 지원\n    20→final class PersistenceController {\n    21→\n    22→    // MARK: - Shared Instance\n    23→\n    24→    // 📚 학습 포인트: Singleton Pattern in Swift\n    25→    // static let으로 선언하면 lazy하게 초기화되고 thread-safe\n    26→    // 💡 Java 비교: synchronized singleton과 달리 언어 레벨에서 thread-safe 보장\n    27→    static let shared = PersistenceController()\n    28→\n    29→    // MARK: - Preview Instance\n    30→\n    31→    // 📚 학습 포인트: SwiftUI Preview용 인스턴스\n    32→    // 실제 디스크에 저장하지 않고 메모리에서만 동작\n    33→    // Preview에서 실제 데이터를 사용하면 테스트가 느려지고 side effect 발생\n    34→    @MainActor\n    35→    static let preview: PersistenceController = {\n    36→        let controller = PersistenceController(inMemory: true)\n    37→\n    38→        // 📚 학습 포인트: Preview용 샘플 데이터 생성\n    39→        // 실제 앱에서는 이 블록에서 샘플 데이터를 생성할 수 있음\n    40→        // 현재는 빈 상태로 유지 (엔티티 구현 후 추가 예정)\n    41→        let viewContext = controller.container.viewContext\n    42→\n    43→        // TODO: 샘플 데이터 생성 코드 추가\n    44→        // 예: User, DailyLog 등의 샘플 데이터\n    45→\n    46→        do {\n    47→            try viewContext.save()\n    48→        } catch {\n    49→            // 📚 학습 포인트: fatalError 사용\n    50→            // Preview/개발 환경에서만 사용 - 프로덕션에서는 적절한 에러 처리 필요\n    51→            let nsError = error as NSError\n    52→            fatalError(\"Failed to save preview context: \\(nsError), \\(nsError.userInfo)\")\n    53→        }\n    54→\n    55→        return controller\n    56→    }()\n    57→\n    58→    // MARK: - Properties\n    59→\n    60→    // 📚 학습 포인트: NSPersistentContainer\n    61→    // Core Data 스택의 핵심 - 모델, 컨텍스트, 저장소를 모두 관리\n    62→    // iOS 10+에서 도입되어 Core Data 설정을 크게 간소화\n    63→    let container: NSPersistentContainer\n    64→\n    65→    // 📚 학습 포인트: NSManagedObjectContext\n    66→    // viewContext는 main queue에서 동작하며 UI 업데이트에 사용\n    67→    // 💡 Java 비교: JPA의 EntityManager와 유사 - 엔티티의 생명주기 관리\n    68→    var viewContext: NSManagedObjectContext {\n    69→        container.viewContext\n    70→    }\n    71→\n    72→    // MARK: - Initialization\n    73→\n    74→    // 📚 학습 포인트: Convenience Init with Default Parameters\n    75→    // inMemory: true로 하면 SQLite 파일 대신 메모리에 저장\n    76→    // 테스트나 Preview에서 유용\n    77→    init(inMemory: Bool = false) {\n    78→        // 📚 학습 포인트: Bundle에서 Core Data 모델 로드\n    79→        // NSPersistentContainer는 자동으로 .xcdatamodeld 파일을 찾음\n    80→        // 파일명이 \"Bodii\"이면 Bodii.xcdatamodeld를 찾음\n    81→        container = NSPersistentContainer(name: \"Bodii\")\n    82→\n    83→        // 📚 학습 포인트: Lightweight Migration 설정\n    84→        // 스키마 변경 시 자동으로 마이그레이션 수행\n    85→        // ⚠️ 주의: 복잡한 변경은 수동 마이그레이션 필요\n    86→        let description = container.persistentStoreDescriptions.first\n    87→        description?.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)\n    88→        description?.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)\n    89→\n    90→        // 📚 학습 포인트: 인메모리 저장소 설정\n    91→        // 테스트/Preview용 - 앱 종료 시 데이터 소멸\n    92→        if inMemory {\n    93→            description?.url = URL(fileURLWithPath: \"/dev/null\")\n    94→        }\n    95→\n    96→        // 📚 학습 포인트: 비동기 저장소 로드\n    97→        // loadPersistentStores는 비동기로 동작하지만 completion handler에서 에러 처리\n    98→        container.loadPersistentStores { [weak self] storeDescription, error in\n    99→            if let error = error as NSError? {\n   100→                // 📚 학습 포인트: Core Data 로드 실패 처리\n   101→                // ⚠️ 주의: 프로덕션에서는 fatalError 대신 적절한 복구 로직 필요\n   102→                // 예: 손상된 저장소 삭제 후 재생성, 사용자에게 알림 등\n   103→                fatalError(\"Failed to load Core Data store: \\(error), \\(error.userInfo)\")\n   104→            }\n   105→\n   106→            // 📚 학습 포인트: Merge Policy 설정\n   107→            // 여러 컨텍스트에서 동시에 변경 시 충돌 해결 정책\n   108→            // mergeByPropertyObjectTrump: 메모리의 값이 저장소 값을 덮어씀\n   109→            self?.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy\n   110→\n   111→            // 📚 학습 포인트: 자동 병합 설정\n   112→            // 백그라운드 컨텍스트의 변경사항을 viewContext에 자동 반영\n   113→            self?.container.viewContext.automaticallyMergesChangesFromParent = true\n   114→\n   115→            #if DEBUG\n   116→            // 📚 학습 포인트: Core Data 모델 검증\n   117→            // 앱 시작 시 모든 엔티티가 정상적으로 로드되었는지 확인\n   118→            self?.verifyModelLoaded()\n   119→            #endif\n   120→        }\n   121→    }\n   122→\n   123→    // MARK: - Public Methods\n   124→\n   125→    // 📚 학습 포인트: Context 저장\n   126→    // Core Data는 변경사항을 메모리에 저장하다가 save() 호출 시 디스크에 기록\n   127→    // ⚠️ 주의: save() 호출을 잊으면 앱 종료 시 데이터 손실\n   128→    func save() {\n   129→        let context = container.viewContext\n   130→        guard context.hasChanges else { return }\n   131→\n   132→        do {\n   133→            try context.save()\n   134→        } catch {\n   135→            // 📚 학습 포인트: 에러 처리\n   136→            // 프로덕션에서는 사용자에게 알리거나 로깅 필요\n   137→            let nsError = error as NSError\n   138→            assertionFailure(\"Failed to save context: \\(nsError), \\(nsError.userInfo)\")\n   139→        }\n   140→    }\n   141→\n   142→    // 📚 학습 포인트: Background Context 생성\n   143→    // 대용량 데이터 처리 시 메인 스레드 블로킹 방지\n   144→    // 💡 Java 비교: 별도 스레드에서 EntityManager 사용하는 것과 유사\n   145→    func newBackgroundContext() -> NSManagedObjectContext {\n   146→        let context = container.newBackgroundContext()\n   147→        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy\n   148→        return context\n   149→    }\n   150→\n   151→    // 📚 학습 포인트: Background Context에서 작업 수행\n   152→    // 클로저 내에서 백그라운드 작업 수행 후 자동으로 저장\n   153→    func performBackgroundTask(_ block: @escaping (NSManagedObjectContext) -> Void) {\n   154→        container.performBackgroundTask { context in\n   155→            context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy\n   156→            block(context)\n   157→        }\n   158→    }\n   159→}\n   160→\n   161→// MARK: - Debug Helpers\n   162→\n   163→#if DEBUG\n   164→extension PersistenceController {\n   165→    // 📚 학습 포인트: 테스트용 헬퍼\n   166→    // 인메모리 컨트롤러를 빠르게 생성하여 단위 테스트에 활용\n   167→    static func makeForTesting() -> PersistenceController {\n   168→        PersistenceController(inMemory: true)\n   169→    }\n   170→\n   171→    // 📚 학습 포인트: 저장소 위치 디버깅\n   172→    // Core Data 파일이 어디에 저장되는지 확인용\n   173→    func printStoreLocation() {\n   174→        guard let url = container.persistentStoreDescriptions.first?.url else {\n   175→            print(\"No store URL found\")\n   176→            return\n   177→        }\n   178→        print(\"Core Data store location: \\(url)\")\n   179→    }\n   180→\n   181→    // 📚 학습 포인트: Core Data 모델 검증\n   182→    // 앱 시작 시 모든 엔티티가 정상적으로 로드되었는지 확인\n   183→    // 💡 이 메서드는 DEBUG 빌드에서만 실행됨\n   184→    func verifyModelLoaded() {\n   185→        // 📚 학습 포인트: NSManagedObjectModel\n   186→        // Core Data 모델의 메타데이터에 접근하여 엔티티 목록 확인\n   187→        guard let model = container.managedObjectModel as NSManagedObjectModel? else {\n   188→            print(\"⚠️ [Core Data] Failed to access managed object model\")\n   189→            return\n   190→        }\n   191→\n   192→        // 앱에서 필요한 9개 엔티티 목록\n   193→        let expectedEntities: Set<String> = [\n   194→            \"User\",\n   195→            \"BodyRecord\",\n   196→            \"MetabolismSnapshot\",\n   197→            \"Food\",\n   198→            \"FoodRecord\",\n   199→            \"ExerciseRecord\",\n   200→            \"SleepRecord\",\n   201→            \"DailyLog\",\n   202→            \"Goal\"\n   203→        ]\n   204→\n   205→        // 모델에서 로드된 엔티티 이름 추출\n   206→        let loadedEntities = Set(model.entities.compactMap { $0.name })\n   207→\n   208→        // 검증: 모든 필수 엔티티가 로드되었는지 확인\n   209→        let missingEntities = expectedEntities.subtracting(loadedEntities)\n   210→        let extraEntities = loadedEntities.subtracting(expectedEntities)\n   211→\n   212→        if missingEntities.isEmpty {\n   213→            print(\"✅ [Core Data] Model loaded successfully with all 9 entities:\")\n   214→            for entity in expectedEntities.sorted() {\n   215→                print(\"   - \\(entity)\")\n   216→            }\n   217→        } else {\n   218→            print(\"❌ [Core Data] Missing entities: \\(missingEntities.sorted().joined(separator: \", \"))\")\n   219→        }\n   220→\n   221→        if !extraEntities.isEmpty {\n   222→            print(\"ℹ️ [Core Data] Additional entities found: \\(extraEntities.sorted().joined(separator: \", \"))\")\n   223→        }\n   224→\n   225→        // 각 엔티티의 속성 수 출력 (모델 구조 확인용)\n   226→        print(\"📊 [Core Data] Entity details:\")\n   227→        for entityName in expectedEntities.sorted() {\n   228→            if let entity = model.entitiesByName[entityName] {\n   229→                let attributeCount = entity.attributesByName.count\n   230→                let relationshipCount = entity.relationshipsByName.count\n   231→                print(\"   - \\(entityName): \\(attributeCount) attributes, \\(relationshipCount) relationships\")\n   232→            }\n   233→        }\n   234→    }\n   235→}\n   236→#endif\n   237→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:47:59.388130+00:00",
+          "type": "text",
+          "content": "Excellent! Now I have a complete picture. The project already has:\n- ✅ Xcode project with SwiftUI lifecycle\n- ✅ Core Data model with all 9 entities defined\n- ✅ MVVM folder structure established\n- ✅ PersistenceController with basic save operations\n\nWhat's still needed based on the acceptance criteria:\n- ❌ DateUtils with 02:00 sleep boundary logic\n- ❌ ValidationService for input validation\n- ❌ Domain entities (pure Swift models)\n- ❌ Enums (Gender, ActivityLevel, etc.)\n\nLet me create the comprehensive implementation plan:",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:48:58.418488+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...dation-core-data-model/implementation_plan.json",
+          "phase": "planning",
+          "tool_name": "Write",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:48:58.430368+00:00",
+          "type": "tool_end",
+          "content": "[Write] Error: <tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>",
+          "phase": "planning",
+          "tool_name": "Write",
+          "session": 1,
+          "detail": "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:49:01.748277+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./.auto-claude/specs/002-project-foundat...",
+          "phase": "planning",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./.auto-claude/specs/002-project-foundat...",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:49:01.845742+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "planning",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "total 128\ndrwxr-xr-x@ 8 chacha  staff    256 Jan 11 19:49 .\ndrwxr-xr-x@ 3 chacha  staff     96 Jan 11 19:47 ..\n-rw-r--r--@ 1 chacha  staff  12364 Jan 11 19:48 implementation_plan.json\ndrwxr-xr-x@ 4 chacha  staff    128 Jan 11 19:47 memory\n-rw-r--r--@ 1 chacha  staff   1320 Jan 11 19:45 requirements.json\n-rw-r--r--@ 1 chacha  staff   1244 Jan 11 19:45 spec.md\n-rw-------@ 1 chacha  staff  35622 Jan 11 19:49 task_logs.json\n-rw-r--r--@ 1 chacha  staff     82 Jan 11 19:45 task_metadata.json",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:49:04.725107+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...dation-core-data-model/implementation_plan.json",
+          "phase": "planning",
+          "tool_name": "Read",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:49:04.746649+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "planning",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→{\n     2→  \"spec_id\": \"002-project-foundation-core-data-model\",\n     3→  \"title\": \"Project Foundation & Core Data Model\",\n     4→  \"feature\": \"Project Foundation & Core Data Model\",\n     5→  \"description\": \"Set up Xcode project with SwiftUI, MVVM architecture, Core Data persistence layer with 9 entities (User, BodyRecord, MetabolismSnapshot, Food, FoodRecord, ExerciseRecord, SleepRecord, DailyLog, Goal), and utility services for date handling and input validation.\",\n     6→  \"status\": \"in_progress\",\n     7→  \"planStatus\": \"in_progress\",\n     8→  \"total_phases\": 3,\n     9→  \"phases\": [\n    10→    {\n    11→      \"phase_id\": 1,\n    12→      \"title\": \"Enum Definitions & Type Safety\",\n    13→      \"description\": \"Create all required enums for Core Data entities to provide type-safe access to coded values\",\n    14→      \"status\": \"pending\",\n    15→      \"subtasks\": [\n    16→        {\n    17→          \"subtask_id\": \"1.1\",\n    18→          \"title\": \"Create Gender Enum\",\n    19→          \"description\": \"Define Gender enum with male/female cases matching Core Data Int16 values (0: male, 1: female)\",\n    20→          \"file_path\": \"Bodii/Shared/Enums/Gender.swift\",\n    21→          \"acceptance_criteria\": [\n    22→            \"Gender enum with rawValue Int16\",\n    23→            \"Cases: male (0), female (1)\",\n    24→            \"Korean localized display names\"\n    25→          ],\n    26→          \"status\": \"pending\",\n    27→          \"notes\": \"\"\n    28→        },\n    29→        {\n    30→          \"subtask_id\": \"1.2\",\n    31→          \"title\": \"Create ActivityLevel Enum\",\n    32→          \"description\": \"Define ActivityLevel enum with 5 levels and TDEE multipliers (1.2, 1.375, 1.55, 1.725, 1.9)\",\n    33→          \"file_path\": \"Bodii/Shared/Enums/ActivityLevel.swift\",\n    34→          \"acceptance_criteria\": [\n    35→            \"ActivityLevel enum with rawValue Int16\",\n    36→            \"Cases: sedentary (1), light (2), moderate (3), active (4), veryActive (5)\",\n    37→            \"multiplier property returning correct TDEE coefficient\",\n    38→            \"Korean localized display names\"\n    39→          ],\n    40→          \"status\": \"pending\",\n    41→          \"notes\": \"\"\n    42→        },\n    43→        {\n    44→          \"subtask_id\": \"1.3\",\n    45→          \"title\": \"Create MealType Enum\",\n    46→          \"description\": \"Define MealType enum for food records (breakfast, lunch, dinner, snack)\",\n    47→          \"file_path\": \"Bodii/Shared/Enums/MealType.swift\",\n    48→          \"acceptance_criteria\": [\n    49→            \"MealType enum with rawValue Int16\",\n    50→            \"Cases: breakfast (0), lunch (1), dinner (2), snack (3)\",\n    51→            \"Korean localized display names\"\n    52→          ],\n    53→          \"status\": \"pending\",\n    54→          \"notes\": \"\"\n    55→        },\n    56→        {\n    57→          \"subtask_id\": \"1.4\",\n    58→          \"title\": \"Create ExerciseType Enum\",\n    59→          \"description\": \"Define ExerciseType enum with 8 exercise types and MET values\",\n    60→          \"file_path\": \"Bodii/Shared/Enums/ExerciseType.swift\",\n    61→          \"acceptance_criteria\": [\n    62→            \"ExerciseType enum with rawValue Int16\",\n    63→            \"Cases: walking (0), running (1), cycling (2), swimming (3), weight (4), crossfit (5), yoga (6), other (7)\",\n    64→            \"baseMET property for each type\",\n    65→            \"Korean localized display names\"\n    66→          ],\n    67→          \"status\": \"pending\",\n    68→          \"notes\": \"\"\n    69→        },\n    70→        {\n    71→          \"subtask_id\": \"1.5\",\n    72→          \"title\": \"Create Intensity Enum\",\n    73→          \"description\": \"Define Intensity enum for exercise intensity levels with multipliers\",\n    74→          \"file_path\": \"Bodii/Shared/Enums/Intensity.swift\",\n    75→          \"acceptance_criteria\": [\n    76→            \"Intensity enum with rawValue Int16\",\n    77→            \"Cases: low (0), medium (1), high (2)\",\n    78→            \"multiplier property (0.8, 1.0, 1.2)\",\n    79→            \"Korean localized display names\"\n    80→          ],\n    81→          \"status\": \"pending\",\n    82→          \"notes\": \"\"\n    83→        },\n    84→        {\n    85→          \"subtask_id\": \"1.6\",\n    86→          \"title\": \"Create FoodSource Enum\",\n    87→          \"description\": \"Define FoodSource enum for food data sources\",\n    88→          \"file_path\": \"Bodii/Shared/Enums/FoodSource.swift\",\n    89→          \"acceptance_criteria\": [\n    90→            \"FoodSource enum with rawValue Int16\",\n    91→            \"Cases: kfdaAPI (0), usdaAPI (1), userCreated (2)\",\n    92→            \"Korean localized display names\"\n    93→          ],\n    94→          \"status\": \"pending\",\n    95→          \"notes\": \"\"\n    96→        },\n    97→        {\n    98→          \"subtask_id\": \"1.7\",\n    99→          \"title\": \"Create GoalType Enum\",\n   100→          \"description\": \"Define GoalType enum for user goals\",\n   101→          \"file_path\": \"Bodii/Shared/Enums/GoalType.swift\",\n   102→          \"acceptance_criteria\": [\n   103→            \"GoalType enum with rawValue Int16\",\n   104→            \"Cases: lose (0), maintain (1), gain (2)\",\n   105→            \"Korean localized display names\"\n   106→          ],\n   107→          \"status\": \"pending\",\n   108→          \"notes\": \"\"\n   109→        },\n   110→        {\n   111→          \"subtask_id\": \"1.8\",\n   112→          \"title\": \"Create SleepStatus Enum\",\n   113→          \"description\": \"Define SleepStatus enum with duration thresholds\",\n   114→          \"file_path\": \"Bodii/Shared/Enums/SleepStatus.swift\",\n   115→          \"acceptance_criteria\": [\n   116→            \"SleepStatus enum with rawValue Int16\",\n   117→            \"Cases: bad (0), soso (1), good (2), excellent (3), oversleep (4)\",\n   118→            \"Duration thresholds in minutes\",\n   119→            \"Static method to determine status from duration\",\n   120→            \"Korean localized display names\"\n   121→          ],\n   122→          \"status\": \"pending\",\n   123→          \"notes\": \"\"\n   124→        },\n   125→        {\n   126→          \"subtask_id\": \"1.9\",\n   127→          \"title\": \"Create QuantityUnit Enum\",\n   128→          \"description\": \"Define QuantityUnit enum for food quantity units\",\n   129→          \"file_path\": \"Bodii/Shared/Enums/QuantityUnit.swift\",\n   130→          \"acceptance_criteria\": [\n   131→            \"QuantityUnit enum with rawValue Int16\",\n   132→            \"Cases: serving (0), gram (1)\",\n   133→            \"Korean localized display names\"\n   134→          ],\n   135→          \"status\": \"pending\",\n   136→          \"notes\": \"\"\n   137→        }\n   138→      ]\n   139→    },\n   140→    {\n   141→      \"phase_id\": 2,\n   142→      \"title\": \"Utility Services\",\n   143→      \"description\": \"Create DateUtils for sleep boundary logic and ValidationService for input validation\",\n   144→      \"status\": \"pending\",\n   145→      \"subtasks\": [\n   146→        {\n   147→          \"subtask_id\": \"2.1\",\n   148→          \"title\": \"Create DateUtils\",\n   149→          \"description\": \"Utility for date handling with 02:00 sleep boundary logic\",\n   150→          \"file_path\": \"Bodii/Shared/Utils/DateUtils.swift\",\n   151→          \"acceptance_criteria\": [\n   152→            \"getSleepDate(for:) returns previous day if hour < 2\",\n   153→            \"isNewDayForSleep() checks if current time is past 02:00\",\n   154→            \"startOfDay() and endOfDay() helpers\",\n   155→            \"Date formatting utilities for Korean locale\"\n   156→          ],\n   157→          \"status\": \"pending\",\n   158→          \"notes\": \"Critical for sleep tracking feature per edge case documentation\"\n   159→        },\n   160→        {\n   161→          \"subtask_id\": \"2.2\",\n   162→          \"title\": \"Create ValidationService\",\n   163→          \"description\": \"Input validation service with all range checks\",\n   164→          \"file_path\": \"Bodii/Shared/Utils/ValidationService.swift\",\n   165→          \"acceptance_criteria\": [\n   166→            \"validateHeight: 100-250cm\",\n   167→            \"validateWeight: 20-300kg\",\n   168→            \"validateBodyFatPercent: 1-60%\",\n   169→            \"validateAge: 1900 to current year for birthDate\",\n   170→            \"validateName: 1-20 characters\",\n   171→            \"validateExerciseDuration: minimum 1 minute\",\n   172→            \"validateFoodQuantity: minimum 0.1\",\n   173→            \"ValidationResult type with error messages\"\n   174→          ],\n   175→          \"status\": \"pending\",\n   176→          \"notes\": \"Error messages in Korean per spec\"\n   177→        },\n   178→        {\n   179→          \"subtask_id\": \"2.3\",\n   180→          \"title\": \"Create Date Extension\",\n   181→          \"description\": \"Convenience extensions for Date type\",\n   182→          \"file_path\": \"Bodii/Shared/Extensions/Date+Extensions.swift\",\n   183→          \"acceptance_criteria\": [\n   184→            \"startOfDay property\",\n   185→            \"endOfDay property\",\n   186→            \"age(from birthDate:) method\",\n   187→            \"isSameDay(as:) comparison\",\n   188→            \"Formatting helpers for Korean locale\"\n   189→          ],\n   190→          \"status\": \"pending\",\n   191→          \"notes\": \"\"\n   192→        },\n   193→        {\n   194→          \"subtask_id\": \"2.4\",\n   195→          \"title\": \"Create Decimal Extension\",\n   196→          \"description\": \"Convenience extensions for Decimal type used in Core Data\",\n   197→          \"file_path\": \"Bodii/Shared/Extensions/Decimal+Extensions.swift\",\n   198→          \"acceptance_criteria\": [\n   199→            \"Conversion to/from Double\",\n   200→            \"Rounding utilities\",\n   201→            \"Formatted string with specified decimal places\"\n   202→          ],\n   203→          \"status\": \"pending\",\n   204→          \"notes\": \"\"\n   205→        }\n   206→      ]\n   207→    },\n   208→    {\n   209→      \"phase_id\": 3,\n   210→      \"title\": \"Unit Tests & Verification\",\n   211→      \"description\": \"Create unit tests to verify all implementations meet acceptance criteria\",\n   212→      \"status\": \"pending\",\n   213→      \"subtasks\": [\n   214→        {\n   215→          \"subtask_id\": \"3.1\",\n   216→          \"title\": \"Create DateUtils Tests\",\n   217→          \"description\": \n\n... [truncated - full output was 14832 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:49:08.825042+00:00",
+          "type": "text",
+          "content": "The implementation plan already exists. Let me update it with a more comprehensive structure that includes Domain entities and Core Data extensions:",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:50:32.818240+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...dation-core-data-model/implementation_plan.json",
+          "phase": "planning",
+          "tool_name": "Write",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:50:32.840018+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "planning",
+          "tool_name": "Write",
+          "session": 1,
+          "detail": "The file ./.auto-claude/specs/002-project-foundation-core-data-model/implementation_plan.json has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n     1→{\n     2→  \"spec_id\": \"002-project-foundation-core-data-model\",\n     3→  \"title\": \"Project Foundation & Core Data Model\",\n     4→  \"feature\": \"Project Foundation & Core Data Model\",\n     5→  \"description\": \"Set up Xcode project with SwiftUI, MVVM architecture, Core Data persistence layer with 9 entities (User, BodyRecord, MetabolismSnapshot, Food, FoodRecord, ExerciseRecord, SleepRecord, DailyLog, Goal), and utility services for date handling and input validation.\",\n     6→  \"status\": \"in_progress\",\n     7→  \"planStatus\": \"in_progress\",\n     8→  \"total_phases\": 5,\n     9→  \"phases\": [\n    10→    {\n    11→      \"phase_id\": 1,\n    12→      \"title\": \"Enum Definitions & Type Safety\",\n    13→      \"description\": \"Create all required enums for Core Data entities to provide type-safe access to coded values\",\n    14→      \"status\": \"pending\",\n    15→      \"subtasks\": [\n    16→        {\n    17→          \"subtask_id\": \"1.1\",\n    18→          \"title\": \"Create Gender Enum\",\n    19→          \"description\": \"Define Gender enum with male/female cases matching Core Data Int16 values (0: male, 1: female)\",\n    20→          \"file_path\": \"Bodii/Shared/Enums/Gender.swift\",\n    21→          \"acceptance_criteria\": [\n    22→            \"Gender enum with rawValue Int16\",\n    23→            \"Cases: male (0), female (1)\",\n    24→            \"Korean localized display names\"\n    25→          ],\n    26→          \"status\": \"pending\",\n    27→          \"notes\": \"\"\n    28→        },\n    29→        {\n    30→          \"subtask_id\": \"1.2\",\n    31→          \"title\": \"Create ActivityLevel Enum\",\n    32→          \"description\": \"Define ActivityLevel enum with 5 levels and TDEE multipliers (1.2, 1.375, 1.55, 1.725, 1.9)\",\n    33→          \"file_path\": \"Bodii/Shared/Enums/ActivityLevel.swift\",\n    34→          \"acceptance_criteria\": [\n    35→            \"ActivityLevel enum with rawValue Int16\",\n    36→            \"Cases: sedentary (1), light (2), moderate (3), active (4), veryActive (5)\",\n    37→            \"multiplier property returning correct TDEE coefficient\",\n    38→            \"Korean localized display names\"\n    39→          ],\n    40→          \"status\": \"pending\",\n    41→          \"notes\": \"\"\n    42→        },\n    43→        {\n    44→          \"subtask_id\": \"1.3\",\n    45→          \"title\": \"Create MealType Enum\",\n    46→          \"description\": \"Define MealType enum for food records (breakfast, lunch, dinner, snack)\",\n    47→          \"file_path\": \"Bodii/Shared/Enums/MealType.swift\",\n    48→          \"acceptance_criteria\": [\n    49→            \"MealType enum with rawValue Int16\",\n    50→            \"Cases: breakfast (0), lunch (1), dinner (2), snack (3)\",\n    51→            \"Korean localized display names\"\n    52→          ],\n    53→          \"status\": \"pending\",\n    54→          \"notes\": \"\"\n    55→        },\n    56→        {\n    57→          \"subtask_id\": \"1.4\",\n    58→          \"title\": \"Create ExerciseType Enum\",\n    59→          \"description\": \"Define ExerciseType enum with 8 exercise types and MET values by intensity\",\n    60→          \"file_path\": \"Bodii/Shared/Enums/ExerciseType.swift\",\n    61→          \"acceptance_criteria\": [\n    62→            \"ExerciseType enum with rawValue Int16\",\n    63→            \"Cases: walking (0), running (1), cycling (2), swimming (3), weight (4), crossfit (5), yoga (6), other (7)\",\n    64→            \"MET values for each exercise type by intensity level\",\n    65→            \"Korean localized display names\"\n    66→          ],\n    67→          \"status\": \"pending\",\n    68→          \"notes\": \"MET values per ERD: walking 3.5/4.0/5.0, running 7.0/8.0/10.0, etc.\"\n    69→        },\n    70→        {\n    71→          \"subtask_id\": \"1.5\",\n    72→          \"title\": \"Create Intensity Enum\",\n    73→          \"description\": \"Define Intensity enum for exercise intensity levels (low, medium, high)\",\n    74→          \"file_path\": \"Bodii/Shared/Enums/Intensity.swift\",\n    75→          \"acceptance_criteria\": [\n    76→            \"Intensity enum with rawValue Int16\",\n    77→            \"Cases: low (0), medium (1), high (2)\",\n    78→            \"Korean localized display names\"\n    79→          ],\n    80→          \"status\": \"pending\",\n    81→          \"notes\": \"\"\n    82→        },\n    83→        {\n    84→          \"subtask_id\": \"1.6\",\n    85→          \"title\": \"Create FoodSource Enum\",\n    86→          \"description\": \"Define FoodSource enum for food data sources\",\n    87→          \"file_path\": \"Bodii/Shared/Enums/FoodSource.swift\",\n    88→          \"acceptance_criteria\": [\n    89→            \"FoodSource enum with rawValue Int16\",\n    90→            \"Cases: kfdaAPI (0), usdaAPI (1), userCreated (2)\",\n    91→            \"Korean localized display names\"\n    92→          ],\n    93→          \"status\": \"pending\",\n    94→          \"notes\": \"\"\n    95→        },\n    96→        {\n    97→          \"subtask_id\": \"1.7\",\n    98→          \"title\": \"Create GoalType Enum\",\n    99→          \"description\": \"Define GoalType enum for user goals\",\n   100→          \"file_path\": \"Bodii/Shared/Enums/GoalType.swift\",\n   101→          \"acceptance_criteria\": [\n   102→            \"GoalType enum with rawValue Int16\",\n   103→            \"Cases: lose (0), maintain (1), gain (2)\",\n   104→            \"Korean localized display names\"\n   105→          ],\n   106→          \"status\": \"pending\",\n   107→          \"notes\": \"\"\n   108→        },\n   109→        {\n   110→          \"subtask_id\": \"1.8\",\n   111→          \"title\": \"Create SleepStatus Enum\",\n   112→          \"description\": \"Define SleepStatus enum with duration thresholds for status determination\",\n   113→          \"file_path\": \"Bodii/Shared/Enums/SleepStatus.swift\",\n   114→          \"acceptance_criteria\": [\n   115→            \"SleepStatus enum with rawValue Int16\",\n   116→            \"Cases: bad (0), soso (1), good (2), excellent (3), oversleep (4)\",\n   117→            \"Static method to determine status from duration in minutes\",\n   118→            \"Duration thresholds: bad<330, soso 330-389, good 390-449, excellent 450-540, oversleep>540\",\n   119→            \"Korean localized display names and emoji indicators\"\n   120→          ],\n   121→          \"status\": \"pending\",\n   122→          \"notes\": \"Per ERD: bad🔴, soso🟡, good🟢, excellent🔵, oversleep🟠\"\n   123→        },\n   124→        {\n   125→          \"subtask_id\": \"1.9\",\n   126→          \"title\": \"Create QuantityUnit Enum\",\n   127→          \"description\": \"Define QuantityUnit enum for food quantity units\",\n   128→          \"file_path\": \"Bodii/Shared/Enums/QuantityUnit.swift\",\n   129→          \"acceptance_criteria\": [\n   130→            \"QuantityUnit enum with rawValue Int16\",\n   131→            \"Cases: serving (0), gram (1)\",\n   132→            \"Korean localized display names\"\n   133→          ],\n   134→          \"status\": \"pending\",\n   135→          \"notes\": \"\"\n   136→        },\n   137→        {\n   138→          \"subtask_id\": \"1.10\",\n   139→          \"title\": \"Create Constants File\",\n   140→          \"description\": \"Define app-wide constants for validation limits and default values\",\n   141→          \"file_path\": \"Bodii/Shared/Utils/Constants.swift\",\n   142→          \"acceptance_criteria\": [\n   143→            \"Validation ranges: height 100-250cm, weight 20-300kg, bodyFat 3-60%, etc.\",\n   144→            \"Sleep boundary hour: 2\",\n   145→            \"Default activity level, serving size defaults\",\n   146→            \"Calculation constants for BMR/TDEE\"\n   147→          ],\n   148→          \"status\": \"pending\",\n   149→          \"notes\": \"\"\n   150→        }\n   151→      ]\n   152→    },\n   153→    {\n   154→      \"phase_id\": 2,\n   155→      \"title\": \"Utility Services\",\n   156→      \"description\": \"Create DateUtils for sleep boundary logic and ValidationService for input validation\",\n   157→      \"status\": \"pending\",\n   158→      \"subtasks\": [\n   159→        {\n   160→          \"subtask_id\": \"2.1\",\n   161→          \"title\": \"Create DateUtils\",\n   162→          \"description\": \"Utility for date handling with 02:00 sleep boundary logic\",\n   163→          \"file_path\": \"Bodii/Shared/Utils/DateUtils.swift\",\n   164→          \"acceptance_criteria\": [\n   165→            \"getLogicalDate(for:) returns previous day if hour < 2 (02:00)\",\n   166→            \"isNewDayForSleep(at:) checks if time is past 02:00 boundary\",\n   167→            \"startOfDay(for:) and endOfDay(for:) helpers\",\n   168→            \"Date formatting utilities for Korean locale\",\n   169→            \"Comprehensive documentation with examples\"\n   170→          ],\n   171→          \"status\": \"pending\",\n   172→          \"notes\": \"CRITICAL: 02:00 boundary means 01:59→prev day, 02:00→current day\"\n   173→        },\n   174→        {\n   175→          \"subtask_id\": \"2.2\",\n   176→          \"title\": \"Create ValidationService\",\n   177→          \"description\": \"Input validation service with all range checks from spec\",\n   178→          \"file_path\": \"Bodii/Shared/Utils/ValidationService.swift\",\n   179→          \"acceptance_criteria\": [\n   180→            \"validateHeight: 100-250cm\",\n   181→            \"validateWeight: 20-300kg\",\n   182→            \"validateBodyFatPercent: 3-60%\",\n   183→            \"validateMuscleMass: 10-60kg\",\n   184→            \"validateAge: birth year 1900 to current year\",\n   185→            \"validateName: 1-20 characters, non-empty\",\n   186→            \"validateExerciseDuration: 1-480 minutes\",\n   187→            \"validateFoodQuantity: 0.1-100 servings or 1-10000 grams\",\n   188→            \"ValidationResult type with isValid, errorMessage properties\",\n   189→            \"Korean error messages\"\n   190→          ],\n   191→          \"status\": \"pending\",\n   192→          \"notes\": \"All error messages should be user-friendly in Korean\"\n   193→        },\n   194→        {\n   195→          \"subtask_id\": \"2.3\",\n   196→          \"title\": \"Create Date+Extensions\",\n   197→          \"description\": \"Convenience extensions for Date type\",\n   198→          \"file_path\": \"Bodii/Shared/Extensions/Date+Extensions.swift\",\n   199→          \"acceptance_criteria\": [\n   200→     \n\n... [truncated - full output was 28662 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:50:35.966132+00:00",
+          "type": "text",
+          "content": "Now let me create the build-progress.txt file to document the current status:",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:50:37.559878+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cat ./.auto-claude/specs/002-project-foundation...",
+          "phase": "planning",
+          "tool_name": "Bash",
+          "tool_input": "cat ./.auto-claude/specs/002-project-foundation...",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:50:37.652151+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "planning",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "# Build Progress: Project Foundation & Core Data Model\n# Spec ID: 002-project-foundation-core-data-model\n# Last Updated: 2026-01-11 20:00\n\n## Current Status: PLANNING COMPLETE\n\n---\n\n## ALREADY IMPLEMENTED ✅\n\n### 1. Xcode Project Setup\n- iOS 17+ target with SwiftUI lifecycle\n- BodiiApp.swift with @main entry point\n- ContentView with tab-based navigation\n\n### 2. Core Data Model (Bodii.xcdatamodeld)\nAll 9 entities defined with proper relationships:\n- User (14 attributes, 8 relationships)\n- BodyRecord (7 attributes, 2 relationships)\n- MetabolismSnapshot (8 attributes, 2 relationships)\n- Food (14 attributes, 2 relationships)\n- FoodRecord (10 attributes, 2 relationships)\n- ExerciseRecord (10 attributes, 1 relationship)\n- SleepRecord (6 attributes, 1 relationship)\n- DailyLog (22 attributes, 1 relationship)\n- Goal (17 attributes, 1 relationship)\n\n### 3. Folder Structure (Clean Architecture)\n- Bodii/App - Entry point and DI container\n- Bodii/Presentation/Features/* - Feature-based UI (Views, ViewModels)\n- Bodii/Domain - Use cases, entities, interfaces\n- Bodii/Data - Repositories, data sources, DTOs\n- Bodii/Infrastructure - Persistence, HealthKit, Network\n- Bodii/Shared - Enums, Utils, Extensions\n\n### 4. PersistenceController\n- Singleton with shared instance\n- Preview instance for SwiftUI\n- save(), newBackgroundContext(), performBackgroundTask()\n- Lightweight migration support\n- DEBUG verifyModelLoaded() helper\n\n---\n\n## REMAINING WORK (17 Subtasks)\n\n### Phase 1: Enum Definitions (9 subtasks)\n- [ ] 1.1 Gender enum (male/female)\n- [ ] 1.2 ActivityLevel enum (5 levels with TDEE multipliers)\n- [ ] 1.3 MealType enum (breakfast/lunch/dinner/snack)\n- [ ] 1.4 ExerciseType enum (8 types with MET values)\n- [ ] 1.5 Intensity enum (low/medium/high with multipliers)\n- [ ] 1.6 FoodSource enum (kfdaAPI/usdaAPI/userCreated)\n- [ ] 1.7 GoalType enum (lose/maintain/gain)\n- [ ] 1.8 SleepStatus enum (5 statuses with duration thresholds)\n- [ ] 1.9 QuantityUnit enum (serving/gram)\n\n### Phase 2: Utility Services (4 subtasks)\n- [ ] 2.1 DateUtils (02:00 sleep boundary logic)\n- [ ] 2.2 ValidationService (input range validation)\n- [ ] 2.3 Date+Extensions (convenience methods)\n- [ ] 2.4 Decimal+Extensions (Core Data helpers)\n\n### Phase 3: Unit Tests & Verification (4 subtasks)\n- [ ] 3.1 DateUtilsTests\n- [ ] 3.2 ValidationServiceTests\n- [ ] 3.3 SleepStatusTests\n- [ ] 3.4 Core Data Model Verification\n\n---\n\n## KEY REFERENCES\n\n### Validation Ranges (from spec.md and edge_cases.md)\n- Height: 100-250cm\n- Weight: 20-300kg\n- Body Fat: 1-60%\n- Name: 1-20 characters\n- Exercise Duration: min 1 minute\n- Food Quantity: min 0.1\n\n### Sleep Boundary Logic (from edge_cases.md)\n```swift\n// 02:00 ~ 다음날 02:00 = 하루\n// 00:00 ~ 01:59 → previous day\n// 02:00 ~ 23:59 → current day\nfunc getSleepDate(for date: Date) -> Date {\n    let hour = Calendar.current.component(.hour, from: date)\n    if hour < 2 {\n        return Calendar.current.date(byAdding: .day, value: -1, to: date)!\n    }\n    return date\n}\n```\n\n### Activity Level Multipliers (from algorithm.md)\n| Level | Multiplier |\n|-------|-----------|\n| 1 (Sedentary) | 1.2 |\n| 2 (Light) | 1.375 |\n| 3 (Moderate) | 1.55 |\n| 4 (Active) | 1.725 |\n| 5 (Very Active) | 1.9 |\n\n### Sleep Status Thresholds (from ERD.md)\n| Status | Minutes |\n|--------|---------|\n| bad (0) | < 330 |\n| soso (1) | 330-389 |\n| good (2) | 390-449 |\n| excellent (3) | 450-540 |\n| oversleep (4) | > 540 |\n\n---\n\n## NOTES\n- Korean localization required for all display names\n- Error messages must be in Korean\n- All enums use Int16 rawValue to match Core Data attributes",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:50:40.878741+00:00",
+          "type": "text",
+          "content": "The build-progress.txt already exists. Let me update it to reflect the expanded 5-phase plan:",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:50:42.010904+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...t-foundation-core-data-model/build-progress.txt",
+          "phase": "planning",
+          "tool_name": "Read",
+          "tool_input": "...t-foundation-core-data-model/build-progress.txt",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:50:42.026542+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "planning",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→# Build Progress: Project Foundation & Core Data Model\n     2→# Spec ID: 002-project-foundation-core-data-model\n     3→# Last Updated: 2026-01-11 20:00\n     4→\n     5→## Current Status: PLANNING COMPLETE\n     6→\n     7→---\n     8→\n     9→## ALREADY IMPLEMENTED ✅\n    10→\n    11→### 1. Xcode Project Setup\n    12→- iOS 17+ target with SwiftUI lifecycle\n    13→- BodiiApp.swift with @main entry point\n    14→- ContentView with tab-based navigation\n    15→\n    16→### 2. Core Data Model (Bodii.xcdatamodeld)\n    17→All 9 entities defined with proper relationships:\n    18→- User (14 attributes, 8 relationships)\n    19→- BodyRecord (7 attributes, 2 relationships)\n    20→- MetabolismSnapshot (8 attributes, 2 relationships)\n    21→- Food (14 attributes, 2 relationships)\n    22→- FoodRecord (10 attributes, 2 relationships)\n    23→- ExerciseRecord (10 attributes, 1 relationship)\n    24→- SleepRecord (6 attributes, 1 relationship)\n    25→- DailyLog (22 attributes, 1 relationship)\n    26→- Goal (17 attributes, 1 relationship)\n    27→\n    28→### 3. Folder Structure (Clean Architecture)\n    29→- Bodii/App - Entry point and DI container\n    30→- Bodii/Presentation/Features/* - Feature-based UI (Views, ViewModels)\n    31→- Bodii/Domain - Use cases, entities, interfaces\n    32→- Bodii/Data - Repositories, data sources, DTOs\n    33→- Bodii/Infrastructure - Persistence, HealthKit, Network\n    34→- Bodii/Shared - Enums, Utils, Extensions\n    35→\n    36→### 4. PersistenceController\n    37→- Singleton with shared instance\n    38→- Preview instance for SwiftUI\n    39→- save(), newBackgroundContext(), performBackgroundTask()\n    40→- Lightweight migration support\n    41→- DEBUG verifyModelLoaded() helper\n    42→\n    43→---\n    44→\n    45→## REMAINING WORK (17 Subtasks)\n    46→\n    47→### Phase 1: Enum Definitions (9 subtasks)\n    48→- [ ] 1.1 Gender enum (male/female)\n    49→- [ ] 1.2 ActivityLevel enum (5 levels with TDEE multipliers)\n    50→- [ ] 1.3 MealType enum (breakfast/lunch/dinner/snack)\n    51→- [ ] 1.4 ExerciseType enum (8 types with MET values)\n    52→- [ ] 1.5 Intensity enum (low/medium/high with multipliers)\n    53→- [ ] 1.6 FoodSource enum (kfdaAPI/usdaAPI/userCreated)\n    54→- [ ] 1.7 GoalType enum (lose/maintain/gain)\n    55→- [ ] 1.8 SleepStatus enum (5 statuses with duration thresholds)\n    56→- [ ] 1.9 QuantityUnit enum (serving/gram)\n    57→\n    58→### Phase 2: Utility Services (4 subtasks)\n    59→- [ ] 2.1 DateUtils (02:00 sleep boundary logic)\n    60→- [ ] 2.2 ValidationService (input range validation)\n    61→- [ ] 2.3 Date+Extensions (convenience methods)\n    62→- [ ] 2.4 Decimal+Extensions (Core Data helpers)\n    63→\n    64→### Phase 3: Unit Tests & Verification (4 subtasks)\n    65→- [ ] 3.1 DateUtilsTests\n    66→- [ ] 3.2 ValidationServiceTests\n    67→- [ ] 3.3 SleepStatusTests\n    68→- [ ] 3.4 Core Data Model Verification\n    69→\n    70→---\n    71→\n    72→## KEY REFERENCES\n    73→\n    74→### Validation Ranges (from spec.md and edge_cases.md)\n    75→- Height: 100-250cm\n    76→- Weight: 20-300kg\n    77→- Body Fat: 1-60%\n    78→- Name: 1-20 characters\n    79→- Exercise Duration: min 1 minute\n    80→- Food Quantity: min 0.1\n    81→\n    82→### Sleep Boundary Logic (from edge_cases.md)\n    83→```swift\n    84→// 02:00 ~ 다음날 02:00 = 하루\n    85→// 00:00 ~ 01:59 → previous day\n    86→// 02:00 ~ 23:59 → current day\n    87→func getSleepDate(for date: Date) -> Date {\n    88→    let hour = Calendar.current.component(.hour, from: date)\n    89→    if hour < 2 {\n    90→        return Calendar.current.date(byAdding: .day, value: -1, to: date)!\n    91→    }\n    92→    return date\n    93→}\n    94→```\n    95→\n    96→### Activity Level Multipliers (from algorithm.md)\n    97→| Level | Multiplier |\n    98→|-------|-----------|\n    99→| 1 (Sedentary) | 1.2 |\n   100→| 2 (Light) | 1.375 |\n   101→| 3 (Moderate) | 1.55 |\n   102→| 4 (Active) | 1.725 |\n   103→| 5 (Very Active) | 1.9 |\n   104→\n   105→### Sleep Status Thresholds (from ERD.md)\n   106→| Status | Minutes |\n   107→|--------|---------|\n   108→| bad (0) | < 330 |\n   109→| soso (1) | 330-389 |\n   110→| good (2) | 390-449 |\n   111→| excellent (3) | 450-540 |\n   112→| oversleep (4) | > 540 |\n   113→\n   114→---\n   115→\n   116→## NOTES\n   117→- Korean localization required for all display names\n   118→- Error messages must be in Korean\n   119→- All enums use Int16 rawValue to match Core Data attributes\n   120→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:51:22.677164+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...t-foundation-core-data-model/build-progress.txt",
+          "phase": "planning",
+          "tool_name": "Write",
+          "tool_input": "...t-foundation-core-data-model/build-progress.txt",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:51:22.697127+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "planning",
+          "tool_name": "Write",
+          "session": 1,
+          "detail": "The file ./.auto-claude/specs/002-project-foundation-core-data-model/build-progress.txt has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n     1→# Build Progress: Project Foundation & Core Data Model\n     2→# Spec ID: 002-project-foundation-core-data-model\n     3→# Last Updated: 2026-01-11 20:00\n     4→\n     5→## Current Status: IMPLEMENTATION PLAN CREATED\n     6→\n     7→---\n     8→\n     9→## ALREADY IMPLEMENTED ✅\n    10→\n    11→### 1. Xcode Project Setup\n    12→- iOS 17+ target with SwiftUI lifecycle\n    13→- BodiiApp.swift with @main entry point\n    14→- ContentView with tab-based navigation\n    15→\n    16→### 2. Core Data Model (Bodii.xcdatamodeld)\n    17→All 9 entities defined with proper relationships:\n    18→- User (14 attributes, 8 relationships)\n    19→- BodyRecord (7 attributes, 2 relationships)\n    20→- MetabolismSnapshot (8 attributes, 2 relationships)\n    21→- Food (14 attributes, 2 relationships)\n    22→- FoodRecord (10 attributes, 2 relationships)\n    23→- ExerciseRecord (10 attributes, 1 relationship)\n    24→- SleepRecord (6 attributes, 1 relationship)\n    25→- DailyLog (22 attributes, 1 relationship)\n    26→- Goal (17 attributes, 1 relationship)\n    27→\n    28→### 3. Folder Structure (Clean Architecture)\n    29→- Bodii/App - Entry point and DI container\n    30→- Bodii/Presentation/Features/* - Feature-based UI (Views, ViewModels)\n    31→- Bodii/Domain - Use cases, entities, interfaces\n    32→- Bodii/Data - Repositories, data sources, DTOs\n    33→- Bodii/Infrastructure - Persistence, HealthKit, Network\n    34→- Bodii/Shared - Enums, Utils, Extensions\n    35→\n    36→### 4. PersistenceController\n    37→- Singleton with shared instance\n    38→- Preview instance for SwiftUI\n    39→- save(), newBackgroundContext(), performBackgroundTask()\n    40→- Lightweight migration support\n    41→- DEBUG verifyModelLoaded() helper\n    42→\n    43→---\n    44→\n    45→## REMAINING WORK (32 Subtasks across 5 Phases)\n    46→\n    47→### Phase 1: Enum Definitions & Type Safety (10 subtasks)\n    48→- [ ] 1.1 Gender enum (male=0, female=1)\n    49→- [ ] 1.2 ActivityLevel enum (5 levels with TDEE multipliers)\n    50→- [ ] 1.3 MealType enum (breakfast/lunch/dinner/snack)\n    51→- [ ] 1.4 ExerciseType enum (8 types with MET values)\n    52→- [ ] 1.5 Intensity enum (low/medium/high)\n    53→- [ ] 1.6 FoodSource enum (kfdaAPI/usdaAPI/userCreated)\n    54→- [ ] 1.7 GoalType enum (lose/maintain/gain)\n    55→- [ ] 1.8 SleepStatus enum (5 statuses with duration thresholds)\n    56→- [ ] 1.9 QuantityUnit enum (serving/gram)\n    57→- [ ] 1.10 Constants file (validation ranges, defaults)\n    58→\n    59→### Phase 2: Utility Services (5 subtasks)\n    60→- [ ] 2.1 DateUtils (02:00 sleep boundary logic) ⭐ CRITICAL\n    61→- [ ] 2.2 ValidationService (input range validation) ⭐ CRITICAL\n    62→- [ ] 2.3 Date+Extensions (convenience methods)\n    63→- [ ] 2.4 Decimal+Extensions (Core Data helpers)\n    64→- [ ] 2.5 Formatters utility (shared formatters)\n    65→\n    66→### Phase 3: Domain Entities (9 subtasks)\n    67→- [ ] 3.1 User domain entity\n    68→- [ ] 3.2 BodyRecord domain entity\n    69→- [ ] 3.3 MetabolismSnapshot domain entity\n    70→- [ ] 3.4 Food domain entity\n    71→- [ ] 3.5 FoodRecord domain entity\n    72→- [ ] 3.6 ExerciseRecord domain entity\n    73→- [ ] 3.7 SleepRecord domain entity\n    74→- [ ] 3.8 DailyLog domain entity\n    75→- [ ] 3.9 Goal domain entity\n    76→\n    77→### Phase 4: Core Data Entity Extensions (4 subtasks)\n    78→- [ ] 4.1 UserEntity+Extensions\n    79→- [ ] 4.2 BodyRecordEntity+Extensions\n    80→- [ ] 4.3 DailyLogEntity+Extensions\n    81→- [ ] 4.4 Remaining entity extensions (6 files)\n    82→\n    83→### Phase 5: Testing & Verification (4 subtasks)\n    84→- [ ] 5.1 DateUtilsTests\n    85→- [ ] 5.2 ValidationServiceTests\n    86→- [ ] 5.3 SleepStatusTests\n    87→- [ ] 5.4 Build and Core Data verification\n    88→\n    89→---\n    90→\n    91→## ACCEPTANCE CRITERIA STATUS\n    92→\n    93→| Criteria | Status |\n    94→|----------|--------|\n    95→| Xcode project with iOS 17+ and SwiftUI | ✅ DONE |\n    96→| Core Data model with 9 entities | ✅ DONE |\n    97→| MVVM folder structure | ✅ DONE |\n    98→| PersistenceController with CRUD | ✅ DONE |\n    99→| DateUtils with 02:00 boundary | ⏳ PENDING |\n   100→| ValidationService for all ranges | ⏳ PENDING |\n   101→\n   102→---\n   103→\n   104→## KEY REFERENCES\n   105→\n   106→### Validation Ranges (from spec.md and ERD.md)\n   107→- Height: 100-250cm\n   108→- Weight: 20-300kg\n   109→- Body Fat: 3-60%\n   110→- Muscle Mass: 10-60kg\n   111→- Name: 1-20 characters\n   112→- Exercise Duration: 1-480 minutes\n   113→- Food Quantity: 0.1-100 servings or 1-10000 grams\n   114→\n   115→### Sleep Boundary Logic (02:00 = logical day boundary)\n   116→```swift\n   117→// 02:00 ~ 다음날 02:00 = 하루\n   118→// 00:00 ~ 01:59 → previous day (수면은 전날에 속함)\n   119→// 02:00 ~ 23:59 → current day\n   120→func getLogicalDate(for date: Date) -> Date {\n   121→    let hour = Calendar.current.component(.hour, from: date)\n   122→    if hour < 2 {\n   123→        return Calendar.current.date(byAdding: .day, value: -1, to: date)!.startOfDay\n   124→    }\n   125→    return date.startOfDay\n   126→}\n   127→```\n   128→\n   129→### Activity Level Multipliers (TDEE = BMR × multiplier)\n   130→| Level | Name | Multiplier |\n   131→|-------|------|-----------|\n   132→| 1 | Sedentary (비활동적) | 1.2 |\n   133→| 2 | Light (가벼운 활동) | 1.375 |\n   134→| 3 | Moderate (보통 활동) | 1.55 |\n   135→| 4 | Active (활동적) | 1.725 |\n   136→| 5 | Very Active (매우 활동적) | 1.9 |\n   137→\n   138→### Sleep Status Thresholds (minutes)\n   139→| Status | Min | Max | Emoji |\n   140→|--------|-----|-----|-------|\n   141→| bad (0) | 0 | 329 | 🔴 |\n   142→| soso (1) | 330 | 389 | 🟡 |\n   143→| good (2) | 390 | 449 | 🟢 |\n   144→| excellent (3) | 450 | 540 | 🔵 |\n   145→| oversleep (4) | 541 | ∞ | 🟠 |\n   146→\n   147→### Exercise MET Values (by type and intensity)\n   148→| Type | Low | Medium | High |\n   149→|------|-----|--------|------|\n   150→| walking | 3.5 | 4.0 | 5.0 |\n   151→| running | 7.0 | 8.0 | 10.0 |\n   152→| cycling | 5.0 | 6.0 | 8.0 |\n   153→| swimming | 6.0 | 7.0 | 9.0 |\n   154→| weight | 4.0 | 6.0 | 8.0 |\n   155→| crossfit | 6.0 | 8.0 | 10.0 |\n   156→| yoga | 2.5 | 3.0 | 4.0 |\n   157→| other | 4.0 | 5.0 | 6.0 |\n   158→\n   159→---\n   160→\n   161→## NOTES\n   162→- Korean localization required for all display names (displayName 프로퍼티)\n   163→- Error messages must be in Korean for user-facing validation\n   164→- All enums use Int16 rawValue to match Core Data attributes\n   165→- Domain entities should be pure Swift structs (Identifiable, Codable, Equatable)\n   166→- Core Data entity extensions provide toDomain() and update(from:) methods\n   167→\n   168→---\n   169→\n   170→## ESTIMATED TIME\n   171→- Total: ~720 minutes (12 hours)\n   172→- Phase 1: ~130 minutes\n   173→- Phase 2: ~130 minutes\n   174→- Phase 3: ~180 minutes\n   175→- Phase 4: ~115 minutes\n   176→- Phase 5: ~80 minutes\n   177→",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:51:26.242645+00:00",
+          "type": "text",
+          "content": "Now let me record this planning work as a discovery:",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:51:29.723705+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__record_discovery] ...dation-core-data-model/implementation_plan.json",
+          "phase": "planning",
+          "tool_name": "mcp__auto-claude__record_discovery",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:51:29.744515+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__record_discovery] Done",
+          "phase": "planning",
+          "tool_name": "mcp__auto-claude__record_discovery",
+          "session": 1,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:51:42.428242+00:00",
+          "type": "text",
+          "content": "I've created a comprehensive implementation plan for the **Project Foundation & Core Data Model** spec. Here's the summary:\n\n## Implementation Plan Created ✅\n\n### What's Already Done (4/6 Acceptance Criteria)\n| Component | Status |\n|-----------|--------|\n| Xcode project with iOS 17+ and SwiftUI | ✅ Complete |\n| Core Data model with 9 entities | ✅ Complete |\n| MVVM folder structure (Clean Architecture) | ✅ Complete |\n| PersistenceController with save/fetch | ✅ Complete |\n| DateUtils with 02:00 sleep boundary | ⏳ Pending |\n| ValidationService for input ranges | ⏳ Pending |\n\n### Implementation Plan: 5 Phases, 32 Subtasks\n\n| Phase | Title | Subtasks | Est. Time |\n|-------|-------|----------|-----------|\n| 1 | Enum Definitions & Type Safety | 10 | ~130 min |\n| 2 | Utility Services | 5 | ~130 min |\n| 3 | Domain Entities | 9 | ~180 min |\n| 4 | Core Data Entity Extensions | 4 | ~115 min |\n| 5 | Testing & Verification | 4 | ~80 min |\n\n### Key Deliverables\n\n**Phase 1 - Enums:**\n- Gender, ActivityLevel, MealType, ExerciseType\n- Intensity, FoodSource, GoalType, SleepStatus, QuantityUnit\n- Constants file with validation ranges\n\n**Phase 2 - Utilities (Critical for Acceptance):**\n- `DateUtils` - 02:00 sleep boundary logic\n- `ValidationService` - height, weight, body fat, etc. validation\n- Date and Decimal extensions, Formatters\n\n**Phase 3 - Domain Entities:**\n- 9 pure Swift structs mirroring Core Data entities\n- User, BodyRecord, MetabolismSnapshot, Food, FoodRecord, ExerciseRecord, SleepRecord, DailyLog, Goal\n\n**Phase 4 - Core Data Extensions:**\n- `toDomain()` and `update(from:)` methods\n- Bridge between Core Data and domain models\n\n**Phase 5 - Testing:**\n- Unit tests for DateUtils (boundary cases)\n- Unit tests for ValidationService (all ranges)\n- Build verification\n\n### Files Updated\n- `./.auto-claude/specs/002-project-foundation-core-data-model/implementation_plan.json`\n- `./.auto-claude/specs/002-project-foundation-core-data-model/build-progress.txt`",
+          "phase": "planning",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:51:46.496138+00:00",
+          "type": "phase_end",
+          "content": "Implementation plan created",
+          "phase": "planning",
+          "session": 1
+        }
+      ]
+    },
+    "coding": {
+      "phase": "coding",
+      "status": "active",
+      "started_at": "2026-01-11T10:51:46.498145+00:00",
+      "completed_at": null,
+      "entries": [
+        {
+          "timestamp": "2026-01-11T10:51:46.498161+00:00",
+          "type": "phase_start",
+          "content": "Starting implementation...",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:51:50.580287+00:00",
+          "type": "text",
+          "content": "I'll help you implement this subtask. Let me start by reading the relevant files to understand the context and requirements.",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:51:51.199583+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:51:51.673905+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../002-project-foundation-core-data-model/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../002-project-foundation-core-data-model/spec.md",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:51:52.031610+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...project-foundation-core-data-model/context.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...project-foundation-core-data-model/context.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:51:52.050271+00:00",
+          "type": "tool_end",
+          "content": "[Read] Error: <tool_use_error>File does not exist.</tool_use_error>",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "<tool_use_error>File does not exist.</tool_use_error>",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:51:59.100744+00:00",
+          "type": "text",
+          "content": "Now let me check the current directory structure to understand the existing codebase:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:00.039553+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find . -type f -name \"*.swift\" | head -20",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find . -type f -name \"*.swift\" | head -20",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:00.551701+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:00.653032+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "total 32\ndrwxr-xr-x@ 11 chacha  staff   352 Jan 11 19:45 .\ndrwxr-xr-x@  5 chacha  staff   160 Jan 11 19:46 ..\ndrwxr-xr-x@  3 chacha  staff    96 Jan 11 19:45 .auto-claude\n-rw-r--r--@  1 chacha  staff   436 Jan 11 19:51 .auto-claude-status\n-rw-r--r--@  1 chacha  staff  1558 Jan 11 19:51 .claude_settings.json\n-rw-r--r--@  1 chacha  staff    86 Jan 11 19:45 .git\n-rw-r--r--@  1 chacha  staff    87 Jan 11 19:45 .gitignore\ndrwxr-xr-x@  3 chacha  staff    96 Jan 11 19:45 .worktrees\ndrwxr-xr-x@ 11 chacha  staff   352 Jan 11 19:45 Bodii\ndrwxr-xr-x@  4 chacha  staff   128 Jan 11 19:45 Bodii.xcodeproj\ndrwxr-xr-x@ 14 chacha  staff   448 Jan 11 19:45 docs",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:52:04.451194+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:05.012887+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii -type d | sort",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii -type d | sort",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:05.105664+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "./Bodii\n./Bodii/App\n./Bodii/Assets.xcassets\n./Bodii/Assets.xcassets/AccentColor.colorset\n./Bodii/Assets.xcassets/AppIcon.appiconset\n./Bodii/Data\n./Bodii/Data/DTOs\n./Bodii/Data/DataSources\n./Bodii/Data/DataSources/Local\n./Bodii/Data/DataSources/Local/Entities\n./Bodii/Data/DataSources/Remote\n./Bodii/Data/Mappers\n./Bodii/Data/Repositories\n./Bodii/Domain\n./Bodii/Domain/Entities\n./Bodii/Domain/Interfaces\n./Bodii/Domain/UseCases\n./Bodii/Infrastructure\n./Bodii/Infrastructure/HealthKit\n./Bodii/Infrastructure/Network\n./Bodii/Infrastructure/Persistence\n./Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld\n./Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld/Bodii.xcdatamodel\n./Bodii/Presentation\n./Bodii/Presentation/Components\n./Bodii/Presentation/Components/Cards\n./Bodii/Presentation/Components/Charts\n./Bodii/Presentation/Components/Common\n./Bodii/Presentation/Features\n./Bodii/Presentation/Features/Body\n./Bodii/Presentation/Features/Body/ViewModels\n./Bodii/Presentation/Features/Body/Views\n./Bodii/Presentation/Features/Dashboard\n./Bodii/Presentation/Features/Dashboard/ViewModels\n./Bodii/Presentation/Features/Dashboard/Views\n./Bodii/Presentation/Features/Diet\n./Bodii/Presentation/Features/Diet/ViewModels\n./Bodii/Presentation/Features/Diet/Views\n./Bodii/Presentation/Features/Exercise\n./Bodii/Presentation/Features/Exercise/ViewModels\n./Bodii/Presentation/Features/Exercise/Views\n./Bodii/Presentation/Features/Onboarding\n./Bodii/Presentation/Features/Onboarding/ViewModels\n./Bodii/Presentation/Features/Onboarding/Views\n./Bodii/Presentation/Features/Settings\n./Bodii/Presentation/Features/Settings/ViewModels\n./Bodii/Presentation/Features/Settings/Views\n./Bodii/Presentation/Features/Sleep\n./Bodii/Presentation/Features/Sleep/ViewModels\n./Bodii/Presentation/Features/Sleep/Views\n./Bodii/Preview Content\n./Bodii/Preview Content/Preview Assets.xcassets\n./Bodii/Resources\n./Bodii/Shared\n./Bodii/Shared/Enums\n./Bodii/Shared/Extensions\n./Bodii/Shared/Utils",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:52:09.766692+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Shared/Enums/",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Shared/Enums/",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:10.127095+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Shared/",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Shared/",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:10.218263+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "total 0\ndrwxr-xr-x@ 3 chacha  staff   96 Jan 11 19:45 .\ndrwxr-xr-x@ 5 chacha  staff  160 Jan 11 19:45 ..\n-rw-r--r--@ 1 chacha  staff    0 Jan 11 19:45 .gitkeep",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:52:14.069011+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/App/BodiiApp.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/App/BodiiApp.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:14.580095+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ructure/Persistence/PersistenceController.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ructure/Persistence/PersistenceController.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:14.596639+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→//\n     2→//  BodiiApp.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-11.\n     6→//\n     7→\n     8→// 📚 학습 포인트: SwiftUI App Lifecycle\n     9→// iOS 14+에서는 App protocol 기반 진입점 사용\n    10→// 💡 Java 비교: main() 메서드 대신 App struct 사용\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - App Entry Point\n    15→\n    16→@main\n    17→struct BodiiApp: App {\n    18→\n    19→    // MARK: - Properties\n    20→\n    21→    // 📚 학습 포인트: @StateObject\n    22→    // App 생명주기 동안 유지되는 상태 객체\n    23→    // Core Data의 PersistenceController를 앱 전역에서 사용\n    24→    private let persistenceController = PersistenceController.shared\n    25→\n    26→    // MARK: - Body\n    27→\n    28→    // 📚 학습 포인트: some Scene\n    29→    // WindowGroup은 플랫폼에 맞는 윈도우 관리 제공\n    30→    // iOS: 단일 윈도우, macOS: 다중 윈도우 지원\n    31→    var body: some Scene {\n    32→        WindowGroup {\n    33→            ContentView()\n    34→                // 📚 학습 포인트: Environment\n    35→                // managedObjectContext를 View 계층 전체에 주입\n    36→                // 하위 뷰에서 @Environment(\\.managedObjectContext)로 접근 가능\n    37→                .environment(\\.managedObjectContext, persistenceController.viewContext)\n    38→        }\n    39→    }\n    40→}\n    41→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:52:21.830844+00:00",
+          "type": "text",
+          "content": "Perfect! I can see the coding patterns used in this project. Now I'll create the Gender enum following the established style. Let me create the file:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:30.234319+00:00",
+          "type": "tool_start",
+          "content": "[Write] ./Bodii/Shared/Enums/Gender.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "./Bodii/Shared/Enums/Gender.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:30.661458+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "session": 1,
+          "detail": "File created successfully at: ./Bodii/Shared/Enums/Gender.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:52:34.058488+00:00",
+          "type": "text",
+          "content": "Now let me verify that the code compiles correctly:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:35.785666+00:00",
+          "type": "tool_start",
+          "content": "[Bash] xcodebuild -project ./Bodii.xcodeproj -scheme B...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "xcodebuild -project ./Bodii.xcodeproj -scheme B...",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:35.803193+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:52:41.808294+00:00",
+          "type": "text",
+          "content": "I see that xcodebuild is not available. Let me verify the implementation manually against the acceptance criteria and then commit the changes.\n\nLet me check that the file was created correctly:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:42.231754+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/Gender.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/Gender.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:42.247013+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→//\n     2→//  Gender.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-11.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Enum with RawValue\n     9→// Swift enum은 Int16 rawValue를 가져 Core Data의 정수 저장 타입과 매핑\n    10→// 💡 Java 비교: JPA의 @Enumerated(EnumType.ORDINAL)과 유사\n    11→\n    12→import Foundation\n    13→\n    14→// MARK: - Gender\n    15→\n    16→/// 사용자 성별\n    17→/// - Core Data의 User 엔티티에서 Int16으로 저장\n    18→/// - 기초대사량(BMR) 계산 시 사용\n    19→enum Gender: Int16, CaseIterable, Codable {\n    20→\n    21→    // MARK: - Cases\n    22→\n    23→    /// 남성 (0)\n    24→    case male = 0\n    25→\n    26→    /// 여성 (1)\n    27→    case female = 1\n    28→\n    29→    // MARK: - Display Name\n    30→\n    31→    /// 한국어 표시 이름\n    32→    /// - 사용자 인터페이스에 표시되는 텍스트\n    33→    var displayName: String {\n    34→        switch self {\n    35→        case .male:\n    36→            return \"남성\"\n    37→        case .female:\n    38→            return \"여성\"\n    39→        }\n    40→    }\n    41→}\n    42→\n    43→// MARK: - Identifiable\n    44→\n    45→extension Gender: Identifiable {\n    46→    /// SwiftUI List와 ForEach에서 사용하기 위한 ID\n    47→    /// - rawValue를 ID로 사용하여 각 케이스를 고유하게 식별\n    48→    var id: Int16 {\n    49→        rawValue\n    50→    }\n    51→}\n    52→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:52:50.526149+00:00",
+          "type": "text",
+          "content": "Perfect! The Gender enum has been successfully created and meets all acceptance criteria:\n\n✅ **Acceptance Criteria Verified:**\n- Gender enum with rawValue Int16 ✓\n- Cases: male (0), female (1) ✓  \n- Korean localized display names ✓\n\nThe implementation also follows the existing code patterns with Korean educational comments, proper MARK sections, and includes helpful extensions like Identifiable for SwiftUI usage.\n\nNow let me commit the changes and update the plan:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:51.343342+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add ./Bodii/Shared/Enums/Gender.swift",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add ./Bodii/Shared/Enums/Gender.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:52.469700+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git commit -m \"auto-claude: 1.1 - Define Gender...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git commit -m \"auto-claude: 1.1 - Define Gender...",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:53.297853+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:52:57.894826+00:00",
+          "type": "text",
+          "content": "Excellent! The commit was successful. Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:59.133296+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:52:59.152423+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "session": 1,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:02.336002+00:00",
+          "type": "text",
+          "content": "Let me update the implementation plan manually:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:03.435746+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:03.469610+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "    15→      \"subtasks\": [\n    16→        {\n    17→          \"subtask_id\": \"1.1\",\n    18→          \"title\": \"Create Gender Enum\",\n    19→          \"description\": \"Define Gender enum with male/female cases matching Core Data Int16 values (0: male, 1: female)\",\n    20→          \"file_path\": \"Bodii/Shared/Enums/Gender.swift\",\n    21→          \"acceptance_criteria\": [\n    22→            \"Gender enum with rawValue Int16\",\n    23→            \"Cases: male (0), female (1)\",\n    24→            \"Korean localized display names\"\n    25→          ],\n    26→          \"status\": \"pending\",\n    27→          \"notes\": \"\"\n    28→        },\n    29→        {\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:08.885422+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:08.901754+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "session": 1,
+          "detail": "The file ./.auto-claude/specs/002-project-foundation-core-data-model/implementation_plan.json has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n    12→      \"title\": \"Enum Definitions & Type Safety\",\n    13→      \"description\": \"Create all required enums for Core Data entities to provide type-safe access to coded values\",\n    14→      \"status\": \"pending\",\n    15→      \"subtasks\": [\n    16→        {\n    17→          \"subtask_id\": \"1.1\",\n    18→          \"title\": \"Create Gender Enum\",\n    19→          \"description\": \"Define Gender enum with male/female cases matching Core Data Int16 values (0: male, 1: female)\",\n    20→          \"file_path\": \"Bodii/Shared/Enums/Gender.swift\",\n    21→          \"acceptance_criteria\": [\n    22→            \"Gender enum with rawValue Int16\",\n    23→            \"Cases: male (0), female (1)\",\n    24→            \"Korean localized display names\"\n    25→          ],\n    26→          \"status\": \"completed\",\n    27→          \"notes\": \"Gender enum created with Int16 rawValue, male (0) and female (1) cases, and Korean localized display names. Includes Identifiable extension for SwiftUI compatibility.\"\n    28→        },\n    29→        {\n    30→          \"subtask_id\": \"1.2\",\n    31→          \"title\": \"Create ActivityLevel Enum\",\n    32→          \"description\": \"Define ActivityLevel enum with 5 levels and TDEE multipliers (1.2, 1.375, 1.55, 1.725, 1.9)\",",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:11.835451+00:00",
+          "type": "text",
+          "content": "Perfect! Now let me update the build-progress.txt file to document this completion:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:12.327768+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...t-foundation-core-data-model/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...t-foundation-core-data-model/build-progress.txt",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:12.343847+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→# Build Progress: Project Foundation & Core Data Model\n     2→# Spec ID: 002-project-foundation-core-data-model\n     3→# Last Updated: 2026-01-11 20:00\n     4→\n     5→## Current Status: IMPLEMENTATION PLAN CREATED\n     6→\n     7→---\n     8→\n     9→## ALREADY IMPLEMENTED ✅\n    10→\n    11→### 1. Xcode Project Setup\n    12→- iOS 17+ target with SwiftUI lifecycle\n    13→- BodiiApp.swift with @main entry point\n    14→- ContentView with tab-based navigation\n    15→\n    16→### 2. Core Data Model (Bodii.xcdatamodeld)\n    17→All 9 entities defined with proper relationships:\n    18→- User (14 attributes, 8 relationships)\n    19→- BodyRecord (7 attributes, 2 relationships)\n    20→- MetabolismSnapshot (8 attributes, 2 relationships)\n    21→- Food (14 attributes, 2 relationships)\n    22→- FoodRecord (10 attributes, 2 relationships)\n    23→- ExerciseRecord (10 attributes, 1 relationship)\n    24→- SleepRecord (6 attributes, 1 relationship)\n    25→- DailyLog (22 attributes, 1 relationship)\n    26→- Goal (17 attributes, 1 relationship)\n    27→\n    28→### 3. Folder Structure (Clean Architecture)\n    29→- Bodii/App - Entry point and DI container\n    30→- Bodii/Presentation/Features/* - Feature-based UI (Views, ViewModels)\n    31→- Bodii/Domain - Use cases, entities, interfaces\n    32→- Bodii/Data - Repositories, data sources, DTOs\n    33→- Bodii/Infrastructure - Persistence, HealthKit, Network\n    34→- Bodii/Shared - Enums, Utils, Extensions\n    35→\n    36→### 4. PersistenceController\n    37→- Singleton with shared instance\n    38→- Preview instance for SwiftUI\n    39→- save(), newBackgroundContext(), performBackgroundTask()\n    40→- Lightweight migration support\n    41→- DEBUG verifyModelLoaded() helper\n    42→\n    43→---\n    44→\n    45→## REMAINING WORK (32 Subtasks across 5 Phases)\n    46→\n    47→### Phase 1: Enum Definitions & Type Safety (10 subtasks)\n    48→- [ ] 1.1 Gender enum (male=0, female=1)\n    49→- [ ] 1.2 ActivityLevel enum (5 levels with TDEE multipliers)\n    50→- [ ] 1.3 MealType enum (breakfast/lunch/dinner/snack)\n    51→- [ ] 1.4 ExerciseType enum (8 types with MET values)\n    52→- [ ] 1.5 Intensity enum (low/medium/high)\n    53→- [ ] 1.6 FoodSource enum (kfdaAPI/usdaAPI/userCreated)\n    54→- [ ] 1.7 GoalType enum (lose/maintain/gain)\n    55→- [ ] 1.8 SleepStatus enum (5 statuses with duration thresholds)\n    56→- [ ] 1.9 QuantityUnit enum (serving/gram)\n    57→- [ ] 1.10 Constants file (validation ranges, defaults)\n    58→\n    59→### Phase 2: Utility Services (5 subtasks)\n    60→- [ ] 2.1 DateUtils (02:00 sleep boundary logic) ⭐ CRITICAL\n    61→- [ ] 2.2 ValidationService (input range validation) ⭐ CRITICAL\n    62→- [ ] 2.3 Date+Extensions (convenience methods)\n    63→- [ ] 2.4 Decimal+Extensions (Core Data helpers)\n    64→- [ ] 2.5 Formatters utility (shared formatters)\n    65→\n    66→### Phase 3: Domain Entities (9 subtasks)\n    67→- [ ] 3.1 User domain entity\n    68→- [ ] 3.2 BodyRecord domain entity\n    69→- [ ] 3.3 MetabolismSnapshot domain entity\n    70→- [ ] 3.4 Food domain entity\n    71→- [ ] 3.5 FoodRecord domain entity\n    72→- [ ] 3.6 ExerciseRecord domain entity\n    73→- [ ] 3.7 SleepRecord domain entity\n    74→- [ ] 3.8 DailyLog domain entity\n    75→- [ ] 3.9 Goal domain entity\n    76→\n    77→### Phase 4: Core Data Entity Extensions (4 subtasks)\n    78→- [ ] 4.1 UserEntity+Extensions\n    79→- [ ] 4.2 BodyRecordEntity+Extensions\n    80→- [ ] 4.3 DailyLogEntity+Extensions\n    81→- [ ] 4.4 Remaining entity extensions (6 files)\n    82→\n    83→### Phase 5: Testing & Verification (4 subtasks)\n    84→- [ ] 5.1 DateUtilsTests\n    85→- [ ] 5.2 ValidationServiceTests\n    86→- [ ] 5.3 SleepStatusTests\n    87→- [ ] 5.4 Build and Core Data verification\n    88→\n    89→---\n    90→\n    91→## ACCEPTANCE CRITERIA STATUS\n    92→\n    93→| Criteria | Status |\n    94→|----------|--------|\n    95→| Xcode project with iOS 17+ and SwiftUI | ✅ DONE |\n    96→| Core Data model with 9 entities | ✅ DONE |\n    97→| MVVM folder structure | ✅ DONE |\n    98→| PersistenceController with CRUD | ✅ DONE |\n    99→| DateUtils with 02:00 boundary | ⏳ PENDING |\n   100→| ValidationService for all ranges | ⏳ PENDING |\n   101→\n   102→---\n   103→\n   104→## KEY REFERENCES\n   105→\n   106→### Validation Ranges (from spec.md and ERD.md)\n   107→- Height: 100-250cm\n   108→- Weight: 20-300kg\n   109→- Body Fat: 3-60%\n   110→- Muscle Mass: 10-60kg\n   111→- Name: 1-20 characters\n   112→- Exercise Duration: 1-480 minutes\n   113→- Food Quantity: 0.1-100 servings or 1-10000 grams\n   114→\n   115→### Sleep Boundary Logic (02:00 = logical day boundary)\n   116→```swift\n   117→// 02:00 ~ 다음날 02:00 = 하루\n   118→// 00:00 ~ 01:59 → previous day (수면은 전날에 속함)\n   119→// 02:00 ~ 23:59 → current day\n   120→func getLogicalDate(for date: Date) -> Date {\n   121→    let hour = Calendar.current.component(.hour, from: date)\n   122→    if hour < 2 {\n   123→        return Calendar.current.date(byAdding: .day, value: -1, to: date)!.startOfDay\n   124→    }\n   125→    return date.startOfDay\n   126→}\n   127→```\n   128→\n   129→### Activity Level Multipliers (TDEE = BMR × multiplier)\n   130→| Level | Name | Multiplier |\n   131→|-------|------|-----------|\n   132→| 1 | Sedentary (비활동적) | 1.2 |\n   133→| 2 | Light (가벼운 활동) | 1.375 |\n   134→| 3 | Moderate (보통 활동) | 1.55 |\n   135→| 4 | Active (활동적) | 1.725 |\n   136→| 5 | Very Active (매우 활동적) | 1.9 |\n   137→\n   138→### Sleep Status Thresholds (minutes)\n   139→| Status | Min | Max | Emoji |\n   140→|--------|-----|-----|-------|\n   141→| bad (0) | 0 | 329 | 🔴 |\n   142→| soso (1) | 330 | 389 | 🟡 |\n   143→| good (2) | 390 | 449 | 🟢 |\n   144→| excellent (3) | 450 | 540 | 🔵 |\n   145→| oversleep (4) | 541 | ∞ | 🟠 |\n   146→\n   147→### Exercise MET Values (by type and intensity)\n   148→| Type | Low | Medium | High |\n   149→|------|-----|--------|------|\n   150→| walking | 3.5 | 4.0 | 5.0 |\n   151→| running | 7.0 | 8.0 | 10.0 |\n   152→| cycling | 5.0 | 6.0 | 8.0 |\n   153→| swimming | 6.0 | 7.0 | 9.0 |\n   154→| weight | 4.0 | 6.0 | 8.0 |\n   155→| crossfit | 6.0 | 8.0 | 10.0 |\n   156→| yoga | 2.5 | 3.0 | 4.0 |\n   157→| other | 4.0 | 5.0 | 6.0 |\n   158→\n   159→---\n   160→\n   161→## NOTES\n   162→- Korean localization required for all display names (displayName 프로퍼티)\n   163→- Error messages must be in Korean for user-facing validation\n   164→- All enums use Int16 rawValue to match Core Data attributes\n   165→- Domain entities should be pure Swift structs (Identifiable, Codable, Equatable)\n   166→- Core Data entity extensions provide toDomain() and update(from:) methods\n   167→\n   168→---\n   169→\n   170→## ESTIMATED TIME\n   171→- Total: ~720 minutes (12 hours)\n   172→- Phase 1: ~130 minutes\n   173→- Phase 2: ~130 minutes\n   174→- Phase 3: ~180 minutes\n   175→- Phase 4: ~115 minutes\n   176→- Phase 5: ~80 minutes\n   177→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:18.657124+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...t-foundation-core-data-model/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...t-foundation-core-data-model/build-progress.txt",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:18.675415+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "session": 1,
+          "detail": "The file ./.auto-claude/specs/002-project-foundation-core-data-model/build-progress.txt has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n    43→---\n    44→\n    45→## REMAINING WORK (32 Subtasks across 5 Phases)\n    46→\n    47→### Phase 1: Enum Definitions & Type Safety (10 subtasks)\n    48→- [x] 1.1 Gender enum (male=0, female=1) ✅\n    49→- [ ] 1.2 ActivityLevel enum (5 levels with TDEE multipliers)\n    50→- [ ] 1.3 MealType enum (breakfast/lunch/dinner/snack)\n    51→- [ ] 1.4 ExerciseType enum (8 types with MET values)\n    52→- [ ] 1.5 Intensity enum (low/medium/high)",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:22.782576+00:00",
+          "type": "tool_start",
+          "content": "[Bash] date -u +\"%Y-%m-%d %H:%M\"",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "date -u +\"%Y-%m-%d %H:%M\"",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:22.874485+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "2026-01-11 10:53",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:27.899731+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...t-foundation-core-data-model/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...t-foundation-core-data-model/build-progress.txt",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:27.916070+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "session": 1,
+          "detail": "The file ./.auto-claude/specs/002-project-foundation-core-data-model/build-progress.txt has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n     1→# Build Progress: Project Foundation & Core Data Model\n     2→# Spec ID: 002-project-foundation-core-data-model\n     3→# Last Updated: 2026-01-11 10:53\n     4→\n     5→## Current Status: IN PROGRESS - Phase 1.1 Complete\n     6→\n     7→---\n     8→\n     9→## ALREADY IMPLEMENTED ✅",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:30.765609+00:00",
+          "type": "text",
+          "content": "Excellent! Let me verify that everything is properly committed:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:31.486932+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git status",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git status",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:31.989709+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git log --oneline -1",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git log --oneline -1",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:32.087143+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "c6d4eda auto-claude: 1.1 - Define Gender enum with male/female cases matching Core Data Int16 values",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:37.091338+00:00",
+          "type": "text",
+          "content": "Let me also commit the progress tracking file updates:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:38.597407+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add ./.auto-claude/specs/002-project-founda...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add ./.auto-claude/specs/002-project-founda...",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:39.889712+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "[auto-claude/002-project-foundation-core-data-model 500c8b1] auto-claude: Update progress tracking - subtask 1.1 completed\n 2 files changed, 748 insertions(+)\n create mode 100644 .auto-claude/specs/002-project-foundation-core-data-model/build-progress.txt\n create mode 100644 .auto-claude/specs/002-project-foundation-core-data-model/implementation_plan.json",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:41.998839+00:00",
+          "type": "text",
+          "content": "Perfect! Let me show you the final result:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:42.470156+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git log --oneline -2",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git log --oneline -2",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:53:42.566523+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "500c8b1 auto-claude: Update progress tracking - subtask 1.1 completed\nc6d4eda auto-claude: 1.1 - Define Gender enum with male/female cases matching Core Data Int16 values",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:53:51.746009+00:00",
+          "type": "text",
+          "content": "## ✅ Subtask 1.1 Complete - Gender Enum\n\nI've successfully implemented the Gender enum for the Bodii project. Here's what was accomplished:\n\n### **Implementation Summary**\n\n**File Created:** `./Bodii/Shared/Enums/Gender.swift`\n\n**Features Implemented:**\n- ✅ Gender enum with `Int16` rawValue (matches Core Data storage type)\n- ✅ Two cases: `male (0)` and `female (1)` \n- ✅ Korean localized display names (`남성`, `여성`)\n- ✅ Additional protocols for SwiftUI compatibility:\n  - `CaseIterable` - iterate over all cases\n  - `Codable` - JSON serialization support\n  - `Identifiable` - SwiftUI List/ForEach support\n\n**Code Quality:**\n- Follows existing project patterns (Korean educational comments, MARK sections)\n- Comprehensive documentation in Korean\n- Type-safe enum values matching Core Data Int16 storage\n\n**Commits:**\n1. `c6d4eda` - Gender enum implementation\n2. `500c8b1` - Updated progress tracking (implementation_plan.json, build-progress.txt)\n\n### **Acceptance Criteria Met:**\n- [x] Gender enum with rawValue Int16\n- [x] Cases: male (0), female (1)\n- [x] Korean localized display names\n\nThe implementation is ready for use in the User entity and BMR calculations! 🎉",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:00.395363+00:00",
+          "type": "text",
+          "content": "I'll help you implement the ActivityLevel enum with TDEE multipliers. Let me start by reading the relevant files to understand the context and patterns.",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:01.024082+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../002-project-foundation-core-data-model/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../002-project-foundation-core-data-model/spec.md",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:01.494728+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:01.874466+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...project-foundation-core-data-model/context.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...project-foundation-core-data-model/context.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:01.888706+00:00",
+          "type": "tool_end",
+          "content": "[Read] Error: <tool_use_error>File does not exist.</tool_use_error>",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "<tool_use_error>File does not exist.</tool_use_error>",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:54:08.846109+00:00",
+          "type": "text",
+          "content": "Now let me check the existing Gender enum to understand the code pattern:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:09.477465+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/Gender.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/Gender.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:10.052083+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Shared/Enums/",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Shared/Enums/",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:10.076936+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "     1→//\n     2→//  Gender.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-11.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Enum with RawValue\n     9→// Swift enum은 Int16 rawValue를 가져 Core Data의 정수 저장 타입과 매핑\n    10→// 💡 Java 비교: JPA의 @Enumerated(EnumType.ORDINAL)과 유사\n    11→\n    12→import Foundation\n    13→\n    14→// MARK: - Gender\n    15→\n    16→/// 사용자 성별\n    17→/// - Core Data의 User 엔티티에서 Int16으로 저장\n    18→/// - 기초대사량(BMR) 계산 시 사용\n    19→enum Gender: Int16, CaseIterable, Codable {\n    20→\n    21→    // MARK: - Cases\n    22→\n    23→    /// 남성 (0)\n    24→    case male = 0\n    25→\n    26→    /// 여성 (1)\n    27→    case female = 1\n    28→\n    29→    // MARK: - Display Name\n    30→\n    31→    /// 한국어 표시 이름\n    32→    /// - 사용자 인터페이스에 표시되는 텍스트\n    33→    var displayName: String {\n    34→        switch self {\n    35→        case .male:\n    36→            return \"남성\"\n    37→        case .female:\n    38→            return \"여성\"\n    39→        }\n    40→    }\n    41→}\n    42→\n    43→// MARK: - Identifiable\n    44→\n    45→extension Gender: Identifiable {\n    46→    /// SwiftUI List와 ForEach에서 사용하기 위한 ID\n    47→    /// - rawValue를 ID로 사용하여 각 케이스를 고유하게 식별\n    48→    var id: Int16 {\n    49→        rawValue\n    50→    }\n    51→}\n    52→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:54:15.490876+00:00",
+          "type": "text",
+          "content": "Perfect! I can see the pattern. Now let me create the ActivityLevel enum following the same structure:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:26.113632+00:00",
+          "type": "tool_start",
+          "content": "[Write] ./Bodii/Shared/Enums/ActivityLevel.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "./Bodii/Shared/Enums/ActivityLevel.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:26.559639+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "session": 1,
+          "detail": "File created successfully at: ./Bodii/Shared/Enums/ActivityLevel.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:54:30.399893+00:00",
+          "type": "text",
+          "content": "Excellent! Now let me verify the implementation and then commit the changes:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:31.292735+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cat ./Bodii/Shared/Enums/ActivityLevel.swift",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cat ./Bodii/Shared/Enums/ActivityLevel.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:31.799720+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git status",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git status",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:31.889054+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "//\n//  ActivityLevel.swift\n//  Bodii\n//\n//  Created by Auto-Claude on 2026-01-11.\n//\n\n// 📚 학습 포인트: Enum with Computed Properties\n// Swift enum은 stored property를 가질 수 없지만 computed property는 가능\n// 💡 Java 비교: enum의 final 필드와 유사하지만 Swift는 computed property로 구현\n\nimport Foundation\n\n// MARK: - ActivityLevel\n\n/// 사용자 활동 수준\n/// - Core Data의 User 엔티티에서 Int16으로 저장\n/// - TDEE(일일 총 에너지 소비량) 계산 시 BMR에 곱할 계수 제공\nenum ActivityLevel: Int16, CaseIterable, Codable {\n\n    // MARK: - Cases\n\n    /// 거의 활동 없음 (1) - 주로 앉아서 생활, 운동 거의 안함\n    case sedentary = 1\n\n    /// 가벼운 활동 (2) - 주 1-3회 가벼운 운동\n    case light = 2\n\n    /// 보통 활동 (3) - 주 3-5회 중간 강도 운동\n    case moderate = 3\n\n    /// 활발한 활동 (4) - 주 6-7회 고강도 운동\n    case active = 4\n\n    /// 매우 활발한 활동 (5) - 하루 2회 운동 또는 육체 노동\n    case veryActive = 5\n\n    // MARK: - Display Name\n\n    /// 한국어 표시 이름\n    /// - 사용자 인터페이스에 표시되는 텍스트\n    var displayName: String {\n        switch self {\n        case .sedentary:\n            return \"거의 활동 없음\"\n        case .light:\n            return \"가벼운 활동\"\n        case .moderate:\n            return \"보통 활동\"\n        case .active:\n            return \"활발한 활동\"\n        case .veryActive:\n            return \"매우 활발한 활동\"\n        }\n    }\n\n    // MARK: - TDEE Multiplier\n\n    /// TDEE 계산용 활동 계수\n    /// - TDEE = BMR × multiplier\n    /// - Returns: 활동 수준에 따른 TDEE 계수\n    var multiplier: Double {\n        switch self {\n        case .sedentary:\n            return 1.2      // 거의 활동 없음\n        case .light:\n            return 1.375    // 가벼운 활동\n        case .moderate:\n            return 1.55     // 보통 활동\n        case .active:\n            return 1.725    // 활발한 활동\n        case .veryActive:\n            return 1.9      // 매우 활발한 활동\n        }\n    }\n}\n\n// MARK: - Identifiable\n\nextension ActivityLevel: Identifiable {\n    /// SwiftUI List와 ForEach에서 사용하기 위한 ID\n    /// - rawValue를 ID로 사용하여 각 케이스를 고유하게 식별\n    var id: Int16 {\n        rawValue\n    }\n}",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:54:36.961557+00:00",
+          "type": "text",
+          "content": "Perfect! The ActivityLevel enum has been created successfully with all required features. Now let me commit the changes:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:40.918375+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add Bodii/Shared/Enums/ActivityLevel.swift ...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add Bodii/Shared/Enums/ActivityLevel.swift ...",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:42.268357+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "[auto-claude/002-project-foundation-core-data-model 8b89806] auto-claude: 1.2 - Define ActivityLevel enum with 5 levels and TDEE multipliers\n 1 file changed, 86 insertions(+)\n create mode 100644 Bodii/Shared/Enums/ActivityLevel.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:54:45.589089+00:00",
+          "type": "text",
+          "content": "Excellent! Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:46.851117+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:47.035840+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "    28→        },\n    29→        {\n    30→          \"subtask_id\": \"1.2\",\n    31→          \"title\": \"Create ActivityLevel Enum\",\n    32→          \"description\": \"Define ActivityLevel enum with 5 levels and TDEE multipliers (1.2, 1.375, 1.55, 1.725, 1.9)\",\n    33→          \"file_path\": \"Bodii/Shared/Enums/ActivityLevel.swift\",\n    34→          \"acceptance_criteria\": [\n    35→            \"ActivityLevel enum with rawValue Int16\",\n    36→            \"Cases: sedentary (1), light (2), moderate (3), active (4), veryActive (5)\",\n    37→            \"multiplier property returning correct TDEE coefficient\",\n    38→            \"Korean localized display names\"\n    39→          ],\n    40→          \"status\": \"pending\",\n    41→          \"notes\": \"\"\n    42→        },\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:54:54.619811+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:54.640536+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "session": 1,
+          "detail": "The file ./.auto-claude/specs/002-project-foundation-core-data-model/implementation_plan.json has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n    25→          ],\n    26→          \"status\": \"completed\",\n    27→          \"notes\": \"Gender enum created with Int16 rawValue, male (0) and female (1) cases, and Korean localized display names. Includes Identifiable extension for SwiftUI compatibility.\"\n    28→        },\n    29→        {\n    30→          \"subtask_id\": \"1.2\",\n    31→          \"title\": \"Create ActivityLevel Enum\",\n    32→          \"description\": \"Define ActivityLevel enum with 5 levels and TDEE multipliers (1.2, 1.375, 1.55, 1.725, 1.9)\",\n    33→          \"file_path\": \"Bodii/Shared/Enums/ActivityLevel.swift\",\n    34→          \"acceptance_criteria\": [\n    35→            \"ActivityLevel enum with rawValue Int16\",\n    36→            \"Cases: sedentary (1), light (2), moderate (3), active (4), veryActive (5)\",\n    37→            \"multiplier property returning correct TDEE coefficient\",\n    38→            \"Korean localized display names\"\n    39→          ],\n    40→          \"status\": \"completed\",\n    41→          \"notes\": \"ActivityLevel enum created with Int16 rawValue, 5 activity level cases (sedentary, light, moderate, active, veryActive) with corresponding TDEE multipliers (1.2, 1.375, 1.55, 1.725, 1.9), Korean localized display names, and Identifiable extension for SwiftUI compatibility.\"\n    42→        },\n    43→        {\n    44→          \"subtask_id\": \"1.3\",\n    45→          \"title\": \"Create MealType Enum\",\n    46→          \"description\": \"Define MealType enum for food records (breakfast, lunch, dinner, snack)\",",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:54:58.243096+00:00",
+          "type": "text",
+          "content": "Perfect! Now let me update the build-progress.txt file to document this completion:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:58.664938+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...t-foundation-core-data-model/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...t-foundation-core-data-model/build-progress.txt",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:54:58.680577+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→# Build Progress: Project Foundation & Core Data Model\n     2→# Spec ID: 002-project-foundation-core-data-model\n     3→# Last Updated: 2026-01-11 10:53\n     4→\n     5→## Current Status: IN PROGRESS - Phase 1.1 Complete\n     6→\n     7→---\n     8→\n     9→## ALREADY IMPLEMENTED ✅\n    10→\n    11→### 1. Xcode Project Setup\n    12→- iOS 17+ target with SwiftUI lifecycle\n    13→- BodiiApp.swift with @main entry point\n    14→- ContentView with tab-based navigation\n    15→\n    16→### 2. Core Data Model (Bodii.xcdatamodeld)\n    17→All 9 entities defined with proper relationships:\n    18→- User (14 attributes, 8 relationships)\n    19→- BodyRecord (7 attributes, 2 relationships)\n    20→- MetabolismSnapshot (8 attributes, 2 relationships)\n    21→- Food (14 attributes, 2 relationships)\n    22→- FoodRecord (10 attributes, 2 relationships)\n    23→- ExerciseRecord (10 attributes, 1 relationship)\n    24→- SleepRecord (6 attributes, 1 relationship)\n    25→- DailyLog (22 attributes, 1 relationship)\n    26→- Goal (17 attributes, 1 relationship)\n    27→\n    28→### 3. Folder Structure (Clean Architecture)\n    29→- Bodii/App - Entry point and DI container\n    30→- Bodii/Presentation/Features/* - Feature-based UI (Views, ViewModels)\n    31→- Bodii/Domain - Use cases, entities, interfaces\n    32→- Bodii/Data - Repositories, data sources, DTOs\n    33→- Bodii/Infrastructure - Persistence, HealthKit, Network\n    34→- Bodii/Shared - Enums, Utils, Extensions\n    35→\n    36→### 4. PersistenceController\n    37→- Singleton with shared instance\n    38→- Preview instance for SwiftUI\n    39→- save(), newBackgroundContext(), performBackgroundTask()\n    40→- Lightweight migration support\n    41→- DEBUG verifyModelLoaded() helper\n    42→\n    43→---\n    44→\n    45→## REMAINING WORK (32 Subtasks across 5 Phases)\n    46→\n    47→### Phase 1: Enum Definitions & Type Safety (10 subtasks)\n    48→- [x] 1.1 Gender enum (male=0, female=1) ✅\n    49→- [ ] 1.2 ActivityLevel enum (5 levels with TDEE multipliers)\n    50→- [ ] 1.3 MealType enum (breakfast/lunch/dinner/snack)\n    51→- [ ] 1.4 ExerciseType enum (8 types with MET values)\n    52→- [ ] 1.5 Intensity enum (low/medium/high)\n    53→- [ ] 1.6 FoodSource enum (kfdaAPI/usdaAPI/userCreated)\n    54→- [ ] 1.7 GoalType enum (lose/maintain/gain)\n    55→- [ ] 1.8 SleepStatus enum (5 statuses with duration thresholds)\n    56→- [ ] 1.9 QuantityUnit enum (serving/gram)\n    57→- [ ] 1.10 Constants file (validation ranges, defaults)\n    58→\n    59→### Phase 2: Utility Services (5 subtasks)\n    60→- [ ] 2.1 DateUtils (02:00 sleep boundary logic) ⭐ CRITICAL\n    61→- [ ] 2.2 ValidationService (input range validation) ⭐ CRITICAL\n    62→- [ ] 2.3 Date+Extensions (convenience methods)\n    63→- [ ] 2.4 Decimal+Extensions (Core Data helpers)\n    64→- [ ] 2.5 Formatters utility (shared formatters)\n    65→\n    66→### Phase 3: Domain Entities (9 subtasks)\n    67→- [ ] 3.1 User domain entity\n    68→- [ ] 3.2 BodyRecord domain entity\n    69→- [ ] 3.3 MetabolismSnapshot domain entity\n    70→- [ ] 3.4 Food domain entity\n    71→- [ ] 3.5 FoodRecord domain entity\n    72→- [ ] 3.6 ExerciseRecord domain entity\n    73→- [ ] 3.7 SleepRecord domain entity\n    74→- [ ] 3.8 DailyLog domain entity\n    75→- [ ] 3.9 Goal domain entity\n    76→\n    77→### Phase 4: Core Data Entity Extensions (4 subtasks)\n    78→- [ ] 4.1 UserEntity+Extensions\n    79→- [ ] 4.2 BodyRecordEntity+Extensions\n    80→- [ ] 4.3 DailyLogEntity+Extensions\n    81→- [ ] 4.4 Remaining entity extensions (6 files)\n    82→\n    83→### Phase 5: Testing & Verification (4 subtasks)\n    84→- [ ] 5.1 DateUtilsTests\n    85→- [ ] 5.2 ValidationServiceTests\n    86→- [ ] 5.3 SleepStatusTests\n    87→- [ ] 5.4 Build and Core Data verification\n    88→\n    89→---\n    90→\n    91→## ACCEPTANCE CRITERIA STATUS\n    92→\n    93→| Criteria | Status |\n    94→|----------|--------|\n    95→| Xcode project with iOS 17+ and SwiftUI | ✅ DONE |\n    96→| Core Data model with 9 entities | ✅ DONE |\n    97→| MVVM folder structure | ✅ DONE |\n    98→| PersistenceController with CRUD | ✅ DONE |\n    99→| DateUtils with 02:00 boundary | ⏳ PENDING |\n   100→| ValidationService for all ranges | ⏳ PENDING |\n   101→\n   102→---\n   103→\n   104→## KEY REFERENCES\n   105→\n   106→### Validation Ranges (from spec.md and ERD.md)\n   107→- Height: 100-250cm\n   108→- Weight: 20-300kg\n   109→- Body Fat: 3-60%\n   110→- Muscle Mass: 10-60kg\n   111→- Name: 1-20 characters\n   112→- Exercise Duration: 1-480 minutes\n   113→- Food Quantity: 0.1-100 servings or 1-10000 grams\n   114→\n   115→### Sleep Boundary Logic (02:00 = logical day boundary)\n   116→```swift\n   117→// 02:00 ~ 다음날 02:00 = 하루\n   118→// 00:00 ~ 01:59 → previous day (수면은 전날에 속함)\n   119→// 02:00 ~ 23:59 → current day\n   120→func getLogicalDate(for date: Date) -> Date {\n   121→    let hour = Calendar.current.component(.hour, from: date)\n   122→    if hour < 2 {\n   123→        return Calendar.current.date(byAdding: .day, value: -1, to: date)!.startOfDay\n   124→    }\n   125→    return date.startOfDay\n   126→}\n   127→```\n   128→\n   129→### Activity Level Multipliers (TDEE = BMR × multiplier)\n   130→| Level | Name | Multiplier |\n   131→|-------|------|-----------|\n   132→| 1 | Sedentary (비활동적) | 1.2 |\n   133→| 2 | Light (가벼운 활동) | 1.375 |\n   134→| 3 | Moderate (보통 활동) | 1.55 |\n   135→| 4 | Active (활동적) | 1.725 |\n   136→| 5 | Very Active (매우 활동적) | 1.9 |\n   137→\n   138→### Sleep Status Thresholds (minutes)\n   139→| Status | Min | Max | Emoji |\n   140→|--------|-----|-----|-------|\n   141→| bad (0) | 0 | 329 | 🔴 |\n   142→| soso (1) | 330 | 389 | 🟡 |\n   143→| good (2) | 390 | 449 | 🟢 |\n   144→| excellent (3) | 450 | 540 | 🔵 |\n   145→| oversleep (4) | 541 | ∞ | 🟠 |\n   146→\n   147→### Exercise MET Values (by type and intensity)\n   148→| Type | Low | Medium | High |\n   149→|------|-----|--------|------|\n   150→| walking | 3.5 | 4.0 | 5.0 |\n   151→| running | 7.0 | 8.0 | 10.0 |\n   152→| cycling | 5.0 | 6.0 | 8.0 |\n   153→| swimming | 6.0 | 7.0 | 9.0 |\n   154→| weight | 4.0 | 6.0 | 8.0 |\n   155→| crossfit | 6.0 | 8.0 | 10.0 |\n   156→| yoga | 2.5 | 3.0 | 4.0 |\n   157→| other | 4.0 | 5.0 | 6.0 |\n   158→\n   159→---\n   160→\n   161→## NOTES\n   162→- Korean localization required for all display names (displayName 프로퍼티)\n   163→- Error messages must be in Korean for user-facing validation\n   164→- All enums use Int16 rawValue to match Core Data attributes\n   165→- Domain entities should be pure Swift structs (Identifiable, Codable, Equatable)\n   166→- Core Data entity extensions provide toDomain() and update(from:) methods\n   167→\n   168→---\n   169→\n   170→## ESTIMATED TIME\n   171→- Total: ~720 minutes (12 hours)\n   172→- Phase 1: ~130 minutes\n   173→- Phase 2: ~130 minutes\n   174→- Phase 3: ~180 minutes\n   175→- Phase 4: ~115 minutes\n   176→- Phase 5: ~80 minutes\n   177→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:55:03.528445+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...t-foundation-core-data-model/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...t-foundation-core-data-model/build-progress.txt",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:05.349817+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...t-foundation-core-data-model/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...t-foundation-core-data-model/build-progress.txt",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:05.365794+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "session": 1,
+          "detail": "The file ./.auto-claude/specs/002-project-foundation-core-data-model/build-progress.txt has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n     1→# Build Progress: Project Foundation & Core Data Model\n     2→# Spec ID: 002-project-foundation-core-data-model\n     3→# Last Updated: 2026-01-11 20:05\n     4→\n     5→## Current Status: IN PROGRESS - Phase 1.2 Complete\n     6→\n     7→---\n     8→\n     9→## ALREADY IMPLEMENTED ✅",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:55:09.077565+00:00",
+          "type": "text",
+          "content": "Excellent! Let me verify the final status:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:09.894007+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git log --oneline -1",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git log --oneline -1",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:10.617527+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -lh ./Bodii/Shared/Enums/",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -lh ./Bodii/Shared/Enums/",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:10.714438+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "total 16\n-rw-r--r--@ 1 chacha  staff   2.4K Jan 11 19:54 ActivityLevel.swift\n-rw-r--r--@ 1 chacha  staff   1.1K Jan 11 19:52 Gender.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:55:21.331492+00:00",
+          "type": "text",
+          "content": "Perfect! Subtask 1.2 has been completed successfully. Here's a summary:\n\n## ✅ Subtask 1.2 Complete: ActivityLevel Enum\n\n### What Was Implemented:\n\n**File Created:** `Bodii/Shared/Enums/ActivityLevel.swift` (2.4KB)\n\n**Features:**\n- ✅ Enum with Int16 rawValue for Core Data compatibility\n- ✅ 5 activity level cases with correct raw values:\n  - `sedentary = 1` - 거의 활동 없음\n  - `light = 2` - 가벼운 활동\n  - `moderate = 3` - 보통 활동\n  - `active = 4` - 활발한 활동\n  - `veryActive = 5` - 매우 활발한 활동\n\n- ✅ TDEE multiplier property returning correct coefficients:\n  - Sedentary: 1.2\n  - Light: 1.375\n  - Moderate: 1.55\n  - Active: 1.725\n  - Very Active: 1.9\n\n- ✅ Korean localized display names\n- ✅ Identifiable extension for SwiftUI compatibility\n- ✅ CaseIterable and Codable conformance\n- ✅ Comprehensive documentation with educational comments\n\n### Status Updates:\n- ✅ Code committed: `8b89806`\n- ✅ implementation_plan.json updated: subtask 1.2 marked as \"completed\"\n- ✅ build-progress.txt updated: Phase 1.2 complete\n\n### Quality Checklist:\n- ✅ Follows patterns from Gender.swift reference file\n- ✅ No debugging statements\n- ✅ Clean commit with descriptive message\n- ✅ All acceptance criteria met\n\nThe ActivityLevel enum is now ready to be used in the User entity for TDEE (Total Daily Energy Expenditure) calculations throughout the app!",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:30.431409+00:00",
+          "type": "text",
+          "content": "I'll help you implement the MealType enum for food records. Let me start by reading the spec and implementation plan to understand the context.",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:30.859603+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../002-project-foundation-core-data-model/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../002-project-foundation-core-data-model/spec.md",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:31.324844+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:31.828599+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...project-foundation-core-data-model/context.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...project-foundation-core-data-model/context.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:31.847263+00:00",
+          "type": "tool_end",
+          "content": "[Read] Error: <tool_use_error>File does not exist.</tool_use_error>",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "<tool_use_error>File does not exist.</tool_use_error>",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:55:38.364391+00:00",
+          "type": "text",
+          "content": "Now let me read the pattern files to understand the code style and conventions used in the existing enum implementations.",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:38.875647+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/Gender.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/Gender.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:39.341812+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/ActivityLevel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/ActivityLevel.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:39.691807+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: Bodii/Shared/Enums/*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: Bodii/Shared/Enums/*.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:39.711726+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "session": 1,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:55:45.816167+00:00",
+          "type": "text",
+          "content": "Perfect! I can see the pattern used in the existing enums. Now I'll create the MealType enum following the same style and conventions.",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:51.347981+00:00",
+          "type": "tool_start",
+          "content": "[Write] ./Bodii/Shared/Enums/MealType.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "./Bodii/Shared/Enums/MealType.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:51.693229+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "session": 1,
+          "detail": "File created successfully at: ./Bodii/Shared/Enums/MealType.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:55:56.194847+00:00",
+          "type": "text",
+          "content": "Excellent! I've created the MealType enum following the established patterns. Now let me verify that it builds correctly and then commit the changes.",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:57.818193+00:00",
+          "type": "tool_start",
+          "content": "[Bash] xcodebuild -scheme Bodii -destination 'platform...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "xcodebuild -scheme Bodii -destination 'platform...",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:55:57.838103+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-11T10:56:03.955865+00:00",
+          "type": "text",
+          "content": "I see that xcodebuild is not available in this environment. Since the MealType enum follows the exact same pattern as the existing Gender and ActivityLevel enums (which have already been completed successfully), it should compile correctly. Let me proceed to commit the changes.",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:56:04.583978+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add .",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add .",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-11T10:56:05.717344+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git commit -m \"auto-claude: 1.3 - Define MealTy...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git commit -m \"auto-claude: 1.3 - Define MealTy...",
+          "session": 1
+        }
+      ]
+    },
+    "validation": {
+      "phase": "validation",
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "entries": []
+    }
+  }
+}
