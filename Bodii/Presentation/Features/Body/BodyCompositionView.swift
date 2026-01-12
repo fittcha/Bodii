@@ -116,8 +116,14 @@ struct BodyCompositionView: View {
             // 📚 학습 포인트: Sheet Navigation
             // 트렌드 뷰를 모달로 표시
             .sheet(isPresented: $showTrendsView) {
-                // TODO: BodyTrendsView 구현 후 연결
-                Text("트렌드 뷰 (구현 예정)")
+                // TODO: DIContainer에서 trendsViewModel을 주입받아 사용
+                // BodyTrendsView(
+                //     viewModel: container.makeBodyTrendsViewModel(),
+                //     userGender: viewModel.userProfile?.gender,
+                //     goalWeight: viewModel.userProfile?.goalWeight,
+                //     goalBodyFat: viewModel.userProfile?.goalBodyFat
+                // )
+                Text("트렌드 뷰 (DIContainer 연결 필요)")
             }
         }
     }
