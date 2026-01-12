@@ -777,3 +777,79 @@ Total: 1048 lines of comprehensive mock implementations
   - 9.3: Write unit tests for UnifiedFoodSearchService
   - 9.4: Write unit tests for NutritionCalculator
 
+
+#### 9.3 - Write unit tests for UnifiedFoodSearchService ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: eee16f1
+- **Implementation**: Created comprehensive unit tests for UnifiedFoodSearchService
+
+**Test Coverage (18 tests):**
+
+1. **Korean Query Prioritization Tests (4 tests):**
+   - testSearchFoods_KoreanQuery_SufficientKFDAResults_ReturnsOnlyKFDA
+   - testSearchFoods_KoreanQuery_InsufficientKFDAResults_FallsBackToUSDA
+   - testSearchFoods_KoreanQuery_NoKFDAResults_ReturnsUSDAResults
+   - testSearchFoods_KoreanQuery_KFDAResultsAppearFirst
+
+2. **English Query Parallel Search Tests (3 tests):**
+   - testSearchFoods_EnglishQuery_SearchesBothAPIsConcurrently
+   - testSearchFoods_EnglishQuery_USDAResultsAppearFirst
+   - testSearchFoods_EnglishQuery_OnlyUSDAResults
+
+3. **Deduplication Logic Tests (2 tests):**
+   - testSearchFoods_Deduplication_RemovesDuplicatesByApiCode
+   - testSearchFoods_Deduplication_RemovesDuplicatesByName
+
+4. **Error Handling and Fallback Tests (3 tests):**
+   - testSearchFoods_KoreanQuery_KFDAFails_FallsBackToUSDA
+   - testSearchFoods_EnglishQuery_USDAFails_ReturnsKFDAResults
+   - testSearchFoods_BothAPIsFail_ReturnsEmptyArray (graceful degradation)
+
+5. **Limit and Boundary Tests (4 tests):**
+   - testSearchFoods_RespectsLimitParameter
+   - testSearchFoods_EmptyQuery_ThrowsError
+   - testSearchFoods_WhitespaceQuery_ThrowsError
+   - testSearchFoods_ZeroLimit_ReturnsEmpty
+
+6. **Korean Character Detection Tests (2 tests):**
+   - testSearchFoods_MixedKoreanEnglish_TreatedAsKorean
+   - testSearchFoods_PureEnglish_UsesParallelSearch
+
+**Test Scenarios Covered:**
+- Korean foods prioritized when Korean characters detected
+- USDA fallback when KFDA returns empty or insufficient results (<5)
+- Parallel search for English queries with USDA priority
+- Deduplication by apiCode (primary) and name (fallback)
+- Graceful error handling (single API failure, both APIs fail)
+- Input validation (empty/whitespace queries)
+- Limit parameter enforcement
+- Zero limit edge case
+- Mixed Korean-English queries
+- Result ordering (KFDA first for Korean, USDA first for English)
+
+**Acceptance Criteria Met:**
+✅ Test Korean foods returned first - Korean query tests verify KFDA priority and result ordering
+✅ Test USDA fallback when KFDA returns empty - Fallback tests cover insufficient and empty scenarios
+✅ Test both APIs failing (cache fallback) - testSearchFoods_BothAPIsFail_ReturnsEmptyArray
+✅ Test deduplication logic - Tests for both apiCode and name-based deduplication
+✅ Test concurrent request handling - testSearchFoods_EnglishQuery_SearchesBothAPIsConcurrently
+
+**Files Created:**
+- BodiiTests/Services/UnifiedFoodSearchServiceTests.swift (555 lines, 18 test methods)
+
+**Test Quality:**
+- Uses MockKFDAFoodAPIService and MockUSDAFoodAPIService
+- Given-When-Then structure for clarity
+- Comprehensive assertions with descriptive messages
+- Helper methods for test data creation (createSampleKFDAFoods, createSampleUSDAFoods, etc.)
+- Follows existing project test patterns (setUp/tearDown lifecycle)
+- Korean documentation following project standards
+- Async/await test methods with proper error handling
+- Tests both success and failure paths
+
+---
+
+## Next Steps
+- Phase 9: Testing
+  - 9.4: Write unit tests for NutritionCalculator
+

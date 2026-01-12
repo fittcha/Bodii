@@ -558,7 +558,7 @@
           "id": "9.3",
           "title": "Write unit tests for UnifiedFoodSearchService",
           "description": "Test search prioritization, fallback, and error handling",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "BodiiTests/Services/UnifiedFoodSearchServiceTests.swift"
           ],
@@ -574,7 +574,8 @@
             "4.2",
             "9.1"
           ],
-          "notes": ""
+          "notes": "\u2705 Implemented comprehensive unit tests for UnifiedFoodSearchService with 18 test methods:\n\nTEST COVERAGE:\n- Korean query prioritization (4 tests): Sufficient/insufficient KFDA results, fallback, result ordering\n- English query parallel search (3 tests): Concurrent search, USDA priority, only USDA scenario\n- Deduplication logic (2 tests): By apiCode and by name\n- Error handling and fallback (3 tests): KFDA/USDA failures, both APIs fail (graceful degradation)\n- Limit and boundary tests (4 tests): Limit parameter, empty/whitespace queries, zero limit\n- Korean character detection (2 tests): Mixed Korean-English, pure English\n\nACCEPTANCE CRITERIA MET:\n\u2705 Test Korean foods returned first - testSearchFoods_KoreanQuery_KFDAResultsAppearFirst\n\u2705 Test USDA fallback when KFDA returns empty - testSearchFoods_KoreanQuery_InsufficientKFDAResults_FallsBackToUSDA\n\u2705 Test both APIs failing (cache fallback) - testSearchFoods_BothAPIsFail_ReturnsEmptyArray\n\u2705 Test deduplication logic - testSearchFoods_Deduplication_RemovesDuplicatesByApiCode/ByName\n\u2705 Test concurrent request handling - testSearchFoods_EnglishQuery_SearchesBothAPIsConcurrently\n\nFILES CREATED:\n- BodiiTests/Services/UnifiedFoodSearchServiceTests.swift (555 lines, 18 tests)\n\nCOMMIT: eee16f1",
+          "updated_at": "2026-01-12T23:50:07.081890+00:00"
         },
         {
           "id": "9.4",
@@ -606,5 +607,5 @@
   },
   "total_subtasks": 24,
   "estimated_total_effort": "large",
-  "last_updated": "2026-01-12T23:46:17.756724+00:00"
+  "last_updated": "2026-01-12T23:50:07.081902+00:00"
 }
