@@ -44,11 +44,23 @@ struct ContentView: View {
     private var dashboardTab: some View {
         // 📚 학습 포인트: tabItem modifier
         // 탭 바에 표시될 아이콘과 텍스트 정의
-        PlaceholderView(title: "대시보드", systemImage: "chart.bar.fill")
-            .tabItem {
-                Label("대시보드", systemImage: "chart.bar.fill")
+        // TODO: Phase 6 (6.1, 6.2) - DIContainer에서 ViewModel 주입받도록 변경
+        // 현재는 임시로 직접 생성하여 사용
+        let bodyRepository = BodyRepository()
+        let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
+
+        return DashboardView(
+            metabolismViewModel: metabolismViewModel,
+            onNavigateToBody: {
+                // 📚 학습 포인트: Tab Navigation
+                // 대사율 카드 탭 시 체성분 탭으로 이동
+                selectedTab = .body
             }
-            .tag(Tab.dashboard)
+        )
+        .tabItem {
+            Label("대시보드", systemImage: "chart.bar.fill")
+        }
+        .tag(Tab.dashboard)
     }
 
     private var bodyTab: some View {
