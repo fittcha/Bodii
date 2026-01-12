@@ -3,9 +3,9 @@
   "title": "Body Composition Tracking with BMR/TDEE",
   "description": "Complete body composition logging system including height, weight, body fat percentage, muscle mass, with automatic BMR (Mifflin-St Jeor) and TDEE calculations. Visualize changes over time with Swift Charts graphs showing trends and goal progress.",
   "created_at": "2026-01-11T10:45:54.366Z",
-  "updated_at": "2026-01-12T00:00:00Z",
+  "updated_at": "2026-01-12T02:58:30.068Z",
   "status": "in_progress",
-  "planStatus": "ready",
+  "planStatus": "in_progress",
   "phases": [
     {
       "id": "phase-1",
@@ -148,8 +148,8 @@
             "Includes performance requirements (<0.5s)"
           ],
           "estimated_complexity": "low",
-          "notes": "BodyRepositoryProtocol created with comprehensive interface for body composition data operations. Includes CRUD operations (save, fetch by id/date/latest, fetchAll, date range queries, update, delete), async/await based methods, and performance requirements (<0.5s). Defined BodyCompositionStatistics struct for aggregate queries and RepositoryError enum for proper error handling. Protocol includes methods for: single record fetch, date range queries (from/to dates, recent N days), metabolism data retrieval, and statistics calculation. Follows established patterns with extensive Korean documentation, learning points, and Java comparisons.",
-          "updated_at": "2026-01-12T00:05:00.000000+00:00"
+          "notes": "BodyRepositoryProtocol fully implemented with comprehensive CRUD operations, async/await interface, date range queries for trends, and performance requirements (<0.5s) documented. Includes:\n- CRUD operations: save, fetch (by id, by date, latest), fetchAll, update, delete\n- Date range queries: fetch(from:to:), fetchRecent(days:) for trend charts\n- Metabolism data queries: fetchMetabolismData(for:)\n- Statistics aggregation: fetchStatistics(from:to:)\n- Error handling: RepositoryError enum with localized messages\n- Supporting types: BodyCompositionStatistics struct\n- Comprehensive Korean documentation with learning points and Java comparisons\n- All methods use async/await for modern Swift concurrency\n- Performance targets specified for each operation\nAlready committed in 87c3e2b.",
+          "updated_at": "2026-01-12T02:59:26.745457+00:00"
         }
       ]
     },
@@ -163,7 +163,7 @@
           "id": "2.1",
           "title": "Create BodyRecordMapper for Core Data entity mapping",
           "description": "Implement mapper to convert between BodyRecord (Core Data) and BodyCompositionEntry (Domain)",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Data/Mappers/BodyRecordMapper.swift"
           ],
@@ -172,13 +172,15 @@
             "Handles optional values safely",
             "Decimal precision preserved"
           ],
-          "estimated_complexity": "low"
+          "estimated_complexity": "low",
+          "notes": "BodyRecordMapper implemented with bidirectional conversion between Core Data BodyRecord and Domain BodyCompositionEntry. Includes safe optional handling, Decimal precision preservation, error handling with custom MappingError enum, convenience methods for create/update/save operations, and comprehensive Korean documentation following established code patterns. Committed in d714bf8.",
+          "updated_at": "2026-01-12T03:01:52.109364+00:00"
         },
         {
           "id": "2.2",
           "title": "Create MetabolismSnapshotMapper",
           "description": "Implement mapper for MetabolismSnapshot Core Data entity to domain entity",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Data/Mappers/MetabolismSnapshotMapper.swift"
           ],
@@ -187,7 +189,9 @@
             "Handles ActivityLevel enum conversion",
             "Preserves calculation precision"
           ],
-          "estimated_complexity": "low"
+          "estimated_complexity": "low",
+          "notes": "MetabolismSnapshotMapper implemented with bidirectional conversion between Core Data MetabolismSnapshot and Domain MetabolismData. Includes ActivityLevel enum conversion (Int16 ↔ ActivityLevel), field name mapping (bodyFatPct ↔ bodyFatPercent), Decimal precision preservation, error handling with custom MappingError enum, and convenience methods for create/update/save operations. Comprehensive Korean documentation follows established patterns. Committed in 60d759d.",
+          "updated_at": "2026-01-12T03:05:30.000000+00:00"
         },
         {
           "id": "2.3",
@@ -696,5 +700,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-12T00:00:16.878344+00:00"
+  "last_updated": "2026-01-12T03:01:52.109373+00:00"
 }
