@@ -279,7 +279,7 @@
           "id": "3.1",
           "title": "Create BodyCompositionViewModel",
           "description": "Implement ViewModel for body composition input and history display",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Presentation/Features/Body/BodyCompositionViewModel.swift"
           ],
@@ -290,7 +290,9 @@
             "Loads and displays history",
             "Handles loading and error states"
           ],
-          "estimated_complexity": "high"
+          "estimated_complexity": "high",
+          "notes": "BodyCompositionViewModel fully implemented with comprehensive functionality:\n- Input state management: weight, bodyFatPercent, muscleMass with @Published properties for SwiftUI binding\n- Real-time input validation with specific error messages (weight: 20-500kg, body fat: 1-60%, muscle: 10-100kg)\n- Async save operation using RecordBodyCompositionUseCase for automatic BMR/TDEE calculation\n- History loading from BodyRepositoryProtocol (recent 30 days)\n- Latest metabolism data display for dashboard integration\n- Loading and error state management with user-friendly Korean error messages\n- Success feedback with auto-dismiss after 3 seconds for better UX\n- Delete operation with optimistic UI update\n- Input field clearing and validation methods\n- UserProfile management for BMR/TDEE calculations\n- Follows MVVM pattern with @MainActor for UI thread safety\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- Includes computed properties: isInputValid, canSave for UI state control\n- Helper methods for formatting and validation\n- Preview support structure for SwiftUI previews (to be implemented with MockBodyRepository)\n\nAll acceptance criteria met:\n\u2705 Manages input state for weight, body fat %, muscle mass\n\u2705 Validates inputs with appropriate ranges\n\u2705 Triggers BMR/TDEE calculation on save\n\u2705 Loads and displays history\n\u2705 Handles loading and error states\n\nCommitted in e6c6123.",
+          "updated_at": "2026-01-12T10:32:24.485966+00:00"
         },
         {
           "id": "3.2",
@@ -708,5 +710,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-12T10:29:29.615760+00:00"
+  "last_updated": "2026-01-12T10:32:24.485975+00:00"
 }
