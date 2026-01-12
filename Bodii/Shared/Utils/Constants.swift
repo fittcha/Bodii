@@ -153,6 +153,57 @@ enum Constants {
         enum Vision {
             static let monthlyFreeRequests: Int = 1000
         }
+
+        /// 식약처(KFDA) API 설정
+        enum KFDA {
+            /// 기본 페이지 크기
+            static let defaultPageSize: Int = 10
+
+            /// 최대 페이지 크기
+            static let maxPageSize: Int = 100
+
+            /// API 타임아웃 (초)
+            static let timeout: TimeInterval = 30
+
+            /// 최대 재시도 횟수
+            static let maxRetries: Int = 2
+        }
+
+        /// USDA FoodData Central API 설정
+        enum USDA {
+            /// 기본 페이지 크기
+            static let defaultPageSize: Int = 25
+
+            /// 최대 페이지 크기
+            static let maxPageSize: Int = 200
+
+            /// API 타임아웃 (초)
+            static let timeout: TimeInterval = 30
+
+            /// 최대 재시도 횟수
+            static let maxRetries: Int = 2
+
+            /// DEMO_KEY rate limits
+            enum DemoKeyLimits {
+                /// 시간당 요청 제한
+                static let requestsPerHour: Int = 30
+
+                /// 일일 요청 제한
+                static let requestsPerDay: Int = 50
+            }
+        }
+
+        /// 식품 검색 캐시 설정
+        enum FoodCache {
+            /// 캐시 최대 크기 (개수)
+            static let maxCachedFoods: Int = 500
+
+            /// 캐시 유효 기간 (일)
+            static let cacheExpirationDays: Int = 30
+
+            /// 최근 검색 식품 표시 개수
+            static let recentFoodsCount: Int = 10
+        }
     }
 
     // MARK: - HealthKit Sync
