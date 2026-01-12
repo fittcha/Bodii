@@ -602,7 +602,7 @@
           "id": "7.2",
           "title": "Create Decimal+Extensions for formatting",
           "description": "Extensions for Decimal formatting and display",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Shared/Extensions/Decimal+Extensions.swift"
           ],
@@ -611,7 +611,9 @@
             "Format to 0 decimal for calories",
             "Locale-aware formatting"
           ],
-          "estimated_complexity": "low"
+          "estimated_complexity": "low",
+          "notes": "Decimal+Extensions.swift fully implemented with comprehensive formatting utilities:\n\n\u2705 All acceptance criteria met:\n- Format to 1 decimal place for display (formatted(decimalPlaces:) with default 1)\n- Format to 0 decimal for calories (formattedAsCalories())\n- Locale-aware formatting (formatted(locale:decimalPlaces:))\n\nKey features implemented:\n- Display formatting methods: formatted(), formattedAsCalories(), formattedAsPercent(), formattedAsWeight()\n- Locale-aware formatting with support for international number formats\n- Rounding helpers: roundedInt(), rounded(toPlaces:)\n- Validation helpers: isValid property for NaN checks\n- String conversion: toDecimal(locale:) for TextField inputs\n\nAll methods follow established code patterns:\n- Comprehensive Korean documentation with \ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8 and \ud83d\udca1 Java \ube44\uad50\n- Uses NumberFormatter for locale-aware formatting\n- Provides sample data and usage examples\n- Includes extensive documentation section explaining when to use each method\n\nThis centralizes all Decimal formatting logic used throughout the app, replacing duplicate formatDecimal/formatCalories methods in views.\n\nCommitted in bd4b5d6.",
+          "updated_at": "2026-01-12T22:50:21.725154+00:00"
         }
       ]
     },
@@ -740,5 +742,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-12T22:47:22.709437+00:00"
+  "last_updated": "2026-01-12T22:50:21.725163+00:00"
 }
