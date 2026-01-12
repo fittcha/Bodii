@@ -1,254 +1,83 @@
 # Build Progress - 002-project-foundation-core-data-model
 
-## Subtask 1.7: Define GoalType enum for user goals
+## Subtask 2.3: Create Date+Extensions
 
 ### Status: ✅ COMPLETED
 
 ### Summary
-The GoalType enum was already implemented and committed (commit 3fab35a). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
+The Date+Extensions file was already fully implemented and committed (commit 96c7cc6). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
 
 ### Implementation Details
-- **File**: `Bodii/Shared/Enums/GoalType.swift`
-- **Enum Type**: `Int16` rawValue for Core Data compatibility
-- **Cases**:
-  - `lose = 0` - 감량 (Weight Loss)
-  - `maintain = 1` - 유지 (Maintain)
-  - `gain = 2` - 증량 (Weight Gain)
-- **Protocols**: CaseIterable, Codable, Identifiable
-- **Display Names**: Korean localized strings via `displayName` property
+- **File**: `Bodii/Shared/Extensions/Date+Extensions.swift`
+- **Purpose**: Provides convenient instance methods and computed properties for Date type
+- **Pattern**: Extensions delegate to DateUtils for actual implementation, providing cleaner API
+- **Key Features**:
+  - Computed properties for natural syntax (`date.startOfDay` vs `DateUtils.startOfDay(for: date)`)
+  - Instance methods for better readability (`date1.isSameDay(as: date2)`)
+  - Static methods for age calculation
+  - Type-safe FormatStyle enum for date formatting
 
-### Acceptance Criteria Verification
-✅ GoalType enum with rawValue Int16
-✅ Cases: lose (0), maintain (1), gain (2)
-✅ Korean localized display names
-✅ Follows project patterns (same structure as Gender, MealType, FoodSource)
-✅ Identifiable extension using rawValue as id
-✅ CaseIterable and Codable conformance
+### Implemented Methods
+✅ **startOfDay** - Computed property returning 00:00:00 of the date
+✅ **endOfDay** - Computed property returning 23:59:59 of the date
+✅ **isSameDay(as:)** - Instance method comparing if two dates are the same day
+✅ **isToday** - Computed property checking if date is today
+✅ **daysBetween(and:)** - Instance method calculating days between dates
+✅ **age(from:referenceDate:)** - Static method calculating age from birth date
+✅ **formatted(style:)** - Instance method for Korean locale date formatting
 
-### Commits
-- 3fab35a: auto-claude: 1.7 - Define GoalType enum for user goals
-- f25afd0: auto-claude: Mark subtask 1.7 (GoalType enum) as completed (earlier iteration)
+### FormatStyle Enum
+The implementation includes a nested FormatStyle enum for type-safe formatting:
+- **full**: "yyyy년 MM월 dd일" (e.g., "2024년 01월 15일")
+- **short**: "M월 d일" (e.g., "1월 15일")
+- **withWeekday**: "M월 d일 (E)" (e.g., "1월 15일 (월)")
+- **time**: "HH:mm" (e.g., "14:30")
+- **dateTime**: "M월 d일 HH:mm" (e.g., "1월 15일 14:30")
 
-### Next Steps
-The next pending subtasks in Phase 1 are:
-- 1.8: Create SleepStatus Enum ✅ COMPLETED
-- 1.9: Create QuantityUnit Enum ✅ COMPLETED
-- 1.10: Create Constants File
-
----
-
-## Subtask 1.9: Define QuantityUnit enum for food quantity units
-
-### Status: ✅ COMPLETED
-
-### Summary
-The QuantityUnit enum was already implemented and committed (commit c4e96c6). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
-
-### Implementation Details
-- **File**: `Bodii/Shared/Enums/QuantityUnit.swift`
-- **Enum Type**: `Int16` rawValue for Core Data compatibility
-- **Cases**:
-  - `serving = 0` - 인분 (Serving)
-  - `gram = 1` - 그램 (Gram)
-- **Protocols**: CaseIterable, Codable, Identifiable
-- **Display Names**: Korean localized strings via `displayName` property
-
-### Acceptance Criteria Verification
-✅ QuantityUnit enum with rawValue Int16
-✅ Cases: serving (0), gram (1)
-✅ Korean localized display names (인분, 그램)
-✅ Follows project patterns (same structure as Gender, MealType, GoalType)
-✅ Identifiable extension using rawValue as id
-✅ CaseIterable and Codable conformance
-
-### Commits
-- c4e96c6: auto-claude: 1.9 - Define QuantityUnit enum for food quantity units
-
-### Next Steps
-Phase 1 (Enum Definitions & Type Safety) is almost complete! Only one subtask remains:
-- 1.10: Create Constants File
-
----
-
-## Subtask 1.10: Define app-wide constants for validation limits and default values
-
-### Status: ✅ COMPLETED
-
-### Summary
-The Constants file was already implemented and committed (commit 386bd3c). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status. **Phase 1 (Enum Definitions & Type Safety) is now 100% complete!**
-
-### Implementation Details
-- **File**: `Bodii/Shared/Utils/Constants.swift`
-- **Structure**: Nested enum namespaces to prevent instantiation
-- **Organized into categories**:
-  - **Validation**: Input validation ranges for all user inputs
-  - **Sleep**: Sleep boundary hour configuration
-  - **Defaults**: Default values for user preferences
-  - **BMR**: Basal Metabolic Rate calculation constants (Mifflin-St Jeor equation)
-  - **TDEE**: Total Daily Energy Expenditure references
-  - **CalorieAdjustment**: Weight change calculations
-  - **MacroRatios**: Macronutrient calorie conversions
-  - **BodyComposition**: Body composition formulas
-
-### Validation Ranges Implemented
-✅ **Height**: 100-250 cm (Constants.Validation.Height)
-✅ **Weight**: 20-300 kg (Constants.Validation.Weight)
-✅ **Body Fat Percent**: 3-60% (Constants.Validation.BodyFatPercent)
-✅ **Muscle Mass**: 10-60 kg (Constants.Validation.MuscleMass)
-✅ **Birth Year**: 1900-current year (Constants.Validation.BirthYear)
-✅ **Name**: 1-20 characters (Constants.Validation.Name)
-✅ **Exercise Duration**: 1-480 minutes (Constants.Validation.ExerciseDuration)
-✅ **Serving Quantity**: 0.1-100 servings (Constants.Validation.ServingQuantity)
-✅ **Gram Quantity**: 1-10,000 grams (Constants.Validation.GramQuantity)
-
-### Sleep Boundary
-✅ **Boundary Hour**: 2 (02:00) - times before 02:00 count as previous day
-
-### Default Values
-✅ **Activity Level**: 3 (ActivityLevel.moderate)
-✅ **Serving Size**: 100.0 grams
-✅ **Goal Type**: 1 (GoalType.maintain)
-
-### Calculation Constants
-✅ **BMR (Male)**: weight×10 + height×6.25 - age×5 + 5
-✅ **BMR (Female)**: weight×10 + height×6.25 - age×5 - 161
-✅ **TDEE**: References ActivityLevel.multiplier (1.2 to 1.9)
-✅ **Calorie/Weight**: 7,700 kcal per kg
-✅ **Safe Weight Change**: max loss 1kg/week, max gain 0.5kg/week
-✅ **Macro Calories**: carbs 4 kcal/g, protein 4 kcal/g, fat 9 kcal/g
-
-### Acceptance Criteria Verification
-✅ Validation ranges: height 100-250cm, weight 20-300kg, bodyFat 3-60%, etc.
-✅ Sleep boundary hour: 2
-✅ Default activity level, serving size defaults
-✅ Calculation constants for BMR/TDEE
-✅ Nested enum structure for organization
-✅ Korean documentation comments following project patterns
-✅ Static properties preventing modification
-
-### Commits
-- 386bd3c: auto-claude: 1.10 - Define app-wide constants for validation limits and default values
-
-### Next Steps
-🎉 **Phase 1 Complete!** All 10 subtasks in "Enum Definitions & Type Safety" are done.
-
-**Phase 2 (Utility Services)** can now begin with these pending subtasks:
-- 2.1: Create DateUtils (02:00 sleep boundary logic)
-- 2.2: Create ValidationService (uses Constants for validation ranges)
-- 2.3: Create Date+Extensions
-- 2.4: Create Decimal+Extensions
-- 2.5: Create Formatters Utility
-
----
-
-## Subtask 2.1: Create DateUtils
-
-### Status: ✅ COMPLETED
-
-### Summary
-The DateUtils utility was already fully implemented and committed (commit c39c4cd). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
-
-### Implementation Details
-- **File**: `Bodii/Shared/Utils/DateUtils.swift`
-- **Structure**: Static enum as namespace (prevents instantiation)
-- **Sleep Boundary Logic**: Implements 02:00 boundary for logical date calculation
-- **Key Methods**:
-  - `getLogicalDate(for:)` - Returns previous day if hour < 2, current day if hour ≥ 2
-  - `isNewDayForSleep(at:)` - Checks if time is past 02:00 boundary
-  - `startOfDay(for:)` - Returns 00:00:00 for a date
-  - `endOfDay(for:)` - Returns 23:59:59 for a date
-  - `format(_:format:)` - Formats date with Korean locale
-  - `formatFullDate(_:)` - "yyyy년 MM월 dd일" format
-  - `formatShortDate(_:)` - "M월 d일" format
-  - `formatDateWithWeekday(_:)` - "M월 d일 (E)" format
-  - `formatTime(_:)` - "HH:mm" format
-  - `formatDateTime(_:)` - "M월 d일 HH:mm" format
-  - `isSameDay(_:_:)` - Compares if two dates are same day
-  - `isToday(_:)` - Checks if date is today
-  - `daysBetween(_:and:)` - Calculates days between two dates
-  - `age(from:referenceDate:)` - Calculates age from birth date
-
-### Sleep Boundary Logic Details
-**Critical Implementation**: The 02:00 boundary logic correctly handles:
-- ✅ 00:00 ~ 01:59 → Returns **previous day** (still part of previous day's activity)
-- ✅ 02:00 ~ 23:59 → Returns **current day** (new day begins)
-
-**Examples**:
+### Examples
 ```swift
-// 2024-01-02 01:59 → 2024-01-01 (previous day)
-// 2024-01-02 02:00 → 2024-01-02 (current day)
-// 2024-01-02 12:00 → 2024-01-02 (current day)
+let today = Date()
+let dayStart = today.startOfDay // 오늘 00:00:00
+let dayEnd = today.endOfDay // 오늘 23:59:59
+let isSame = today.isSameDay(as: otherDate) // Boolean comparison
+let age = Date.age(from: birthDate) // Calculate age from birth date
+let formatted = today.formatted(style: .full) // "2024년 01월 15일"
 ```
 
 ### Acceptance Criteria Verification
-✅ `getLogicalDate(for:)` returns previous day if hour < 2 (02:00)
-✅ `isNewDayForSleep(at:)` checks if time is past 02:00 boundary
-✅ `startOfDay(for:)` and `endOfDay(for:)` helpers
-✅ Date formatting utilities for Korean locale (multiple format methods)
-✅ Comprehensive documentation with examples (Korean docs throughout)
-✅ Uses Constants.Sleep.boundaryHour for maintainability
-✅ Static shared DateFormatter for performance optimization
-✅ Additional utility methods for date comparison and age calculation
+✅ startOfDay computed property
+✅ endOfDay computed property
+✅ age(from birthDate:) static method for calculating age
+✅ isSameDay(as:) comparison method
+✅ isToday computed property
+✅ daysBetween(and:) method
+✅ formatted(style:) for Korean date formatting
+✅ Follows project patterns (Korean docs, learning points, Java/Kotlin comparisons)
+✅ Comprehensive documentation with examples
 
 ### Commits
-- c39c4cd: auto-claude: 2.1 - Utility for date handling with 02:00 sleep boundary logic
+- 96c7cc6: auto-claude: 2.3 - Convenience extensions for Date type
 
 ### Next Steps
-**Phase 2 (Utility Services)** - Remaining subtasks:
+**Phase 2 (Utility Services)** - Progress: 3/5 completed (60%)
+- 2.1: Create DateUtils ✅ COMPLETED
 - 2.2: Create ValidationService ✅ COMPLETED
-- 2.3: Create Date+Extensions ⏳ PENDING
+- 2.3: Create Date+Extensions ✅ COMPLETED
 - 2.4: Create Decimal+Extensions ⏳ PENDING
 - 2.5: Create Formatters Utility ⏳ PENDING
+
+### Notes
+The Date+Extensions provides a more SwiftUI-friendly API by adding instance methods and computed properties to the Date type. All methods delegate to DateUtils for consistency and maintainability. This pattern is common in Swift - having both utility classes and convenience extensions.
+
+The FormatStyle enum provides type-safe date formatting, preventing string-based format errors and making code more readable.
 
 ---
 
-## Subtask 2.2: Create ValidationService
+## Overall Progress
+- **Phase 1** (Enum Definitions & Type Safety): ✅ 10/10 completed (100%)
+- **Phase 2** (Utility Services): 🔄 3/5 completed (60%)
+- **Phase 3** (Domain Entities): ⏳ 0/9 completed (0%)
+- **Phase 4** (Core Data Entity Extensions): ⏳ 0/4 completed (0%)
+- **Phase 5** (Testing & Verification): ⏳ 0/4 completed (0%)
 
-### Status: ✅ COMPLETED
-
-### Summary
-The ValidationService was already fully implemented and committed (commit ba7669a). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
-
-### Implementation Details
-- **File**: `Bodii/Shared/Utils/ValidationService.swift`
-- **Structure**: Static enum as namespace (prevents instantiation)
-- **ValidationResult**: Struct with isValid (Bool) and errorMessage (String?) properties
-- **All Validation Methods Implemented**:
-  - validateHeight (100-250cm)
-  - validateWeight (20-300kg)
-  - validateBodyFatPercent (3-60%)
-  - validateMuscleMass (10-60kg)
-  - validateAge (birth year 1900-current year)
-  - validateName (1-20 chars, non-empty)
-  - validateExerciseDuration (1-480 minutes)
-  - validateFoodQuantity (0.1-100 servings or 1-10000g)
-- **Bonus Method**: validateBodyComposition for body composition consistency checking
-
-### Key Features
-✅ Uses Constants.Validation for all validation ranges
-✅ User-friendly Korean error messages
-✅ Follows project patterns with 📚 and 💡 learning points
-✅ Comprehensive documentation with examples
-✅ MARK sections for organization
-✅ ValidationResult with static success and failure(message:) factory methods
-
-### Acceptance Criteria Verification
-✅ validateHeight: 100-250cm
-✅ validateWeight: 20-300kg
-✅ validateBodyFatPercent: 3-60%
-✅ validateMuscleMass: 10-60kg
-✅ validateAge: birth year 1900 to current year
-✅ validateName: 1-20 characters, non-empty
-✅ validateExerciseDuration: 1-480 minutes
-✅ validateFoodQuantity: 0.1-100 servings or 1-10000 grams
-✅ ValidationResult type with isValid, errorMessage properties
-✅ Korean error messages (all error messages are user-friendly in Korean)
-
-### Commits
-- ba7669a: auto-claude: 2.2 - Input validation service with all range checks from spec
-
-### Next Steps
-**Phase 2 (Utility Services)** - Remaining subtasks:
-- 2.3: Create Date+Extensions ⏳ PENDING
-- 2.4: Create Decimal+Extensions ⏳ PENDING
-- 2.5: Create Formatters Utility ⏳ PENDING
+**Total Progress**: 13/32 subtasks completed (41%)
