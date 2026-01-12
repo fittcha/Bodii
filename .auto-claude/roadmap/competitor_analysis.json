@@ -1,0 +1,430 @@
+{
+  "project_context": {
+    "project_name": "Bodii",
+    "project_type": "iOS Health Tracking Mobile App",
+    "target_audience": "Korean health-conscious individuals aged 20-45 who want to systematically track body composition, diet, exercise, and sleep"
+  },
+  "competitors": [
+    {
+      "id": "competitor-1",
+      "name": "MyFitnessPal",
+      "url": "https://www.myfitnesspal.com",
+      "description": "The world's largest calorie tracking app with 200M+ users, extensive food database, and barcode scanning",
+      "relevance": "high",
+      "pain_points": [
+        {
+          "id": "pain-1-1",
+          "description": "Weak Korean food database - users must manually search with variations or create custom entries for Korean dishes",
+          "source": "MyFitnessPal Community Forums (community.myfitnesspal.com/en/discussion/1119399/korean-food-help)",
+          "severity": "high",
+          "frequency": "Common among international users",
+          "opportunity": "Bodii integrates KFDA (Korean Food & Drug Administration) API for comprehensive Korean food data"
+        },
+        {
+          "id": "pain-1-2",
+          "description": "User-submitted database entries contain frequent accuracy errors - missing macros, wrong serving sizes, raw vs cooked confusion",
+          "source": "Trustpilot reviews, PissedConsumer (1.5 stars from 156 reviews), Sitejabber (2.7 stars)",
+          "severity": "high",
+          "frequency": "Very common - cited in most negative reviews",
+          "opportunity": "Use verified government API data (KFDA, USDA) for accurate nutrition information"
+        },
+        {
+          "id": "pain-1-3",
+          "description": "Premium subscription too expensive ($20/month) with features like barcode scanning moved behind paywall",
+          "source": "FeastGood.com review, Trustpilot reviews",
+          "severity": "medium",
+          "frequency": "Common complaint in reviews",
+          "opportunity": "Offer core features free, use free-tier APIs to minimize costs"
+        },
+        {
+          "id": "pain-1-4",
+          "description": "Poor customer support - no phone/email, BBB notes 18 unanswered complaints, cancellation difficulties",
+          "source": "BBB (bbb.org/us/ca/san-francisco/profile/online-shopping/myfitnesspal-1116-539525/complaints)",
+          "severity": "medium",
+          "frequency": "Significant - BBB documented issue",
+          "opportunity": "Focus on app quality to reduce support needs"
+        },
+        {
+          "id": "pain-1-5",
+          "description": "App updates made interface clunky and slow, removed previously available functions",
+          "source": "MyFitnessPal Community Forums, Sitejabber reviews",
+          "severity": "medium",
+          "frequency": "Common in recent reviews",
+          "opportunity": "Design clean, performant UI with SwiftUI"
+        }
+      ],
+      "strengths": ["Largest food database with 20M+ foods", "Barcode scanning for packaged foods", "Extensive third-party integrations", "4.7 stars on App Store despite complaints", "Strong brand recognition"],
+      "market_position": "Market leader in calorie tracking globally, but weak on international cuisines"
+    },
+    {
+      "id": "competitor-2",
+      "name": "Noom",
+      "url": "https://www.noom.com",
+      "description": "Psychology-based weight loss app with coaching, food logging, and behavioral change focus",
+      "relevance": "high",
+      "pain_points": [
+        {
+          "id": "pain-2-1",
+          "description": "Aggressive billing practices - BBB D rating, $62M class action settlement for billing users after trial cancellation",
+          "source": "BBB (1,200+ complaints), Consumer Affairs, WebMD review",
+          "severity": "high",
+          "frequency": "Extremely common - led to lawsuit settlement",
+          "opportunity": "No subscription required for core features, transparent pricing"
+        },
+        {
+          "id": "pain-2-2",
+          "description": "Very expensive subscription ($120+ for multiple months) - users feel features don't justify cost",
+          "source": "Trustpilot, Consumer Affairs reviews",
+          "severity": "high",
+          "frequency": "Very common complaint",
+          "opportunity": "Free tier with free API usage for core functionality"
+        },
+        {
+          "id": "pain-2-3",
+          "description": "Food logging frustration - foods not in library, tedious to enter weight/volume/calories manually",
+          "source": "Noom user reviews, Trustpilot, Consumer Affairs",
+          "severity": "medium",
+          "frequency": "Common user complaint",
+          "opportunity": "AI-powered food recognition (Phase 2), comprehensive Korean food database"
+        },
+        {
+          "id": "pain-2-4",
+          "description": "App crashes, freezes, doesn't save data, barcode feature malfunctions",
+          "source": "App Store reviews, Trustpilot reviews",
+          "severity": "medium",
+          "frequency": "Mentioned in multiple reviews",
+          "opportunity": "Native iOS development with Core Data for reliable local storage"
+        },
+        {
+          "id": "pain-2-5",
+          "description": "Coaching is inconsistent - 'revolving door' of coaches, copy-paste responses, lack of personalization",
+          "source": "Consumer Affairs, Trustpilot reviews",
+          "severity": "medium",
+          "frequency": "Common complaint",
+          "opportunity": "AI-powered personalized diet comments with Gemini (consistent, always available)"
+        }
+      ],
+      "strengths": ["Psychology-based behavioral change approach", "4.7 stars on App Store (801K reviews)", "Comprehensive onboarding assessment", "Noom Body Scan for 3D body composition"],
+      "market_position": "Premium psychology-focused weight loss platform with high churn due to pricing"
+    },
+    {
+      "id": "competitor-3",
+      "name": "Samsung Health",
+      "url": "https://www.samsung.com/global/galaxy/apps/samsung-health/",
+      "description": "Samsung's comprehensive health tracking ecosystem with wearable integration",
+      "relevance": "medium",
+      "pain_points": [
+        {
+          "id": "pain-3-1",
+          "description": "Android-focused ecosystem - limited value for iOS users without Samsung wearables",
+          "source": "App functionality, platform restrictions",
+          "severity": "high",
+          "frequency": "Structural limitation",
+          "opportunity": "iOS-first development with Apple Health/HealthKit integration"
+        },
+        {
+          "id": "pain-3-2",
+          "description": "Syncing issues between watch and app - exercise data shows 0 despite watch showing 120 minutes",
+          "source": "Samsung Community Forums (us.community.samsung.com)",
+          "severity": "high",
+          "frequency": "Very common in forums",
+          "opportunity": "Reliable local-first data storage with Core Data"
+        },
+        {
+          "id": "pain-3-3",
+          "description": "Sleep tracking shows inaccurate data - marking users awake for half the night, wrong sleep recommendations",
+          "source": "Samsung Community Forums, EU Samsung Community",
+          "severity": "medium",
+          "frequency": "Common complaint",
+          "opportunity": "Manual sleep entry with simple popup, HealthKit integration for data"
+        },
+        {
+          "id": "pain-3-4",
+          "description": "App crashing on pre-2024 devices, especially during sync with wearables",
+          "source": "Samsung official confirmation, Sammy Fans news",
+          "severity": "medium",
+          "frequency": "Confirmed widespread issue",
+          "opportunity": "Stable standalone app not dependent on external devices"
+        },
+        {
+          "id": "pain-3-5",
+          "description": "Food search issues - language/region settings cause foods not to be found",
+          "source": "Samsung Health update notes (November 2024)",
+          "severity": "medium",
+          "frequency": "Common enough for dedicated fix",
+          "opportunity": "Korean-first food database with KFDA integration"
+        }
+      ],
+      "strengths": ["Deep Samsung wearable integration", "Comprehensive health metrics dashboard", "Free with Samsung devices", "Good sleep and activity tracking with Galaxy Watch"],
+      "market_position": "Samsung ecosystem health hub, limited appeal outside Samsung users"
+    },
+    {
+      "id": "competitor-4",
+      "name": "YAZIO",
+      "url": "https://www.yazio.com",
+      "description": "European calorie counter and intermittent fasting app with AI features",
+      "relevance": "medium",
+      "pain_points": [
+        {
+          "id": "pain-4-1",
+          "description": "European-focused food database - items scanned often not found even though they exist in MyFitnessPal",
+          "source": "Kimola customer feedback report, Trustpilot reviews",
+          "severity": "high",
+          "frequency": "Common complaint",
+          "opportunity": "KFDA + USDA integration for Korean and international foods"
+        },
+        {
+          "id": "pain-4-2",
+          "description": "Annoying UI - 3-4 unnecessary animations per meal, 'healthy tips' after logging described as 'judgy' and triggering for eating disorders",
+          "source": "Kimola report, App Store reviews",
+          "severity": "medium",
+          "frequency": "Frequently mentioned",
+          "opportunity": "Clean, non-judgmental UI focused on data, not lectures"
+        },
+        {
+          "id": "pain-4-3",
+          "description": "Database entries often incorrect - calorie amounts 'off by quite a bit', misleading gram measurements",
+          "source": "Fit Desk Life review, user feedback",
+          "severity": "medium",
+          "frequency": "Common complaint",
+          "opportunity": "Verified government nutrition data from KFDA/USDA"
+        },
+        {
+          "id": "pain-4-4",
+          "description": "Limited free version - 'NOTHING accessible except calorie tracker', immediately pushes $30/year subscription",
+          "source": "JustUseApp reviews, Trustpilot",
+          "severity": "medium",
+          "frequency": "Common complaint",
+          "opportunity": "Generous free tier using free API quotas"
+        },
+        {
+          "id": "pain-4-5",
+          "description": "Only 4 meal slots with no customization, annoying streak feature that resets if you skip a day",
+          "source": "Kimola feedback report",
+          "severity": "low",
+          "frequency": "Mentioned in reviews",
+          "opportunity": "Flexible meal logging without artificial constraints"
+        }
+      ],
+      "strengths": ["Clean design aesthetic", "Intermittent fasting integration", "AI calorie tracking features", "Good user satisfaction for core experience"],
+      "market_position": "European-focused calorie tracker with intermittent fasting emphasis"
+    },
+    {
+      "id": "competitor-5",
+      "name": "Cronometer",
+      "url": "https://cronometer.com",
+      "description": "Highly accurate nutrition tracker with 80+ micronutrient tracking, popular with health enthusiasts",
+      "relevance": "medium",
+      "pain_points": [
+        {
+          "id": "pain-5-1",
+          "description": "Overwhelming for beginners - detailed micronutrient tracking creates steep learning curve",
+          "source": "Reddit discussions, VegFAQs review",
+          "severity": "medium",
+          "frequency": "Common in reviews",
+          "opportunity": "Progressive disclosure - show simple data first, details on demand"
+        },
+        {
+          "id": "pain-5-2",
+          "description": "Very US-oriented database - UK/international brand nutrition data incorrect or missing",
+          "source": "Cronometer forums (forums.cronometer.com)",
+          "severity": "high",
+          "frequency": "Major complaint from non-US users",
+          "opportunity": "Korean food database first with KFDA integration"
+        },
+        {
+          "id": "pain-5-3",
+          "description": "UI issues - too much whitespace, hard-to-read fonts, scrolling wheel instead of dropdown, requires excessive scrolling on mobile",
+          "source": "Cronometer community forums",
+          "severity": "medium",
+          "frequency": "Multiple forum threads",
+          "opportunity": "Mobile-first SwiftUI design optimized for iOS"
+        },
+        {
+          "id": "pain-5-4",
+          "description": "Syncing problems - Withings disconnects daily, Fitbit records exercise twice, desktop/mobile data mismatch",
+          "source": "Cronometer community forums, bug reports",
+          "severity": "medium",
+          "frequency": "Common technical complaint",
+          "opportunity": "Reliable single-source data with Core Data + optional iCloud"
+        },
+        {
+          "id": "pain-5-5",
+          "description": "Recipe builder bugs - page refreshes during ingredient search, losing work",
+          "source": "Cronometer community forums",
+          "severity": "low",
+          "frequency": "Mentioned in bug reports",
+          "opportunity": "Stable, offline-capable meal creation"
+        }
+      ],
+      "strengths": ["Most accurate nutrition data - curated, not crowdsourced", "80+ micronutrient tracking", "Loved by health enthusiasts and professionals", "Strong scientific credibility"],
+      "market_position": "Gold standard for nutrition accuracy, niche appeal among health enthusiasts"
+    },
+    {
+      "id": "competitor-6",
+      "name": "다이어트신 (Dashin/DietShin)",
+      "url": "https://play.google.com/store/apps/details?id=com.diet.calorie160105",
+      "description": "Leading Korean diet app with largest Korean calorie database, diet community, and home training videos",
+      "relevance": "high",
+      "pain_points": [
+        {
+          "id": "pain-6-1",
+          "description": "Android-focused development - Play Store presence stronger than iOS",
+          "source": "App Store presence analysis",
+          "severity": "medium",
+          "frequency": "Platform structural issue",
+          "opportunity": "iOS-first development with native Swift/SwiftUI"
+        },
+        {
+          "id": "pain-6-2",
+          "description": "App forced termination issues due to diary registration data conflicts",
+          "source": "App description, user feedback",
+          "severity": "medium",
+          "frequency": "Acknowledged in app description",
+          "opportunity": "Robust Core Data implementation with conflict resolution"
+        },
+        {
+          "id": "pain-6-3",
+          "description": "Multiple separate apps needed for different functions - users complained about fragmentation before consolidation",
+          "source": "App description (addresses this as past problem)",
+          "severity": "low",
+          "frequency": "Historical issue",
+          "opportunity": "Integrated 4-in-1 tracking (body, diet, exercise, sleep) from day one"
+        },
+        {
+          "id": "pain-6-4",
+          "description": "No AI-powered dietary feedback or personalized insights",
+          "source": "Feature analysis",
+          "severity": "medium",
+          "frequency": "Feature gap",
+          "opportunity": "Gemini AI for personalized Korean-language diet comments"
+        }
+      ],
+      "strengths": ["Largest Korean food calorie database", "Free powerful features (diary, statistics)", "Largest Korean diet community", "Home training videos included", "Menstrual cycle integration for diet planning"],
+      "market_position": "Dominant Korean diet app with strong community features"
+    }
+  ],
+  "market_gaps": [
+    {
+      "id": "gap-1",
+      "description": "No iOS-first Korean health app with comprehensive Korean food database integration",
+      "affected_competitors": ["competitor-1", "competitor-4", "competitor-5", "competitor-6"],
+      "opportunity_size": "high",
+      "suggested_feature": "KFDA API integration providing verified Korean food nutrition data native to iOS"
+    },
+    {
+      "id": "gap-2",
+      "description": "AI food recognition and dietary feedback severely underperforms on Asian/Korean cuisines - 49% overestimate for pho, 76% underestimate for bubble tea",
+      "affected_competitors": ["competitor-1", "competitor-2", "competitor-4"],
+      "opportunity_size": "high",
+      "suggested_feature": "AI model trained/optimized for Korean cuisine with Gemini + Korean food-specific training"
+    },
+    {
+      "id": "gap-3",
+      "description": "Integrated body composition + diet + exercise + sleep tracking not available in one app - users must switch between multiple apps",
+      "affected_competitors": ["competitor-1", "competitor-2", "competitor-4", "competitor-5"],
+      "opportunity_size": "high",
+      "suggested_feature": "Unified 4-in-1 health tracking with correlated insights (e.g., how sleep affects weight)"
+    },
+    {
+      "id": "gap-4",
+      "description": "Most apps require expensive subscriptions ($120-240/year) for core features",
+      "affected_competitors": ["competitor-1", "competitor-2", "competitor-4"],
+      "opportunity_size": "medium",
+      "suggested_feature": "Generous free tier using free API quotas (Gemini 15 RPM, KFDA, USDA)"
+    },
+    {
+      "id": "gap-5",
+      "description": "AI dietary feedback in Korean language not available - existing apps use English-centric AI",
+      "affected_competitors": ["competitor-1", "competitor-2", "competitor-4", "competitor-5"],
+      "opportunity_size": "high",
+      "suggested_feature": "Gemini-powered Korean language dietary comments and insights"
+    },
+    {
+      "id": "gap-6",
+      "description": "Manual calorie entry is tedious - users off by 53% on average, only 80% complete their logging consistently",
+      "affected_competitors": ["competitor-1", "competitor-2", "competitor-4", "competitor-5", "competitor-6"],
+      "opportunity_size": "medium",
+      "suggested_feature": "AI photo recognition for quick meal logging (Phase 2) + voice input"
+    },
+    {
+      "id": "gap-7",
+      "description": "Body composition tracking (body fat %, muscle mass) poorly integrated with dietary recommendations",
+      "affected_competitors": ["competitor-1", "competitor-4", "competitor-5"],
+      "opportunity_size": "medium",
+      "suggested_feature": "BMR/TDEE calculations using body composition data (Katch-McArdle formula) for personalized calorie targets"
+    }
+  ],
+  "insights_summary": {
+    "top_pain_points": [
+      "Korean food databases severely limited in global apps - users must manually create entries",
+      "Manual calorie logging is tedious and error-prone (53% average error rate)",
+      "Expensive subscriptions ($120-240/year) for features that should be basic",
+      "AI food recognition fails on non-Western cuisines",
+      "User-submitted food database entries contain frequent inaccuracies",
+      "Sleep tracking features unreliable across platforms",
+      "Apps don't integrate body composition with dietary recommendations",
+      "No AI-powered dietary feedback in Korean language"
+    ],
+    "differentiator_opportunities": [
+      "KFDA integration for verified Korean food nutrition - first-to-market advantage",
+      "Gemini AI for Korean-language personalized dietary feedback",
+      "Integrated 4-in-1 tracking (body, diet, exercise, sleep) with correlated insights",
+      "Free tier with free API usage - avoid subscription fatigue",
+      "iOS-first native development with HealthKit integration",
+      "BMR/TDEE calculations using actual body composition data (not just weight)",
+      "Clean, non-judgmental UI without patronizing 'healthy tips'"
+    ],
+    "market_trends": [
+      "AI-powered photo recognition for food logging becoming table stakes",
+      "Users demand integrated health tracking rather than multiple apps",
+      "Subscription fatigue driving demand for free/affordable alternatives",
+      "Body composition tracking (beyond just weight) gaining popularity",
+      "HealthKit/Health Connect integration expected by health-conscious users",
+      "Micronutrient tracking interest growing among health enthusiasts",
+      "Voice input and natural language food logging emerging"
+    ]
+  },
+  "research_metadata": {
+    "search_queries_used": [
+      "MyFitnessPal reviews complaints 2024 2025",
+      "Noom app reviews complaints problems 2024",
+      "best diet tracking apps Korea 2024",
+      "health tracking app body composition alternatives 2024",
+      "MyFitnessPal reddit complaints Korean food database",
+      "YAZIO app reviews complaints problems 2024",
+      "Samsung Health app complaints problems reddit 2024",
+      "다이어트신 app reviews problems complaints",
+      "calorie tracking app tedious manual entry problems reddit",
+      "AI food recognition calorie tracking app 2024 reviews",
+      "Cronometer app complaints problems reddit 2024",
+      "health app sleep tracking inaccurate problems complaints 2024",
+      "body composition tracking app muscle mass weight loss progress 2024"
+    ],
+    "sources_consulted": [
+      "BBB (Better Business Bureau) - MyFitnessPal and Noom profiles",
+      "Trustpilot - MyFitnessPal, Noom, YAZIO, Cronometer reviews",
+      "PissedConsumer - MyFitnessPal (362 reviews, 1.5 stars)",
+      "Sitejabber - MyFitnessPal, Noom, YAZIO reviews",
+      "Consumer Affairs - Noom reviews",
+      "App Store - Cal AI, YAZIO, Samsung Health reviews",
+      "Google Play Store - 다이어트신, MealLens reviews",
+      "Kimola - YAZIO customer feedback report",
+      "MyFitnessPal Community Forums",
+      "Samsung Community Forums (US, EU, R2)",
+      "Cronometer Community Forums",
+      "Reddit discussions (via web search)",
+      "University of Sydney AI food app research",
+      "Apple Discussions - Health app sleep tracking issues",
+      "Sammy Fans - Samsung Health news"
+    ],
+    "limitations": [
+      "Reddit-specific threads were accessed via web search summaries, not direct Reddit API",
+      "Korean app (다이어트신) reviews limited - most content in Korean not fully accessible",
+      "App Store review text not directly accessible, relied on aggregator summaries",
+      "Some competitor information based on 2024 data, may have recent updates",
+      "Research focused on English and Korean language sources"
+    ]
+  },
+  "created_at": "2025-01-11T19:55:00Z"
+}

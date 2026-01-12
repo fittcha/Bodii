@@ -1,0 +1,125 @@
+{
+  "project_name": "Bodii",
+  "project_type": "mobile-app",
+  "tech_stack": {
+    "primary_language": "Swift",
+    "frameworks": ["SwiftUI", "Core Data", "HealthKit"],
+    "key_dependencies": [
+      "Google Gemini API (AI diet comments)",
+      "Google Cloud Vision API (food image recognition - Phase 2)",
+      "KFDA API (Korean Food & Drug Administration - nutrition data)",
+      "USDA FoodData Central API (international food data)"
+    ]
+  },
+  "target_audience": {
+    "primary_persona": "Korean health-conscious individuals aged 20-45 who want to systematically track body composition, diet, exercise, and sleep",
+    "secondary_personas": [
+      "Fitness enthusiasts tracking body composition changes",
+      "People on weight loss/gain programs",
+      "Health-conscious individuals wanting AI-powered dietary feedback"
+    ],
+    "pain_points": [
+      "Difficulty tracking body composition changes over time",
+      "No integrated solution for diet + exercise + sleep tracking",
+      "Existing apps don't support Korean food database well",
+      "Manual calorie counting is tedious and error-prone",
+      "Hard to visualize progress toward health goals"
+    ],
+    "goals": [
+      "Track and visualize body composition changes (weight, body fat %, muscle mass)",
+      "Log and analyze daily diet with AI feedback",
+      "Monitor exercise and calorie burn",
+      "Track sleep quality and patterns",
+      "Set and achieve health goals (weight loss/gain, muscle building)"
+    ],
+    "usage_context": "Daily health tracking app used primarily on iPhone for logging meals, workouts, sleep, and body measurements"
+  },
+  "product_vision": {
+    "one_liner": "AI-powered personal health management agent that integrates body composition, diet, exercise, and sleep tracking",
+    "problem_statement": "Health-conscious individuals struggle to comprehensively track and understand the relationship between their body composition, diet, exercise, and sleep patterns, especially with Korean food databases and personalized AI insights",
+    "value_proposition": "Bodii provides an integrated health tracking solution with Korean food database support (KFDA), AI-powered diet analysis using Gemini, accurate BMR/TDEE calculations based on body composition, and comprehensive visualization of health metrics",
+    "success_metrics": [
+      "App Store launch completion",
+      "Dashboard loading under 0.5 seconds",
+      "Daily active users recording all four metrics (body/diet/exercise/sleep)",
+      "AI food recognition accuracy above 70% (Phase 2)",
+      "User goal completion rate tracking"
+    ]
+  },
+  "current_state": {
+    "maturity": "prototype",
+    "existing_features": [
+      "Xcode project structure with SwiftUI",
+      "Core Data model with all entities (User, BodyRecord, MetabolismSnapshot, Food, FoodRecord, ExerciseRecord, SleepRecord, DailyLog, Goal)",
+      "Basic app entry point (BodiiApp.swift)",
+      "Placeholder tab bar structure (ContentView.swift)",
+      "Dependency injection container (DIContainer.swift)",
+      "Persistence controller for Core Data (PersistenceController.swift)"
+    ],
+    "known_gaps": [
+      "Onboarding flow not implemented",
+      "Body composition input/history/graph screens not implemented",
+      "Food search and recording UI not implemented",
+      "API integrations (KFDA, USDA, Gemini) not implemented",
+      "Exercise recording UI not implemented",
+      "Sleep tracking UI and popup not implemented",
+      "Dashboard visualization not implemented",
+      "HealthKit integration not implemented",
+      "Settings screens not implemented"
+    ],
+    "technical_debt": [
+      "Only basic project structure exists - most services and ViewModels need to be created",
+      "No unit tests yet",
+      "No UI tests yet",
+      "API key management system not set up"
+    ]
+  },
+  "competitive_context": {
+    "alternatives": [
+      "MyFitnessPal - comprehensive calorie tracking but weak on Korean foods",
+      "Samsung Health - good integration but Android-focused",
+      "Apple Health - data hub but lacks food logging",
+      "Noom - psychology-focused weight loss but expensive subscription",
+      "YAZIO - European-focused food database"
+    ],
+    "differentiators": [
+      "Korean food database integration (KFDA API)",
+      "AI-powered diet analysis with Korean language support (Gemini)",
+      "Integrated body composition + diet + exercise + sleep tracking",
+      "Accurate BMR/TDEE calculations using Katch-McArdle and Mifflin-St Jeor formulas",
+      "Data-driven approach with comprehensive metric storage strategy",
+      "Free tier API usage to minimize costs"
+    ],
+    "market_position": "iOS-first health tracking app optimized for Korean users with AI-powered dietary insights and comprehensive body composition tracking",
+    "competitor_pain_points": [
+      "Existing apps have poor Korean food database coverage",
+      "Many apps require paid subscriptions for basic features",
+      "Lack of integrated body composition tracking with diet analysis",
+      "No AI-powered dietary feedback in Korean language"
+    ],
+    "competitor_analysis_available": false
+  },
+  "constraints": {
+    "technical": [
+      "iOS 17+ required (for latest SwiftUI features)",
+      "iPhone only initially (iPad support deferred)",
+      "HealthKit is Apple ecosystem exclusive",
+      "API rate limits: Gemini 15 RPM, Cloud Vision 1000/month free tier"
+    ],
+    "resources": [
+      "Solo developer project (inferred from git history)",
+      "5 weeks estimated for MVP (Phase 1)",
+      "Free API tiers only for Phase 1-2",
+      "Server costs deferred to Phase 3 (social features)"
+    ],
+    "dependencies": [
+      "KFDA Open API (Korean food nutrition data)",
+      "USDA FoodData Central API (international foods)",
+      "Google Gemini API (AI diet comments)",
+      "Google Cloud Vision API (food image recognition - Phase 2)",
+      "Apple HealthKit framework",
+      "CloudKit for iCloud sync (Phase 2 optional)"
+    ]
+  },
+  "created_at": "2025-01-11T19:45:00Z"
+}

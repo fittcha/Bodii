@@ -1,0 +1,40 @@
+{
+  "task_description": "Initial Xcode project setup for Bodii iOS app with Clean Architecture scaffolding and Core Data model",
+  "scoped_services": ["ios"],
+  "files_to_modify": [],
+  "files_to_create": [
+    "Bodii.xcodeproj",
+    "Bodii/App/BodiiApp.swift",
+    "Bodii/App/ContentView.swift",
+    "Bodii/App/DIContainer.swift",
+    "Bodii/Infrastructure/Persistence/PersistenceController.swift",
+    "Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld"
+  ],
+  "files_to_reference": [
+    "docs/06_DEVELOPMENT_GUIDE.md",
+    "docs/04_ERD.md"
+  ],
+  "patterns": {
+    "architecture": "MVVM + Clean Architecture Hybrid with 5 layers: App, Presentation, Domain, Data, Infrastructure, Shared",
+    "file_structure": "MARK comments for sections: Protocol, Properties, Initialization, Public Methods, Private Methods, Extensions, Preview",
+    "dependency_rule": "Presentation → Domain ← Data, Infrastructure → Domain. Domain has NO external dependencies.",
+    "core_data_model": "9 entities from ERD: User, BodyRecord, MetabolismSnapshot, Food, FoodRecord, ExerciseRecord, SleepRecord, DailyLog, Goal",
+    "naming": "UpperCamelCase for types, lowerCamelCase for variables/functions, Protocol suffix for protocols"
+  },
+  "existing_implementations": {
+    "description": "Greenfield project - no existing code. Documentation provides patterns and requirements.",
+    "relevant_docs": [
+      "docs/04_ERD.md - Complete entity schemas with attributes, relationships, indexes, and data types",
+      "docs/06_DEVELOPMENT_GUIDE.md - Architecture, folder structure, coding conventions, file templates"
+    ]
+  },
+  "constraints": [
+    "SwiftUI only - no UIKit or Storyboards (except LaunchScreen if needed)",
+    "iOS 17.0+ minimum deployment target",
+    "Domain layer must have zero external dependencies (pure Swift)",
+    "No business logic implementation - scaffolding only",
+    "No third-party dependencies",
+    "No unit tests (separate task)"
+  ],
+  "created_at": "2026-01-11T16:33:55.976388"
+}

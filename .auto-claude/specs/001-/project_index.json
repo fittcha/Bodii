@@ -1,0 +1,42 @@
+{
+  "project_root": "/Users/chacha/lab/Bodii",
+  "project_type": "single",
+  "services": {
+    "ios": {
+      "path": "Bodii",
+      "tech_stack": ["swift", "swiftui", "coredata"],
+      "min_ios_version": "17.0",
+      "bundle_id": "com.seungming.bodii",
+      "dev_command": "xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build",
+      "run_command": "open Bodii.xcodeproj",
+      "test_command": "xcodebuild test -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15'"
+    }
+  },
+  "infrastructure": {
+    "docker": false,
+    "database": "coredata",
+    "ci_cd": false
+  },
+  "conventions": {
+    "architecture": "mvvm_clean_hybrid",
+    "linter": "swiftlint",
+    "formatter": null,
+    "testing": "xctest",
+    "naming": {
+      "types": "UpperCamelCase",
+      "variables": "lowerCamelCase",
+      "functions": "lowerCamelCase",
+      "protocols": "UpperCamelCase_Protocol_suffix"
+    }
+  },
+  "layer_dependencies": {
+    "presentation": ["domain"],
+    "domain": [],
+    "data": ["domain"],
+    "infrastructure": ["domain"]
+  },
+  "reference_docs": [
+    "docs/06_DEVELOPMENT_GUIDE.md",
+    "docs/04_ERD.md"
+  ]
+}
