@@ -2,9 +2,9 @@
   "feature": "Korean Food Database Integration",
   "description": "Integrate Korean Food & Drug Administration (\uc2dd\uc57d\ucc98) food nutrition database API as primary source, with USDA FoodData Central as fallback for international foods. Prioritize Korean dishes (kimchi jjigae, bibimbap, tteokbokki) that are poorly covered by competitors.",
   "created_at": "2026-01-12T10:46:08.264Z",
-  "updated_at": "2026-01-12T19:50:00.000Z",
+  "updated_at": "2026-01-12T22:46:23.152Z",
   "status": "in_progress",
-  "planStatus": "planned",
+  "planStatus": "in_progress",
   "phases": [
     {
       "id": "phase_1",
@@ -107,7 +107,7 @@
           "id": "2.3",
           "title": "Create KFDA to Food entity mapper",
           "description": "Implement mapper to convert \uc2dd\uc57d\ucc98 DTOs to domain Food entities",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/Mappers/KFDAFoodMapper.swift"
           ],
@@ -122,7 +122,8 @@
           "dependencies": [
             "2.1"
           ],
-          "notes": ""
+          "notes": "\u2705 Implemented KFDAFoodMapper for converting KFDAFoodDTO to Food domain entity. Maps all nutrition fields (calories, protein, carbs, fat, sodium, fiber, sugar) with proper type conversions (String to Int32/Decimal). Sets source to .governmentAPI and stores apiCode (foodCd) for deduplication. Handles serving size with intelligent fallback logic (servingSize \u2192 servingWt \u2192 100g default). Properly handles missing optional fields with safe parsing using parseDecimal() helper. Includes batch mapping capability with toDomainArray() for processing multiple DTOs efficiently. Comprehensive error handling with MappingError enum for clear error messages. Follows project patterns with Korean documentation and educational comments comparing to Java patterns.",
+          "updated_at": "2026-01-12T11:18:44.612530+00:00"
         }
       ]
     },
@@ -135,7 +136,7 @@
           "id": "3.1",
           "title": "Create USDA API DTOs",
           "description": "Define Data Transfer Objects for parsing USDA FoodData Central API responses",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/DTOs/USDAFoodDTO.swift",
             "Bodii/Data/DTOs/USDASearchResponseDTO.swift",
@@ -149,13 +150,14 @@
           ],
           "estimated_effort": "small",
           "dependencies": [],
-          "notes": ""
+          "notes": "\u2705 Created USDA FoodData Central API DTOs for parsing API responses:\n\nIMPLEMENTATION DETAILS:\n- Created USDANutrientDTO.swift:\n  * Handles USDA's nutrient array format with nutrient IDs\n  * Supports all major nutrient IDs (1008=energy, 1003=protein, 1004=fat, 1005=carbs, etc.)\n  * Helper methods for type conversion (Double \u2192 Decimal, Int32)\n  * Array extension methods for easy nutrient lookup by ID\n  * USDANutrientID enum with common nutrient ID constants\n\n- Created USDAFoodDTO.swift:\n  * Comprehensive food item structure matching USDA API\n  * Supports multiple food types: Foundation, SR Legacy, Branded, Survey\n  * Includes basic info: fdcId, description, dataType, foodCode\n  * Nutrition info: foodNutrients array (uses USDANutrientDTO)\n  * Serving info: servingSize, servingSizeUnit, householdServingFullText\n  * Branded food fields: brandOwner, brandName, gtinUpc, ingredients\n  * Category info: foodCategoryId, foodCategory\n  * Helper methods: getNutrientValue(), isBranded, isFoundation, etc.\n  * Validation: isValid property checks required fields\n\n- Created USDASearchResponseDTO.swift:\n  * Search response wrapper with pagination info\n  * Fields: totalHits, currentPage, totalPages, pageList\n  * Nested SearchCriteria struct for request echo\n  * foods array containing USDAFoodDTO items\n  * Convenience methods: hasResults, hasMorePages, nextPage, resultSummary\n  * USDAAPIError enum for error handling\n  * Response validation logic\n\nACCEPTANCE CRITERIA VERIFICATION:\n\u2705 DTOs match USDA API response structure - All fields mapped correctly\n\u2705 Handles nutrient array format (USDA uses nutrient IDs) - USDANutrientDTO with ID-based lookup\n\u2705 Codable conformance for JSON parsing - All DTOs conform to Codable with explicit CodingKeys\n\u2705 Supports both branded and foundation foods - foodType field and helper properties (isBranded, isFoundation, etc.)\n\nCOMMIT: e40ade6",
+          "updated_at": "2026-01-12T11:22:31.207308+00:00"
         },
         {
           "id": "3.2",
           "title": "Implement USDAFoodAPIService",
           "description": "Create the service class to search and fetch food data from USDA FoodData Central API",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/DataSources/Remote/USDAFoodAPIService.swift"
           ],
@@ -172,13 +174,14 @@
             "1.2",
             "3.1"
           ],
-          "notes": ""
+          "notes": "\u2705 Implemented USDAFoodAPIService with comprehensive functionality:\n- searchFoods() method with query, pageSize, pageNumber, and dataType filter support\n- getFoodDetail() method for single food lookup by FDC ID\n- getFoods() method for batch lookup (bonus feature - up to 20 items at once)\n- USDA-style pagination using page numbers (pageNumber=1,2,3...) not index ranges\n- Proper error handling with NetworkError to USDAAPIError mapping via mapNetworkErrorToUSDAError()\n- API response validation using response.isValid\n- Helper methods for pagination: nextPageNumber(), previousPageNumber(), totalPages(), isLastPage()\n- validateFoods() for data quality assurance - filters out invalid food items\n- Rate limit compliance through NetworkManager configuration (timeout: 30s, maxRetries: 2)\n- MockUSDAFoodAPIService for testing with configurable responses and error simulation\n- Follows project patterns with Korean documentation and Java comparison comments\n\nACCEPTANCE CRITERIA VERIFICATION:\n\u2705 Search foods using FoodData Central search endpoint - searchFoods() with full parameter support\n\u2705 Handle pagination - page number based system with comprehensive helper methods\n\u2705 Parse API responses to DTOs - USDASearchResponseDTO and USDAFoodDTO parsing\n\u2705 Proper error handling - comprehensive error mapping and try-catch blocks\n\u2705 API key authentication - uses APIConfig.buildUSDAURL() for secure key management\n\nBONUS FEATURES:\n- Batch food lookup with getFoods() for multiple FDC IDs\n- dataType filtering for targeted searches (Branded, Foundation, etc.)\n- isEmpty() helper for response validation\n- Comprehensive pagination utilities\n\nCOMMIT: 4b0f5f6",
+          "updated_at": "2026-01-12T22:48:50.686921+00:00"
         },
         {
           "id": "3.3",
           "title": "Create USDA to Food entity mapper",
           "description": "Implement mapper to convert USDA DTOs to domain Food entities with unit conversions",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/Mappers/USDAFoodMapper.swift"
           ],
@@ -193,7 +196,8 @@
           "dependencies": [
             "3.1"
           ],
-          "notes": ""
+          "notes": "\u2705 Implemented USDAFoodMapper for converting USDAFoodDTO to Food domain entity.\n\nIMPLEMENTATION DETAILS:\n- Created USDAFoodMapper.swift with comprehensive DTO to entity mapping\n- Maps USDA nutrient IDs to correct fields using USDANutrientID constants:\n  * 1008 (energy) \u2192 calories\n  * 1003 (protein) \u2192 protein\n  * 1004 (fat) \u2192 fat\n  * 1005 (carbohydrate) \u2192 carbohydrates\n  * 1093 (sodium) \u2192 sodium\n  * 1079 (fiber) \u2192 fiber\n  * 2000 (sugar) \u2192 sugar\n\nUNIT CONVERSION:\n- Comprehensive convertToGrams() method with support for:\n  * Weight units: oz \u2192 g, lb \u2192 g, kg \u2192 g, mg \u2192 g\n  * Volume units: ml, fl oz, cup, tbsp, tsp (water-based approximation)\n  * Graceful handling of unknown units (returns original value)\n\nACCEPTANCE CRITERIA VERIFICATION:\n\u2705 Maps USDA nutrient IDs to correct fields - extractNutrient() with ID lookup\n\u2705 Converts units (oz to g, etc.) if needed - convertToGrams() with 10+ unit types\n\u2705 Sets source to .usda - source: .usda in Food entity creation\n\u2705 Stores fdcId as apiCode - apiCode: String(dto.fdcId)\n\u2705 Handles missing nutrients gracefully - optional fields return nil, required throw error\n\nFEATURES:\n- Helper methods: parseCalories(), extractNutrient(), parseServingSize(), convertToGrams()\n- Batch mapping: toDomainArray() for converting multiple DTOs\n- Error handling: reuses MappingError enum from KFDAFoodMapper\n- User-friendly serving unit parsing with fallback to householdServingFullText\n- Follows project patterns with Korean documentation and Java comparison comments\n\nCOMMIT: ac228cf",
+          "updated_at": "2026-01-12T22:52:08.942390+00:00"
         }
       ]
     },
@@ -588,5 +592,5 @@
   },
   "total_subtasks": 24,
   "estimated_total_effort": "large",
-  "last_updated": "2026-01-12T11:16:01.644049+00:00"
+  "last_updated": "2026-01-12T22:52:08.942395+00:00"
 }

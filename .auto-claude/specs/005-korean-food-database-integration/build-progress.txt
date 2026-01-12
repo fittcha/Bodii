@@ -1,127 +1,36 @@
-# Korean Food Database Integration - Build Progress
+# Build Progress - Korean Food Database Integration
 
-## Feature Overview
-Integrate Korean Food & Drug Administration (식약처) API as primary food data source with USDA FoodData Central as fallback for international foods.
+## Completed Subtasks
 
-## Implementation Plan Summary
-- **Total Subtasks:** 24
-- **Phases:** 9
-- **Estimated Effort:** Large
+### Phase 3: USDA API Integration
 
-### Phase Breakdown
-1. **Phase 1: Infrastructure Setup** (2 subtasks)
-   - NetworkManager service
-   - API configuration and keys management
+#### 3.3 - USDA to Food entity mapper ✅ (2026-01-12)
+- **Status**: COMPLETED
+- **Commit**: ac228cf
+- **Implementation**: Created USDAFoodMapper.swift with comprehensive DTO to domain entity mapping
 
-2. **Phase 2: Korean Food API (식약처) Integration** (3 subtasks)
-   - DTOs for 식약처 API
-   - KFDAFoodAPIService implementation
-   - KFDA to Food mapper
+**Key Features:**
+- Maps USDA nutrient IDs to Food entity fields (energy: 1008, protein: 1003, fat: 1004, carbs: 1005, sodium: 1093, fiber: 1079, sugar: 2000)
+- Comprehensive unit conversion system supporting 10+ unit types (oz, lb, kg, mg, ml, fl oz, cup, tbsp, tsp)
+- Graceful handling of missing nutrients (required throw errors, optional return nil)
+- Sets source to .usda and stores fdcId as apiCode
+- Batch mapping capability with toDomainArray()
+- Follows project patterns with Korean documentation
 
-3. **Phase 3: USDA API Integration** (3 subtasks)
-   - DTOs for USDA API
-   - USDAFoodAPIService implementation
-   - USDA to Food mapper
+**Acceptance Criteria Met:**
+✅ Maps USDA nutrient IDs to correct fields
+✅ Converts units (oz to g, etc.) if needed
+✅ Sets source to .usda
+✅ Stores fdcId as apiCode
+✅ Handles missing nutrients gracefully
 
-4. **Phase 4: Unified Search Service** (3 subtasks)
-   - FoodSearchRepository protocol
-   - UnifiedFoodSearchService
-   - FoodSearchRepositoryImpl
-
-5. **Phase 5: Local Caching & Offline Support** (4 subtasks)
-   - Core Data FoodEntity
-   - FoodLocalDataSource
-   - Food to Core Data mapper
-   - Caching integration
-
-6. **Phase 6: Serving Size & Nutrition Calculation** (2 subtasks)
-   - NutritionCalculator utility
-   - FoodWithQuantity model
-
-7. **Phase 7: Error Handling & Resilience** (2 subtasks)
-   - FoodSearchError enum
-   - Graceful fallback implementation
-
-8. **Phase 8: DI Container Integration** (1 subtask)
-   - Update DIContainer with all dependencies
-
-9. **Phase 9: Testing** (4 subtasks)
-   - Mock services
-   - Mapper tests
-   - UnifiedFoodSearchService tests
-   - NutritionCalculator tests
+**Files Created:**
+- Bodii/Data/Mappers/USDAFoodMapper.swift (344 lines)
 
 ---
 
-## Progress Log
-
-### 2026-01-12 (Evening)
-- ✅ **Subtask 1.1 COMPLETED:** NetworkManager service
-  - Created NetworkManager.swift with full async/await support
-  - Created NetworkError.swift with comprehensive error types
-  - Features: GET/POST requests, timeout config, retry logic, JSON decoding
-  - Follows project patterns with Korean docs and Java comparisons
-  - Commit: 6f0563a
-
-### 2026-01-12 (Afternoon)
-- ✅ Created implementation_plan.json with 9 phases and 24 subtasks
-- ✅ Analyzed existing project structure
-- ✅ Started Phase 1: Infrastructure Setup
-
-### Current Status
-- **Active Phase:** Phase 1 - Infrastructure Setup
-- **Next Subtask:** 1.2 - Create API configuration and keys management
-- **Blocked:** None
-- **Completed:** 1.1 - NetworkManager service
-
-### Key Findings
-- Project uses clean architecture (Domain/Data/Infrastructure/Presentation layers)
-- Food domain entity already exists with proper structure
-- FoodSource enum already defined (governmentAPI, usda, userDefined)
-- DIContainer exists but needs new services registered
-- Empty folders ready for: Data/DTOs, Data/DataSources/Remote, Data/Mappers
-
-========================================
-[2026-01-12 20:15] Subtask 2.2 COMPLETED
-========================================
-
-✅ Created KFDAFoodAPIService (Bodii/Data/DataSources/Remote/KFDAFoodAPIService.swift)
-
-IMPLEMENTATION DETAILS:
-- Main Methods:
-  * searchFoods(query, startIdx, endIdx) - Search foods by name with pagination
-  * getFoodDetail(foodCode) - Get single food details by code
-  
-- Pagination Support:
-  * Uses KFDA-style index ranges (startIdx/endIdx) instead of page numbers
-  * Helper methods: nextPageIndices(), pageToIndices()
-  * Respects max page size limit (100 items)
-  
-- Error Handling:
-  * Validates API responses and throws appropriate errors
-  * Maps KFDA error codes to KFDAAPIError types
-  * Handles NetworkError for network failures
-  * Input validation for query and indices
-  
-- Data Quality:
-  * validateFoods() filters out invalid entries
-  * Checks food.isValid for required fields
-  
-- Configuration:
-  * Uses Constants.API.KFDA for timeout, retries, page sizes
-  * Integrates with APIConfig for URL building
-  * Dependency injection for NetworkManager and APIConfig
-  
-- Testing Support:
-  * MockKFDAFoodAPIService for unit testing
-  * Configurable mock responses and errors
-
-ACCEPTANCE CRITERIA VERIFICATION:
-✅ Search foods by name (keyword search) - searchFoods() method
-✅ Handle pagination for large result sets - startIdx/endIdx support
-✅ Parse API responses to DTOs - Uses KFDASearchResponseDTO
-✅ Proper error handling for network/parsing failures - NetworkError + KFDAAPIError
-✅ Respects API rate limits - NetworkManager retry logic with exponential backoff
-
-COMMIT: cda50cf
-
+## Next Steps
+- Phase 4: Unified Search Service
+  - 4.1: Define FoodSearchRepository protocol
+  - 4.2: Implement UnifiedFoodSearchService
+  - 4.3: Implement FoodSearchRepositoryImpl
