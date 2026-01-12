@@ -298,7 +298,7 @@
           "id": "3.2",
           "title": "Create BodyTrendsViewModel",
           "description": "Implement ViewModel for body composition trends chart",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Presentation/Features/Body/BodyTrendsViewModel.swift"
           ],
@@ -308,13 +308,15 @@
             "Handles empty state",
             "Supports date range navigation"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "BodyTrendsViewModel fully implemented with comprehensive functionality:\n- Period selection management: selectedPeriod (@Published) for 7/30/90 day periods with automatic data reload on change\n- Trend data fetching: Uses FetchBodyTrendsUseCase to retrieve and transform data for charts\n- Empty state handling: isEmpty computed property and trendsOutput optional state\n- Date range navigation: navigateToPreviousPeriod() and navigateToNextPeriod() for browsing historical trends\n- Custom date range support: useCustomDateRange toggle with customStartDate/customEndDate for flexible querying\n- Loading and error state management: isLoading and errorMessage with user-friendly Korean error messages\n- Metabolism data toggle: includeMetabolismData flag for optional BMR/TDEE data loading (performance optimization)\n- Reactive state observation: Combine-based observer for automatic reload on period change with debounce\n- UI helper methods: formatDate(), formatWeightChange(), formatBodyFatChange() for consistent display\n- Convenience properties: isEmpty, dataPointCount, dataPoints, periodDisplayString for easy View integration\n- Reset functionality: resetToCurrentPeriod() to return to current date view\n- Manual refresh support: refresh() method for pull-to-refresh\n- Follows MVVM pattern with @MainActor for UI thread safety\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- Preview support structure for SwiftUI previews\n\nAll acceptance criteria met:\n\u2705 Manages selected time period (7/30/90 days) - selectedPeriod with TrendPeriod enum\n\u2705 Fetches and transforms data for charts - loadTrends() uses FetchBodyTrendsUseCase\n\u2705 Handles empty state - isEmpty computed property and empty state checks\n\u2705 Supports date range navigation - navigateToPreviousPeriod(), navigateToNextPeriod(), resetToCurrentPeriod()\n\nCommitted in 4f07625.",
+          "updated_at": "2026-01-12T10:35:14.116308+00:00"
         },
         {
           "id": "3.3",
           "title": "Create MetabolismViewModel for BMR/TDEE display",
           "description": "Implement ViewModel for displaying current BMR/TDEE on dashboard",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Presentation/Features/Dashboard/MetabolismViewModel.swift"
           ],
@@ -324,7 +326,9 @@
             "Compares with TDEE for surplus/deficit",
             "Auto-refreshes on new body records"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "MetabolismViewModel fully implemented for dashboard BMR/TDEE display:\n- Current metabolism data management: Loads latest BMR/TDEE from body repository\n- Calorie balance calculation: Computes intake - (TDEE + exercise expenditure)\n- State classification: Determines surplus (>0), deficit (<0), or maintenance (\u00b1100 kcal)\n- Auto-refresh support: refresh() method for updates after new body records\n- UI helpers: Formatting methods for calories, balance, weight change\n- Visual indicators: Status colors (green/orange/blue), icons (SF Symbols), and text\n- External data integration: Accepts dailyCalorieIntake and dailyCalorieExpenditure from diet/exercise modules\n- Computed properties: calorieBalance, totalCalorieExpenditure, estimatedWeeklyWeightChange\n- Loading and error state management with user-friendly Korean error messages\n- Follows MVVM pattern with @MainActor for UI thread safety\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- Preview support structure for SwiftUI previews\n\nAll acceptance criteria met:\n\u2705 Fetches current BMR/TDEE from user profile (via fetchLatest() + fetchMetabolismData())\n\u2705 Calculates net calories (intake - expenditure) - calorieBalance computed property\n\u2705 Compares with TDEE for surplus/deficit - isCalorieSurplus, isCalorieDeficit, isCalorieMaintenance\n\u2705 Auto-refreshes on new body records - refresh() method with debounce protection\n\nKey features:\n- hasBMR, bmr, tdee, activityLevel convenience properties for easy View access\n- calorieBalanceStatusText(), calorieBalanceStatusColor(), calorieBalanceStatusIcon() for UI state\n- formatCalories(), formatCalorieBalance(), formatWeightChange() for consistent formatting\n- metabolismExplanation() for educational content\n- Debounce check in refresh() to prevent rapid duplicate calls (<1 second)\n\nCommitted in 7f774f6.",
+          "updated_at": "2026-01-12T10:37:51.316490+00:00"
         }
       ]
     },
@@ -338,7 +342,7 @@
           "id": "4.1",
           "title": "Create BodyCompositionInputCard component",
           "description": "Reusable card component for inputting body measurements",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Presentation/Components/Cards/BodyCompositionInputCard.swift"
           ],
@@ -348,13 +352,15 @@
             "Input validation with error messages",
             "Korean localization for labels"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "BodyCompositionInputCard component fully implemented with comprehensive functionality:\n- Three input fields: weight (kg), body fat percent (%), muscle mass (kg)\n- Numeric keyboard with decimal support (.keyboardType(.decimalPad))\n- Real-time validation with error message display\n- Optional parameters: validationMessages, isEnabled, onInputChanged callback\n- @Binding for two-way data binding with parent views\n- @FocusState for keyboard focus management\n- Adaptive light/dark mode support with system colors\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- Multiple SwiftUI previews: basic, filled, error, disabled, and dark mode states\n- Helper sections: card header with icon, validation errors, input range help text\n- Follows established code patterns from BodyCompositionViewModel and ContentView\n- Clean component-based architecture for reusability\n\nAll acceptance criteria met:\n\u2705 Text fields for weight, body fat %, muscle mass\n\u2705 Numeric keyboard with decimal support\n\u2705 Input validation with error messages\n\u2705 Korean localization for labels\n\nCommitted in ac03c93.",
+          "updated_at": "2026-01-12T10:40:48.009145+00:00"
         },
         {
           "id": "4.2",
           "title": "Create MetabolismDisplayCard component",
           "description": "Card showing BMR/TDEE values with visual indicators",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Presentation/Components/Cards/MetabolismDisplayCard.swift"
           ],
@@ -364,7 +370,9 @@
             "Visual indicator for calorie balance",
             "Compact and dashboard-friendly"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "MetabolismDisplayCard component fully implemented with comprehensive functionality:\n- BMR/TDEE display: Prominently shows both values with icons and labels\n- Activity level display: Shows activity level name, icon, and multiplier badge\n- Visual indicators: Color-coded calorie balance status with icons (green/orange/blue)\n- Empty state: User-friendly message when no data available\n- Loading state: Progress indicator with message during data fetch\n- Compact design: Dashboard-friendly layout with proper spacing and hierarchy\n- Tap action support: Optional onTap callback for navigation to body tab\n- Multiple initializers: Convenience init with ViewModel and manual values init\n- Formatting helpers: formatCalories() and formatCalorieBalance() for consistent display\n- Activity level icons: Dynamic SF Symbol selection based on activity level\n- Follows established code patterns from BodyCompositionInputCard\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- Multiple SwiftUI previews: data states (surplus/deficit/maintenance), empty, loading, dark mode, various activity levels\n- Adaptive light/dark mode support with system colors\n\nAll acceptance criteria met:\n\u2705 Displays BMR and TDEE prominently - Large bold numbers with icons and labels\n\u2705 Shows activity level - Displays name, icon, and multiplier badge\n\u2705 Visual indicator for calorie balance - Color-coded status (green/orange/blue) with icons\n\u2705 Compact and dashboard-friendly - Clean layout optimized for dashboard cards\n\nKey features:\n- Reads data from MetabolismViewModel via convenience initializer\n- Supports both data-present and empty states\n- Visual feedback with status colors, icons, and text\n- Tappable card with chevron indicator for navigation\n- 8 comprehensive SwiftUI previews for all states",
+          "updated_at": "2026-01-12T10:43:23.080995+00:00"
         },
         {
           "id": "4.3",
@@ -710,5 +718,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-12T10:32:24.485975+00:00"
+  "last_updated": "2026-01-12T10:43:23.081004+00:00"
 }
