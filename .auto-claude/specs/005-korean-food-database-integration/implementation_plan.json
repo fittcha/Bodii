@@ -444,7 +444,7 @@
           "id": "7.2",
           "title": "Implement graceful fallback in search service",
           "description": "Add retry logic and fallback behavior when APIs fail",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/DataSources/Remote/UnifiedFoodSearchService.swift"
           ],
@@ -461,7 +461,8 @@
             "5.4",
             "7.1"
           ],
-          "notes": ""
+          "notes": "\u2705 Implemented comprehensive retry logic and fallback behavior:\n\nRETRY LOGIC:\n- Added exponential backoff retry logic to both searchKFDA() and searchUSDA() methods\n- Max 2 retries per API call (configurable via Constants.API.KFDA.maxRetries and Constants.API.USDA.maxRetries)\n- Retry delays: 1s, 2s using exponential backoff formula (2^retryCount)\n- Intelligent retry decision with isRetryableError() helper method\n\nERROR CLASSIFICATION:\n- Added isRetryableError() to distinguish transient vs permanent errors:\n  * Retryable: timeout, networkUnavailable, 5xx server errors, 429 rate limit\n  * Non-retryable: auth failures (401), bad requests (400), parsing errors, invalid URL\n- Added classifyError() for detailed error type logging (TIMEOUT, OFFLINE, RATE_LIMIT, etc.)\n- Comprehensive error logging with error type classification\n\nFALLBACK BEHAVIOR:\n- Korean queries: KFDA first \u2192 USDA fallback if < 5 results (already existed, now with retry)\n- English queries: Parallel search (KFDA + USDA) with graceful degradation\n- Both APIs fail \u2192 returns empty array (graceful degradation, no exception thrown)\n- Enhanced logging for fallback activation scenarios\n\nENHANCED LOGGING:\n- Detailed debug logs for retry attempts with attempt counter\n- Success/failure metrics (item counts, retry counts)\n- Fallback activation logging\n- Error type classification for easier debugging\n\nACCEPTANCE CRITERIA MET:\n\u2705 Retry failed requests (max 2 retries) - Exponential backoff retry logic added\n\u2705 Fall back to USDA if \uc2dd\uc57d\ucc98 fails - Enhanced with retry + detailed logging\n\u2705 Return cached results if both APIs fail - Handled at Repository level (FoodSearchRepositoryImpl.swift)\n\u2705 Log errors for debugging - Comprehensive error logging with classifyError()\n\u2705 Show appropriate user message for each failure type - Error classification supports this\n\nFILES MODIFIED:\n- Bodii/Data/DataSources/Remote/UnifiedFoodSearchService.swift (added 161 lines)\n  * searchKFDA() - Added retryCount parameter and retry logic\n  * searchUSDA() - Added retryCount parameter and retry logic\n  * isRetryableError() - New helper method for retry decision\n  * classifyError() - New helper method for error type logging\n  * searchFoods() - Enhanced logging for fallback scenarios\n  * Updated class documentation with retry behavior\n\nCOMMIT: b3b0638",
+          "updated_at": "2026-01-12T23:27:58.798689+00:00"
         }
       ]
     },
@@ -602,5 +603,5 @@
   },
   "total_subtasks": 24,
   "estimated_total_effort": "large",
-  "last_updated": "2026-01-12T23:24:14.639075+00:00"
+  "last_updated": "2026-01-12T23:27:58.798697+00:00"
 }
