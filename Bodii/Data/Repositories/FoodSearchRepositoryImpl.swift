@@ -172,7 +172,7 @@ final class FoodSearchRepositoryImpl: FoodSearchRepository {
                 offset: offset
             )
 
-            // 📚 학습 포인트: Async Cache Update (Phase 5에서 구현 예정)
+            // 📚 학습 포인트: Async Cache Update
             // 검색 결과를 백그라운드에서 캐시에 저장
             // 💡 Java 비교: @CachePut 어노테이션과 유사
             if let localDataSource = localDataSource {
@@ -202,6 +202,41 @@ final class FoodSearchRepositoryImpl: FoodSearchRepository {
             return foods
 
         } catch {
+            // 📚 학습 포인트: Offline Fallback Strategy
+            // API 실패 시 캐시에서 검색하여 오프라인 지원
+            // 💡 Java 비교: Circuit Breaker + Cache Fallback 패턴과 유사
+
+            #if DEBUG
+            print("⚠️ API search failed: \(error.localizedDescription)")
+            #endif
+
+            // 📚 학습 포인트: Graceful Degradation
+            // 네트워크 실패 시 캐시에서 결과 반환하여 오프라인 지원
+            if let localDataSource = localDataSource {
+                do {
+                    let cachedFoods = try await localDataSource.searchFoods(
+                        query: query,
+                        limit: limit
+                    )
+
+                    if !cachedFoods.isEmpty {
+                        #if DEBUG
+                        print("✅ Offline fallback: Returned \(cachedFoods.count) cached foods")
+                        #endif
+                        return cachedFoods
+                    }
+
+                    #if DEBUG
+                    print("ℹ️ No cached results found for '\(query)'")
+                    #endif
+
+                } catch {
+                    #if DEBUG
+                    print("⚠️ Cache fallback also failed: \(error.localizedDescription)")
+                    #endif
+                }
+            }
+
             // 📚 학습 포인트: Error Mapping
             // 하위 레이어의 에러를 도메인 에러로 변환
             // 💡 Java 비교: Custom Exception Translator와 유사
