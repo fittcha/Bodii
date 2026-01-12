@@ -479,7 +479,7 @@
           "id": "5.3",
           "title": "Create BodyRecordDetailView",
           "description": "Detail view for individual body composition record",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Presentation/Features/Body/BodyRecordDetailView.swift"
           ],
@@ -489,13 +489,15 @@
             "Edit and delete options",
             "Comparison with previous record"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "BodyRecordDetailView fully implemented with comprehensive functionality:\n- Date header: Displays measurement date and time prominently\n- Body measurements section: Shows weight, body fat %, muscle mass, body fat mass with icons and values\n- Calculated values section: Displays lean body mass (LBM) and muscle percentage with formulas\n- Metabolism section: Shows BMR, TDEE, activity level, and activity calories (when available)\n- Comparison section: Displays changes from previous record with color-coded indicators (when available)\n- Edit and delete actions: Buttons with confirmation dialog for delete\n- Change calculations: Automatic calculation of changes for all measurements\n- Visual indicators: Color-coded badges showing increases (orange) and decreases (blue)\n- Days elapsed: Shows number of days between current and previous record\n- NavigationStack with close button and dismiss functionality\n- Follows established patterns from BodyCompositionView and BodyTrendsView\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- 4 SwiftUI previews: basic, with previous entry, without metabolism data, dark mode\n- Adaptive light/dark mode support with system colors\n\nAll acceptance criteria met:\n\u2705 Shows all recorded values (weight, body fat %, muscle mass, body fat mass, LBM, muscle %)\n\u2705 Displays calculated BMR/TDEE for that record (metabolism section)\n\u2705 Edit and delete options (action buttons with confirmation)\n\u2705 Comparison with previous record (comparison section with change indicators)\n\nKey features:\n- Comprehensive data display with icons and colors for each measurement type\n- Automatic change calculation from previous record with visual indicators\n- Color-coded change badges: orange (increase), blue (decrease), gray (no change)\n- Days elapsed calculation between records\n- Delete confirmation alert to prevent accidental deletion\n- Metabolism data display: BMR, TDEE, activity level with multiplier, activity calories\n- Calculated values: lean body mass and muscle percentage with formulas\n- Helper methods for all formatting: dates, weights, percentages, calories, changes\n- Consistent card-based layout matching app design system\n- Sheet presentation with NavigationStack and close button\n\nCommitted in 2878948.",
+          "updated_at": "2026-01-12T11:12:30.978796+00:00"
         },
         {
           "id": "5.4",
           "title": "Update DashboardView with metabolism display",
           "description": "Add BMR/TDEE card to dashboard with intake/expenditure comparison",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Presentation/Features/Dashboard/DashboardView.swift"
           ],
@@ -505,7 +507,9 @@
             "Visual indicator for surplus/deficit",
             "Tappable to navigate to body tab"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "DashboardView fully implemented with comprehensive functionality:\n- Created DashboardView as main dashboard screen with card-based layout\n- Integrated MetabolismDisplayCard component for BMR/TDEE display\n- Shows BMR, TDEE, activity level with icons and multipliers\n- Displays calorie balance with color-coded visual indicators:\n  * Green: maintenance (\u00b1100 kcal)\n  * Orange: surplus (>0 kcal)\n  * Blue: deficit (<0 kcal)\n- Tappable card with onNavigateToBody callback for navigation to body tab\n- Time-based greeting header (morning/afternoon/evening/night)\n- Current date and time display\n- Pull-to-refresh support for data updates\n- Loading and error state handling with alerts\n- Placeholder cards for future modules (diet/exercise/sleep)\n- Updated ContentView to use DashboardView instead of placeholder\n- Follows established code patterns from BodyCompositionView\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- 3 SwiftUI preview support structures (to be implemented with Mock ViewModel)\n- TODO note for Phase 6: Connect via DIContainer for proper dependency injection\n\nAll acceptance criteria met:\n\u2705 Metabolism card showing BMR/TDEE - MetabolismDisplayCard displays both values prominently with icons\n\u2705 Daily calorie balance display - Shows intake - (TDEE + exercise) with formatted values\n\u2705 Visual indicator for surplus/deficit - Color-coded status with icons (green/orange/blue)\n\u2705 Tappable to navigate to body tab - onNavigateToBody callback changes selectedTab to .body\n\nCommitted in 450a7b7.",
+          "updated_at": "2026-01-12T11:16:19.628051+00:00"
         }
       ]
     },
@@ -519,7 +523,7 @@
           "id": "6.1",
           "title": "Update DIContainer with body composition dependencies",
           "description": "Register all body composition related dependencies in DIContainer",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/App/DIContainer.swift"
           ],
@@ -529,7 +533,9 @@
             "Registers all use cases",
             "Factory methods for ViewModels"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "DIContainer fully updated with all body composition dependencies:\n\nData Sources:\n- bodyLocalDataSource: BodyLocalDataSource with PersistenceController\n\nRepositories:\n- bodyRepository: BodyRepositoryProtocol implementation with BodyLocalDataSource injection\n\nUse Cases:\n- calculateBMRUseCase: Stateless BMR calculation use case\n- calculateTDEEUseCase: Stateless TDEE calculation use case\n- recordBodyCompositionUseCase: Orchestration use case with calculateBMRUseCase, calculateTDEEUseCase, and bodyRepository dependencies\n- fetchBodyTrendsUseCase: Query use case with bodyRepository dependency\n\nFactory Methods:\n- makeBodyCompositionViewModel(userProfile:): Creates BodyCompositionViewModel with all required dependencies\n- makeBodyTrendsViewModel(): Creates BodyTrendsViewModel with fetchBodyTrendsUseCase and bodyRepository\n- makeMetabolismViewModel(): Creates MetabolismViewModel with bodyRepository\n\nAll dependencies use lazy initialization for performance optimization. Proper dependency injection chain established: PersistenceController \u2192 BodyLocalDataSource \u2192 BodyRepository \u2192 Use Cases \u2192 ViewModels.\n\nAll acceptance criteria met:\n\u2705 Registers BodyLocalDataSource\n\u2705 Registers BodyRepository\n\u2705 Registers all use cases (4 use cases)\n\u2705 Factory methods for ViewModels (3 factory methods)\n\nFollows established patterns with comprehensive Korean documentation and Java comparisons.\n\nCommitted in 44d44a4.",
+          "updated_at": "2026-01-12T11:19:21.687079+00:00"
         },
         {
           "id": "6.2",
@@ -728,5 +734,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-12T11:09:14.809877+00:00"
+  "last_updated": "2026-01-12T11:19:21.687087+00:00"
 }

@@ -64,7 +64,15 @@ struct ContentView: View {
     }
 
     private var bodyTab: some View {
-        PlaceholderView(title: "체성분", systemImage: "figure.stand")
+        // 📚 학습 포인트: DIContainer Factory Pattern
+        // DIContainer의 factory 메서드를 통해 ViewModel 생성
+        // TODO: Phase 7 - UserProfile을 실제 저장된 사용자 데이터로 교체
+        // 현재는 임시로 sample 데이터 사용
+        let viewModel = DIContainer.shared.makeBodyCompositionViewModel(
+            userProfile: UserProfile.sample
+        )
+
+        return BodyCompositionView(viewModel: viewModel)
             .tabItem {
                 Label("체성분", systemImage: "figure.stand")
             }
