@@ -195,7 +195,60 @@ The DateUtils utility was already fully implemented and committed (commit c39c4c
 
 ### Next Steps
 **Phase 2 (Utility Services)** - Remaining subtasks:
-- 2.2: Create ValidationService ⏳ PENDING
+- 2.2: Create ValidationService ✅ COMPLETED
+- 2.3: Create Date+Extensions ⏳ PENDING
+- 2.4: Create Decimal+Extensions ⏳ PENDING
+- 2.5: Create Formatters Utility ⏳ PENDING
+
+---
+
+## Subtask 2.2: Create ValidationService
+
+### Status: ✅ COMPLETED
+
+### Summary
+The ValidationService was already fully implemented and committed (commit ba7669a). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
+
+### Implementation Details
+- **File**: `Bodii/Shared/Utils/ValidationService.swift`
+- **Structure**: Static enum as namespace (prevents instantiation)
+- **ValidationResult**: Struct with isValid (Bool) and errorMessage (String?) properties
+- **All Validation Methods Implemented**:
+  - validateHeight (100-250cm)
+  - validateWeight (20-300kg)
+  - validateBodyFatPercent (3-60%)
+  - validateMuscleMass (10-60kg)
+  - validateAge (birth year 1900-current year)
+  - validateName (1-20 chars, non-empty)
+  - validateExerciseDuration (1-480 minutes)
+  - validateFoodQuantity (0.1-100 servings or 1-10000g)
+- **Bonus Method**: validateBodyComposition for body composition consistency checking
+
+### Key Features
+✅ Uses Constants.Validation for all validation ranges
+✅ User-friendly Korean error messages
+✅ Follows project patterns with 📚 and 💡 learning points
+✅ Comprehensive documentation with examples
+✅ MARK sections for organization
+✅ ValidationResult with static success and failure(message:) factory methods
+
+### Acceptance Criteria Verification
+✅ validateHeight: 100-250cm
+✅ validateWeight: 20-300kg
+✅ validateBodyFatPercent: 3-60%
+✅ validateMuscleMass: 10-60kg
+✅ validateAge: birth year 1900 to current year
+✅ validateName: 1-20 characters, non-empty
+✅ validateExerciseDuration: 1-480 minutes
+✅ validateFoodQuantity: 0.1-100 servings or 1-10000 grams
+✅ ValidationResult type with isValid, errorMessage properties
+✅ Korean error messages (all error messages are user-friendly in Korean)
+
+### Commits
+- ba7669a: auto-claude: 2.2 - Input validation service with all range checks from spec
+
+### Next Steps
+**Phase 2 (Utility Services)** - Remaining subtasks:
 - 2.3: Create Date+Extensions ⏳ PENDING
 - 2.4: Create Decimal+Extensions ⏳ PENDING
 - 2.5: Create Formatters Utility ⏳ PENDING
