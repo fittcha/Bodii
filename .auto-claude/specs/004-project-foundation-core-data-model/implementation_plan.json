@@ -295,7 +295,9 @@
             "command": "xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5",
             "expected": "BUILD SUCCEEDED"
           },
-          "status": "pending"
+          "status": "completed",
+          "notes": "Successfully created DateUtils.swift with all required functionality:\n- Sleep boundary logic: getLogicalDate(for:) implements 02:00 boundary rule (00:00-01:59 belongs to previous day)\n- shouldShowSleepPopup() checks if current time is >= 02:00\n- getSleepDate(for:) alias for clearer sleep context\n- Korean locale formatting: formatKorean(_:style:), formatKoreanWithTime(_:dateStyle:timeStyle:)\n- Relative date strings: relativeDate(_:) returns 오늘/어제/내일 or formatted date\n- Duration formatting: formatDuration(minutes:) converts to hours/minutes in Korean\n- Date creation: date(year:month:day:) helper\n- Date calculations: daysBetween(from:to:)\nAll methods include comprehensive Korean/English documentation with examples. Follows established codebase patterns from Constants.swift and Date+Extensions.swift. Clean commit completed.",
+          "updated_at": "2026-01-12T00:42:00.000000+00:00"
         },
         {
           "id": "subtask-3-2",
