@@ -1,0 +1,592 @@
+{
+  "feature": "Korean Food Database Integration",
+  "description": "Integrate Korean Food & Drug Administration (\uc2dd\uc57d\ucc98) food nutrition database API as primary source, with USDA FoodData Central as fallback for international foods. Prioritize Korean dishes (kimchi jjigae, bibimbap, tteokbokki) that are poorly covered by competitors.",
+  "created_at": "2026-01-12T10:46:08.264Z",
+  "updated_at": "2026-01-12T19:50:00.000Z",
+  "status": "in_progress",
+  "planStatus": "planned",
+  "phases": [
+    {
+      "id": "phase_1",
+      "name": "Infrastructure Setup",
+      "description": "Set up networking infrastructure, API configuration, and base services",
+      "subtasks": [
+        {
+          "id": "1.1",
+          "title": "Create NetworkManager service",
+          "description": "Implement base NetworkManager class for handling HTTP requests with async/await, error handling, timeout configuration, and retry logic",
+          "status": "completed",
+          "files": [
+            "Bodii/Infrastructure/Network/NetworkManager.swift",
+            "Bodii/Infrastructure/Network/NetworkError.swift"
+          ],
+          "acceptance_criteria": [
+            "NetworkManager can perform GET/POST requests",
+            "Proper error handling with NetworkError enum",
+            "Configurable timeout (default 30s)",
+            "Async/await support",
+            "Generic response decoding"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [],
+          "notes": "\u2705 Implemented NetworkManager with async/await, retry logic with exponential backoff, timeout configuration, and comprehensive NetworkError enum. Follows project patterns with Korean documentation.",
+          "updated_at": "2026-01-12T10:52:32.261337+00:00"
+        },
+        {
+          "id": "1.2",
+          "title": "Create API configuration and keys management",
+          "description": "Set up configuration for API endpoints and secure key management using Info.plist or environment variables",
+          "status": "completed",
+          "files": [
+            "Bodii/Infrastructure/Network/APIConfig.swift",
+            "Bodii/Shared/Utils/Constants.swift"
+          ],
+          "acceptance_criteria": [
+            "API endpoints defined for \uc2dd\uc57d\ucc98 and USDA",
+            "API keys stored securely (not hardcoded)",
+            "Configuration is testable with mock values",
+            "Environment-specific configurations supported"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [],
+          "notes": "\u2705 Implemented comprehensive API configuration system with secure key management. Created APIConfig.swift with protocol-based design supporting KFDA and USDA APIs, URL builders, environment-specific configs, and DEMO_KEY fallback. Updated Constants.swift with API limits and cache settings. Added detailed setup guide (API_KEYS_SETUP.md) and Info.plist template. Follows project patterns with Korean documentation.",
+          "updated_at": "2026-01-12T11:08:40.849984+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase_2",
+      "name": "Korean Food API (\uc2dd\uc57d\ucc98) Integration",
+      "description": "Integrate the Korean Food & Drug Administration API as the primary food data source",
+      "subtasks": [
+        {
+          "id": "2.1",
+          "title": "Create \uc2dd\uc57d\ucc98 API DTOs",
+          "description": "Define Data Transfer Objects for parsing \uc2dd\uc57d\ucc98 API responses including food items and nutrition data",
+          "status": "completed",
+          "files": [
+            "Bodii/Data/DTOs/KFDAFoodDTO.swift",
+            "Bodii/Data/DTOs/KFDASearchResponseDTO.swift"
+          ],
+          "acceptance_criteria": [
+            "DTOs match \uc2dd\uc57d\ucc98 API response structure",
+            "All nutrition fields mapped (calories, carbs, protein, fat, sodium)",
+            "Codable conformance for JSON parsing",
+            "Handles nullable fields properly"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [],
+          "notes": "\u2705 Created KFDAFoodDTO and KFDASearchResponseDTO for parsing \uc2dd\uc57d\ucc98 API responses. DTOs include all nutrition fields (calories, protein, carbs, fat, sodium, fiber, sugar), handle nullable fields properly, follow Codable protocol, and use custom CodingKeys for uppercase API field names. KFDASearchResponseDTO handles standard Korean government API structure with Header + Body, includes pagination support, and custom decoding for single item vs array responses. Both files follow project patterns with Korean documentation.",
+          "updated_at": "2026-01-12T11:13:27.342606+00:00"
+        },
+        {
+          "id": "2.2",
+          "title": "Implement KFDAFoodAPIService",
+          "description": "Create the service class to search and fetch Korean food data from \uc2dd\uc57d\ucc98 API",
+          "status": "completed",
+          "files": [
+            "Bodii/Data/DataSources/Remote/KFDAFoodAPIService.swift"
+          ],
+          "acceptance_criteria": [
+            "Search foods by name (keyword search)",
+            "Handle pagination for large result sets",
+            "Parse API responses to DTOs",
+            "Proper error handling for network/parsing failures",
+            "Respects API rate limits"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [
+            "1.1",
+            "1.2",
+            "2.1"
+          ],
+          "notes": "\u2705 Implemented KFDAFoodAPIService with comprehensive functionality:\n- searchFoods() method with keyword search and pagination support\n- getFoodDetail() method for single food lookup\n- KFDA-style pagination using startIdx/endIdx (not page numbers)\n- Proper error handling with NetworkError and KFDAAPIError types\n- API response validation and data filtering\n- Helper methods for pagination: nextPageIndices() and pageToIndices()\n- validateFoods() for data quality assurance\n- Rate limit compliance through NetworkManager configuration\n- MockKFDAFoodAPIService for testing\n- Follows project patterns with Korean documentation\n- All acceptance criteria met: search, pagination, DTO parsing, error handling, rate limits",
+          "updated_at": "2026-01-12T11:16:01.644043+00:00"
+        },
+        {
+          "id": "2.3",
+          "title": "Create KFDA to Food entity mapper",
+          "description": "Implement mapper to convert \uc2dd\uc57d\ucc98 DTOs to domain Food entities",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/Mappers/KFDAFoodMapper.swift"
+          ],
+          "acceptance_criteria": [
+            "Maps all nutrition fields correctly",
+            "Sets source to .governmentAPI",
+            "Stores apiCode for deduplication",
+            "Handles unit conversions if needed",
+            "Properly handles missing optional fields"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [
+            "2.1"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase_3",
+      "name": "USDA API Integration",
+      "description": "Integrate USDA FoodData Central API as fallback for international foods",
+      "subtasks": [
+        {
+          "id": "3.1",
+          "title": "Create USDA API DTOs",
+          "description": "Define Data Transfer Objects for parsing USDA FoodData Central API responses",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/DTOs/USDAFoodDTO.swift",
+            "Bodii/Data/DTOs/USDASearchResponseDTO.swift",
+            "Bodii/Data/DTOs/USDANutrientDTO.swift"
+          ],
+          "acceptance_criteria": [
+            "DTOs match USDA API response structure",
+            "Handles nutrient array format (USDA uses nutrient IDs)",
+            "Codable conformance for JSON parsing",
+            "Supports both branded and foundation foods"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [],
+          "notes": ""
+        },
+        {
+          "id": "3.2",
+          "title": "Implement USDAFoodAPIService",
+          "description": "Create the service class to search and fetch food data from USDA FoodData Central API",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/DataSources/Remote/USDAFoodAPIService.swift"
+          ],
+          "acceptance_criteria": [
+            "Search foods using FoodData Central search endpoint",
+            "Handle pagination",
+            "Parse API responses to DTOs",
+            "Proper error handling",
+            "API key authentication"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [
+            "1.1",
+            "1.2",
+            "3.1"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "3.3",
+          "title": "Create USDA to Food entity mapper",
+          "description": "Implement mapper to convert USDA DTOs to domain Food entities with unit conversions",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/Mappers/USDAFoodMapper.swift"
+          ],
+          "acceptance_criteria": [
+            "Maps USDA nutrient IDs to correct fields",
+            "Converts units (oz to g, etc.) if needed",
+            "Sets source to .usda",
+            "Stores fdcId as apiCode",
+            "Handles missing nutrients gracefully"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [
+            "3.1"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase_4",
+      "name": "Unified Search Service",
+      "description": "Create unified search service that prioritizes Korean foods and provides seamless fallback",
+      "subtasks": [
+        {
+          "id": "4.1",
+          "title": "Define FoodSearchRepository protocol",
+          "description": "Create repository protocol for food search operations following clean architecture",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Interfaces/FoodSearchRepository.swift"
+          ],
+          "acceptance_criteria": [
+            "Protocol defines search method with async/throws",
+            "Supports search query and optional parameters",
+            "Returns array of Food domain entities",
+            "Follows dependency inversion principle"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [],
+          "notes": ""
+        },
+        {
+          "id": "4.2",
+          "title": "Implement UnifiedFoodSearchService",
+          "description": "Create service that searches \uc2dd\uc57d\ucc98 first, then USDA as fallback, and merges results",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/DataSources/Remote/UnifiedFoodSearchService.swift"
+          ],
+          "acceptance_criteria": [
+            "Searches \uc2dd\uc57d\ucc98 API first (primary)",
+            "Falls back to USDA if no Korean results or search appears international",
+            "Korean foods appear first in results",
+            "Handles concurrent API calls efficiently",
+            "Deduplicates results if same food from multiple sources",
+            "Returns empty array gracefully if both APIs fail"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [
+            "2.2",
+            "3.2",
+            "4.1"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "4.3",
+          "title": "Implement FoodSearchRepositoryImpl",
+          "description": "Create repository implementation that uses UnifiedFoodSearchService",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/Repositories/FoodSearchRepositoryImpl.swift"
+          ],
+          "acceptance_criteria": [
+            "Implements FoodSearchRepository protocol",
+            "Uses UnifiedFoodSearchService for actual search",
+            "Can be injected via DIContainer",
+            "Testable with mock service"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [
+            "4.1",
+            "4.2"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase_5",
+      "name": "Local Caching & Offline Support",
+      "description": "Implement local caching for recent foods and offline access",
+      "subtasks": [
+        {
+          "id": "5.1",
+          "title": "Create FoodEntity for Core Data",
+          "description": "Define Core Data entity for caching food items locally",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/DataSources/Local/Entities/FoodEntity+CoreData.swift",
+            "Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld/Bodii.xcdatamodel/contents"
+          ],
+          "acceptance_criteria": [
+            "Core Data entity matches Food domain model",
+            "Includes lastAccessedAt for recency tracking",
+            "Includes searchCount for popularity",
+            "Proper indices for efficient queries"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [],
+          "notes": ""
+        },
+        {
+          "id": "5.2",
+          "title": "Implement FoodLocalDataSource",
+          "description": "Create local data source for CRUD operations on cached foods",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/DataSources/Local/FoodLocalDataSource.swift"
+          ],
+          "acceptance_criteria": [
+            "Save food to local cache",
+            "Fetch recent foods (sorted by lastAccessedAt)",
+            "Search cached foods by name",
+            "Update access timestamp on retrieval",
+            "Delete old cached items (LRU cleanup)",
+            "Limit cache to reasonable size (e.g., 500 items)"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [
+            "5.1"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "5.3",
+          "title": "Create Food domain to Core Data mapper",
+          "description": "Implement bidirectional mapper between Food entity and FoodEntity Core Data object",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/Mappers/FoodEntityMapper.swift"
+          ],
+          "acceptance_criteria": [
+            "Maps Food to FoodEntity (Core Data)",
+            "Maps FoodEntity to Food (domain)",
+            "Handles all fields including optionals",
+            "Preserves source and apiCode"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [
+            "5.1"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "5.4",
+          "title": "Integrate caching into search flow",
+          "description": "Update FoodSearchRepository to use local cache for recent foods and cache new search results",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/Repositories/FoodSearchRepositoryImpl.swift"
+          ],
+          "acceptance_criteria": [
+            "Check local cache before API call for exact matches",
+            "Cache new foods from API results",
+            "Return cached results when offline",
+            "Show recent foods section from cache",
+            "Update lastAccessedAt when food is selected"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [
+            "4.3",
+            "5.2",
+            "5.3"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase_6",
+      "name": "Serving Size & Nutrition Calculation",
+      "description": "Implement serving size adjustment with automatic nutrition recalculation",
+      "subtasks": [
+        {
+          "id": "6.1",
+          "title": "Create NutritionCalculator utility",
+          "description": "Implement utility for calculating nutrition values based on serving size adjustments",
+          "status": "pending",
+          "files": [
+            "Bodii/Shared/Utils/NutritionCalculator.swift"
+          ],
+          "acceptance_criteria": [
+            "Calculate nutrition for given quantity and unit",
+            "Support both serving-based and gram-based calculations",
+            "Handle decimal precision appropriately",
+            "Calculate macro ratios (carbs/protein/fat percentages)"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [],
+          "notes": ""
+        },
+        {
+          "id": "6.2",
+          "title": "Create FoodWithQuantity model",
+          "description": "Create model that combines Food with selected quantity and calculated nutrition",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Entities/FoodWithQuantity.swift"
+          ],
+          "acceptance_criteria": [
+            "Contains Food reference and quantity/unit",
+            "Provides calculated nutrition properties",
+            "Immutable calculated values based on quantity",
+            "Easy to convert to FoodRecord"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [
+            "6.1"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase_7",
+      "name": "Error Handling & Resilience",
+      "description": "Implement comprehensive error handling and graceful fallback mechanisms",
+      "subtasks": [
+        {
+          "id": "7.1",
+          "title": "Create FoodSearchError enum",
+          "description": "Define comprehensive error types for food search operations",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Interfaces/FoodSearchError.swift"
+          ],
+          "acceptance_criteria": [
+            "Covers network errors, parsing errors, API errors",
+            "User-friendly error messages (Korean)",
+            "Distinguishes recoverable vs non-recoverable errors",
+            "Includes offline/no-connection state"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [],
+          "notes": ""
+        },
+        {
+          "id": "7.2",
+          "title": "Implement graceful fallback in search service",
+          "description": "Add retry logic and fallback behavior when APIs fail",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/DataSources/Remote/UnifiedFoodSearchService.swift"
+          ],
+          "acceptance_criteria": [
+            "Retry failed requests (max 2 retries)",
+            "Fall back to USDA if \uc2dd\uc57d\ucc98 fails",
+            "Return cached results if both APIs fail",
+            "Log errors for debugging",
+            "Show appropriate user message for each failure type"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [
+            "4.2",
+            "5.4",
+            "7.1"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase_8",
+      "name": "DI Container Integration",
+      "description": "Register all new services in dependency injection container",
+      "subtasks": [
+        {
+          "id": "8.1",
+          "title": "Update DIContainer with food search dependencies",
+          "description": "Register NetworkManager, API services, repository, and related dependencies",
+          "status": "pending",
+          "files": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "acceptance_criteria": [
+            "NetworkManager registered as singleton",
+            "API services registered (KFDA, USDA)",
+            "UnifiedFoodSearchService registered",
+            "FoodSearchRepository registered",
+            "FoodLocalDataSource registered",
+            "Factory methods for ViewModel creation"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [
+            "2.2",
+            "3.2",
+            "4.3",
+            "5.2"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase_9",
+      "name": "Testing",
+      "description": "Write unit tests for all new components",
+      "subtasks": [
+        {
+          "id": "9.1",
+          "title": "Create mock API services for testing",
+          "description": "Create mock implementations of API services for unit testing",
+          "status": "pending",
+          "files": [
+            "BodiiTests/Mocks/MockKFDAFoodAPIService.swift",
+            "BodiiTests/Mocks/MockUSDAFoodAPIService.swift",
+            "BodiiTests/Mocks/MockFoodLocalDataSource.swift"
+          ],
+          "acceptance_criteria": [
+            "Mock services return configurable responses",
+            "Can simulate success/failure scenarios",
+            "Can simulate network delays",
+            "Conforms to same protocols as real services"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [
+            "2.2",
+            "3.2",
+            "5.2"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "9.2",
+          "title": "Write unit tests for mappers",
+          "description": "Test DTO to entity mapping logic",
+          "status": "pending",
+          "files": [
+            "BodiiTests/Mappers/KFDAFoodMapperTests.swift",
+            "BodiiTests/Mappers/USDAFoodMapperTests.swift",
+            "BodiiTests/Mappers/FoodEntityMapperTests.swift"
+          ],
+          "acceptance_criteria": [
+            "Test all field mappings",
+            "Test edge cases (missing fields, null values)",
+            "Test unit conversions",
+            "100% coverage of mapping logic"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [
+            "2.3",
+            "3.3",
+            "5.3"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "9.3",
+          "title": "Write unit tests for UnifiedFoodSearchService",
+          "description": "Test search prioritization, fallback, and error handling",
+          "status": "pending",
+          "files": [
+            "BodiiTests/Services/UnifiedFoodSearchServiceTests.swift"
+          ],
+          "acceptance_criteria": [
+            "Test Korean foods returned first",
+            "Test USDA fallback when KFDA returns empty",
+            "Test both APIs failing (cache fallback)",
+            "Test deduplication logic",
+            "Test concurrent request handling"
+          ],
+          "estimated_effort": "medium",
+          "dependencies": [
+            "4.2",
+            "9.1"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "9.4",
+          "title": "Write unit tests for NutritionCalculator",
+          "description": "Test serving size calculations and nutrition math",
+          "status": "pending",
+          "files": [
+            "BodiiTests/Utils/NutritionCalculatorTests.swift"
+          ],
+          "acceptance_criteria": [
+            "Test serving-based calculations",
+            "Test gram-based calculations",
+            "Test decimal precision",
+            "Test edge cases (0, very large values)"
+          ],
+          "estimated_effort": "small",
+          "dependencies": [
+            "6.1"
+          ],
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "qa_signoff": {
+    "status": "pending",
+    "tests_passed": "",
+    "issues": ""
+  },
+  "total_subtasks": 24,
+  "estimated_total_effort": "large",
+  "last_updated": "2026-01-12T11:16:01.644049+00:00"
+}
