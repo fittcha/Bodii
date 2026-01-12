@@ -108,3 +108,64 @@ Estimated Effort: 3-4 days
 | Swift Charts weight/body fat trends 7/30/90 days | 4.3, 4.4, 5.2 | Pending |
 | Dashboard shows BMR/TDEE with intake/expenditure | 3.3, 4.2, 5.4 | Pending |
 | Query performance under 0.5 seconds | 2.3, 8.3 | Pending |
+
+## ✅ Subtask 1.8 Completed - 2026-01-12T00:05:00.000Z
+
+**Title:** Create BodyRepository protocol
+
+**Changes:**
+- Created `Bodii/Domain/Interfaces/BodyRepositoryProtocol.swift` with comprehensive repository interface
+- Defined async/await based CRUD operations for body composition data
+- Added date range query methods for trend analysis (by date range, recent N days)
+- Created `BodyCompositionStatistics` struct for aggregate statistics
+- Defined `RepositoryError` enum with detailed error cases
+- Included performance requirements documentation (<0.5s for all queries)
+
+**Implementation Details:**
+- Save operation: saves BodyCompositionEntry with associated MetabolismData
+- Read operations: fetch by ID, date, latest, all, date range, recent N days
+- Update/Delete operations: modify or remove entries with cascade delete for metabolism data
+- Statistics: aggregate queries for trend analysis
+- All methods use async/await pattern for modern Swift concurrency
+- Comprehensive Korean documentation with learning points and Java comparisons
+
+**Verification:**
+✅ Defines CRUD operations for body records
+✅ Includes fetch by date range for trends
+✅ Async/await based interface
+✅ Includes performance requirements (<0.5s)
+
+**Quality Checks:**
+✅ Follows patterns from existing domain entities and use cases
+✅ No console.log/print debugging statements
+✅ Comprehensive error handling with RepositoryError enum
+✅ Clean commit with descriptive message
+✅ Korean documentation with learning points
+
+**Files Modified:**
+- Bodii/Domain/Interfaces/BodyRepositoryProtocol.swift (NEW)
+
+**Commit:** 87c3e2b - "auto-claude: 1.8 - Define repository interface for body composition data operations"
+
+---
+
+## 🎉 Phase 1 Complete - Domain Layer - Entities & Business Logic
+
+All subtasks in Phase 1 have been completed successfully:
+- 1.1 ✅ ActivityLevel enum with TDEE multipliers
+- 1.2 ✅ Gender enum for BMR calculations
+- 1.3 ✅ BodyCompositionEntry domain entity
+- 1.4 ✅ MetabolismData domain entity
+- 1.5 ✅ UserProfile domain entity
+- 1.6 ✅ CalculateBMRUseCase with Mifflin-St Jeor formula
+- 1.7 ✅ CalculateTDEEUseCase
+- 1.8 ✅ BodyRepositoryProtocol
+
+**Next Phase:** Phase 2 - Data Layer - Repository & Data Sources
+- 2.1: Create BodyRecordMapper for Core Data entity mapping
+- 2.2: Create MetabolismSnapshotMapper
+- 2.3: Implement BodyLocalDataSource
+- 2.4: Implement BodyRepository
+- 2.5: Create RecordBodyCompositionUseCase
+- 2.6: Create FetchBodyTrendsUseCase
+
