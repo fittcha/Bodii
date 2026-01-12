@@ -29,8 +29,40 @@
 
 ---
 
+### Phase 4: Unified Search Service
+
+#### 4.1 - Define FoodSearchRepository protocol ✅ (2026-01-12)
+- **Status**: COMPLETED
+- **Commit**: a8cebe3
+- **Implementation**: Created FoodSearchRepository protocol for food search operations following clean architecture
+
+**Key Features:**
+- Protocol defines searchFoods() method with async/throws support
+- Supports search query with optional parameters (limit, offset, useCache)
+- Returns array of Food domain entities
+- Follows dependency inversion principle (domain defines protocol, data implements)
+- Cache management methods: getRecentFoods(), updateFoodAccessTime(), cleanupCache()
+- Protocol extension with default parameter values for convenience
+- FoodSearchError enum for domain-level error handling with localized messages
+
+**Acceptance Criteria Met:**
+✅ Protocol defines search method with async/throws
+✅ Supports search query and optional parameters
+✅ Returns array of Food domain entities
+✅ Follows dependency inversion principle
+
+**Files Created:**
+- Bodii/Domain/Interfaces/FoodSearchRepository.swift (254 lines)
+
+**Architecture:**
+- Domain layer defines the contract (protocol)
+- Data layer will implement the concrete class
+- Repository pattern abstracts data sources (KFDA API, USDA API, local cache)
+- Enables clean separation of concerns and testability
+
+---
+
 ## Next Steps
 - Phase 4: Unified Search Service
-  - 4.1: Define FoodSearchRepository protocol
   - 4.2: Implement UnifiedFoodSearchService
   - 4.3: Implement FoodSearchRepositoryImpl
