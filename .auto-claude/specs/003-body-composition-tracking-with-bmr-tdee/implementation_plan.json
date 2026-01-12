@@ -441,7 +441,7 @@
           "id": "5.1",
           "title": "Create BodyCompositionView main screen",
           "description": "Main view for body tab showing input form and recent records",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Presentation/Features/Body/BodyCompositionView.swift"
           ],
@@ -452,13 +452,15 @@
             "Navigation to trends view",
             "Refresh/loading states"
           ],
-          "estimated_complexity": "high"
+          "estimated_complexity": "high",
+          "notes": "BodyCompositionView fully implemented with comprehensive functionality:\n- Input section: Uses BodyCompositionInputCard component for weight, body fat %, muscle mass input\n- Real-time validation: Input validation with error messages via ViewModel\n- BMR/TDEE display: Shows latest metabolism data with activity level and measurement date\n- Recent records list: Displays last 30 days of records with delete functionality\n- Navigation: Toolbar button to navigate to trends view (sheet presentation)\n- Refresh support: Pull-to-refresh functionality for data reload\n- Loading states: ProgressView during data loading\n- Error handling: Alert dialog for errors, toast notification for success\n- Empty state: User-friendly message when no records exist\n- Card-based layout: Consistent card design following established patterns\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- Formatting helpers: Date, time, decimal, calorie formatting methods\n- Adaptive colors: Light/dark mode support\n- Follows MVVM pattern with @StateObject for ViewModel\n- Uses NavigationStack for modern iOS navigation\n\nAll acceptance criteria met:\n\u2705 Input section for new measurements (BodyCompositionInputCard)\n\u2705 Displays current BMR/TDEE (metabolismSection with latest data)\n\u2705 Shows recent records list (historySection with LazyVStack)\n\u2705 Navigation to trends view (toolbar button + sheet)\n\u2705 Refresh/loading states (refreshable, isLoading, isSaving states)\n\nKey features:\n- Save button with loading indicator during save operation\n- Individual record deletion with confirmation\n- Section headers with icons for visual hierarchy\n- Metabolism card showing BMR, TDEE, activity level, measurement date\n- History rows with date, time, all measurements in compact format\n- Success toast notification with auto-dismiss after 3 seconds\n- ScrollView with VStack for smooth scrolling\n- Proper spacing and padding following design system\n\nCommitted in 58d8ff7.",
+          "updated_at": "2026-01-12T11:06:21.049097+00:00"
         },
         {
           "id": "5.2",
           "title": "Create BodyTrendsView for chart display",
           "description": "View showing weight and body fat trends with period selection",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "Bodii/Presentation/Features/Body/BodyTrendsView.swift"
           ],
@@ -469,7 +471,9 @@
             "Statistics summary (avg, min, max)",
             "Empty state when no data"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "BodyTrendsView fully implemented with comprehensive functionality:\n- Period selector: TrendPeriodPicker for 7/30/90 day selection with automatic data reload\n- Weight trend chart: WeightTrendChart with interactive selection, goal line, smooth curves\n- Body fat trend chart: BodyFatTrendChart with health zones (gender-based), goal line, color-coded indicators\n- Statistics summary: Displays average weight/body fat, min/max values, total changes in grid layout\n- Empty state: User-friendly message with period selector when no data available\n- Loading state: Progress indicator during data fetch\n- Error handling: Alert dialog for errors with user-friendly Korean messages\n- Pull-to-refresh: Async refresh support via .refreshable modifier\n- NavigationStack with close button and dismiss functionality\n- Card-based layout following established design patterns\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- Multiple SwiftUI preview support structure (to be implemented with Mock ViewModel)\n- Follows MVVM pattern with @StateObject for ViewModel\n- Adaptive light/dark mode support with system colors\n- Updated BodyCompositionView sheet navigation (ready for DIContainer integration in phase 6)\n\nAll acceptance criteria met:\n\u2705 Period selector (7/30/90 days) - TrendPeriodPicker with fullWidth style in card\n\u2705 Weight trend chart - WeightTrendChart with interactive features, goal line, statistics badge\n\u2705 Body fat trend chart - BodyFatTrendChart with health zones, gender-based classification\n\u2705 Statistics summary (avg, min, max) - statisticsCard with 4 key metrics in grid layout\n\u2705 Empty state when no data - emptyStateView with helpful guidance and period selector\n\nKey features:\n- Period selection triggers automatic data reload via ViewModel\n- Both charts are interactive with tap-to-see-details functionality\n- Statistics card shows: period range, record count, avg weight/body fat, weight/body fat changes\n- Visual indicators: color-coded change badges (orange for increase, blue for decrease)\n- Health zones in body fat chart show different ranges for male/female\n- Goal lines displayed as dashed green lines when provided\n- Proper error handling and loading states throughout\n- Sheet presentation with NavigationStack and close button\n- Follows established patterns from BodyCompositionView and other components\n\nCommitted in 235caa1.",
+          "updated_at": "2026-01-12T11:09:14.809870+00:00"
         },
         {
           "id": "5.3",
@@ -724,5 +728,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-12T10:53:38.486783+00:00"
+  "last_updated": "2026-01-12T11:09:14.809877+00:00"
 }
