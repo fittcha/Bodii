@@ -128,9 +128,55 @@
 
 ---
 
+## Phase 5: Local Caching & Offline Support
+
+#### 5.1 - Create FoodEntity for Core Data ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: [pending]
+- **Implementation**: Updated Core Data model and created FoodEntity+CoreData.swift extension
+
+**Key Features:**
+- Updated Food entity in Core Data model with cache-specific fields:
+  * `lastAccessedAt` (Date, optional) - for LRU (Least Recently Used) cache tracking
+  * `searchCount` (Integer 32, default 0) - for popularity tracking
+- Added four fetch indices for efficient queries:
+  * `byApiCode` - for deduplication and lookup by API code
+  * `byLastAccessed` - for LRU cache queries (descending order)
+  * `byName` - for search by food name
+  * `bySearchCount` - for popularity-based sorting (descending order)
+- Created comprehensive FoodEntity+CoreData.swift extension (415 lines):
+  * Cache management methods: isRecentlyAccessed, isPopular(), updateAccessTime(), isCacheExpired()
+  * Domain entity conversion: toDomainEntity(), from(), update()
+  * Fetch request builders: fetchRequest(), fetchRequestByApiCode(), fetchRecentFoods(), fetchPopularFoods(), fetchByName(), fetchExpiredCache()
+  * Batch operations: batchCreate(), saveUnique() with upsert logic
+  * Debug helpers for testing
+
+**Acceptance Criteria Met:**
+✅ Core Data entity matches Food domain model - All fields mapped correctly
+✅ Includes lastAccessedAt for recency tracking - Added as optional Date attribute
+✅ Includes searchCount for popularity - Added as Integer 32 with default 0
+✅ Proper indices for efficient queries - Four indices added (apiCode, lastAccessed, name, searchCount)
+
+**Files Created/Modified:**
+- Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld/Bodii.xcdatamodel/contents (updated)
+- Bodii/Data/DataSources/Local/Entities/FoodEntity+CoreData.swift (415 lines)
+
+**Architecture:**
+- Follows Clean Architecture with clear separation of concerns
+- Core Data entity (Infrastructure) ↔ Domain entity (Domain) conversion
+- Extension pattern used to avoid modifying auto-generated Core Data classes
+- Factory methods and convenience initializers for easy entity creation
+
+**Cache Strategy:**
+- LRU (Least Recently Used) based on lastAccessedAt timestamp
+- Popularity tracking with searchCount for trending foods
+- Automatic expiration after 30 days (configurable)
+- Upsert logic to prevent duplicate API data
+
+---
+
 ## Next Steps
 - Phase 5: Local Caching & Offline Support
-  - 5.1: Create FoodEntity for Core Data
   - 5.2: Implement FoodLocalDataSource
   - 5.3: Create Food domain to Core Data mapper
   - 5.4: Integrate caching into search flow
