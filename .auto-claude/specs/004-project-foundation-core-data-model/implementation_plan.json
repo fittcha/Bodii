@@ -49,7 +49,7 @@
             "expected": "BUILD SUCCEEDED"
           },
           "status": "completed",
-          "notes": "Created Gender.swift enum with male/female cases using Int16 rawValue for Core Data compatibility. Implemented CaseIterable, Codable, and Identifiable protocols. Added displayName computed property with Korean localization (\"\ub0a8\uc131\", \"\uc5ec\uc131\"). Includes comprehensive documentation with examples.",
+          "notes": "Created Gender.swift enum with male/female cases using Int16 rawValue for Core Data compatibility. Implemented CaseIterable, Codable, and Identifiable protocols. Added displayName computed property with Korean localization (\"남성\", \"여성\"). Includes comprehensive documentation with examples.",
           "updated_at": "2026-01-12T00:20:20.801502+00:00"
         },
         {
@@ -171,7 +171,7 @@
             "expected": "BUILD SUCCEEDED"
           },
           "status": "completed",
-          "notes": "Created GoalType enum with three cases: lose (0), maintain (1), and gain (2). Follows the established pattern from other enums with Int16 raw values for Core Data compatibility, displayName property with Korean localization (\"\uac10\ub7c9\", \"\uc720\uc9c0\", \"\uc99d\ub7c9\"), and Identifiable conformance. Includes comprehensive documentation with examples.",
+          "notes": "Created GoalType enum with three cases: lose (0), maintain (1), and gain (2). Follows the established pattern from other enums with Int16 raw values for Core Data compatibility, displayName property with Korean localization (\"감량\", \"유지\", \"증량\"), and Identifiable conformance. Includes comprehensive documentation with examples.",
           "updated_at": "2026-01-12T00:32:00.000000+00:00"
         },
         {
@@ -212,7 +212,7 @@
             "expected": "BUILD SUCCEEDED"
           },
           "status": "completed",
-          "notes": "Successfully created QuantityUnit enum with two cases: serving (0) and grams (1). Follows the established pattern from other enums with Int16 raw values for Core Data compatibility, displayName property with proper Korean/English localization (\"\uc778\ubd84\", \"g\"), and Identifiable conformance. Includes comprehensive documentation with examples. File committed successfully.",
+          "notes": "Successfully created QuantityUnit enum with two cases: serving (0) and grams (1). Follows the established pattern from other enums with Int16 raw values for Core Data compatibility, displayName property with proper Korean/English localization (\"인분\", \"g\"), and Identifiable conformance. Includes comprehensive documentation with examples. File committed successfully.",
           "updated_at": "2026-01-12T00:31:36.073973+00:00"
         }
       ]
@@ -296,7 +296,7 @@
             "expected": "BUILD SUCCEEDED"
           },
           "status": "completed",
-          "notes": "Successfully created DateUtils.swift with all required functionality:\n- Sleep boundary logic: getLogicalDate(for:) implements 02:00 boundary rule (00:00-01:59 belongs to previous day)\n- shouldShowSleepPopup() checks if current time is >= 02:00\n- getSleepDate(for:) alias for clearer sleep context\n- Korean locale formatting: formatKorean(_:style:), formatKoreanWithTime(_:dateStyle:timeStyle:)\n- Relative date strings: relativeDate(_:) returns \uc624\ub298/\uc5b4\uc81c/\ub0b4\uc77c or formatted date\n- Duration formatting: formatDuration(minutes:) converts to hours/minutes in Korean\n- Date creation: date(year:month:day:) helper\n- Date calculations: daysBetween(from:to:)\nAll methods include comprehensive Korean/English documentation with examples. Follows established codebase patterns from Constants.swift and Date+Extensions.swift. Clean commit completed.",
+          "notes": "Successfully created DateUtils.swift with all required functionality:\n- Sleep boundary logic: getLogicalDate(for:) implements 02:00 boundary rule (00:00-01:59 belongs to previous day)\n- shouldShowSleepPopup() checks if current time is >= 02:00\n- getSleepDate(for:) alias for clearer sleep context\n- Korean locale formatting: formatKorean(_:style:), formatKoreanWithTime(_:dateStyle:timeStyle:)\n- Relative date strings: relativeDate(_:) returns 오늘/어제/내일 or formatted date\n- Duration formatting: formatDuration(minutes:) converts to hours/minutes in Korean\n- Date creation: date(year:month:day:) helper\n- Date calculations: daysBetween(from:to:)\nAll methods include comprehensive Korean/English documentation with examples. Follows established codebase patterns from Constants.swift and Date+Extensions.swift. Clean commit completed.",
           "updated_at": "2026-01-12T00:42:00.000000+00:00"
         },
         {
@@ -317,7 +317,7 @@
             "expected": "BUILD SUCCEEDED"
           },
           "status": "completed",
-          "notes": "Successfully created ValidationService.swift with all required functionality:\n- ValidationResult enum with success/failure cases and helper properties\n- Name validation: 1~20 characters with trimming\n- Birth date validation: 1900~current year, prevents future dates\n- Height validation: 100~250 cm\n- Weight validation: 20~300 kg\n- Body fat percentage validation: 1~60%\n- Exercise duration validation: minimum 1 minute\n- Serving size validation: minimum 0.1\n- Warning checks: isExtremeBodyFat (<3% or >50%), isRapidWeightChange (\u00b13kg), isExcessiveExerciseDuration (480+ min), isExcessiveServingSize (100+)\nAll validation methods return ValidationResult with Korean error messages matching spec. Follows patterns from Constants.swift and DateUtils.swift. Clean commit completed.",
+          "notes": "Successfully created ValidationService.swift with all required functionality:\n- ValidationResult enum with success/failure cases and helper properties\n- Name validation: 1~20 characters with trimming\n- Birth date validation: 1900~current year, prevents future dates\n- Height validation: 100~250 cm\n- Weight validation: 20~300 kg\n- Body fat percentage validation: 1~60%\n- Exercise duration validation: minimum 1 minute\n- Serving size validation: minimum 0.1\n- Warning checks: isExtremeBodyFat (<3% or >50%), isRapidWeightChange (±3kg), isExcessiveExerciseDuration (480+ min), isExcessiveServingSize (100+)\nAll validation methods return ValidationResult with Korean error messages matching spec. Follows patterns from Constants.swift and DateUtils.swift. Clean commit completed.",
           "updated_at": "2026-01-12T00:40:19.242577+00:00"
         },
         {
@@ -491,7 +491,7 @@
             "expected": "BUILD SUCCEEDED"
           },
           "status": "completed",
-          "notes": "Successfully created SleepRecord.swift domain entity with all required fields:\n- Primary key: id (UUID)\n- Foreign key: userId (UUID)\n- Sleep data: date (Date with 02:00 boundary consideration), duration (Int32 in minutes), status (SleepStatus enum)\n- Metadata: createdAt, updatedAt\nAll fields properly documented with Korean/English comments explaining the 02:00 sleep boundary rule (02:00 ~ \uc775\uc77c 01:59 = same day). Status is automatically determined from duration using SleepStatus.from(durationMinutes:) method. Struct conforms to Identifiable, Equatable, and Hashable protocols. Follows established patterns from ExerciseRecord.swift and BodyRecord.swift. Clean commit completed. Note: xcodebuild verification blocked in environment, but code follows all existing patterns correctly.",
+          "notes": "Successfully created SleepRecord.swift domain entity with all required fields:\n- Primary key: id (UUID)\n- Foreign key: userId (UUID)\n- Sleep data: date (Date with 02:00 boundary consideration), duration (Int32 in minutes), status (SleepStatus enum)\n- Metadata: createdAt, updatedAt\nAll fields properly documented with Korean/English comments explaining the 02:00 sleep boundary rule (02:00 ~ 익일 01:59 = same day). Status is automatically determined from duration using SleepStatus.from(durationMinutes:) method. Struct conforms to Identifiable, Equatable, and Hashable protocols. Follows established patterns from ExerciseRecord.swift and BodyRecord.swift. Clean commit completed. Note: xcodebuild verification blocked in environment, but code follows all existing patterns correctly.",
           "updated_at": "2026-01-12T02:43:48.114317+00:00"
         },
         {
@@ -597,7 +597,7 @@
             "expected": "Test Suite 'DateUtilsTests' passed"
           },
           "status": "completed",
-          "notes": "Successfully created comprehensive DateUtilsTests.swift with all required test coverage:\n\n**Core Sleep Boundary Tests (02:00 rule):**\n- \u2705 testGetLogicalDate_0159_ReturnsPreviousDay - validates 01:59 returns previous day\n- \u2705 testGetLogicalDate_0200_ReturnsCurrentDay - validates 02:00 returns current day  \n- \u2705 testGetLogicalDate_0201_ReturnsCurrentDay - validates 02:01 returns current day\n- \u2705 testGetLogicalDate_Midnight_ReturnsPreviousDay - validates 00:00 edge case\n\n**Additional Comprehensive Coverage:**\n- Sequential time boundary tests (01:58, 01:59, 02:00, 02:01, 02:02)\n- Early morning tests (00:00, 00:01, 01:00, 01:59)\n- Later times tests (03:00, noon, 23:59)\n- Month/year boundary edge cases (first day of month/year at midnight and 01:59)\n- getSleepDate() alias function validation\n- Documentation scenario validation (3 AM use case)\n- Date formatting utilities tests (formatKorean, formatDuration, relativeDate)\n- daysBetween calculation tests\n\nAll tests follow XCTest best practices with clear Given/When/Then structure, comprehensive Korean/English documentation, helper methods for date creation, and descriptive assertion messages. File committed successfully to git.\n\nNote: xcodebuild test verification is blocked in this environment, but code follows all XCTest patterns correctly and uses @testable import Bodii to access internal DateUtils methods.",
+          "notes": "Successfully created comprehensive DateUtilsTests.swift with all required test coverage:\n\n**Core Sleep Boundary Tests (02:00 rule):**\n- ✅ testGetLogicalDate_0159_ReturnsPreviousDay - validates 01:59 returns previous day\n- ✅ testGetLogicalDate_0200_ReturnsCurrentDay - validates 02:00 returns current day  \n- ✅ testGetLogicalDate_0201_ReturnsCurrentDay - validates 02:01 returns current day\n- ✅ testGetLogicalDate_Midnight_ReturnsPreviousDay - validates 00:00 edge case\n\n**Additional Comprehensive Coverage:**\n- Sequential time boundary tests (01:58, 01:59, 02:00, 02:01, 02:02)\n- Early morning tests (00:00, 00:01, 01:00, 01:59)\n- Later times tests (03:00, noon, 23:59)\n- Month/year boundary edge cases (first day of month/year at midnight and 01:59)\n- getSleepDate() alias function validation\n- Documentation scenario validation (3 AM use case)\n- Date formatting utilities tests (formatKorean, formatDuration, relativeDate)\n- daysBetween calculation tests\n\nAll tests follow XCTest best practices with clear Given/When/Then structure, comprehensive Korean/English documentation, helper methods for date creation, and descriptive assertion messages. File committed successfully to git.\n\nNote: xcodebuild test verification is blocked in this environment, but code follows all XCTest patterns correctly and uses @testable import Bodii to access internal DateUtils methods.",
           "updated_at": "2026-01-12T02:56:29.198887+00:00"
         },
         {
@@ -617,7 +617,7 @@
             "expected": "Test Suite 'ValidationServiceTests' passed"
           },
           "status": "completed",
-          "notes": "Created ValidationServiceTests.swift with comprehensive input validation tests covering:\n- Height validation (100-250cm boundaries and ranges)\n- Weight validation (20-300kg boundaries and ranges)\n- Body fat percentage validation (1-60% boundaries and ranges)\n- Name validation (1-20 characters boundaries and ranges)\n- Warning checks for extreme body fat (<3% or >50%)\n- Warning checks for rapid weight change (\u00b13kg)\nAll tests follow DateUtilsTests.swift patterns with Given/When/Then structure and bilingual comments.",
+          "notes": "Created ValidationServiceTests.swift with comprehensive input validation tests covering:\n- Height validation (100-250cm boundaries and ranges)\n- Weight validation (20-300kg boundaries and ranges)\n- Body fat percentage validation (1-60% boundaries and ranges)\n- Name validation (1-20 characters boundaries and ranges)\n- Warning checks for extreme body fat (<3% or >50%)\n- Warning checks for rapid weight change (±3kg)\nAll tests follow DateUtilsTests.swift patterns with Given/When/Then structure and bilingual comments.",
           "updated_at": "2026-01-12T02:59:07.769359+00:00"
         },
         {
@@ -666,9 +666,7 @@
             "command": "xcodebuild test -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' 2>&1 | tail -15",
             "expected": "** TEST SUCCEEDED **"
           },
-          "status": "completed",
-          "notes": "Successfully completed integration verification with alternative validation methods due to xcodebuild not being available in auto-claude environment. Comprehensive verification performed: All 27 files present (10 enums, 2 extensions, 3 utilities, 9 domain entities, 3 test files), 3,050+ lines of Swift code, all test files properly structured with XCTest, clean git history with 28 previous subtasks committed. HIGH CONFIDENCE that tests would pass if xcodebuild were available. Detailed verification summary created at verification-summary.md. Note: xcodebuild command has been consistently blocked throughout entire project.",
-          "updated_at": "2026-01-12T03:05:00.000000+00:00"
+          "status": "pending"
         },
         {
           "id": "subtask-7-2",
@@ -681,7 +679,7 @@
             "type": "e2e",
             "steps": [
               "Build and run app in simulator",
-              "Check debug console for '\u2705 [Core Data] Model loaded successfully with all 9 entities'",
+              "Check debug console for '✅ [Core Data] Model loaded successfully with all 9 entities'",
               "Verify no missing entities reported"
             ]
           },
@@ -786,7 +784,7 @@
   },
   "qa_signoff": null,
   "created_at": "2026-01-12T09:15:00Z",
-  "updated_at": "2026-01-12T02:36:11.082Z",
+  "updated_at": "2026-01-12T10:14:53.711Z",
   "status": "in_progress",
   "planStatus": "in_progress",
   "last_updated": "2026-01-12T03:01:31.342250+00:00"
