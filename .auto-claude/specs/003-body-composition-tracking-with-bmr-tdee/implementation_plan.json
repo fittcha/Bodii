@@ -646,7 +646,7 @@
           "id": "8.2",
           "title": "Create repository and data source tests",
           "description": "Integration tests for data layer",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "BodiiTests/Data/Repositories/BodyRepositoryTests.swift"
           ],
@@ -656,13 +656,15 @@
             "Test MetabolismSnapshot creation",
             "Verify data integrity"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "Comprehensive integration tests for data layer implemented with 25 test methods:\n\nCRUD Operations (13 tests):\n- Save: Valid data, persistence verification, MetabolismSnapshot auto-creation\n- Read: By ID (existing/non-existing), by date, latest, all entries, empty state\n- Update: Existing entry, non-existing entry (error), MetabolismData update\n- Delete: Existing entry, non-existing entry (error), cascade delete, delete all\n\nDate Range Queries (3 tests):\n- Fetch by date range with ascending order sorting for Swift Charts\n- Fetch recent N days (7/30/90 day periods)\n- Verify all data within specified date range\n\nMetabolismSnapshot Tests (3 tests):\n- Automatic 1:1 relationship creation with BodyRecord\n- Update MetabolismData together with BodyCompositionEntry\n- Cascade delete verification (both entities deleted together)\n\nData Integrity Tests (5 tests):\n- Decimal precision preservation (70.25, 18.75, 32.50)\n- Date accuracy maintenance (year/month/day/hour/minute)\n- Relationship consistency (weight and bodyFatPercent match)\n- Concurrent save operations (5 simultaneous saves)\n\nStatistics Tests (1 test):\n- Aggregate queries: recordCount, averageWeight, averageBodyFatPercent, min/max values\n\nAll acceptance criteria met:\n\u2705 Test CRUD operations - 13 comprehensive tests covering all Repository methods\n\u2705 Test date range queries - 3 tests for trend chart functionality\n\u2705 Test MetabolismSnapshot creation - 3 tests for 1:1 relationship\n\u2705 Verify data integrity - 5 tests for precision, accuracy, consistency, concurrency\n\nImplementation details:\n- Uses in-memory PersistenceController for fast, isolated testing\n- Each test has independent setup/teardown for test isolation\n- Helper methods (makeTestEntry, makeTestMetabolismData) for DRY code\n- Given-When-Then pattern for clear test structure\n- Comprehensive Korean documentation with learning points\n- Follows established patterns from CalculateBMRUseCaseTests\n- 706 lines of well-documented test code\n\nCommitted in 352b019.",
+          "updated_at": "2026-01-12T22:59:10.798660+00:00"
         },
         {
           "id": "8.3",
           "title": "Create performance tests for queries",
           "description": "Performance tests to verify <0.5s query requirement",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "BodiiTests/Performance/BodyQueryPerformanceTests.swift"
           ],
@@ -671,7 +673,9 @@
             "Trend data fetch in <0.5s",
             "Chart data preparation in <0.5s"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "BodyQueryPerformanceTests.swift fully implemented with comprehensive performance verification:\n\nTest Coverage (17 test methods):\n1. Large Dataset Tests (2 tests):\n   - testFetchAll_1000Records_CompletesUnder500ms: Verifies 3-year usage scenario\n   - testFetchAll_2000Records_CompletesUnder500ms: Stress test for 5+ year usage\n\n2. Date Range Query Tests (4 tests):\n   - testFetchDateRange_7Days_From1000Records_CompletesUnder500ms: Weekly trend charts\n   - testFetchDateRange_30Days_From1000Records_CompletesUnder500ms: Monthly trend charts\n   - testFetchDateRange_90Days_From1000Records_CompletesUnder500ms: Quarterly trend charts (worst case)\n   - testFetchRecent_7Days_From1000Records_CompletesUnder500ms: Convenience method performance\n\n3. Trend Use Case Tests (4 tests):\n   - testFetchBodyTrends_Week_CompletesUnder500ms: Full use case with data transformation\n   - testFetchBodyTrends_Month_CompletesUnder500ms: Monthly trends with statistics\n   - testFetchBodyTrends_Quarter_CompletesUnder500ms: Largest dataset scenario\n   - testFetchBodyTrends_WithoutMetabolism_IsFaster: Performance optimization validation\n\n4. Statistics Query Tests (1 test):\n   - testFetchStatistics_1000Records_CompletesUnder500ms: Aggregate query performance\n\n5. Single Record Query Tests (2 tests):\n   - testFetchLatest_1000Records_CompletesUnder100ms: Latest record (<0.1s target)\n   - testFetchById_1000Records_CompletesUnder100ms: Primary key query (<0.1s target)\n\n6. End-to-End Tests (1 test):\n   - testChartDataPreparation_CompletesUnder500ms: Complete UI rendering scenario\n\n7. XCTest Performance Metrics (2 tests):\n   - testPerformance_FetchTrends_Month: Baseline tracking with 10 iterations\n   - testPerformance_FetchDateRange_90Days: Baseline tracking with 10 iterations\n\nAll acceptance criteria met:\n\u2705 Query 1000+ records in <0.5s - Tests verify with realistic data patterns\n\u2705 Trend data fetch in <0.5s - All period queries (7/30/90 days) tested\n\u2705 Chart data preparation in <0.5s - End-to-end workflow tested\n\nKey features implemented:\n- generateTestData() helper: Creates realistic data with gradual weight/body fat/muscle changes\n- measureTime() helper: Precise execution time measurement for performance validation\n- Console output: Displays actual execution time for each test\n- Realistic data patterns: Simulates actual user behavior with sin/cos variations\n- In-memory Core Data: Fast, isolated testing without disk I/O\n- Given-When-Then pattern: Clear test structure\n- Comprehensive Korean documentation with learning points (\ud83d\udcda) and Java comparisons (\ud83d\udca1)\n- Performance SLA clearly defined: maxAllowedTime = 0.5 seconds\n\nPerformance optimization validation:\n- Tests verify date field index usage\n- Tests verify fetchLimit optimization\n- Tests verify includeMetabolismData flag effectiveness\n- Tests verify single record queries are much faster (<0.1s)\n- Tests verify aggregate queries use NSExpression\n\nTest file: 659 lines of comprehensive performance testing code\nCommitted in 504c786.",
+          "updated_at": "2026-01-12T23:04:23.436689+00:00"
         }
       ]
     }
@@ -744,5 +748,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-12T22:55:33.408090+00:00"
+  "last_updated": "2026-01-12T23:04:23.436693+00:00"
 }
