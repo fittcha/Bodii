@@ -237,7 +237,198 @@
 
 ---
 
+#### 5.3 - Create Food domain to Core Data mapper ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: d42d004
+- **Implementation**: Created FoodEntityMapper for bidirectional mapping between Food domain entity and FoodEntity Core Data object
+
+**Key Features:**
+- Bidirectional mapping struct following mapper pattern (337 lines):
+  * toDomain(from: FoodEntity) - Core Data → Domain conversion
+  * toEntity(from: Food, context:) - Domain → Core Data conversion
+  * update(entity:from:) - Update existing FoodEntity from Food
+- Batch operations for efficient bulk processing:
+  * toDomainArray(from: [FoodEntity]) - Bulk Core Data → Domain
+  * toEntityArray(from: [Food], context:) - Bulk Domain → Core Data
+- Upsert operations for cache deduplication:
+  * saveUnique(from: [Food], context:) - Batch upsert by apiCode
+  * saveUnique(domainFood: Food, context:) - Single item upsert
+- Convenience methods:
+  * toEntityAndSave() - Combines toEntity() + context.save()
+- Delegates to FoodEntity+CoreData.swift extension methods for actual logic
+- Provides clean, consistent interface matching KFDAFoodMapper and USDAFoodMapper patterns
+
+**Field Mapping:**
+- All required fields: id, name, calories, carbohydrates, protein, fat, servingSize, source, createdAt
+- All optional fields: sodium, fiber, sugar, servingUnit, apiCode, createdByUserId
+- Cache-specific fields: lastAccessedAt, searchCount (managed by FoodEntity methods)
+- Type conversions: FoodSource enum ↔ Int16 rawValue, Decimal ↔ NSDecimalNumber
+
+**Acceptance Criteria Met:**
+✅ Maps Food to FoodEntity (Core Data) - toEntity() and batch methods
+✅ Maps FoodEntity to Food (domain) - toDomain() and batch methods
+✅ Handles all fields including optionals - Complete bidirectional mapping with nil handling
+✅ Preserves source and apiCode - Both fields maintained in conversions
+
+**Files Created:**
+- Bodii/Data/Mappers/FoodEntityMapper.swift (337 lines)
+
+**Architecture:**
+- Follows mapper pattern consistent with KFDAFoodMapper and USDAFoodMapper
+- Delegates to FoodEntity+CoreData.swift for implementation details
+- Provides clean, consistent interface for Repository layer usage
+- Maintains separation between Domain and Infrastructure layers
+- Usage restricted to Data layer (Repository implementations)
+
+**Documentation:**
+- Comprehensive Korean documentation with Java comparison comments
+- Usage examples for common scenarios (cache read/write, single/batch operations)
+- Architectural guidelines for proper usage in Repository layer
+- Educational comments explaining Clean Architecture layer separation
+
+---
+
+#### 5.4 - Integrate caching into search flow ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: c3903c4
+- **Implementation**: Integrated comprehensive caching in FoodSearchRepositoryImpl
+
+**Key Features:**
+- Offline Fallback Strategy: When API search fails, automatically falls back to cached results
+- Cache-First Strategy: Checks local cache before making API calls (when useCache=true)
+- Auto-Caching: API search results are automatically cached in background via Task
+- Error Handling: Graceful handling of both API and cache failures with debug logging
+
+**Multi-tier Search Strategy:**
+1. Tier 1: Check cache first if useCache=true
+2. Tier 2: Search via UnifiedFoodSearchService (KFDA + USDA APIs)
+3. Tier 3: Background cache update for API results
+4. Tier 4: Offline fallback - return cached results on API failure
+
+**Acceptance Criteria Met:**
+✅ Check local cache before API call for exact matches
+✅ Cache new foods from API results
+✅ Return cached results when offline
+✅ Show recent foods section from cache
+✅ Update lastAccessedAt when food is selected
+
+**Files Modified:**
+- Bodii/Data/Repositories/FoodSearchRepositoryImpl.swift (added 36 lines)
+
+**Offline Support:**
+- Network failures gracefully handled with Circuit Breaker + Cache Fallback pattern
+- Users can search previously-viewed foods even without internet
+- Debug logging for development and troubleshooting
+
+---
+
+## Phase 6: Serving Size & Nutrition Calculation
+
+#### 6.1 - Create NutritionCalculator utility ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: d636f7c
+- **Implementation**: Created NutritionCalculator utility for calculating nutrition values based on serving size adjustments
+
+**Key Features:**
+- Main calculation method: calculate(from:quantity:unit:) returns CalculatedNutrition
+- Multiplier calculation logic:
+  * `.serving` unit: quantity is multiplier (1.5 servings = 1.5x)
+  * `.grams` unit: (quantity / servingSize) is multiplier (300g / 210g = 1.43x)
+- Nutrient calculation helpers:
+  * calculateCalories() - rounds to Int32
+  * calculateMacro() - rounds to 1 decimal place
+  * calculateMacroRatios() - computes carbs/protein/fat percentages based on calorie contribution
+- Convenience methods:
+  * calculateForServings() - shorthand for serving-based calculation
+  * calculateForGrams() - shorthand for gram-based calculation
+
+**Supporting Types:**
+- CalculatedNutrition struct: holds computed nutrition with quantity/unit context
+  * toFoodRecord() helper method for easy FoodRecord creation
+  * All nutrition fields: calories, carbs, protein, fat, sodium, fiber, sugar
+  * Macro ratio percentages: carbsPercentage, proteinPercentage, fatPercentage
+- MacroRatios struct: holds carbs/protein/fat percentage breakdown
+- Constants.MacroNutrients extension: defines calorie conversion constants (4/4/9 kcal/g)
+
+**Acceptance Criteria Met:**
+✅ Calculate nutrition for given quantity and unit
+✅ Support both serving-based and gram-based calculations
+✅ Handle decimal precision appropriately
+✅ Calculate macro ratios (carbs/protein/fat percentages)
+
+**Files Created:**
+- Bodii/Shared/Utils/NutritionCalculator.swift (441 lines)
+
+**Documentation:**
+- Comprehensive Korean documentation with usage examples
+- Educational comments comparing to Java patterns
+- Detailed calculation logic documentation
+- Example usage for common scenarios
+
+---
+
+#### 6.2 - Create FoodWithQuantity model ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: 302aa9e
+- **Implementation**: Created FoodWithQuantity domain entity for representing food with user-selected quantity
+
+**Key Features:**
+- Core Properties:
+  * food: Food - Reference to base food entity
+  * quantity: Decimal - User-selected quantity
+  * unit: QuantityUnit - serving or grams
+- Calculated Nutrition (Computed Properties):
+  * calculatedNutrition: Full CalculatedNutrition struct
+  * calculatedCalories, calculatedCarbohydrates, calculatedProtein, calculatedFat
+  * calculatedSodium, calculatedFiber, calculatedSugar (optional)
+  * carbsPercentage, proteinPercentage, fatPercentage
+- Convenience Initializers:
+  * withServings() - Create with serving unit
+  * withGrams() - Create with gram unit
+- FoodRecord Conversion:
+  * toFoodRecord() - Convert to FoodRecord for saving to diary
+  * toFoodRecordUsingCalculation() - Alternative using CalculatedNutrition helper
+- Quantity Adjustment:
+  * withQuantity() - Return new instance with updated quantity
+  * withQuantity(_:unit:) - Return new instance with updated quantity and unit
+- Display Helpers:
+  * quantityDisplay - "1.5인분" or "300g"
+  * fullDisplay - "현미밥 1.5인분"
+- Protocol Conformance:
+  * Identifiable (uses food.id)
+  * Equatable (compares food, quantity, unit)
+  * Hashable (combines all properties)
+
+**Architecture:**
+- Domain layer entity for UI and business logic
+- Value type (struct) for immutability and safety
+- Computed properties ensure calculations are always current
+- No stored calculated values - always fresh from NutritionCalculator
+
+**Use Cases:**
+- Food search results with quantity selection
+- Meal planning and nutrition preview
+- Pre-commit validation before creating FoodRecord
+- Nutrition simulation and "what-if" scenarios
+
+**Acceptance Criteria Met:**
+✅ Contains Food reference and quantity/unit
+✅ Provides calculated nutrition properties
+✅ Immutable calculated values based on quantity
+✅ Easy to convert to FoodRecord
+
+**Files Created:**
+- Bodii/Domain/Entities/FoodWithQuantity.swift (426 lines)
+
+**Documentation:**
+- Comprehensive Korean documentation with usage examples
+- Java DTO/VO pattern comparison comments
+- Detailed examples for all major features
+- Clear architectural guidelines
+
+---
+
 ## Next Steps
-- Phase 5: Local Caching & Support
-  - 5.3: Create Food domain to Core Data mapper
-  - 5.4: Integrate caching into search flow
+- Phase 7: Error Handling & Resilience
+  - 7.1: Create FoodSearchError enum
+  - 7.2: Implement graceful fallback in search service
