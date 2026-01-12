@@ -1,7 +1,7 @@
 {
   "spec_id": "005-korean-food-database-integration",
   "created_at": "2026-01-12T22:46:24.244714+00:00",
-  "updated_at": "2026-01-12T22:54:55.121188+00:00",
+  "updated_at": "2026-01-12T22:57:13.639094+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -1373,6 +1373,310 @@
           "tool_input": "git add . && git commit -m \"docs: Update build-...",
           "subtask_id": "4.1",
           "session": 3
+        },
+        {
+          "timestamp": "2026-01-12T22:54:56.169019+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "4.1",
+          "session": 3,
+          "detail": "[auto-claude/005-korean-food-database-integration 75d0c40] docs: Update build-progress.txt for subtask 4.1 completion\n 3 files changed, 136 insertions(+), 5 deletions(-)",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T22:55:08.060160+00:00",
+          "type": "text",
+          "content": "Perfect! I've successfully completed subtask 4.1. Here's a summary:\n\n## ✅ Subtask 4.1 Completed: Define FoodSearchRepository Protocol\n\n### What Was Implemented\n\nCreated `Bodii/Domain/Interfaces/FoodSearchRepository.swift` with:\n\n1. **Core Protocol Definition**\n   - `searchFoods()` method with async/throws support\n   - Parameters: query, limit, offset, useCache\n   - Returns: `[Food]` domain entities\n\n2. **Cache Management Methods**\n   - `getRecentFoods()` - retrieve recently accessed foods\n   - `updateFoodAccessTime()` - track food usage\n   - `cleanupCache()` - LRU cache cleanup\n\n3. **Protocol Extensions**\n   - Default parameter values for convenience\n   - Simplified API usage without optional parameters\n\n4. **Error Handling**\n   - `FoodSearchError` enum with localized Korean messages\n   - Distinguishes recoverable vs non-recoverable errors\n\n### Acceptance Criteria Met ✅\n\n- ✅ Protocol defines search method with async/throws\n- ✅ Supports search query and optional parameters\n- ✅ Returns array of Food domain entities\n- ✅ Follows dependency inversion principle\n\n### Code Quality\n\n- Follows existing patterns with Korean documentation\n- Includes 📚 학습 포인트 (learning points) and 💡 Java 비교 (Java comparison)\n- Comprehensive documentation with usage examples\n- Clean architecture: domain layer defines protocol, data layer implements\n\n### Commits\n\n- `a8cebe3` - FoodSearchRepository protocol implementation\n- `75d0c40` - Build progress documentation update\n\nThe repository protocol is now ready for the next subtask (4.2 - Implement UnifiedFoodSearchService).",
+          "phase": "coding",
+          "subtask_id": "4.1",
+          "session": 3
+        },
+        {
+          "timestamp": "2026-01-12T22:55:19.138449+00:00",
+          "type": "text",
+          "content": "I'll implement subtask 4.2 to create a unified search service that searches 식약처 first, then USDA as fallback, and merges results.\n\nLet me start by reading the relevant files to understand the requirements and current implementation.",
+          "phase": "coding",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:19.712339+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...cs/005-korean-food-database-integration/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...cs/005-korean-food-database-integration/spec.md",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:20.537839+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...d-database-integration/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...d-database-integration/implementation_plan.json",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:20.584919+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:20.605227+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "4.2",
+          "session": 4,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T22:55:29.110512+00:00",
+          "type": "text",
+          "content": "Now let me read the existing services and patterns to understand how to implement the unified search service:",
+          "phase": "coding",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:29.743164+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ata/DataSources/Remote/KFDAFoodAPIService.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ata/DataSources/Remote/KFDAFoodAPIService.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:30.122322+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ata/DataSources/Remote/USDAFoodAPIService.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ata/DataSources/Remote/USDAFoodAPIService.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:30.593806+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ii/Domain/Interfaces/FoodSearchRepository.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ii/Domain/Interfaces/FoodSearchRepository.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:31.005517+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Data/Mappers/KFDAFoodMapper.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Data/Mappers/KFDAFoodMapper.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:31.023745+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "4.2",
+          "session": 4,
+          "detail": "     1→//\n     2→//  KFDAFoodAPIService.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-12.\n     6→//\n     7→\n     8→// 📚 학습 포인트: API Service Layer\n     9→// 외부 API 호출을 캡슐화하는 서비스 클래스\n    10→// 💡 Java 비교: Retrofit의 Service Interface 구현체와 유사한 역할\n    11→\n    12→import Foundation\n    13→\n    14→/// 식약처(KFDA) 식품 영양 정보 API 서비스\n    15→///\n    16→/// 📚 학습 포인트: Service Layer Pattern\n    17→/// 네트워크 요청 로직을 분리하여 재사용성과 테스트 용이성 향상\n    18→/// 💡 Java 비교: Repository 패턴의 Remote DataSource와 유사\n    19→///\n    20→/// **주요 기능:**\n    21→/// - 식품명으로 검색\n    22→/// - 페이징 지원 (startIdx/endIdx)\n    23→/// - 식품 상세 정보 조회\n    24→/// - API 응답 파싱 및 에러 처리\n    25→/// - Rate limit 준수\n    26→///\n    27→/// **API 정보:**\n    28→/// - Provider: 식품의약품안전처 (공공데이터포털)\n    29→/// - API 문서: https://www.data.go.kr/data/15127578/openapi.do\n    30→/// - Rate Limit: API 키에 따라 상이 (일반적으로 1000 requests/day)\n    31→///\n    32→/// **사용 예시:**\n    33→/// ```swift\n    34→/// let service = KFDAFoodAPIService()\n    35→///\n    36→/// // 식품 검색\n    37→/// let result = try await service.searchFoods(query: \"김치찌개\", startIdx: 1, endIdx: 10)\n    38→/// print(\"Found \\(result.totalCount) foods\")\n    39→/// result.foods.forEach { food in\n    40→///     print(\"\\(food.descKor): \\(food.enercKcal ?? \"N/A\") kcal\")\n    41→/// }\n    42→///\n    43→/// // 식품 상세 조회\n    44→/// let detail = try await service.getFoodDetail(foodCode: \"D000001\")\n    45→/// ```\n    46→final class KFDAFoodAPIService {\n    47→\n    48→    // MARK: - Properties\n    49→\n    50→    /// 네트워크 매니저\n    51→    ///\n    52→    /// 📚 학습 포인트: Dependency Injection\n    53→    /// NetworkManager를 주입받아 테스트 시 Mock으로 교체 가능\n    54→    /// 💡 Java 비교: Constructor Injection 패턴\n    55→    private let networkManager: NetworkManager\n    56→\n    57→    /// API 설정\n    58→    ///\n    59→    /// API URL과 인증 키를 제공하는 설정 객체\n    60→    private let apiConfig: APIConfigProtocol\n    61→\n    62→    // MARK: - Initialization\n    63→\n    64→    /// KFDAFoodAPIService 초기화\n    65→    ///\n    66→    /// 📚 학습 포인트: Dependency Injection\n    67→    /// 외부에서 의존성을 주입받아 테스트와 유연성 향상\n    68→    /// 💡 Java 비교: @Inject 어노테이션과 유사한 패턴\n    69→    ///\n    70→    /// - Parameters:\n    71→    ///   - networkManager: 네트워크 요청을 처리할 매니저 (기본값: shared URLSession 사용)\n    72→    ///   - apiConfig: API 설정 (기본값: APIConfig.shared)\n    73→    init(\n    74→        networkManager: NetworkManager = NetworkManager(\n    75→            timeout: Constants.API.KFDA.timeout,\n    76→            maxRetries: Constants.API.KFDA.maxRetries\n    77→        ),\n    78→        apiConfig: APIConfigProtocol = APIConfig.shared\n    79→    ) {\n    80→        self.networkManager = networkManager\n    81→        self.apiConfig = apiConfig\n    82→    }\n    83→\n    84→    // MARK: - Public Methods\n    85→\n    86→    /// 식품명으로 검색\n    87→    ///\n    88→    /// 📚 학습 포인트: Async/Await Network Call\n    89→    /// 비동기 네트워크 요청을 동기 코드처럼 작성\n    90→    /// 💡 Java 비교: CompletableFuture와 유사하지만 더 간결\n    91→    ///\n    92→    /// 📚 학습 포인트: KFDA Pagination\n    93→    /// KFDA API는 페이지 번호가 아닌 인덱스 범위(startIdx, endIdx)를 사용\n    94→    /// 💡 예: startIdx=1, endIdx=10 → 1-10번 결과 (10개)\n    95→    ///       startIdx=11, endIdx=20 → 11-20번 결과 (10개)\n    96→    ///\n    97→    /// - Parameters:\n    98→    ///   - query: 검색어 (식품명, 예: \"김치찌개\", \"현미밥\")\n    99→    ///   - startIdx: 시작 인덱스 (1부터 시작, 기본값: 1)\n   100→    ///   - endIdx: 종료 인덱스 (기본값: startIdx + defaultPageSize - 1)\n   101→    ///\n   102→    /// - Returns: API 응답 (식품 목록과 페이징 정보 포함)\n   103→    ///\n   104→    /// - Throws:\n   105→    ///   - NetworkError: 네트워크 요청 실패\n   106→    ///   - KFDAAPIError: API 에러 (인증 실패, rate limit 등)\n   107→    ///\n   108→    /// - Example:\n   109→    /// ```swift\n   110→    /// // 첫 페이지 검색 (1-10)\n   111→    /// let page1 = try await service.searchFoods(query: \"김치\")\n   112→    ///\n   113→    /// // 다음 페이지 검색 (11-20)\n   114→    /// let page2 = try await service.searchFoods(\n   115→    ///     query: \"김치\",\n   116→    ///     startIdx: 11,\n   117→    ///     endIdx: 20\n   118→    /// )\n   119→    /// ```\n   120→    func searchFoods(\n   121→        query: String,\n   122→        startIdx: Int = 1,\n   123→        endIdx: Int? = nil\n   124→    ) async throws -> KFDASearchResponseDTO {\n   125→\n   126→        // 입력 검증\n   127→        guard !query.trimmingCharacters(in: .whitespaces).isEmpty else {\n   128→            throw KFDAAPIError.invalidRequest(\"검색어가 비어있습니다.\")\n   129→        }\n   130→\n   131→        guard startIdx > 0 else {\n   132→            throw KFDAAPIError.invalidRequest(\"시작 인덱스는 1 이상이어야 합니다.\")\n   133→        }\n   134→\n   135→        // endIdx 기본값 계산\n   136→        let calculatedEndIdx = endIdx ?? (startIdx + Constants.API.KFDA.defaultPageSize - 1)\n   137→\n   138→        // 페이지 크기 검증\n   139→        let pageSize = calculatedEndIdx - startIdx + 1\n   140→        guard pageSize <= Constants.API.KFDA.maxPageSize else {\n   141→            throw KFDAAPIError.invalidRequest(\n   142→                \"페이지 크기가 너무 큽니다. 최대 \\(Constants.API.KFDA.maxPageSize)개까지 요청 가능합니다.\"\n   143→            )\n   144→        }\n   145→\n   146→        // URL 생성\n   147→        let endpoint = APIConfig.KFDAEndpoint.search(\n   148→            query: query,\n   149→            startIdx: startIdx,\n   150→            endIdx: calculatedEndIdx\n   151→        )\n   152→\n   153→        guard let url = apiConfig.buildKFDAURL(endpoint: endpoint) else {\n   154→            throw NetworkError.invalidURL(\"KFDA API URL 생성 실패\")\n   155→        }\n   156→\n   157→        // API 요청\n   158→        do {\n   159→            let response: KFDASearchResponseDTO = try await networkManager.request(\n   160→                url: url.absoluteString,\n   161→                method: .get,\n   162→                timeout: Constants.API.KFDA.timeout\n   163→            )\n   164→\n   165→            // API 응답 검증\n   166→            guard response.isSuccess else {\n   167→                // API 에러 발생\n   168→                if let error = response.errorType {\n   169→                    throw error\n   170→                } else {\n   171→                    throw KFDAAPIError.unknown(\n   172→                        response.header.resultCode,\n   173→                        response.header.resultMsg\n   174→                    )\n   175→                }\n   176→            }\n   177→\n   178→            return response\n   179→\n   180→        } catch let error as KFDAAPIError {\n   181→            // KFDA API 에러는 그대로 전달\n   182→            throw error\n   183→\n   184→        } catch let error as NetworkError {\n   185→            // 네트워크 에러 처리\n   186→            throw error\n   187→\n   188→        } catch {\n   189→            // 기타 에러\n   190→            throw NetworkError.unknown(error)\n   191→        }\n   192→    }\n   193→\n   194→    /// 식품 코드로 상세 정보 조회\n   195→    ///\n   196→    /// 📚 학습 포인트: Single Item API Call\n   197→    /// 특정 식품의 상세 정보를 조회하는 메서드\n   198→    /// 💡 Java 비교: findById()와 유사한 패턴\n   199→    ///\n   200→    /// - Parameter foodCode: 식품 코드 (예: \"D000001\")\n   201→    ///\n   202→    /// - Returns: 식품 상세 정보\n   203→    ///\n   204→    /// - Throws:\n   205→    ///   - NetworkError: 네트워크 요청 실패\n   206→    ///   - KFDAAPIError: API 에러 또는 식품을 찾을 수 없음\n   207→    ///\n   208→    /// - Example:\n   209→    /// ```swift\n   210→    /// let food = try await service.getFoodDetail(foodCode: \"D000001\")\n   211→    /// print(\"\\(food.descKor): \\(food.enercKcal ?? \"N/A\") kcal\")\n   212→    /// ```\n   213→    func getFoodDetail(foodCode: String) async throws -> KFDAFoodDTO {\n   214→\n   215→        // 입력 검증\n   216→        guard !foodCode.trimmingCharacters(in: .whitespaces).isEmpty else {\n   217→            throw KFDAAPIError.invalidRequest(\"식품 코드가 비어있습니다.\")\n   218→        }\n   219→\n   220→        // URL 생성\n   221→        let endpoint = APIConfig.KFDAEndpoint.detail(foodCode: foodCode)\n   222→\n   223→        guard let url = apiConfig.buildKFDAURL(endpoint: endpoint) else {\n   224→            throw NetworkError.invalidURL(\"KFDA API URL 생성 실패\")\n   225→        }\n   226→\n   227→        // API 요청\n   228→        do {\n   229→            let response: KFDASearchResponseDTO = try await networkManager.request(\n   230→                url: url.absoluteString,\n   231→                method: .get,\n   232→                timeout: Constants.API.KFDA.timeout\n   233→            )\n   234→\n   235→            // API 응답 검증\n   236→            guard response.isSuccess else {\n   237→                // API 에러 발생\n   238→                if let error = response.errorType {\n   239→                    throw error\n   240→                } else {\n   241→                    throw KFDAAPIError.unknown(\n   242→                        response.header.resultCode,\n   243→                        response.header.resultMsg\n   244→                    )\n   245→                }\n   246→            }\n   247→\n   248→            // 식품 데이터 추출\n   249→            guard let food = response.foods.first else {\n   250→                throw KFDAAPIError.noData\n   251→            }\n   252→\n   253→            // 데이터 유효성 검증\n   254→            guard food.isValid else {\n   255→                throw KFDAAPIError.invalidRequest(\"유효하지 않은 식품 데이터입니다.\")\n   256→            }\n   257→\n   258→            return food\n   259→\n   260→        } catch let error as KFDAAPIError {\n   261→            // KFDA API 에러는 그대로 전달\n   262→            throw error\n   263→\n   264→        } catch let error as NetworkError {\n   265→            // 네트워크 에러 처리\n   266→            throw error\n   267→\n   268→        } catch {\n   269→            // 기타 에러\n   270→            throw NetworkError.unknown(error)\n   271→        }\n   272→    }\n   273→}\n   274→\n   275→// MARK: - Pagination Helper\n   276→\n   277→extension KFDAFoodAPIService {\n   278→\n   279→    /// 다음 페이지 인덱스 범위 계산\n   280→    ///\n   281→    /// 📚 학습 포인트: Pagination Helper\n   282→    /// 페이징 로직을 캡슐화하여 호출 코드 단순화\n   283→    /// 💡 Java 비교: PageRequest.next()와 유사한 패턴\n   284→    ///\n   285→    /// - Parameters:\n   286→    ///   - currentStartIdx: 현재 페이지 시작 인덱스\n   287→    ///   - currentEndIdx: 현재 페이지 종료 인덱스\n   288→    ///\n   289→    /// - Returns: 다음 페이지의 (startIdx, endIdx) 튜플\n   290→    ///\n   291→    /// - Example:\n   292→    /// ```swift\n   293→    /// var (start, end) = (1, 10)\n   294→    ///\n   295→    /// while hasMoreResu\n\n... [truncated - full output was 15590 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T22:55:34.859280+00:00",
+          "type": "text",
+          "content": "Let me also check the Food domain entity and USDAFoodMapper:",
+          "phase": "coding",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:35.656027+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Data/Mappers/USDAFoodMapper.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Data/Mappers/USDAFoodMapper.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:35.974631+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/Food.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/Food.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:35.991348+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "4.2",
+          "session": 4,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T22:55:40.094529+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Entities/Food.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Entities/Food.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:40.109398+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "4.2",
+          "session": 4,
+          "detail": "     1→//\n     2→//  Food.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// 음식 마스터 도메인 엔티티\n    11→///\n    12→/// 음식의 영양 정보를 저장하는 마스터 데이터입니다.\n    13→/// 식약처 API, USDA API, 사용자 직접 입력 등 다양한 출처에서 제공됩니다.\n    14→///\n    15→/// - Note: servingSize는 1회 제공량의 기준이 되며, 모든 영양 정보는 이 기준량에 대한 값입니다.\n    16→///\n    17→/// - Note: source가 userDefined일 경우 createdByUserId가 설정됩니다.\n    18→///\n    19→/// - Example:\n    20→/// ```swift\n    21→/// let food = Food(\n    22→///     id: UUID(),\n    23→///     name: \"현미밥\",\n    24→///     calories: 330,\n    25→///     carbohydrates: Decimal(73.4),\n    26→///     protein: Decimal(6.8),\n    27→///     fat: Decimal(2.5),\n    28→///     sodium: Decimal(5.0),\n    29→///     fiber: Decimal(3.0),\n    30→///     sugar: Decimal(0.5),\n    31→///     servingSize: Decimal(210.0),\n    32→///     servingUnit: \"1공기\",\n    33→///     source: .governmentAPI,\n    34→///     apiCode: \"D000001\",\n    35→///     createdByUserId: nil,\n    36→///     createdAt: Date()\n    37→/// )\n    38→/// ```\n    39→struct Food {\n    40→    // MARK: - Primary Key\n    41→\n    42→    /// 고유 식별자\n    43→    let id: UUID\n    44→\n    45→    // MARK: - Basic Information\n    46→\n    47→    /// 음식명\n    48→    var name: String\n    49→\n    50→    // MARK: - Nutrition Information\n    51→\n    52→    /// 칼로리 (kcal)\n    53→    ///\n    54→    /// servingSize 기준 칼로리 정보입니다.\n    55→    var calories: Int32\n    56→\n    57→    /// 탄수화물 (g)\n    58→    ///\n    59→    /// servingSize 기준 탄수화물 함량입니다.\n    60→    var carbohydrates: Decimal\n    61→\n    62→    /// 단백질 (g)\n    63→    ///\n    64→    /// servingSize 기준 단백질 함량입니다.\n    65→    var protein: Decimal\n    66→\n    67→    /// 지방 (g)\n    68→    ///\n    69→    /// servingSize 기준 지방 함량입니다.\n    70→    var fat: Decimal\n    71→\n    72→    /// 나트륨 (mg)\n    73→    ///\n    74→    /// servingSize 기준 나트륨 함량입니다.\n    75→    var sodium: Decimal?\n    76→\n    77→    /// 식이섬유 (g)\n    78→    ///\n    79→    /// servingSize 기준 식이섬유 함량입니다.\n    80→    var fiber: Decimal?\n    81→\n    82→    /// 당류 (g)\n    83→    ///\n    84→    /// servingSize 기준 당류 함량입니다.\n    85→    var sugar: Decimal?\n    86→\n    87→    // MARK: - Serving Information\n    88→\n    89→    /// 1회 제공량 (g)\n    90→    ///\n    91→    /// 영양 정보의 기준이 되는 제공량입니다.\n    92→    var servingSize: Decimal\n    93→\n    94→    /// 단위 (예: \"1인분\", \"1개\", \"1공기\")\n    95→    ///\n    96→    /// 사용자에게 표시할 제공량 단위입니다.\n    97→    var servingUnit: String?\n    98→\n    99→    // MARK: - Source Information\n   100→\n   101→    /// 출처 (0: 식약처 API, 1: USDA API, 2: 사용자 직접 입력)\n   102→    ///\n   103→    /// - 0: 식약처 API (공공데이터) - 한국 음식\n   104→    /// - 1: USDA FoodData Central - 외국 음식\n   105→    /// - 2: 사용자 직접 입력\n   106→    var source: FoodSource\n   107→\n   108→    /// API 식품코드\n   109→    ///\n   110→    /// 외부 API에서 제공하는 고유 식품 코드입니다.\n   111→    /// source가 governmentAPI 또는 usda일 경우 설정됩니다.\n   112→    var apiCode: String?\n   113→\n   114→    // MARK: - Foreign Key\n   115→\n   116→    /// 사용자 정의 음식 생성자\n   117→    ///\n   118→    /// source가 userDefined일 경우 생성한 사용자의 ID가 설정됩니다.\n   119→    var createdByUserId: UUID?\n   120→\n   121→    // MARK: - Metadata\n   122→\n   123→    /// 생성일시\n   124→    let createdAt: Date\n   125→}\n   126→\n   127→// MARK: - Identifiable\n   128→\n   129→extension Food: Identifiable {}\n   130→\n   131→// MARK: - Equatable\n   132→\n   133→extension Food: Equatable {\n   134→    static func == (lhs: Food, rhs: Food) -> Bool {\n   135→        lhs.id == rhs.id\n   136→    }\n   137→}\n   138→\n   139→// MARK: - Hashable\n   140→\n   141→extension Food: Hashable {\n   142→    func hash(into hasher: inout Hasher) {\n   143→        hasher.combine(id)\n   144→    }\n   145→}\n   146→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T22:55:43.560817+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: enum FoodSource",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: enum FoodSource",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:43.926538+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "4.2",
+          "session": 4,
+          "detail": "Found 3 files\n.auto-claude/specs/005-korean-food-database-integration/task_logs.json\nBodii/Shared/Enums/FoodSource.swift\n.auto-claude/file-timelines/Bodii_Shared_Enums_FoodSource.swift.json",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T22:55:46.654885+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/FoodSource.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/FoodSource.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:46.674932+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "4.2",
+          "session": 4,
+          "detail": "     1→//\n     2→//  FoodSource.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// 식품 데이터 출처 열거형\n    11→///\n    12→/// 식품 정보의 출처를 나타냅니다.\n    13→/// Core Data 호환성을 위해 Int16 rawValue를 사용합니다.\n    14→///\n    15→/// - Cases:\n    16→///   - governmentAPI: 정부 공공 데이터 API\n    17→///   - usda: USDA 식품 데이터베이스\n    18→///   - userDefined: 사용자 정의 식품\n    19→///\n    20→/// - Example:\n    21→/// ```swift\n    22→/// let source = FoodSource.usda\n    23→/// print(source.displayName) // \"USDA 데이터베이스\"\n    24→/// ```\n    25→enum FoodSource: Int16, CaseIterable, Codable {\n    26→    case governmentAPI = 0\n    27→    case usda = 1\n    28→    case userDefined = 2\n    29→\n    30→    /// 사용자에게 표시할 출처 이름\n    31→    var displayName: String {\n    32→        switch self {\n    33→        case .governmentAPI: return \"정부 공공 데이터 API\"\n    34→        case .usda: return \"USDA 데이터베이스\"\n    35→        case .userDefined: return \"사용자 정의\"\n    36→        }\n    37→    }\n    38→}\n    39→\n    40→// MARK: - Identifiable\n    41→\n    42→extension FoodSource: Identifiable {\n    43→    var id: Int16 { rawValue }\n    44→}\n    45→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T22:55:49.779166+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Utils/Constants.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Utils/Constants.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:55:49.794347+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "4.2",
+          "session": 4,
+          "detail": "     1→//\n     2→//  Constants.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// App-wide configuration constants\n    11→enum Constants {\n    12→\n    13→    // MARK: - Validation Ranges\n    14→\n    15→    enum Validation {\n    16→        /// Height validation range (cm)\n    17→        enum Height {\n    18→            static let min: Double = 100\n    19→            static let max: Double = 250\n    20→        }\n    21→\n    22→        /// Weight validation range (kg)\n    23→        enum Weight {\n    24→            static let min: Double = 20\n    25→            static let max: Double = 300\n    26→        }\n    27→\n    28→        /// Body fat percentage validation range (%)\n    29→        enum BodyFatPercentage {\n    30→            static let min: Double = 1\n    31→            static let max: Double = 60\n    32→        }\n    33→\n    34→        /// Name length validation range\n    35→        enum Name {\n    36→            static let minLength: Int = 1\n    37→            static let maxLength: Int = 20\n    38→        }\n    39→\n    40→        /// Birth year validation range\n    41→        enum BirthYear {\n    42→            static let min: Int = 1900\n    43→            static var max: Int {\n    44→                Calendar.current.component(.year, from: Date())\n    45→            }\n    46→        }\n    47→\n    48→        /// Exercise duration validation (minutes)\n    49→        enum Exercise {\n    50→            static let minDuration: Int = 1\n    51→        }\n    52→\n    53→        /// Food serving size validation\n    54→        enum Serving {\n    55→            static let min: Double = 0.1\n    56→        }\n    57→    }\n    58→\n    59→    // MARK: - Warning Thresholds\n    60→\n    61→    enum Threshold {\n    62→        /// Body fat percentage warning thresholds (%)\n    63→        enum BodyFat {\n    64→            static let extremeLow: Double = 3\n    65→            static let extremeHigh: Double = 50\n    66→        }\n    67→\n    68→        /// Weight change warning threshold (kg)\n    69→        enum WeightChange {\n    70→            static let rapid: Double = 3\n    71→        }\n    72→\n    73→        /// Exercise duration warning threshold (minutes)\n    74→        enum Exercise {\n    75→            static let excessive: Int = 480 // 8 hours\n    76→        }\n    77→\n    78→        /// Food serving size warning threshold\n    79→        enum Serving {\n    80→            static let excessive: Double = 100\n    81→        }\n    82→    }\n    83→\n    84→    // MARK: - Sleep Constants\n    85→\n    86→    enum Sleep {\n    87→        /// Sleep day boundary hour (02:00)\n    88→        /// Hours 00:00-01:59 belong to previous day\n    89→        static let boundaryHour: Int = 2\n    90→\n    91→        /// Maximum sleep popup retry count\n    92→        static let maxPopupRetries: Int = 3\n    93→\n    94→        /// Sleep duration ranges for status (minutes)\n    95→        enum Duration {\n    96→            static let badMax: Int = 330        // < 5h 30m\n    97→            static let sosoMax: Int = 390       // 5h 30m - 6h 30m\n    98→            static let goodMax: Int = 450       // 6h 30m - 7h 30m\n    99→            static let excellentMax: Int = 540  // 7h 30m - 9h\n   100→            // > 540 = Oversleep\n   101→        }\n   102→    }\n   103→\n   104→    // MARK: - Activity Level Multipliers (TDEE)\n   105→\n   106→    enum ActivityLevel {\n   107→        static let sedentary: Double = 1.2\n   108→        static let light: Double = 1.375\n   109→        static let moderate: Double = 1.55\n   110→        static let active: Double = 1.725\n   111→        static let veryActive: Double = 1.9\n   112→    }\n   113→\n   114→    // MARK: - BMR Formula Constants\n   115→\n   116→    enum BMR {\n   117→        /// Katch-McArdle formula (used when body fat % is available)\n   118→        enum KatchMcArdle {\n   119→            static let base: Double = 370\n   120→            static let multiplier: Double = 21.6\n   121→        }\n   122→\n   123→        /// Mifflin-St Jeor formula (used when body fat % is unavailable)\n   124→        enum MifflinStJeor {\n   125→            static let weightMultiplier: Double = 10\n   126→            static let heightMultiplier: Double = 6.25\n   127→            static let ageMultiplier: Double = 5\n   128→            static let maleConstant: Double = 5\n   129→            static let femaleConstant: Double = -161\n   130→        }\n   131→    }\n   132→\n   133→    // MARK: - Diet Score Ranges\n   134→\n   135→    enum DietScore {\n   136→        static let greatMin: Int = 8\n   137→        static let greatMax: Int = 10\n   138→        static let goodMin: Int = 5\n   139→        static let goodMax: Int = 7\n   140→        static let needsWorkMin: Int = 0\n   141→        static let needsWorkMax: Int = 4\n   142→    }\n   143→\n   144→    // MARK: - API Limits\n   145→\n   146→    enum API {\n   147→        /// Google Gemini API rate limits\n   148→        enum Gemini {\n   149→            static let requestsPerMinute: Int = 15\n   150→        }\n   151→\n   152→        /// Google Cloud Vision API limits\n   153→        enum Vision {\n   154→            static let monthlyFreeRequests: Int = 1000\n   155→        }\n   156→\n   157→        /// 식약처(KFDA) API 설정\n   158→        enum KFDA {\n   159→            /// 기본 페이지 크기\n   160→            static let defaultPageSize: Int = 10\n   161→\n   162→            /// 최대 페이지 크기\n   163→            static let maxPageSize: Int = 100\n   164→\n   165→            /// API 타임아웃 (초)\n   166→            static let timeout: TimeInterval = 30\n   167→\n   168→            /// 최대 재시도 횟수\n   169→            static let maxRetries: Int = 2\n   170→        }\n   171→\n   172→        /// USDA FoodData Central API 설정\n   173→        enum USDA {\n   174→            /// 기본 페이지 크기\n   175→            static let defaultPageSize: Int = 25\n   176→\n   177→            /// 최대 페이지 크기\n   178→            static let maxPageSize: Int = 200\n   179→\n   180→            /// API 타임아웃 (초)\n   181→            static let timeout: TimeInterval = 30\n   182→\n   183→            /// 최대 재시도 횟수\n   184→            static let maxRetries: Int = 2\n   185→\n   186→            /// DEMO_KEY rate limits\n   187→            enum DemoKeyLimits {\n   188→                /// 시간당 요청 제한\n   189→                static let requestsPerHour: Int = 30\n   190→\n   191→                /// 일일 요청 제한\n   192→                static let requestsPerDay: Int = 50\n   193→            }\n   194→        }\n   195→\n   196→        /// 식품 검색 캐시 설정\n   197→        enum FoodCache {\n   198→            /// 캐시 최대 크기 (개수)\n   199→            static let maxCachedFoods: Int = 500\n   200→\n   201→            /// 캐시 유효 기간 (일)\n   202→            static let cacheExpirationDays: Int = 30\n   203→\n   204→            /// 최근 검색 식품 표시 개수\n   205→            static let recentFoodsCount: Int = 10\n   206→        }\n   207→    }\n   208→\n   209→    // MARK: - HealthKit Sync\n   210→\n   211→    enum HealthKit {\n   212→        /// Default number of days to sync from HealthKit\n   213→        static let defaultSyncDays: Int = 7\n   214→    }\n   215→}\n   216→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T22:55:57.825382+00:00",
+          "type": "text",
+          "content": "Now I have all the information I need. Let me create the UnifiedFoodSearchService that implements the unified search strategy:",
+          "phase": "coding",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:57:03.346342+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...taSources/Remote/UnifiedFoodSearchService.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...taSources/Remote/UnifiedFoodSearchService.swift",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:57:03.896302+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "4.2",
+          "session": 4,
+          "detail": "File created successfully at: ./Bodii/Data/DataSources/Remote/UnifiedFoodSearchService.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T22:57:11.559764+00:00",
+          "type": "text",
+          "content": "Perfect! The UnifiedFoodSearchService has been implemented. Now let me verify it compiles and commit the changes:",
+          "phase": "coding",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:57:12.965292+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add -A",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add -A",
+          "subtask_id": "4.2",
+          "session": 4
+        },
+        {
+          "timestamp": "2026-01-12T22:57:13.639057+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git diff --cached --stat",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git diff --cached --stat",
+          "subtask_id": "4.2",
+          "session": 4
         }
       ]
     },
