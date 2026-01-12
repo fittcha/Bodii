@@ -325,16 +325,15 @@ final class FoodSearchRepositoryImpl: FoodSearchRepository {
     }
 }
 
-// MARK: - Placeholder: FoodLocalDataSource
+// MARK: - FoodLocalDataSource Protocol
 
-/// 식품 로컬 데이터 소스 (Phase 5에서 구현 예정)
+/// 식품 로컬 데이터 소스 프로토콜
 ///
-/// 📚 학습 포인트: Interface Placeholder
-/// 아직 구현되지 않은 의존성을 위한 임시 클래스
-/// Phase 5에서 Core Data 기반으로 실제 구현
-/// 💡 Java 비교: Interface의 Mock 구현체와 유사
+/// 📚 학습 포인트: Data Source Protocol
+/// Core Data를 사용한 로컬 캐싱 인터페이스
+/// 💡 Java 비교: DAO (Data Access Object) 인터페이스와 유사
 ///
-/// - TODO: Phase 5에서 실제 구현으로 교체
+/// - Note: 실제 구현은 FoodLocalDataSourceImpl (Phase 5.2)
 protocol FoodLocalDataSource {
     /// 식품 검색 (로컬 캐시)
     func searchFoods(query: String, limit: Int) async throws -> [Food]

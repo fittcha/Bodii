@@ -229,7 +229,7 @@
           "id": "4.2",
           "title": "Implement UnifiedFoodSearchService",
           "description": "Create service that searches \uc2dd\uc57d\ucc98 first, then USDA as fallback, and merges results",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/DataSources/Remote/UnifiedFoodSearchService.swift"
           ],
@@ -247,13 +247,14 @@
             "3.2",
             "4.1"
           ],
-          "notes": ""
+          "notes": "\u2705 Implemented UnifiedFoodSearchService for multi-source food search:\n\nIMPLEMENTATION DETAILS:\n- Created UnifiedFoodSearchService.swift with intelligent search strategy\n- Smart query analysis: detects Korean characters to determine search priority\n- Korean queries (\ud55c\uae00 \ud3ec\ud568):\n  * Searches KFDA API first (primary source for Korean foods)\n  * Falls back to USDA if KFDA returns fewer than 5 results\n  * Korean foods appear first in merged results\n- English queries:\n  * Parallel search using async let for optimal performance\n  * Both KFDA and USDA searched concurrently\n  * USDA results prioritized (more accurate for international foods)\n- Graceful error handling:\n  * Individual API failures don't crash the service\n  * Returns results from successful API even if other fails\n  * Returns empty array if both APIs fail (no exception thrown)\n- Result deduplication:\n  * Uses apiCode as primary key for deduplication\n  * Falls back to food name if apiCode is missing\n  * Maintains result order (first occurrence kept)\n- Helper methods:\n  * searchKFDA() - error-safe KFDA search\n  * searchUSDA() - error-safe USDA search\n  * containsKoreanCharacters() - Unicode-based Korean detection\n  * deduplicateFoods() - O(n) deduplication using Set\n- Testing support:\n  * MockUnifiedFoodSearchService for unit testing\n  * Debug logging for API success/failure tracking\n\nACCEPTANCE CRITERIA VERIFICATION:\n\u2705 Searches \uc2dd\uc57d\ucc98 API first (primary) - Korean queries search KFDA first\n\u2705 Falls back to USDA if no Korean results or search appears international - Fallback logic implemented with < 5 results threshold\n\u2705 Korean foods appear first in results - Korean foods added to array before USDA results\n\u2705 Handles concurrent API calls efficiently - async let for parallel execution on English queries\n\u2705 Deduplicates results if same food from multiple sources - deduplicateFoods() by apiCode/name\n\u2705 Returns empty array gracefully if both APIs fail - No exceptions on double failure, returns []\n\nCOMMIT: 3ae237f",
+          "updated_at": "2026-01-12T22:57:38.118223+00:00"
         },
         {
           "id": "4.3",
           "title": "Implement FoodSearchRepositoryImpl",
           "description": "Create repository implementation that uses UnifiedFoodSearchService",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/Repositories/FoodSearchRepositoryImpl.swift"
           ],
@@ -268,7 +269,8 @@
             "4.1",
             "4.2"
           ],
-          "notes": ""
+          "notes": "\u2705 Implemented FoodSearchRepositoryImpl for food search operations following clean architecture:\n\nIMPLEMENTATION DETAILS:\n- Created FoodSearchRepositoryImpl.swift implementing FoodSearchRepository protocol\n- Uses UnifiedFoodSearchService for multi-source API search (KFDA + USDA)\n- Implements cache-first strategy with FoodLocalDataSource placeholder\n- Full dependency injection support for testability and flexibility\n- MockFoodSearchRepository included for unit testing\n\nKEY FEATURES:\n- searchFoods() method:\n  * Input validation (query, limit)\n  * Cache-first strategy (checks cache before API calls)\n  * Uses UnifiedFoodSearchService for multi-API search\n  * Asynchronously caches search results\n  * Proper error mapping to FoodSearchError\n  * Graceful handling of empty results\n\n- getRecentFoods() method:\n  * Cache-only query (no API calls)\n  * Returns foods sorted by lastAccessedAt\n  * Returns empty array if cache unavailable\n\n- updateFoodAccessTime() method:\n  * Updates LRU cache timestamps\n  * Non-blocking operation (doesn't throw on failure)\n  * Enables recency-based recommendations\n\n- cleanupCache() method:\n  * Implements cache eviction policy\n  * Maintains max cache size limit\n  * Prevents unbounded growth\n\nARCHITECTURE:\n- Repository Pattern: Abstracts multiple data sources (KFDA API, USDA API, local cache)\n- Dependency Injection: Constructor injection with default parameters\n- Clean Architecture: Domain layer defines protocol, Data layer implements\n- Testability: Mock repository with call tracking for unit tests\n\nERROR HANDLING:\n- Maps lower-level errors to domain-level FoodSearchError\n- Graceful degradation (cache failures don't break search)\n- Debug logging for development and troubleshooting\n\nACCEPTANCE CRITERIA VERIFICATION:\n\u2705 Implements FoodSearchRepository protocol - Full implementation of all 4 methods\n\u2705 Uses UnifiedFoodSearchService for actual search - searchService property and usage in searchFoods()\n\u2705 Can be injected via DIContainer - Constructor injection with default parameters\n\u2705 Testable with mock service - MockFoodSearchRepository with call tracking\n\nPLACEHOLDER:\n- FoodLocalDataSource protocol defined as placeholder\n- Will be implemented in Phase 5 with Core Data\n- Repository gracefully handles missing local data source\n\nFILES CREATED:\n- Bodii/Data/Repositories/FoodSearchRepositoryImpl.swift (421 lines)\n\nCOMMIT: 3692782",
+          "updated_at": "2026-01-12T23:00:20.869576+00:00"
         }
       ]
     },
@@ -281,7 +283,7 @@
           "id": "5.1",
           "title": "Create FoodEntity for Core Data",
           "description": "Define Core Data entity for caching food items locally",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/DataSources/Local/Entities/FoodEntity+CoreData.swift",
             "Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld/Bodii.xcdatamodel/contents"
@@ -294,7 +296,8 @@
           ],
           "estimated_effort": "small",
           "dependencies": [],
-          "notes": ""
+          "notes": "\u2705 Implemented Core Data entity for food caching with LRU and popularity tracking.\n\nIMPLEMENTATION DETAILS:\n- Updated Food entity in Core Data model (Bodii.xcdatamodel/contents):\n  * Added lastAccessedAt (Date, optional) for LRU cache tracking\n  * Added searchCount (Integer 32, default 0) for popularity tracking\n  * Added 4 fetch indices: byApiCode, byLastAccessed, byName, bySearchCount\n\n- Created FoodEntity+CoreData.swift extension (415 lines):\n  * Cache management methods: isRecentlyAccessed, isPopular(), updateAccessTime(), isCacheExpired()\n  * Domain entity conversion: toDomainEntity(), from(), update()\n  * Fetch request builders for various query patterns\n  * Batch operations: batchCreate(), saveUnique() with upsert logic\n  * Debug helpers and sample data generation\n\nACCEPTANCE CRITERIA VERIFICATION:\n\u2705 Core Data entity matches Food domain model - All fields mapped correctly\n\u2705 Includes lastAccessedAt for recency tracking - Added as optional Date attribute\n\u2705 Includes searchCount for popularity - Added as Integer 32 with default 0\n\u2705 Proper indices for efficient queries - Four indices covering all query patterns\n\nARCHITECTURE:\n- Follows Clean Architecture with Infrastructure \u2194 Domain separation\n- Extension pattern avoids modifying auto-generated Core Data classes\n- Factory methods and convenience initializers for easy usage\n\nCACHE STRATEGY:\n- LRU (Least Recently Used) based on lastAccessedAt timestamp\n- Popularity tracking with searchCount for trending foods\n- Automatic expiration after 30 days (configurable)\n- Upsert logic prevents duplicate API data\n\nCOMMIT: b46ba7d",
+          "updated_at": "2026-01-12T23:04:52.740073+00:00"
         },
         {
           "id": "5.2",
@@ -593,5 +596,5 @@
   },
   "total_subtasks": 24,
   "estimated_total_effort": "large",
-  "last_updated": "2026-01-12T22:54:39.091572+00:00"
+  "last_updated": "2026-01-12T23:04:52.740081+00:00"
 }
