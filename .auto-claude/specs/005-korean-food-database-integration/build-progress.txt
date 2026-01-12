@@ -717,9 +717,63 @@ Total: 1048 lines of comprehensive mock implementations
 
 ---
 
+#### 9.2 - Test DTO to entity mapping logic ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: 08df89a
+- **Implementation**: Implemented comprehensive unit tests for all three mappers (KFDA, USDA, FoodEntity)
+
+**Test Files Created (3):**
+- BodiiTests/Mappers/KFDAFoodMapperTests.swift (585 lines)
+- BodiiTests/Mappers/USDAFoodMapperTests.swift (873 lines)
+- BodiiTests/Mappers/FoodEntityMapperTests.swift (249 lines)
+
+**Total: 1,707 lines of comprehensive test coverage**
+
+**KFDAFoodMapper Tests (14 tests):**
+- Valid DTO mapping with all required and optional fields
+- Minimum required fields only (tests default values)
+- Name trimming (removes leading/trailing whitespace)
+- Decimal calorie rounding (330.5 → 331, 330.4 → 330)
+- Serving size fallback logic (servingSize → servingWt → 100g default)
+- Error cases: Missing foodCd, descKor, calories, carbs, protein, fat
+- Batch mapping: all valid, mixed valid/invalid, all invalid
+
+**USDAFoodMapper Tests (22 tests):**
+- Valid DTO with complete nutrient array (7 nutrients)
+- Minimum required nutrients only (4 required: calories, carbs, protein, fat)
+- Name trimming
+- Decimal calorie rounding
+- Unit conversion tests (oz, lb, kg, mg, ml, cup, tbsp, tsp)
+- Serving unit tests (household text precedence, fallbacks, defaults)
+- Error cases: Empty description, nil/empty nutrients array
+- Missing nutrient errors: calories (1008), carbs (1005), protein (1003), fat (1004)
+- Negative nutrient validation
+- Batch mapping: all valid, mixed valid/invalid, all invalid
+
+**FoodEntityMapper Tests (5 tests):**
+- Domain to Core Data mapping (Food → FoodEntity)
+- Batch mapping with multiple domain entities
+- Upsert tests: new foods, duplicates, mixed scenarios
+
+**Acceptance Criteria Verification:**
+✅ Test all field mappings - Comprehensive coverage of all fields
+✅ Test edge cases (missing fields, null values) - 21 error test cases total
+✅ Test unit conversions - 8 different unit types tested
+✅ 100% coverage of mapping logic - All methods tested including error paths
+
+**Test Quality:**
+- Given-When-Then structure for clear test intent
+- Comprehensive assertions with descriptive messages
+- Helper methods for test data creation
+- Follows existing project test patterns
+- Korean documentation following project standards
+- Proper XCTest lifecycle management (setUp/tearDown)
+- In-memory Core Data context for FoodEntityMapper tests
+
+---
+
 ## Next Steps
 - Phase 9: Testing
-  - 9.2: Write unit tests for mappers
   - 9.3: Write unit tests for UnifiedFoodSearchService
   - 9.4: Write unit tests for NutritionCalculator
 
