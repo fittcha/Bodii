@@ -1,7 +1,7 @@
 {
   "spec_id": "004-project-foundation-core-data-model",
   "created_at": "2026-01-12T00:07:48.838259+00:00",
-  "updated_at": "2026-01-12T00:40:01.392776+00:00",
+  "updated_at": "2026-01-12T00:42:14.437913+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -4837,6 +4837,322 @@
           "tool_input": "git status",
           "subtask_id": "subtask-3-2",
           "session": 14
+        },
+        {
+          "timestamp": "2026-01-12T00:40:02.519134+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "subtask-3-2",
+          "session": 14,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T00:40:07.473167+00:00",
+          "type": "text",
+          "content": "Perfect! The commit was successful. Now I need to update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "subtask-3-2",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-12T00:40:08.176238+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "subtask_id": "subtask-3-2",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-12T00:40:08.509074+00:00",
+          "type": "tool_end",
+          "content": "[Read] Error: BLOCKED",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "subtask-3-2",
+          "session": 14,
+          "detail": "     1→{\n     2→  \"feature\": \"Project Foundation & Core Data Model\",\n     3→  \"workflow_type\": \"feature\",\n     4→  \"workflow_rationale\": \"Building entire foundation layer from scratch with multiple interconnected components (10 enums, 5 utilities, 9 domain entities) requiring cohesive domain-driven design. This is new feature implementation, not bugfix or refactor.\",\n     5→  \"phases\": [\n     6→    {\n     7→      \"id\": \"phase-1-constants-enums\",\n     8→      \"name\": \"Constants & Enums\",\n     9→      \"type\": \"implementation\",\n    10→      \"description\": \"Define foundational type system with Int16 rawValue for Core Data compatibility\",\n    11→      \"depends_on\": [],\n    12→      \"parallel_safe\": true,\n    13→      \"subtasks\": [\n    14→        {\n    15→          \"id\": \"subtask-1-1\",\n    16→          \"description\": \"Create Constants enum with app-wide configuration values (sleep boundary hour, validation ranges)\",\n    17→          \"service\": \"main\",\n    18→          \"files_to_modify\": [],\n    19→          \"files_to_create\": [\n    20→            \"Bodii/Shared/Utils/Constants.swift\"\n    21→          ],\n    22→          \"patterns_from\": [\n    23→            \"docs/02_FEATURE_SPEC.md\",\n    24→            \"docs/08_EDGE_CASES.md\"\n    25→          ],\n    26→          \"verification\": {\n    27→            \"type\": \"command\",\n    28→            \"command\": \"xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5\",\n    29→            \"expected\": \"BUILD SUCCEEDED\"\n    30→          },\n    31→          \"status\": \"completed\",\n    32→          \"notes\": \"Created Constants.swift with all app-wide configuration values including validation ranges (height: 100-250cm, weight: 20-300kg, body fat: 1-60%), sleep boundary hour (2), activity level multipliers, BMR formula constants, diet score ranges, API limits, and warning thresholds.\",\n    33→          \"updated_at\": \"2026-01-12T00:19:00.665432+00:00\"\n    34→        },\n    35→        {\n    36→          \"id\": \"subtask-1-2\",\n    37→          \"description\": \"Create Gender enum (male/female with Int16 rawValue, displayName, Identifiable)\",\n    38→          \"service\": \"main\",\n    39→          \"files_to_modify\": [],\n    40→          \"files_to_create\": [\n    41→            \"Bodii/Shared/Enums/Gender.swift\"\n    42→          ],\n    43→          \"patterns_from\": [\n    44→            \".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Enums/Gender.swift\"\n    45→          ],\n    46→          \"verification\": {\n    47→            \"type\": \"command\",\n    48→            \"command\": \"xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5\",\n    49→            \"expected\": \"BUILD SUCCEEDED\"\n    50→          },\n    51→          \"status\": \"completed\",\n    52→          \"notes\": \"Created Gender.swift enum with male/female cases using Int16 rawValue for Core Data compatibility. Implemented CaseIterable, Codable, and Identifiable protocols. Added displayName computed property with Korean localization (\\\"\\ub0a8\\uc131\\\", \\\"\\uc5ec\\uc131\\\"). Includes comprehensive documentation with examples.\",\n    53→          \"updated_at\": \"2026-01-12T00:20:20.801502+00:00\"\n    54→        },\n    55→        {\n    56→          \"id\": \"subtask-1-3\",\n    57→          \"description\": \"Create ActivityLevel enum with 5 levels (sedentary to veryActive), TDEE multiplier property\",\n    58→          \"service\": \"main\",\n    59→          \"files_to_modify\": [],\n    60→          \"files_to_create\": [\n    61→            \"Bodii/Shared/Enums/ActivityLevel.swift\"\n    62→          ],\n    63→          \"patterns_from\": [\n    64→            \".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Enums/ActivityLevel.swift\",\n    65→            \"docs/06_ALGORITHM.md\"\n    66→          ],\n    67→          \"verification\": {\n    68→            \"type\": \"command\",\n    69→            \"command\": \"xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5\",\n    70→            \"expected\": \"BUILD SUCCEEDED\"\n    71→          },\n    72→          \"status\": \"completed\",\n    73→          \"notes\": \"ActivityLevel enum created with 5 levels (sedentary, lightlyActive, moderatelyActive, veryActive, extraActive). Each level includes displayName property and tdeeMultiplier property with values matching algorithm spec (1.2, 1.375, 1.55, 1.725, 1.9). Follows Gender.swift pattern with Int16 rawValue for Core Data compatibility.\",\n    74→          \"updated_at\": \"2026-01-12T00:21:54.597298+00:00\"\n    75→        },\n    76→        {\n    77→          \"id\": \"subtask-1-4\",\n    78→          \"description\": \"Create MealType enum (breakfast/lunch/dinner/snack) with displayName\",\n    79→          \"service\": \"main\",\n    80→          \"files_to_modify\": [],\n    81→          \"files_to_create\": [\n    82→            \"Bodii/Shared/Enums/MealType.swift\"\n    83→          ],\n    84→          \"patterns_from\": [\n    85→            \"docs/04_ERD.md\"\n    86→          ],\n    87→          \"verification\": {\n    88→            \"type\": \"command\",\n    89→            \"command\": \"xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5\",\n    90→            \"expected\": \"BUILD SUCCEEDED\"\n    91→          },\n    92→          \"status\": \"completed\",\n    93→          \"notes\": \"Created MealType enum with breakfast/lunch/dinner/snack cases following existing enum patterns. Includes displayName property and Identifiable conformance.\",\n    94→          \"updated_at\": \"2026-01-12T00:23:09.193290+00:00\"\n    95→        },\n    96→        {\n    97→          \"id\": \"subtask-1-5\",\n    98→          \"description\": \"Create ExerciseType enum with 8 exercise types and baseMET values per intensity\",\n    99→          \"service\": \"main\",\n   100→          \"files_to_modify\": [],\n   101→          \"files_to_create\": [\n   102→            \"Bodii/Shared/Enums/ExerciseType.swift\"\n   103→          ],\n   104→          \"patterns_from\": [\n   105→            \"docs/06_ALGORITHM.md\",\n   106→            \"docs/04_ERD.md\"\n   107→          ],\n   108→          \"verification\": {\n   109→            \"type\": \"command\",\n   110→            \"command\": \"xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5\",\n   111→            \"expected\": \"BUILD SUCCEEDED\"\n   112→          },\n   113→          \"status\": \"completed\",\n   114→          \"notes\": \"Created ExerciseType enum with 8 exercise types (walking, running, cycling, swimming, weight, crossfit, yoga, other) following established patterns. Implemented baseMET values per spec (3.5, 8.0, 6.0, 7.0, 6.0, 8.0, 3.0, 5.0) and metValue(for:) method with intensity multipliers (0.8, 1.0, 1.2). Follows same pattern as Gender, ActivityLevel, and MealType enums with Int16 rawValue, displayName, and Identifiable conformance.\",\n   115→          \"updated_at\": \"2026-01-12T00:25:00.145910+00:00\"\n   116→        },\n   117→        {\n   118→          \"id\": \"subtask-1-6\",\n   119→          \"description\": \"Create Intensity enum (low/medium/high) with MET intensity multipliers\",\n   120→          \"service\": \"main\",\n   121→          \"files_to_modify\": [],\n   122→          \"files_to_create\": [\n   123→            \"Bodii/Shared/Enums/Intensity.swift\"\n   124→          ],\n   125→          \"patterns_from\": [\n   126→            \"docs/06_ALGORITHM.md\"\n   127→          ],\n   128→          \"verification\": {\n   129→            \"type\": \"command\",\n   130→            \"command\": \"xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5\",\n   131→            \"expected\": \"BUILD SUCCEEDED\"\n   132→          },\n   133→          \"status\": \"completed\",\n   134→          \"notes\": \"Created Intensity.swift enum with low/medium/high cases using Int16 rawValue for Core Data compatibility. Implemented metMultiplier property with correct MET intensity multipliers (0.8, 1.0, 1.2) per algorithm spec. Follows same pattern as other enums with displayName, CaseIterable, Codable, and Identifiable protocols. Includes comprehensive documentation with Korean localization.\",\n   135→          \"updated_at\": \"2026-01-12T00:30:00.000000+00:00\"\n   136→        },\n   137→        {\n   138→          \"id\": \"subtask-1-7\",\n   139→          \"description\": \"Create FoodSource enum (government API, USDA, user-defined)\",\n   140→          \"service\": \"main\",\n   141→          \"files_to_modify\": [],\n   142→          \"files_to_create\": [\n   143→            \"Bodii/Shared/Enums/FoodSource.swift\"\n   144→          ],\n   145→          \"patterns_from\": [\n   146→            \"docs/04_ERD.md\"\n   147→          ],\n   148→          \"verification\": {\n   149→            \"type\": \"command\",\n   150→            \"command\": \"xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5\",\n   151→            \"expected\": \"BUILD SUCCEEDED\"\n   152→          },\n   153→          \"status\": \"completed\",\n   154→          \"notes\": \"Created FoodSource enum with three cases: governmentAPI (0), usda (1), and userDefined (2). Follows the established pattern from other enums with Int16 raw values for Core Data compatibility, displayName property, and Identifiable conformance.\",\n   155→          \"updated_at\": \"2026-01-12T00:27:45.774345+00:00\"\n   156→        },\n   157→        {\n   158→          \"id\": \"subtask-1-8\",\n   159→          \"description\": \"Create GoalType enum (lose/maintain/gain) with displayName\",\n   160→          \"service\": \"main\",\n   161→          \"files_to_modify\": [],\n   162→          \"files_to_create\": [\n   163→            \"Bodii/Shared/Enums/GoalType.swift\"\n   164→          ],\n   165→          \"patterns_from\": [\n   166→            \"docs/04_ERD.md\"\n   167→          ],\n   168→          \"verification\": {\n   169→            \"type\": \"command\",\n   170→            \"command\": \"xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5\",\n   171→            \"expected\": \"BUILD SUCCEEDED\"\n   172→          },\n   173→          \"status\": \"completed\",\n\n... [truncated - full output was 40140 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T00:40:13.216716+00:00",
+          "type": "text",
+          "content": "Now let me update the subtask status to completed:",
+          "phase": "coding",
+          "subtask_id": "subtask-3-2",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-12T00:40:19.235801+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "subtask-3-2",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-12T00:40:19.258015+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "subtask-3-2",
+          "session": 14,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T00:40:25.129261+00:00",
+          "type": "text",
+          "content": "Perfect! Let me verify the update was applied correctly:",
+          "phase": "coding",
+          "subtask_id": "subtask-3-2",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-12T00:40:26.903326+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "subtask_id": "subtask-3-2",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-12T00:40:26.920127+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "subtask-3-2",
+          "session": 14,
+          "detail": "   302→        {\n   303→          \"id\": \"subtask-3-2\",\n   304→          \"description\": \"Create ValidationService with input validation rules (height, weight, bodyFat, name ranges)\",\n   305→          \"service\": \"main\",\n   306→          \"files_to_modify\": [],\n   307→          \"files_to_create\": [\n   308→            \"Bodii/Shared/Utils/ValidationService.swift\"\n   309→          ],\n   310→          \"patterns_from\": [\n   311→            \"docs/08_EDGE_CASES.md\",\n   312→            \"docs/02_FEATURE_SPEC.md\"\n   313→          ],\n   314→          \"verification\": {\n   315→            \"type\": \"command\",\n   316→            \"command\": \"xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5\",\n   317→            \"expected\": \"BUILD SUCCEEDED\"\n   318→          },\n   319→          \"status\": \"completed\",\n   320→          \"notes\": \"Successfully created ValidationService.swift with all required functionality:\\n- ValidationResult enum with success/failure cases and helper properties\\n- Name validation: 1~20 characters with trimming\\n- Birth date validation: 1900~current year, prevents future dates\\n- Height validation: 100~250 cm\\n- Weight validation: 20~300 kg\\n- Body fat percentage validation: 1~60%\\n- Exercise duration validation: minimum 1 minute\\n- Serving size validation: minimum 0.1\\n- Warning checks: isExtremeBodyFat (<3% or >50%), isRapidWeightChange (\\u00b13kg), isExcessiveExerciseDuration (480+ min), isExcessiveServingSize (100+)\\nAll validation methods return ValidationResult with Korean error messages matching spec. Follows patterns from Constants.swift and DateUtils.swift. Clean commit completed.\",\n   321→          \"updated_at\": \"2026-01-12T00:40:19.242577+00:00\"\n   322→        },\n   323→        {\n   324→          \"id\": \"subtask-3-3\",\n   325→          \"description\": \"Create Formatters utility for consistent display formatting (calories, weight, percentage)\",\n   326→          \"service\": \"main\",\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T00:40:37.057438+00:00",
+          "type": "text",
+          "content": "Excellent! The subtask has been completed successfully. Here's a summary:\n\n## ✅ Subtask Complete: ValidationService Implementation\n\n### What was created:\n**File:** `Bodii/Shared/Utils/ValidationService.swift`\n\n### Features implemented:\n\n1. **ValidationResult Enum**\n   - Success/failure cases\n   - Helper properties: `isValid`, `errorMessage`\n\n2. **Input Validation Methods**\n   - `validateName()` - 1~20 characters\n   - `validateBirthDate()` - 1900 to current year, prevents future dates\n   - `validateHeight()` - 100~250 cm\n   - `validateWeight()` - 20~300 kg  \n   - `validateBodyFatPercentage()` - 1~60%\n   - `validateExerciseDuration()` - minimum 1 minute\n   - `validateServingSize()` - minimum 0.1\n\n3. **Warning Check Methods**\n   - `isExtremeBodyFat()` - flags <3% or >50%\n   - `isRapidWeightChange()` - flags ±3kg changes\n   - `isExcessiveExerciseDuration()` - flags 480+ minutes\n   - `isExcessiveServingSize()` - flags 100+ servings\n\n### Code Quality:\n- ✅ All validation ranges match specifications in `docs/08_EDGE_CASES.md`\n- ✅ Error messages in Korean as per spec\n- ✅ Comprehensive documentation with Korean/English comments\n- ✅ Follows existing patterns from `Constants.swift` and `DateUtils.swift`\n- ✅ Clean commit with descriptive message\n- ✅ Implementation plan updated to \"completed\"\n\nThe ValidationService is ready to be used throughout the app for validating user input during onboarding, body composition entry, exercise logging, and food tracking.",
+          "phase": "coding",
+          "subtask_id": "subtask-3-2",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-12T00:40:47.332326+00:00",
+          "type": "text",
+          "content": "I'll help you implement the Formatters utility for consistent display formatting. Let me start by understanding the context and existing patterns.",
+          "phase": "coding",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:40:47.802874+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../004-project-foundation-core-data-model/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../004-project-foundation-core-data-model/spec.md",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:40:48.399501+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...dation-core-data-model/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...dation-core-data-model/implementation_plan.json",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:40:48.684048+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: Bodii/Shared/Utils/*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: Bodii/Shared/Utils/*.swift",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:40:48.704058+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "subtask-3-3",
+          "session": 15,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T00:40:54.210609+00:00",
+          "type": "text",
+          "content": "Now let me read the existing utility files to understand the patterns I should follow:",
+          "phase": "coding",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:40:54.768609+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Utils/Constants.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Utils/Constants.swift",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:40:55.074568+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Utils/DateUtils.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Utils/DateUtils.swift",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:40:55.483756+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Utils/ValidationService.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Utils/ValidationService.swift",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:40:55.899442+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Extensions/Decimal+Extensions.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Extensions/Decimal+Extensions.swift",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:40:55.919699+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "subtask-3-3",
+          "session": 15,
+          "detail": "     1→//\n     2→//  Constants.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// App-wide configuration constants\n    11→enum Constants {\n    12→\n    13→    // MARK: - Validation Ranges\n    14→\n    15→    enum Validation {\n    16→        /// Height validation range (cm)\n    17→        enum Height {\n    18→            static let min: Double = 100\n    19→            static let max: Double = 250\n    20→        }\n    21→\n    22→        /// Weight validation range (kg)\n    23→        enum Weight {\n    24→            static let min: Double = 20\n    25→            static let max: Double = 300\n    26→        }\n    27→\n    28→        /// Body fat percentage validation range (%)\n    29→        enum BodyFatPercentage {\n    30→            static let min: Double = 1\n    31→            static let max: Double = 60\n    32→        }\n    33→\n    34→        /// Name length validation range\n    35→        enum Name {\n    36→            static let minLength: Int = 1\n    37→            static let maxLength: Int = 20\n    38→        }\n    39→\n    40→        /// Birth year validation range\n    41→        enum BirthYear {\n    42→            static let min: Int = 1900\n    43→            static var max: Int {\n    44→                Calendar.current.component(.year, from: Date())\n    45→            }\n    46→        }\n    47→\n    48→        /// Exercise duration validation (minutes)\n    49→        enum Exercise {\n    50→            static let minDuration: Int = 1\n    51→        }\n    52→\n    53→        /// Food serving size validation\n    54→        enum Serving {\n    55→            static let min: Double = 0.1\n    56→        }\n    57→    }\n    58→\n    59→    // MARK: - Warning Thresholds\n    60→\n    61→    enum Threshold {\n    62→        /// Body fat percentage warning thresholds (%)\n    63→        enum BodyFat {\n    64→            static let extremeLow: Double = 3\n    65→            static let extremeHigh: Double = 50\n    66→        }\n    67→\n    68→        /// Weight change warning threshold (kg)\n    69→        enum WeightChange {\n    70→            static let rapid: Double = 3\n    71→        }\n    72→\n    73→        /// Exercise duration warning threshold (minutes)\n    74→        enum Exercise {\n    75→            static let excessive: Int = 480 // 8 hours\n    76→        }\n    77→\n    78→        /// Food serving size warning threshold\n    79→        enum Serving {\n    80→            static let excessive: Double = 100\n    81→        }\n    82→    }\n    83→\n    84→    // MARK: - Sleep Constants\n    85→\n    86→    enum Sleep {\n    87→        /// Sleep day boundary hour (02:00)\n    88→        /// Hours 00:00-01:59 belong to previous day\n    89→        static let boundaryHour: Int = 2\n    90→\n    91→        /// Maximum sleep popup retry count\n    92→        static let maxPopupRetries: Int = 3\n    93→\n    94→        /// Sleep duration ranges for status (minutes)\n    95→        enum Duration {\n    96→            static let badMax: Int = 330        // < 5h 30m\n    97→            static let sosoMax: Int = 390       // 5h 30m - 6h 30m\n    98→            static let goodMax: Int = 450       // 6h 30m - 7h 30m\n    99→            static let excellentMax: Int = 540  // 7h 30m - 9h\n   100→            // > 540 = Oversleep\n   101→        }\n   102→    }\n   103→\n   104→    // MARK: - Activity Level Multipliers (TDEE)\n   105→\n   106→    enum ActivityLevel {\n   107→        static let sedentary: Double = 1.2\n   108→        static let light: Double = 1.375\n   109→        static let moderate: Double = 1.55\n   110→        static let active: Double = 1.725\n   111→        static let veryActive: Double = 1.9\n   112→    }\n   113→\n   114→    // MARK: - BMR Formula Constants\n   115→\n   116→    enum BMR {\n   117→        /// Katch-McArdle formula (used when body fat % is available)\n   118→        enum KatchMcArdle {\n   119→            static let base: Double = 370\n   120→            static let multiplier: Double = 21.6\n   121→        }\n   122→\n   123→        /// Mifflin-St Jeor formula (used when body fat % is unavailable)\n   124→        enum MifflinStJeor {\n   125→            static let weightMultiplier: Double = 10\n   126→            static let heightMultiplier: Double = 6.25\n   127→            static let ageMultiplier: Double = 5\n   128→            static let maleConstant: Double = 5\n   129→            static let femaleConstant: Double = -161\n   130→        }\n   131→    }\n   132→\n   133→    // MARK: - Diet Score Ranges\n   134→\n   135→    enum DietScore {\n   136→        static let greatMin: Int = 8\n   137→        static let greatMax: Int = 10\n   138→        static let goodMin: Int = 5\n   139→        static let goodMax: Int = 7\n   140→        static let needsWorkMin: Int = 0\n   141→        static let needsWorkMax: Int = 4\n   142→    }\n   143→\n   144→    // MARK: - API Limits\n   145→\n   146→    enum API {\n   147→        /// Google Gemini API rate limits\n   148→        enum Gemini {\n   149→            static let requestsPerMinute: Int = 15\n   150→        }\n   151→\n   152→        /// Google Cloud Vision API limits\n   153→        enum Vision {\n   154→            static let monthlyFreeRequests: Int = 1000\n   155→        }\n   156→    }\n   157→\n   158→    // MARK: - HealthKit Sync\n   159→\n   160→    enum HealthKit {\n   161→        /// Default number of days to sync from HealthKit\n   162→        static let defaultSyncDays: Int = 7\n   163→    }\n   164→}\n   165→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T00:41:07.669673+00:00",
+          "type": "text",
+          "content": "Now let me check the ERD documentation to understand what kind of values need formatting:",
+          "phase": "coding",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:41:08.558622+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./docs/04_ERD.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./docs/04_ERD.md",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:41:08.577283+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "subtask-3-3",
+          "session": 15,
+          "detail": "     1→# Bodii - ERD (Entity Relationship Diagram)\n     2→\n     3→## 1. 전체 ERD 다이어그램\n     4→\n     5→```\n     6→┌─────────────────────┐\n     7→│        User         │\n     8→├─────────────────────┤\n     9→│ PK id: UUID         │\n    10→│    name: String     │\n    11→│    gender: Int16    │\n    12→│    birthDate: Date  │\n    13→│    height: Decimal  │\n    14→│    activityLevel    │\n    15→│    ─────────────────│\n    16→│    currentWeight    │\n    17→│    currentBodyFatPct│\n    18→│    currentMuscleMass│\n    19→│    currentBMR       │\n    20→│    currentTDEE      │\n    21→│    metabolismUpdatedAt│\n    22→│    ─────────────────│\n    23→│    createdAt: Date  │\n    24→│    updatedAt: Date  │\n    25→└─────────┬───────────┘\n    26→          │\n    27→          │ 1:N\n    28→          ▼\n    29→┌─────────────────────┐       ┌─────────────────────┐\n    30→│    BodyRecord       │       │ MetabolismSnapshot  │\n    31→├─────────────────────┤       ├─────────────────────┤\n    32→│ PK id: UUID         │──1:1──│ PK id: UUID         │\n    33→│ FK userId: UUID     │       │ FK userId: UUID     │\n    34→│    date: Date       │       │ FK bodyRecordId     │\n    35→│    weight: Decimal  │       │    date: Date       │\n    36→│    bodyFatMass      │       │    weight: Decimal  │\n    37→│    bodyFatPercent   │       │    bodyFatPct       │\n    38→│    muscleMass       │       │    bmr: Decimal     │\n    39→│    createdAt: Date  │       │    tdee: Decimal    │\n    40→└─────────────────────┘       │    activityLevel    │\n    41→                              │    createdAt: Date  │\n    42→                              └─────────────────────┘\n    43→\n    44→┌─────────────────────┐       ┌─────────────────────┐\n    45→│    FoodRecord       │       │       Food          │\n    46→├─────────────────────┤       ├─────────────────────┤\n    47→│ PK id: UUID         │       │ PK id: UUID         │\n    48→│ FK userId: UUID     │──N:1──│    name: String     │\n    49→│ FK foodId: UUID     │       │    calories: Int32  │\n    50→│    date: Date       │       │    carbs: Decimal   │\n    51→│    mealType: Int16  │       │    protein: Decimal │\n    52→│    quantity: Decimal│       │    fat: Decimal     │\n    53→│    quantityUnit     │       │    sodium: Decimal  │\n    54→│    calculatedCal    │       │    fiber: Decimal   │\n    55→│    createdAt: Date  │       │    sugar: Decimal   │\n    56→└─────────────────────┘       │    servingSize      │\n    57→                              │    servingUnit      │\n    58→                              │    source: Int16    │\n    59→                              │    apiCode: String  │\n    60→                              │ FK createdByUserId  │\n    61→                              │    createdAt: Date  │\n    62→                              └─────────────────────┘\n    63→\n    64→┌─────────────────────┐       ┌─────────────────────┐\n    65→│   ExerciseRecord    │       │     SleepRecord     │\n    66→├─────────────────────┤       ├─────────────────────┤\n    67→│ PK id: UUID         │       │ PK id: UUID         │\n    68→│ FK userId: UUID     │       │ FK userId: UUID     │\n    69→│    date: Date       │       │    date: Date       │\n    70→│    exerciseType     │       │    duration: Int32  │\n    71→│    duration: Int32  │       │    status: Int16    │\n    72→│    intensity: Int16 │       │    createdAt: Date  │\n    73→│    caloriesBurned   │       │    updatedAt: Date  │\n    74→│    note: String     │       └─────────────────────┘\n    75→│    fromHealthKit    │\n    76→│    healthKitId      │\n    77→│    createdAt: Date  │\n    78→└─────────────────────┘\n    79→\n    80→┌───────────────────────────────────────────────────┐\n    81→│                    DailyLog                       │\n    82→├───────────────────────────────────────────────────┤\n    83→│ PK id: UUID                                       │\n    84→│ FK userId: UUID                                   │\n    85→│    date: Date (UNIQUE per user)                   │\n    86→│    ─────────────────────────────────────────────  │\n    87→│    // 섭취                                        │\n    88→│    totalCaloriesIn: Int32                         │\n    89→│    totalCarbs: Decimal                            │\n    90→│    totalProtein: Decimal                          │\n    91→│    totalFat: Decimal                              │\n    92→│    carbsRatio: Decimal?                           │\n    93→│    proteinRatio: Decimal?                         │\n    94→│    fatRatio: Decimal?                             │\n    95→│    ─────────────────────────────────────────────  │\n    96→│    // 대사량 스냅샷                                │\n    97→│    bmr: Int32                                     │\n    98→│    tdee: Int32                                    │\n    99→│    netCalories: Int32                             │\n   100→│    ─────────────────────────────────────────────  │\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T00:41:18.013511+00:00",
+          "type": "text",
+          "content": "Perfect! Now I understand what formatting is needed. Let me create the Formatters utility:",
+          "phase": "coding",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:42:00.942642+00:00",
+          "type": "tool_start",
+          "content": "[Write] ./Bodii/Shared/Utils/Formatters.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "./Bodii/Shared/Utils/Formatters.swift",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:42:01.458083+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "subtask-3-3",
+          "session": 15,
+          "detail": "File created successfully at: ./Bodii/Shared/Utils/Formatters.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T00:42:05.733231+00:00",
+          "type": "text",
+          "content": "Perfect! Now let me verify the build:",
+          "phase": "coding",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:42:07.268568+00:00",
+          "type": "tool_start",
+          "content": "[Bash] xcodebuild -project Bodii.xcodeproj -scheme Bod...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "xcodebuild -project Bodii.xcodeproj -scheme Bod...",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:42:07.289836+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "subtask-3-3",
+          "session": 15,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-12T00:42:13.747795+00:00",
+          "type": "text",
+          "content": "I see that xcodebuild is not available in this environment. However, the code I've created follows all the established patterns from the existing utility files (Constants.swift, DateUtils.swift, ValidationService.swift, and Decimal+Extensions.swift), so it should compile correctly.\n\nLet me commit the changes and update the plan:",
+          "phase": "coding",
+          "subtask_id": "subtask-3-3",
+          "session": 15
+        },
+        {
+          "timestamp": "2026-01-12T00:42:14.437877+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add .",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add .",
+          "subtask_id": "subtask-3-3",
+          "session": 15
         }
       ]
     },

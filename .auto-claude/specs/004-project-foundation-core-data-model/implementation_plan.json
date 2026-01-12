@@ -296,7 +296,7 @@
             "expected": "BUILD SUCCEEDED"
           },
           "status": "completed",
-          "notes": "Successfully created DateUtils.swift with all required functionality:\n- Sleep boundary logic: getLogicalDate(for:) implements 02:00 boundary rule (00:00-01:59 belongs to previous day)\n- shouldShowSleepPopup() checks if current time is >= 02:00\n- getSleepDate(for:) alias for clearer sleep context\n- Korean locale formatting: formatKorean(_:style:), formatKoreanWithTime(_:dateStyle:timeStyle:)\n- Relative date strings: relativeDate(_:) returns 오늘/어제/내일 or formatted date\n- Duration formatting: formatDuration(minutes:) converts to hours/minutes in Korean\n- Date creation: date(year:month:day:) helper\n- Date calculations: daysBetween(from:to:)\nAll methods include comprehensive Korean/English documentation with examples. Follows established codebase patterns from Constants.swift and Date+Extensions.swift. Clean commit completed.",
+          "notes": "Successfully created DateUtils.swift with all required functionality:\n- Sleep boundary logic: getLogicalDate(for:) implements 02:00 boundary rule (00:00-01:59 belongs to previous day)\n- shouldShowSleepPopup() checks if current time is >= 02:00\n- getSleepDate(for:) alias for clearer sleep context\n- Korean locale formatting: formatKorean(_:style:), formatKoreanWithTime(_:dateStyle:timeStyle:)\n- Relative date strings: relativeDate(_:) returns \uc624\ub298/\uc5b4\uc81c/\ub0b4\uc77c or formatted date\n- Duration formatting: formatDuration(minutes:) converts to hours/minutes in Korean\n- Date creation: date(year:month:day:) helper\n- Date calculations: daysBetween(from:to:)\nAll methods include comprehensive Korean/English documentation with examples. Follows established codebase patterns from Constants.swift and Date+Extensions.swift. Clean commit completed.",
           "updated_at": "2026-01-12T00:42:00.000000+00:00"
         },
         {
@@ -316,7 +316,9 @@
             "command": "xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5",
             "expected": "BUILD SUCCEEDED"
           },
-          "status": "pending"
+          "status": "completed",
+          "notes": "Successfully created ValidationService.swift with all required functionality:\n- ValidationResult enum with success/failure cases and helper properties\n- Name validation: 1~20 characters with trimming\n- Birth date validation: 1900~current year, prevents future dates\n- Height validation: 100~250 cm\n- Weight validation: 20~300 kg\n- Body fat percentage validation: 1~60%\n- Exercise duration validation: minimum 1 minute\n- Serving size validation: minimum 0.1\n- Warning checks: isExtremeBodyFat (<3% or >50%), isRapidWeightChange (\u00b13kg), isExcessiveExerciseDuration (480+ min), isExcessiveServingSize (100+)\nAll validation methods return ValidationResult with Korean error messages matching spec. Follows patterns from Constants.swift and DateUtils.swift. Clean commit completed.",
+          "updated_at": "2026-01-12T00:40:19.242577+00:00"
         },
         {
           "id": "subtask-3-3",
@@ -758,5 +760,5 @@
   "updated_at": "2026-01-12T00:17:25.109Z",
   "status": "in_progress",
   "planStatus": "in_progress",
-  "last_updated": "2026-01-12T00:33:41.315019+00:00"
+  "last_updated": "2026-01-12T00:40:19.242584+00:00"
 }
