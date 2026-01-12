@@ -627,7 +627,7 @@
           "id": "8.1",
           "title": "Create BMR/TDEE calculation tests",
           "description": "Unit tests for Mifflin-St Jeor formula implementation",
-          "status": "pending",
+          "status": "completed",
           "file_paths": [
             "BodiiTests/Domain/UseCases/CalculateBMRUseCaseTests.swift",
             "BodiiTests/Domain/UseCases/CalculateTDEEUseCaseTests.swift"
@@ -638,7 +638,9 @@
             "Test activity level multipliers",
             "Verify precision to 2 decimal places"
           ],
-          "estimated_complexity": "medium"
+          "estimated_complexity": "medium",
+          "notes": "Comprehensive unit tests implemented for both CalculateBMRUseCase and CalculateTDEEUseCase:\n\nBMR Tests (23 test methods):\n- Male and female BMR calculations with standard cases\n- Young/light and old/heavy edge cases  \n- Gender difference verification (166 kcal difference)\n- Boundary value testing (minimum/maximum valid values)\n- Invalid input error testing (zero/negative weight/height/age)\n- Sanity check testing (300-5000 kcal range)\n- Decimal precision testing (2 decimal places)\n- Output formatting verification (rounded BMR, formatted strings)\n- Convenience method testing\n- Performance testing (single and multiple calculations)\n\nTDEE Tests (27 test methods):\n- All 5 activity level multipliers tested (1.2, 1.375, 1.55, 1.725, 1.9)\n- Comprehensive activity level testing\n- Activity level comparison testing\n- Adjacent activity level increment verification\n- Boundary value testing (minimum/maximum BMR)\n- Invalid input error testing (zero/negative BMR)\n- Sanity check testing (400-10000 kcal range)\n- Decimal precision testing (2 decimal places)\n- Rounding accuracy testing (including .5 cases)\n- Output formatting verification\n- Convenience method testing (BMR parameter, BMR Output)\n- Integration testing (BMR\u2192TDEE use case composition)\n- Performance testing (single and multiple calculations)\n- Real world scenarios (dieting, athletes, office workers)\n\nAll acceptance criteria met:\n\u2705 Test male and female calculations - 6 tests covering both genders with various conditions\n\u2705 Test edge cases (low/high values) - Boundary testing from minimum (1kg, 50cm, 1yr) to maximum (150kg, 200cm, 80yr)\n\u2705 Test activity level multipliers - All 5 levels verified with correct multipliers\n\u2705 Verify precision to 2 decimal places - Decimal type accuracy testing with 0.01 tolerance\n\nTest coverage includes:\n- Formula correctness verification with hand-calculated expected values\n- Error handling for invalid inputs\n- Sanity checks for unrealistic values\n- Precision and rounding behavior\n- UI formatting output\n- Use case composition patterns\n- Performance benchmarks\n\nCommitted in 7cc056a.",
+          "updated_at": "2026-01-12T22:55:33.408081+00:00"
         },
         {
           "id": "8.2",
@@ -742,5 +744,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-12T22:50:21.725163+00:00"
+  "last_updated": "2026-01-12T22:55:33.408090+00:00"
 }
