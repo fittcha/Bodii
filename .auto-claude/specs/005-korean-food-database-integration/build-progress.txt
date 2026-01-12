@@ -428,7 +428,62 @@
 
 ---
 
+## Phase 7: Error Handling & Resilience
+
+#### 7.1 - Define comprehensive error types for food search operations ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Implementation**: Created comprehensive FoodSearchError enum in separate file for food search error handling
+
+**Key Features:**
+- Comprehensive error categories covering all food search scenarios:
+  * Input Validation: invalidQuery
+  * Network Errors: networkFailure, timeout, offline, rateLimitExceeded
+  * API Errors: apiError, kfdaApiError, usdaApiError, authenticationFailed
+  * Parsing Errors: parsingError, decodingFailed
+  * Cache Errors: cacheFailure, cacheUnavailable
+  * Data Errors: noResults, insufficientData
+  * Unknown: unknown
+- User-friendly Korean error messages via LocalizedError protocol
+- Recovery strategy properties:
+  * isRecoverable: Distinguishes recoverable vs non-recoverable errors
+  * canRetry: Indicates if error can be retried
+  * shouldFallbackToCache: Indicates if cache fallback should be used
+- Error mapping helper: from(networkError:) converts NetworkError to FoodSearchError
+- Detailed error context with associated values for debugging
+- Follows project patterns with comprehensive Korean documentation
+
+**Error Recovery Strategy:**
+- **Recoverable Errors** (retry, fallback, cache):
+  * networkFailure, timeout, offline, rateLimitExceeded
+  * apiError, kfdaApiError, usdaApiError
+  * cacheFailure, cacheUnavailable
+- **Non-Recoverable Errors** (user/developer intervention):
+  * invalidQuery, authenticationFailed
+  * parsingError, decodingFailed
+  * noResults, insufficientData
+  * unknown
+
+**Acceptance Criteria Met:**
+✅ Covers network errors, parsing errors, API errors - Comprehensive error categories
+✅ User-friendly error messages (Korean) - LocalizedError protocol with errorDescription
+✅ Distinguishes recoverable vs non-recoverable errors - isRecoverable property
+✅ Includes offline/no-connection state - Explicit offline case with cache fallback guidance
+
+**Files Created:**
+- Bodii/Domain/Interfaces/FoodSearchError.swift (564 lines)
+
+**Files Modified:**
+- Bodii/Domain/Interfaces/FoodSearchRepository.swift (removed embedded FoodSearchError, added reference comment)
+
+**Architecture:**
+- Domain-level error type for business logic errors
+- Maps infrastructure errors (NetworkError, CoreDataError) to domain concepts
+- Provides clear guidance for error recovery strategies
+- Comprehensive documentation with usage examples
+- Follows LocalizedError protocol for UI integration
+
+---
+
 ## Next Steps
 - Phase 7: Error Handling & Resilience
-  - 7.1: Create FoodSearchError enum
   - 7.2: Implement graceful fallback in search service

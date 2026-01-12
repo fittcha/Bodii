@@ -203,69 +203,7 @@ extension FoodSearchRepository {
 }
 
 // MARK: - Search Error
-
-/// 식품 검색 과정에서 발생할 수 있는 에러
-///
-/// 📚 학습 포인트: Domain-Level Error
-/// 도메인 레이어에서 정의된 에러는 비즈니스 로직과 관련
-/// 데이터 레이어의 기술적 에러를 도메인 에러로 변환
-/// 💡 Java 비교: Custom Business Exception과 유사
-enum FoodSearchError: Error {
-    /// 유효하지 않은 검색어
-    case invalidQuery(String)
-
-    /// 네트워크 연결 실패
-    case networkFailure(Error)
-
-    /// API 요청 실패
-    case apiError(String)
-
-    /// 검색 결과 없음
-    case noResults
-
-    /// 캐시 작업 실패
-    case cacheFailure(Error)
-
-    /// 알 수 없는 에러
-    case unknown(Error)
-
-    /// 사용자 친화적 에러 메시지
-    ///
-    /// 📚 학습 포인트: LocalizedError Protocol
-    /// UI에 표시할 수 있는 한글 에러 메시지 제공
-    /// 💡 Java 비교: getMessage()와 유사
-    var localizedDescription: String {
-        switch self {
-        case .invalidQuery(let message):
-            return "유효하지 않은 검색어입니다: \(message)"
-        case .networkFailure:
-            return "네트워크 연결에 실패했습니다. 인터넷 연결을 확인해주세요."
-        case .apiError(let message):
-            return "식품 정보를 불러오는데 실패했습니다: \(message)"
-        case .noResults:
-            return "검색 결과가 없습니다."
-        case .cacheFailure:
-            return "캐시 작업에 실패했습니다."
-        case .unknown:
-            return "알 수 없는 오류가 발생했습니다."
-        }
-    }
-
-    /// 복구 가능한 에러인지 여부
-    ///
-    /// 📚 학습 포인트: Recoverable vs Non-Recoverable Errors
-    /// 에러 유형에 따라 재시도 또는 폴백 전략 결정
-    /// 💡 Java 비교: Checked vs Unchecked Exception과 유사한 개념
-    var isRecoverable: Bool {
-        switch self {
-        case .invalidQuery:
-            return false
-        case .networkFailure, .apiError, .cacheFailure:
-            return true
-        case .noResults:
-            return false
-        case .unknown:
-            return false
-        }
-    }
-}
+// FoodSearchError는 별도 파일로 분리됨: FoodSearchError.swift
+// 📚 학습 포인트: Error Type Separation
+// 에러 타입을 별도 파일로 분리하여 재사용성과 유지보수성 향상
+// 💡 Java 비교: Custom Exception을 별도 클래스 파일로 분리하는 것과 동일
