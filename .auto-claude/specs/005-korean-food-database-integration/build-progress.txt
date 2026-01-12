@@ -62,7 +62,75 @@
 
 ---
 
+#### 4.2 - Implement UnifiedFoodSearchService ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: 3ae237f
+- **Implementation**: Created UnifiedFoodSearchService for multi-source food search
+
+**Key Features:**
+- Intelligent search strategy based on query language (Korean vs English)
+- Korean queries: KFDA API first → USDA fallback if < 5 results
+- English queries: Parallel search (KFDA + USDA) using async let
+- Result deduplication by apiCode or name
+- Graceful error handling (returns results from successful API even if other fails)
+- containsKoreanCharacters() helper for Unicode-based Korean detection
+- Mock service included for testing
+
+**Acceptance Criteria Met:**
+✅ Searches 식약처 API first (primary)
+✅ Falls back to USDA if no Korean results or search appears international
+✅ Korean foods appear first in results
+✅ Handles concurrent API calls efficiently
+✅ Deduplicates results if same food from multiple sources
+✅ Returns empty array gracefully if both APIs fail
+
+**Files Created:**
+- Bodii/Data/DataSources/Remote/UnifiedFoodSearchService.swift (378 lines)
+
+---
+
+#### 4.3 - Implement FoodSearchRepositoryImpl ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: 3692782
+- **Implementation**: Created FoodSearchRepositoryImpl implementing FoodSearchRepository protocol
+
+**Key Features:**
+- Implements FoodSearchRepository protocol from domain layer
+- Uses UnifiedFoodSearchService for multi-source API search
+- Cache-first strategy with FoodLocalDataSource placeholder
+- Full dependency injection support for testability
+- searchFoods(): Input validation, cache check, API search, result caching
+- getRecentFoods(): Cache-only query for recent foods
+- updateFoodAccessTime(): Updates LRU cache timestamps
+- cleanupCache(): Implements cache eviction policy
+- Graceful error handling with FoodSearchError mapping
+- MockFoodSearchRepository included for unit testing
+
+**Acceptance Criteria Met:**
+✅ Implements FoodSearchRepository protocol
+✅ Uses UnifiedFoodSearchService for actual search
+✅ Can be injected via DIContainer
+✅ Testable with mock service
+
+**Files Created:**
+- Bodii/Data/Repositories/FoodSearchRepositoryImpl.swift (421 lines)
+
+**Architecture:**
+- Repository Pattern: Abstracts data sources (KFDA API, USDA API, local cache)
+- Dependency Injection: Constructor injection with default parameters
+- Clean Architecture: Domain defines protocol, Data implements
+- Testability: Mock repository with call tracking
+
+**Note:**
+- FoodLocalDataSource defined as protocol placeholder
+- Will be implemented in Phase 5 with Core Data
+- Repository gracefully handles missing local data source
+
+---
+
 ## Next Steps
-- Phase 4: Unified Search Service
-  - 4.2: Implement UnifiedFoodSearchService
-  - 4.3: Implement FoodSearchRepositoryImpl
+- Phase 5: Local Caching & Offline Support
+  - 5.1: Create FoodEntity for Core Data
+  - 5.2: Implement FoodLocalDataSource
+  - 5.3: Create Food domain to Core Data mapper
+  - 5.4: Integrate caching into search flow
