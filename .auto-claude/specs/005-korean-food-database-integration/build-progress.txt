@@ -175,8 +175,69 @@
 
 ---
 
+#### 5.2 - Implement FoodLocalDataSource ✅ (2026-01-13)
+- **Status**: COMPLETED
+- **Commit**: 5b94c0f
+- **Implementation**: Created FoodLocalDataSourceImpl for local caching with Core Data
+
+**Key Features:**
+- FoodLocalDataSourceImpl.swift implementing FoodLocalDataSource protocol (465 lines)
+- CRUD operations for cached food items:
+  * searchFoods() - Name-based search with CONTAINS[cd] predicate for case-insensitive matching
+  * getRecentFoods() - LRU cache query sorted by lastAccessedAt (descending)
+  * saveFoods() - Upsert with deduplication by apiCode using Food.saveUnique()
+  * updateAccessTime() - Activity tracking for LRU cache (updates lastAccessedAt and increments searchCount)
+  * cleanupOldFoods() - Two-stage cache eviction (expired items + LRU-based cleanup)
+- Async/await support wrapping Core Data synchronous APIs with context.perform()
+- Uses FoodEntity+CoreData extension methods for optimized fetch requests
+- Dependency injection with PersistenceController for testability
+- Comprehensive error handling with FoodLocalDataSourceError enum (5 error types)
+- MockFoodLocalDataSource for unit testing with call tracking
+
+**Caching Strategy:**
+- LRU (Least Recently Used) based on lastAccessedAt timestamp
+- Popularity tracking with searchCount for trending foods
+- Automatic expiration: 30-day cache lifetime for API data
+- Deduplication: Uses apiCode to prevent duplicate storage from APIs
+- Size limit: Default 500 items (configurable via maxCount parameter)
+
+**Cache Cleanup Policy:**
+1. Delete expired cache (30+ days old API data from governmentAPI and USDA sources)
+2. Delete oldest items by lastAccessedAt if cache exceeds maxCount (LRU eviction)
+
+**Error Handling:**
+- FoodLocalDataSourceError enum with localized Korean messages:
+  * fetchFailed(Error) - Cache query failures
+  * saveFailed(Error) - Cache save/upsert failures
+  * updateFailed(Error) - Access time update failures
+  * deleteFailed(Error) - Cache deletion failures
+  * conversionFailed(String) - Core Data to Domain entity conversion failures
+- Proper error propagation from Core Data layer to domain layer
+
+**Acceptance Criteria Met:**
+✅ Save food to local cache - saveFoods() with Food.saveUnique() upsert logic
+✅ Fetch recent foods (sorted by lastAccessedAt) - getRecentFoods() with LRU sorting
+✅ Search cached foods by name - searchFoods() with CONTAINS[cd] predicate
+✅ Update access timestamp on retrieval - updateAccessTime() with searchCount increment
+✅ Delete old cached items (LRU cleanup) - cleanupOldFoods() with 2-stage eviction
+✅ Limit cache to reasonable size (e.g., 500 items) - Default 500, configurable
+
+**Files Created:**
+- Bodii/Data/DataSources/Local/FoodLocalDataSource.swift (465 lines)
+
+**Files Updated:**
+- Bodii/Data/Repositories/FoodSearchRepositoryImpl.swift (protocol comment clarification)
+
+**Architecture:**
+- Data Layer implementation of local data source protocol
+- Uses Core Data FoodEntity from Infrastructure Layer
+- Follows Clean Architecture with proper layer separation
+- Repository Pattern compatible (used by FoodSearchRepositoryImpl)
+- NSManagedObjectContext.perform() for async/await compatibility
+
+---
+
 ## Next Steps
-- Phase 5: Local Caching & Offline Support
-  - 5.2: Implement FoodLocalDataSource
+- Phase 5: Local Caching & Support
   - 5.3: Create Food domain to Core Data mapper
   - 5.4: Integrate caching into search flow
