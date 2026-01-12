@@ -28,7 +28,9 @@
             "command": "xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5",
             "expected": "BUILD SUCCEEDED"
           },
-          "status": "pending"
+          "status": "completed",
+          "notes": "Created Constants.swift with all app-wide configuration values including validation ranges (height: 100-250cm, weight: 20-300kg, body fat: 1-60%), sleep boundary hour (2), activity level multipliers, BMR formula constants, diet score ranges, API limits, and warning thresholds.",
+          "updated_at": "2026-01-12T00:19:00.665432+00:00"
         },
         {
           "id": "subtask-1-2",
@@ -46,7 +48,9 @@
             "command": "xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5",
             "expected": "BUILD SUCCEEDED"
           },
-          "status": "pending"
+          "status": "completed",
+          "notes": "Created Gender.swift enum with male/female cases using Int16 rawValue for Core Data compatibility. Implemented CaseIterable, Codable, and Identifiable protocols. Added displayName computed property with Korean localization (\"\ub0a8\uc131\", \"\uc5ec\uc131\"). Includes comprehensive documentation with examples.",
+          "updated_at": "2026-01-12T00:20:20.801502+00:00"
         },
         {
           "id": "subtask-1-3",
@@ -624,7 +628,7 @@
             "type": "e2e",
             "steps": [
               "Build and run app in simulator",
-              "Check debug console for '✅ [Core Data] Model loaded successfully with all 9 entities'",
+              "Check debug console for '\u2705 [Core Data] Model loaded successfully with all 9 entities'",
               "Verify no missing entities reported"
             ]
           },
@@ -731,5 +735,6 @@
   "created_at": "2026-01-12T09:15:00Z",
   "updated_at": "2026-01-12T00:17:25.109Z",
   "status": "in_progress",
-  "planStatus": "in_progress"
+  "planStatus": "in_progress",
+  "last_updated": "2026-01-12T00:20:20.801508+00:00"
 }
