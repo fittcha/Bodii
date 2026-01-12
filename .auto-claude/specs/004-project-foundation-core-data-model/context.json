@@ -1,0 +1,109 @@
+{
+  "task_description": "Project Foundation & Core Data Model\n\n1. Enum 정의 (Gender, ActivityLevel, MealType, ExerciseType, Intensity, FoodSource, GoalType, SleepStatus, QuantityUnit, Constants)\n2. Utility Services (DateUtils - 02:00 수면 경계, ValidationService, Date+Extensions, Decimal+Extensions, Formatters)\n3. Domain Entities (User, BodyRecord, MetabolismSnapshot, Food, FoodRecord, ExerciseRecord, SleepRecord, DailyLog, Goal)\n4. Core Data Entity Extensions\n5. Unit Tests (DateUtils, ValidationService, SleepStatus)\n\n참고: @docs/04_ERD.md, @docs/02_FEATURE_SPEC.md, @docs/06_ALGORITHM.md",
+  "scoped_services": ["main"],
+  "files_to_modify": {
+    "main": [
+      "Bodii/Data/Bodii.xcdatamodeld"
+    ]
+  },
+  "files_to_create": {
+    "main": [
+      "Bodii/Shared/Utils/Constants.swift",
+      "Bodii/Shared/Enums/Gender.swift",
+      "Bodii/Shared/Enums/ActivityLevel.swift",
+      "Bodii/Shared/Enums/MealType.swift",
+      "Bodii/Shared/Enums/ExerciseType.swift",
+      "Bodii/Shared/Enums/Intensity.swift",
+      "Bodii/Shared/Enums/FoodSource.swift",
+      "Bodii/Shared/Enums/GoalType.swift",
+      "Bodii/Shared/Enums/SleepStatus.swift",
+      "Bodii/Shared/Enums/QuantityUnit.swift",
+      "Bodii/Shared/Extensions/Date+Extensions.swift",
+      "Bodii/Shared/Extensions/Decimal+Extensions.swift",
+      "Bodii/Shared/Utils/DateUtils.swift",
+      "Bodii/Shared/Utils/ValidationService.swift",
+      "Bodii/Shared/Utils/Formatters.swift",
+      "Bodii/Domain/Entities/User.swift",
+      "Bodii/Domain/Entities/BodyRecord.swift",
+      "Bodii/Domain/Entities/MetabolismSnapshot.swift",
+      "Bodii/Domain/Entities/Food.swift",
+      "Bodii/Domain/Entities/FoodRecord.swift",
+      "Bodii/Domain/Entities/ExerciseRecord.swift",
+      "Bodii/Domain/Entities/SleepRecord.swift",
+      "Bodii/Domain/Entities/DailyLog.swift",
+      "Bodii/Domain/Entities/Goal.swift",
+      "BodiiTests/DateUtilsTests.swift",
+      "BodiiTests/ValidationServiceTests.swift",
+      "BodiiTests/SleepStatusTests.swift"
+    ]
+  },
+  "files_to_reference": [
+    "docs/04_ERD.md",
+    "docs/06_ALGORITHM.md",
+    "docs/08_EDGE_CASES.md",
+    ".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Enums/Gender.swift",
+    ".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Enums/ActivityLevel.swift",
+    ".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Utils/DateUtils.swift"
+  ],
+  "patterns": {
+    "enum_pattern": {
+      "description": "All enums use Int16 rawValue for Core Data compatibility",
+      "template": "enum EnumName: Int16, CaseIterable, Codable { ... } extension EnumName: Identifiable { var id: Int16 { rawValue } }",
+      "required_conformances": ["Int16 rawValue", "CaseIterable", "Codable", "Identifiable"],
+      "required_properties": ["displayName: String"]
+    },
+    "utility_pattern": {
+      "description": "Utilities are case-less enums acting as namespaces",
+      "template": "enum UtilityName { static func methodName(...) -> ... { ... } }",
+      "example_file": ".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Utils/DateUtils.swift"
+    },
+    "domain_entity_pattern": {
+      "description": "Domain entities are immutable structs with Identifiable, Codable, Equatable",
+      "template": "struct EntityName: Identifiable, Codable, Equatable { let id: UUID; ... }",
+      "required_conformances": ["Identifiable", "Codable", "Equatable"],
+      "optional_conformances": ["CustomStringConvertible"]
+    },
+    "documentation_pattern": {
+      "description": "Korean docstrings with learning points",
+      "markers": ["📚 학습 포인트:", "💡 Java 비교:", "MARK: -"]
+    }
+  },
+  "existing_implementations": {
+    "description": "Found existing implementations in worktree 002",
+    "relevant_files": [
+      ".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Enums/Gender.swift",
+      ".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Enums/ActivityLevel.swift",
+      ".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Utils/DateUtils.swift",
+      ".worktrees/002-project-foundation-core-data-model/Bodii/Shared/Utils/Constants.swift"
+    ]
+  },
+  "critical_business_rules": {
+    "sleep_boundary": {
+      "description": "02:00 is the day boundary for sleep tracking",
+      "rule": "00:00-01:59 counts as previous day, 02:00-23:59 counts as current day",
+      "implementation": "DateUtils.getLogicalDate(for:)"
+    },
+    "sleep_status_thresholds": {
+      "bad": "< 330 minutes (< 5.5 hours)",
+      "soso": "330-389 minutes (5.5-6.5 hours)",
+      "good": "390-449 minutes (6.5-7.5 hours)",
+      "excellent": "450-540 minutes (7.5-9 hours)",
+      "oversleep": "> 540 minutes (> 9 hours)"
+    },
+    "activity_multipliers": {
+      "sedentary": 1.2,
+      "light": 1.375,
+      "moderate": 1.55,
+      "active": 1.725,
+      "veryActive": 1.9
+    },
+    "validation_ranges": {
+      "height_cm": {"min": 100, "max": 250},
+      "weight_kg": {"min": 20, "max": 300},
+      "body_fat_percent": {"min": 3, "max": 60},
+      "name_length": {"min": 1, "max": 20}
+    }
+  },
+  "created_at": "2026-01-12T09:10:32.183900",
+  "updated_at": "2026-01-12T09:20:00.000000"
+}

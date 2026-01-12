@@ -1,0 +1,154 @@
+=== AUTO-BUILD PROGRESS ===
+
+Project: Project Foundation & Core Data Model
+Spec Number: 004
+Workspace: /Users/chacha/lab/Bodii
+Started: 2026-01-12
+
+Workflow Type: feature
+Rationale: Building entire foundation layer from scratch with multiple interconnected components
+           (10 enums, 5 utilities, 9 domain entities) requiring cohesive domain-driven design.
+
+Session 1 (Planner):
+- Completed deep codebase investigation
+- Analyzed existing patterns (enum, utility, domain entity patterns)
+- Created implementation_plan.json with 7 phases, 26 subtasks
+- Created init.sh setup script
+- Created build-progress.txt
+
+=== PHASE SUMMARY ===
+
+Phase 1: Constants & Enums (10 subtasks)
+  Dependencies: None
+  Files to Create:
+    - Bodii/Shared/Utils/Constants.swift
+    - Bodii/Shared/Enums/Gender.swift
+    - Bodii/Shared/Enums/ActivityLevel.swift
+    - Bodii/Shared/Enums/MealType.swift
+    - Bodii/Shared/Enums/ExerciseType.swift
+    - Bodii/Shared/Enums/Intensity.swift
+    - Bodii/Shared/Enums/FoodSource.swift
+    - Bodii/Shared/Enums/GoalType.swift
+    - Bodii/Shared/Enums/SleepStatus.swift
+    - Bodii/Shared/Enums/QuantityUnit.swift
+
+Phase 2: Swift Extensions (2 subtasks)
+  Dependencies: phase-1-constants-enums
+  Files to Create:
+    - Bodii/Shared/Extensions/Date+Extensions.swift
+    - Bodii/Shared/Extensions/Decimal+Extensions.swift
+
+Phase 3: Utility Services (3 subtasks)
+  Dependencies: phase-1-constants-enums, phase-2-extensions
+  Files to Create:
+    - Bodii/Shared/Utils/DateUtils.swift
+    - Bodii/Shared/Utils/ValidationService.swift
+    - Bodii/Shared/Utils/Formatters.swift
+
+Phase 4: Domain Entities (9 subtasks)
+  Dependencies: phase-1-constants-enums, phase-3-utilities
+  Files to Create:
+    - Bodii/Domain/Entities/User.swift
+    - Bodii/Domain/Entities/BodyRecord.swift
+    - Bodii/Domain/Entities/MetabolismSnapshot.swift
+    - Bodii/Domain/Entities/Food.swift
+    - Bodii/Domain/Entities/FoodRecord.swift
+    - Bodii/Domain/Entities/ExerciseRecord.swift
+    - Bodii/Domain/Entities/SleepRecord.swift
+    - Bodii/Domain/Entities/DailyLog.swift
+    - Bodii/Domain/Entities/Goal.swift
+
+Phase 5: Core Data Model (1 subtask)
+  Dependencies: phase-4-domain-entities
+  Files to Modify:
+    - Bodii/Data/Bodii.xcdatamodeld
+
+Phase 6: Unit Tests (3 subtasks)
+  Dependencies: phase-3-utilities, phase-1-constants-enums
+  Files to Create:
+    - BodiiTests/DateUtilsTests.swift
+    - BodiiTests/ValidationServiceTests.swift
+    - BodiiTests/SleepStatusTests.swift
+
+Phase 7: Integration Verification (2 subtasks)
+  Dependencies: phase-5-core-data, phase-6-unit-tests
+  Files to Create: None (verification only)
+
+=== SERVICES INVOLVED ===
+
+main (iOS App):
+  - Tech Stack: Swift, SwiftUI, Core Data
+  - Entry Point: Bodii/App/BodiiApp.swift
+  - Build Command: xcodebuild -project Bodii.xcodeproj -scheme Bodii build
+  - Test Command: xcodebuild test -project Bodii.xcodeproj -scheme Bodii
+
+=== PATTERNS IDENTIFIED ===
+
+1. Enum Pattern (from existing worktree):
+   - Int16 rawValue for Core Data compatibility
+   - CaseIterable, Codable conformance
+   - Identifiable extension with var id: Int16 { rawValue }
+   - var displayName: String computed property
+   - Korean docstrings with 📚 학습 포인트 comments
+
+2. Utility Pattern:
+   - Case-less enum as namespace (enum UtilityName { ... })
+   - Static methods with comprehensive docstrings
+   - Reference Constants enum for magic numbers
+   - Korean locale for formatting
+
+3. Domain Entity Pattern:
+   - Struct with Identifiable, Codable, Equatable
+   - let for immutable fields (id, createdAt)
+   - var for mutable fields
+   - Computed properties for derived values
+   - CustomStringConvertible extension for debugging
+
+=== CRITICAL BUSINESS RULES ===
+
+1. 02:00 Sleep Boundary:
+   - 00:00 ~ 01:59 → Previous day (for sleep tracking)
+   - 02:00 ~ 23:59 → Current day
+   - Implemented in: DateUtils.getLogicalDate()
+
+2. Sleep Status Thresholds (minutes):
+   - < 330 (< 5.5h)     → Bad
+   - 330-389 (5.5-6.5h) → Soso
+   - 390-449 (6.5-7.5h) → Good
+   - 450-540 (7.5-9h)   → Excellent
+   - > 540 (> 9h)       → Oversleep
+
+3. Activity Level Multipliers (TDEE = BMR × multiplier):
+   - Sedentary:   1.2
+   - Light:       1.375
+   - Moderate:    1.55
+   - Active:      1.725
+   - Very Active: 1.9
+
+4. Validation Ranges:
+   - Height: 100-250 cm
+   - Weight: 20-300 kg
+   - Body Fat %: 3-60%
+   - Name: 1-20 characters
+
+=== PARALLELISM ANALYSIS ===
+
+Max Parallel Phases: 2
+Recommended Workers: 1 (sequential due to iOS build dependencies)
+
+Parallel Groups:
+- phase-2-extensions: Can run after phase-1 completes
+- phase-6-unit-tests: Can run in parallel with phase-4 domain entities
+
+=== STARTUP COMMAND ===
+
+To continue building this spec, run:
+
+  open Bodii.xcodeproj
+
+Or from command line:
+
+  cd /Users/chacha/lab/Bodii
+  xcodebuild -project Bodii.xcodeproj -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build
+
+=== END SESSION 1 ===
