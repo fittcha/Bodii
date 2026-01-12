@@ -1,0 +1,143 @@
+================================================================================
+SUBTASK 7-2 VERIFICATION SUMMARY
+================================================================================
+
+Task: Verify Core Data model loads all 9 entities correctly
+Status: ✅ READY FOR RUNTIME VERIFICATION
+Date: 2026-01-12
+
+================================================================================
+WHAT WAS VERIFIED
+================================================================================
+
+✅ 1. CORE DATA MODEL FILE
+   Location: Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld/Bodii.xcdatamodel/contents
+   
+   All 9 entities are properly defined:
+   • User (14 attributes, 8 relationships)
+   • BodyRecord (7 attributes, 2 relationships)
+   • MetabolismSnapshot (8 attributes, 2 relationships)
+   • Food (14 attributes, 2 relationships)
+   • FoodRecord (10 attributes, 2 relationships)
+   • ExerciseRecord (10 attributes, 1 relationship)
+   • SleepRecord (6 attributes, 1 relationship)
+   • DailyLog (22 attributes, 1 relationship)
+   • Goal (17 attributes, 1 relationship)
+
+✅ 2. VERIFICATION CODE
+   Location: Bodii/Infrastructure/Persistence/PersistenceController.swift (lines 184-234)
+   
+   The verifyModelLoaded() method:
+   • Checks for all 9 expected entities
+   • Prints success message if all entities are found
+   • Reports any missing entities
+   • Shows entity details (attribute and relationship counts)
+   • Only runs in DEBUG builds (wrapped in #if DEBUG)
+
+✅ 3. APP INITIALIZATION
+   Location: Bodii/App/BodiiApp.swift (line 24)
+   
+   • PersistenceController.shared is initialized at app startup
+   • verifyModelLoaded() is automatically called during initialization (line 118 of PersistenceController.swift)
+   • The method is called inside the loadPersistentStores completion handler
+
+✅ 4. ENTITY ATTRIBUTES MATCH ERD
+   Verified against docs/04_ERD.md:
+   • All required attributes are present
+   • All data types are correct (UUID, Date, Decimal, Int16, Int32, String, Boolean)
+   • All relationships are bidirectional with proper inverse relationships
+   • Deletion rules are appropriate (Cascade for owned entities, Nullify for references)
+
+================================================================================
+EXPECTED RUNTIME BEHAVIOR
+================================================================================
+
+When the app runs in DEBUG mode, the following will happen:
+
+1. BodiiApp initializes PersistenceController.shared
+2. PersistenceController loads the Core Data model (Bodii.xcdatamodeld)
+3. loadPersistentStores completion handler is called
+4. verifyModelLoaded() executes automatically
+5. Console prints verification results:
+
+Expected Console Output:
+------------------------
+✅ [Core Data] Model loaded successfully with all 9 entities:
+   - BodyRecord
+   - DailyLog
+   - ExerciseRecord
+   - Food
+   - FoodRecord
+   - Goal
+   - MetabolismSnapshot
+   - SleepRecord
+   - User
+📊 [Core Data] Entity details:
+   - BodyRecord: 7 attributes, 2 relationships
+   - DailyLog: 22 attributes, 1 relationships
+   - ExerciseRecord: 10 attributes, 1 relationships
+   - Food: 14 attributes, 2 relationships
+   - FoodRecord: 10 attributes, 2 relationships
+   - Goal: 17 attributes, 1 relationships
+   - MetabolismSnapshot: 8 attributes, 2 relationships
+   - SleepRecord: 6 attributes, 1 relationships
+   - User: 14 attributes, 8 relationships
+
+================================================================================
+MANUAL TESTING STEPS (For Human Verification)
+================================================================================
+
+1. Open the project in Xcode:
+   $ open Bodii.xcodeproj
+
+2. Build the project (Cmd+B) and verify no errors
+
+3. Run the app in simulator (Cmd+R)
+
+4. Open Debug Console (Cmd+Shift+Y)
+
+5. Look for the verification message:
+   "✅ [Core Data] Model loaded successfully with all 9 entities"
+
+6. Verify all 9 entities are listed in alphabetical order
+
+7. Verify no missing entities are reported
+
+8. Check entity details match expected counts
+
+================================================================================
+ENVIRONMENT LIMITATIONS
+================================================================================
+
+⚠️  xcodebuild and simulator commands are not available in this automation environment
+⚠️  Cannot perform actual runtime verification (requires full Xcode environment)
+✅  All static verification completed successfully
+✅  Verification infrastructure is in place and will execute at runtime
+
+================================================================================
+FILES CREATED/MODIFIED
+================================================================================
+
+Created:
+• CORE_DATA_VERIFICATION.md - Detailed verification report
+• SUBTASK_7_2_VERIFICATION_SUMMARY.txt - This summary
+
+No code modifications needed:
+• All verification code was already in place from previous subtasks
+• PersistenceController.swift already contains verifyModelLoaded() method
+• BodiiApp.swift already initializes PersistenceController properly
+
+================================================================================
+CONCLUSION
+================================================================================
+
+✅ All 9 Core Data entities are properly defined in the model
+✅ Verification code is in place and will run automatically
+✅ App initialization properly connects to Core Data stack
+✅ Ready for runtime verification when app is launched
+
+The subtask objectives are complete from a code perspective. The automatic
+verification will confirm successful entity loading when the app runs in a
+full Xcode/simulator environment.
+
+================================================================================
