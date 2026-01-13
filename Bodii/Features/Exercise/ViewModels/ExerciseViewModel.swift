@@ -355,6 +355,21 @@ final class ExerciseViewModel: ObservableObject {
         }
     }
 
+    /// ExerciseInputViewModel 생성
+    ///
+    /// ExerciseInputView에서 사용할 ViewModel을 생성합니다.
+    /// Create 모드 또는 Edit 모드에 따라 적절한 ViewModel을 반환합니다.
+    ///
+    /// - Parameter exercise: 수정할 운동 기록 (nil인 경우 Create 모드)
+    /// - Returns: ExerciseInputViewModel 인스턴스
+    func makeInputViewModel(for exercise: ExerciseRecord?) -> ExerciseInputViewModel {
+        return ExerciseInputViewModel(
+            exerciseRecordService: exerciseRecordService,
+            userRepository: userRepository,
+            existingRecord: exercise
+        )
+    }
+
     // MARK: - Private Methods
 
     /// 현재 사용자 로드

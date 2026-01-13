@@ -105,8 +105,10 @@ struct ExerciseListView: View {
             .navigationTitle("운동")
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showingInputSheet) {
-                // 운동 입력 모달 (미구현 - 추후 ExerciseInputView 완성 후 연결)
-                Text("운동 입력 모달 (준비 중)")
+                // 운동 입력 모달
+                ExerciseInputView(
+                    viewModel: viewModel.makeInputViewModel(for: exerciseToEdit)
+                )
             }
             .alert("운동 삭제", isPresented: $showingDeleteAlert) {
                 Button("취소", role: .cancel) {}
