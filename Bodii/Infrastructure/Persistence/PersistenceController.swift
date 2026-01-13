@@ -36,12 +36,118 @@ final class PersistenceController {
         let controller = PersistenceController(inMemory: true)
 
         // 📚 학습 포인트: Preview용 샘플 데이터 생성
-        // 실제 앱에서는 이 블록에서 샘플 데이터를 생성할 수 있음
-        // 현재는 빈 상태로 유지 (엔티티 구현 후 추가 예정)
+        // SwiftUI Preview와 개발 중 테스트를 위한 샘플 데이터 생성
+        // 실제 디스크에 저장되지 않고 메모리에만 존재
         let viewContext = controller.container.viewContext
 
-        // TODO: 샘플 데이터 생성 코드 추가
-        // 예: User, DailyLog 등의 샘플 데이터
+        // 📚 학습 포인트: Sample Data Creation
+        // 다양한 날짜의 신체 구성 데이터를 생성하여 트렌드 확인 가능
+        // BodyRecord와 MetabolismSnapshot을 1:1 관계로 생성
+
+        // 샘플 데이터 배열 생성 (30일치 데이터)
+        let calendar = Calendar.current
+        let today = Date()
+
+        // 📚 학습 포인트: 현실적인 데이터 범위
+        // 체중: 68-72kg 범위에서 변동
+        // 체지방률: 17-20% 범위에서 변동 (감소 트렌드)
+        // 근육량: 30-33kg 범위에서 증가
+        let sampleDataSpecs: [(daysAgo: Int, weight: Double, bodyFatPercent: Double, muscleMass: Double, activityLevel: ActivityLevel)] = [
+            // 📚 학습 포인트: 시계열 데이터 패턴
+            // 최근 30일 동안 체중 감량 및 근육 증가 추세 시뮬레이션
+            // 체중과 체지방률은 감소, 근육량은 증가하는 건강한 변화 패턴
+
+            // 4주 전 (Week 1)
+            (28, 72.0, 20.0, 30.0, .lightlyActive),
+            (27, 71.8, 19.9, 30.2, .lightlyActive),
+            (26, 71.6, 19.8, 30.4, .moderatelyActive),
+            (25, 71.5, 19.7, 30.5, .moderatelyActive),
+
+            // 3주 전 (Week 2)
+            (21, 71.3, 19.5, 30.7, .moderatelyActive),
+            (20, 71.1, 19.4, 30.9, .moderatelyActive),
+            (19, 71.0, 19.3, 31.0, .moderatelyActive),
+            (18, 70.8, 19.2, 31.2, .moderatelyActive),
+
+            // 2주 전 (Week 3)
+            (14, 70.6, 19.0, 31.4, .moderatelyActive),
+            (13, 70.4, 18.9, 31.6, .moderatelyActive),
+            (12, 70.3, 18.8, 31.8, .moderatelyActive),
+            (11, 70.1, 18.7, 32.0, .veryActive),
+
+            // 1주 전 (Week 4)
+            (7, 69.9, 18.5, 32.2, .veryActive),
+            (6, 69.7, 18.4, 32.4, .veryActive),
+            (5, 69.5, 18.3, 32.6, .veryActive),
+            (4, 69.3, 18.2, 32.8, .veryActive),
+
+            // 최근 (This Week)
+            (3, 69.0, 18.0, 33.0, .veryActive),
+            (2, 68.8, 17.9, 33.2, .veryActive),
+            (1, 68.5, 17.8, 33.4, .veryActive),
+            (0, 68.3, 17.7, 33.5, .veryActive),
+        ]
+
+        // 📚 학습 포인트: Mapper Pattern Usage
+        // Mapper를 사용하여 Domain Entity를 Core Data Entity로 변환
+        let bodyMapper = BodyRecordMapper()
+        let metabolismMapper = MetabolismSnapshotMapper()
+
+        // 📚 학습 포인트: 샘플 UserProfile
+        // BMR/TDEE 계산에 필요한 사용자 정보
+        let sampleUserProfile = UserProfile(
+            height: Decimal(175.5),
+            birthDate: calendar.date(from: DateComponents(year: 1990, month: 6, day: 15))!,
+            gender: .male,
+            activityLevel: .moderatelyActive
+        )
+
+        // 각 날짜에 대해 BodyRecord와 MetabolismSnapshot 생성
+        for spec in sampleDataSpecs {
+            guard let date = calendar.date(byAdding: .day, value: -spec.daysAgo, to: today) else {
+                continue
+            }
+
+            // 📚 학습 포인트: Domain Entity 생성
+            // 먼저 Domain Entity를 생성하고 비즈니스 로직 적용
+            let bodyEntry = BodyCompositionEntry(
+                date: date,
+                weight: Decimal(spec.weight),
+                bodyFatPercent: Decimal(spec.bodyFatPercent),
+                muscleMass: Decimal(spec.muscleMass)
+            )
+
+            // 📚 학습 포인트: BMR/TDEE 계산
+            // Mifflin-St Jeor 공식으로 BMR 계산
+            // 남성: (10 × weight) + (6.25 × height) - (5 × age) + 5
+            let age = Decimal(sampleUserProfile.age)
+            let bmr = (10 * bodyEntry.weight) +
+                      (Decimal(6.25) * sampleUserProfile.height) -
+                      (5 * age) + 5
+
+            // TDEE = BMR × Activity Level Multiplier
+            let tdee = bmr * Decimal(spec.activityLevel.multiplier)
+
+            let metabolismData = MetabolismData(
+                date: date,
+                bmr: bmr,
+                tdee: tdee,
+                weight: bodyEntry.weight,
+                bodyFatPercent: bodyEntry.bodyFatPercent,
+                activityLevel: spec.activityLevel
+            )
+
+            // 📚 학습 포인트: Core Data Entity 생성
+            // Mapper를 통해 Domain Entity를 Core Data Entity로 변환
+            let bodyRecord = bodyMapper.toEntity(bodyEntry, context: viewContext)
+            let metabolismSnapshot = metabolismMapper.toEntity(metabolismData, context: viewContext)
+
+            // 📚 학습 포인트: Relationship 설정
+            // BodyRecord와 MetabolismSnapshot을 1:1 관계로 연결
+            // Core Data의 relationship은 양방향으로 자동 설정됨
+            bodyRecord.metabolism = metabolismSnapshot
+            metabolismSnapshot.bodyRecord = bodyRecord
+        }
 
         do {
             try viewContext.save()
