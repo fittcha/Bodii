@@ -60,7 +60,7 @@ struct ContentView: View {
     }
 
     private var dietTab: some View {
-        PlaceholderView(title: "식단", systemImage: "fork.knife")
+        DietTabView()
             .tabItem {
                 Label("식단", systemImage: "fork.knife")
             }

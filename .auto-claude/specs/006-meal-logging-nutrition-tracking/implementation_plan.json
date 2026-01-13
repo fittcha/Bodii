@@ -467,7 +467,7 @@
           "id": "6.2",
           "title": "Create ManualFoodEntryView",
           "description": "Implement manual food entry screen with form for entering food details.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Views/Diet/ManualFoodEntryView.swift"
           ],
@@ -482,7 +482,8 @@
             "Save button with validation"
           ],
           "estimated_hours": 2.5,
-          "notes": ""
+          "notes": "Successfully implemented ManualFoodEntryView with all required functionality:\n\n**Core Features:**\n1. Food name text field (required):\n   - Clear validation with required indicator (*)\n   - Error message display below field\n   - Focus state management\n\n2. Serving size and unit fields:\n   - Serving size (required) in grams with decimal keyboard\n   - Serving unit (optional) for description (\uc608: 1\uc778\ubd84, 1\uac1c)\n   - Horizontal layout for size + unit\n   - Helpful hint text explaining g unit requirement\n\n3. Calories field (required):\n   - Number pad keyboard for integer input\n   - Required indicator and validation\n   - Unit display (kcal)\n\n4. Carbohydrates, Protein, Fat fields:\n   - Optional macro input fields\n   - Decimal keyboard for precise input\n   - Unit display (g) for each field\n   - Clear section dividers\n\n5. Optional nutrients (sodium, fiber, sugar):\n   - Separate 'Additional Info' section with 'Optional' badge\n   - Sodium in mg, fiber and sugar in g\n   - Decimal keyboard support\n\n6. Save button with validation:\n   - Prominent blue button at bottom\n   - Loading state with ProgressView during save\n   - Disabled state when invalid (gray color)\n   - Success alert with callback\n   - Keyboard dismissal on save\n\n**UI/UX Features:**\n- Instruction section with helpful guidance message\n- Section-based layout (Basic Info, Nutrition Info, Additional Info)\n- FocusState management for keyboard navigation\n- Validation error messages below each field\n- Required fields marked with red asterisk (*)\n- Unit labels clearly displayed\n- Scroll view for long forms\n- System colors following iOS HIG\n- Card-based design with rounded corners\n\n**Code Quality:**\n- Follows established patterns from FoodDetailView and FoodSearchView\n- Korean and English documentation\n- SwiftUI best practices (ObservedObject, State, Binding, FocusState)\n- Protocol-based dependency injection for ViewModel\n- Comprehensive mock services for #Preview\n- MARK comments for organization\n- Helper method for form field generation (formField)\n- Field enum for focus management\n\n**All Acceptance Criteria Met:**\n\u2705 Food name text field (required)\n\u2705 Serving size and unit fields\n\u2705 Calories field (required)\n\u2705 Carbohydrates field\n\u2705 Protein field\n\u2705 Fat field\n\u2705 Optional: sodium, fiber, sugar\n\u2705 Save button with validation\n\nFile created:\n- Bodii/Presentation/Features/Diet/Views/ManualFoodEntryView.swift (601 lines)\n\nCommit: 49bc9d5\nStatus: Ready for integration in Phase 7 (subtask 7.1)\n\nPhase 6 (UI - Manual Food Entry) Status: \u2705 COMPLETED (2/2 subtasks)",
+          "updated_at": "2026-01-13T09:13:00.743331+00:00"
         }
       ]
     },
@@ -636,5 +637,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T09:10:28.368519+00:00"
+  "last_updated": "2026-01-13T09:13:00.743338+00:00"
 }

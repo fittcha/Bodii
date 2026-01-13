@@ -40,22 +40,29 @@ struct DailyMealView: View {
     /// 활동대사량 (kcal)
     let tdee: Int32
 
-    // MARK: - State
+    /// 음식 추가 콜백 (끼니 타입 전달)
+    let onAddFood: ((MealType) -> Void)?
 
-    /// 음식 추가 시트 표시 여부
-    @State private var showingAddFoodSheet = false
+    // MARK: - Initialization
 
-    /// 선택된 끼니 타입
-    @State private var selectedMealType: MealType?
-
-    /// 선택된 식단 기록 ID (수정용)
-    @State private var selectedFoodRecordId: UUID?
+    init(
+        viewModel: DailyMealViewModel,
+        userId: UUID,
+        bmr: Int32,
+        tdee: Int32,
+        onAddFood: ((MealType) -> Void)? = nil
+    ) {
+        self.viewModel = viewModel
+        self.userId = userId
+        self.bmr = bmr
+        self.tdee = tdee
+        self.onAddFood = onAddFood
+    }
 
     // MARK: - Body
 
     var body: some View {
-        NavigationView {
-            ZStack {
+        ZStack {
                 // 📚 학습 포인트: Background Color
                 // iOS 디자인 가이드에 따른 시스템 배경색 사용
                 Color(.systemGroupedBackground)
@@ -89,14 +96,12 @@ struct DailyMealView: View {
                                     meals: viewModel.mealGroups[mealType] ?? [],
                                     totalCalories: viewModel.totalCalories(for: mealType),
                                     onAddFood: {
-                                        selectedMealType = mealType
-                                        showingAddFoodSheet = true
+                                        onAddFood?(mealType)
                                     },
                                     onDeleteFood: { foodRecordId in
                                         viewModel.deleteFoodRecord(foodRecordId)
                                     },
                                     onEditFood: { foodRecordId in
-                                        selectedFoodRecordId = foodRecordId
                                         // TODO: Phase 5에서 식단 수정 화면 구현
                                         print("Edit food record: \(foodRecordId)")
                                     }
@@ -114,35 +119,30 @@ struct DailyMealView: View {
                     }
                 }
             }
-            .navigationTitle("식단")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                // 새로고침 버튼
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        viewModel.refresh()
-                    }) {
-                        Image(systemName: "arrow.clockwise")
-                    }
+        }
+        .navigationTitle("식단")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            // 새로고침 버튼
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    viewModel.refresh()
+                }) {
+                    Image(systemName: "arrow.clockwise")
                 }
             }
-            .sheet(isPresented: $showingAddFoodSheet) {
-                // 음식 추가 시트 (Phase 4에서 구현)
-                Text("음식 추가 화면")
-                    .font(.title)
+        }
+        .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
+            Button("확인") {
+                viewModel.errorMessage = nil
             }
-            .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
-                Button("확인") {
-                    viewModel.errorMessage = nil
-                }
-            } message: {
-                if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                }
+        } message: {
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
             }
-            .onAppear {
-                viewModel.onAppear(userId: userId, bmr: bmr, tdee: tdee)
-            }
+        }
+        .onAppear {
+            viewModel.onAppear(userId: userId, bmr: bmr, tdee: tdee)
         }
     }
 
