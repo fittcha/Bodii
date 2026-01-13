@@ -608,3 +608,64 @@ Next: Phase 6.1 - ManualFoodEntryViewModel
 
 Phase 5 (UI - Food Detail & Screen) Status: ✅ COMPLETED (4/4 subtasks)
 
+
+================================================================================
+Subtask 7.1: Integrate with Tab Navigation - COMPLETED
+================================================================================
+Date: 2026-01-13
+Status: ✅ COMPLETED
+Files Modified:
+  - Bodii/Presentation/Features/Diet/Views/DietTabView.swift (NEW, 257 lines)
+  - Bodii/Presentation/Features/Diet/Views/DailyMealView.swift (UPDATED)
+  - Bodii/App/ContentView.swift (UPDATED)
+
+Summary:
+Successfully integrated Diet tab into main tab view with complete navigation flow.
+
+1. Created DietTabView.swift ✅
+   - Root view for Diet tab with NavigationStack
+   - Manages all diet-related screen navigation
+   - Initializes repositories and services:
+     * FoodRepository, FoodRecordRepository, DailyLogRepository
+     * FoodRecordService, LocalFoodSearchService, RecentFoodsService
+   - Creates ViewModels (DailyMealViewModel, FoodSearchViewModel)
+   - Handles state management for navigation
+
+2. Updated DailyMealView.swift ✅
+   - Added onAddFood callback parameter for navigation
+   - Removed NavigationView wrapper (handled by DietTabView)
+   - Removed internal sheet management (delegated to parent)
+   - Added custom initializer with optional onAddFood callback
+
+3. Updated ContentView.swift ✅
+   - Replaced PlaceholderView with DietTabView in dietTab
+
+Navigation Flow:
+```
+DietTabView (NavigationStack)
+└── DailyMealView (root)
+    ├── onAddFood -> opens FoodSearchView (sheet)
+    │   ├── onSelectFood -> navigates to FoodDetailView
+    │   │   └── onSave -> closes all sheets and refreshes
+    │   └── onManualEntry -> opens ManualFoodEntryView (sheet)
+    │       └── onSave -> closes all sheets and refreshes
+    └── onDeleteFood -> deletes and refreshes
+```
+
+Key Features:
+- Sheet-based presentation for food search (maintains context)
+- NavigationDestination for food detail (hierarchical navigation)
+- Nested sheets for manual entry
+- Proper data refresh on save/delete operations
+- Temporary user data (userId, BMR, TDEE) - marked with TODO for Phase 7.2
+
+All Acceptance Criteria Met:
+✅ Add Diet tab to TabView
+✅ Navigation from daily view to search
+✅ Navigation from search to detail
+✅ Navigation from search to manual entry
+✅ Proper back navigation
+
+Commit: 3d77468
+Next: Phase 7.2 - Register Services in DI Container
+
