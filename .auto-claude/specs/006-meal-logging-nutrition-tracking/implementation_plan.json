@@ -118,7 +118,7 @@
           "id": "1.6",
           "title": "Write Unit Tests for Services",
           "description": "Create comprehensive unit tests for FoodRecordService and NutritionCalculator.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "BodiiTests/FoodRecordServiceTests.swift",
             "BodiiTests/NutritionCalculatorTests.swift"
@@ -130,7 +130,8 @@
             "Test edge cases (0 quantity, very large values)"
           ],
           "estimated_hours": 2,
-          "notes": ""
+          "notes": "Successfully created comprehensive unit tests for FoodRecordService and NutritionCalculator:\n\n**NutritionCalculatorTests.swift (30+ test cases):**\n1. Nutrition calculation for serving unit:\n   - Test various serving sizes (0.25x, 0.5x, 1x, 1.5x, 2x)\n   - Verify accurate proportional calculations\n\n2. Nutrition calculation for grams unit:\n   - Test exact serving size (210g)\n   - Test half serving (105g)\n   - Test 1.5 servings (315g)\n   - Test non-exact multiples (100g)\n\n3. Edge cases:\n   - Zero quantity (returns zero values)\n   - Very large quantities (10 servings)\n   - Very small quantities (0.01 servings)\n\n4. Macro ratio calculations:\n   - Balanced diet (49.9% carbs, 25% protein, 25.1% fat)\n   - High carb diet (>60% carbs)\n   - High protein diet (>35% protein)\n   - High fat/keto diet (>65% fat)\n   - Zero macros (returns nil ratios)\n   - Verify totals to 100%\n\n5. Serving conversions:\n   - Grams to servings conversion\n   - Servings to grams conversion\n   - Round trip conversion accuracy\n   - Zero serving size handling\n\n**FoodRecordServiceTests.swift (20+ test cases):**\n1. Add food record operations:\n   - Correct nutrition calculation (1 serving = 330 kcal)\n   - DailyLog totals update (cascade updates)\n   - Macro ratios calculation (carbs >80% for rice)\n   - Net calories calculation (intake - TDEE)\n   - Grams unit support (105g = 0.5 serving)\n   - Error handling (food not found)\n   - DailyLog creation if not exists\n\n2. Update food record operations:\n   - Quantity update recalculates nutrition\n   - DailyLog correctly updated (subtract old, add new)\n   - Meal type update support\n   - Error handling (record not found)\n\n3. Delete food record operations:\n   - Record deletion and DailyLog update\n   - Macro ratios recalculation (nil when empty)\n   - Error handling (record not found, daily log not found)\n\n4. Query operations:\n   - Get records by date\n   - Get records by date and meal type\n\n5. Mock repositories:\n   - MockFoodRecordRepository\n   - MockDailyLogRepository\n   - MockFoodRepository\n   - Proper isolation for unit testing\n\n**Code Quality:**\n- Follows established test patterns from ValidationServiceTests\n- Korean and English documentation\n- Given/When/Then structure\n- Clear, descriptive test names\n- Comprehensive edge case coverage\n- 50+ total test cases ensuring robust coverage\n\nAll acceptance criteria met:\n\u2705 Test nutrition calculation accuracy\n\u2705 Test DailyLog cascade updates\n\u2705 Test macro ratio calculations\n\u2705 Test edge cases (0 quantity, very large values)\n\nFiles created:\n- BodiiTests/NutritionCalculatorTests.swift (745 lines)\n- BodiiTests/FoodRecordServiceTests.swift (1,209 lines)\n\nCommit: 11c1ad6\nStatus: Ready for manual verification",
+          "updated_at": "2026-01-13T08:16:59.472456+00:00"
         }
       ]
     },
@@ -620,5 +621,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T08:12:18.006274+00:00"
+  "last_updated": "2026-01-13T08:16:59.472465+00:00"
 }
