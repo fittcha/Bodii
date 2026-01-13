@@ -83,8 +83,8 @@
           "id": "1.5",
           "title": "Create DailyLogService for exercise updates",
           "description": "Implement service to update DailyLog when exercise records are added/modified/deleted. Update totalCaloriesOut, exerciseMinutes, and exerciseCount fields.",
-          "status": "pending",
-          "notes": "May need DailyLogRepository if not existing",
+          "status": "completed",
+          "notes": "Implemented comprehensive DailyLog infrastructure:\n\n- Created DailyLogRepository protocol with getOrCreate, addExercise, removeExercise, updateExercise methods\n- Implemented DailyLogLocalDataSource with Core Data CRUD operations, thread-safe async/await pattern, date normalization\n- Created DailyLogRepositoryImpl following Clean Architecture pattern\n- Implemented DailyLogService with methods to update DailyLog when exercises are added/modified/deleted\n- All methods use User.currentBMR/TDEE when creating new DailyLog\n- addExercise increments totalCaloriesOut, exerciseMinutes, exerciseCount\n- removeExercise decrements fields (with protection against negative values)\n- updateExercise applies difference calculation between old and new values\n\nFiles created:\n- Bodii/Domain/Interfaces/DailyLogRepository.swift\n- Bodii/Data/DataSources/Local/DailyLogLocalDataSource.swift\n- Bodii/Data/Repositories/DailyLogRepositoryImpl.swift\n- Bodii/Domain/Services/DailyLogService.swift\n\nAll implementations follow existing codebase patterns with Korean learning comments, comprehensive documentation, and proper error handling.",
           "files": [
             "Bodii/Domain/Services/DailyLogService.swift",
             "Bodii/Domain/Interfaces/DailyLogRepository.swift",
@@ -97,7 +97,8 @@
             "removeExercise method decrements the fields",
             "updateExercise method adjusts the difference",
             "Uses User.currentBMR/TDEE when creating new DailyLog"
-          ]
+          ],
+          "updated_at": "2026-01-13T10:15:20.441579+00:00"
         }
       ]
     },
@@ -430,5 +431,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T10:10:06.113549+00:00"
+  "last_updated": "2026-01-13T10:15:20.441587+00:00"
 }
