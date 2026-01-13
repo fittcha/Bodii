@@ -486,3 +486,71 @@ Files created:
 
 Commit: dabd974
 Status: Ready for integration in FoodSearchView or DailyMealView
+
+================================================================================
+Subtask 5.2: Implement food detail screen - COMPLETED
+================================================================================
+Date: 2026-01-13
+Status: ✅ COMPLETED
+Files Modified:
+  - Bodii/Presentation/Features/Diet/Views/FoodDetailView.swift (NEW, 659 lines)
+
+Summary:
+Successfully implemented FoodDetailView with all required acceptance criteria:
+
+1. Food name header ✅
+   - Prominent display with title2 font
+   - Serving size and unit information
+   - Clean, centered layout
+
+2. Full nutrition facts display ✅
+   - Calories prominently displayed (title3, bold)
+   - Macronutrients with color coding (carbs: blue, protein: orange, fat: purple)
+   - Optional nutrients (sodium, fiber, sugar) when available
+   - Real-time calculation based on quantity
+   - Color circle indicators for each nutrient
+
+3. Serving size selector (preset values) ✅
+   - Quick preset buttons: 0.25x, 0.5x, 1x, 1.5x, 2x
+   - Visual feedback for selected preset (blue vs gray)
+   - Automatic unit reset to serving on selection
+
+4. Custom quantity input field ✅
+   - Decimal TextField with decimalPad keyboard
+   - Unit toggle: serving ↔ grams (segmented picker)
+   - Automatic conversion on unit change
+   - Input validation with error messages
+   - Minimum quantity: 0.1
+
+5. Meal type picker ✅
+   - All 4 meal types: breakfast, lunch, dinner, snack
+   - Visual selection state (blue highlight + border)
+   - Button-based UI for easy selection
+   - Equal width layout
+
+6. Add to meal button ✅
+   - Prominent blue button at bottom
+   - Loading state (ProgressView) during save
+   - Success alert with callback
+   - Disabled state when invalid
+   - Integration with FoodRecordService
+
+Key Implementation Details:
+- Uses FoodDetailViewModel for all business logic
+- Real-time nutrition calculation via computed properties
+- Proper error handling with alerts
+- Loading states throughout
+- SwiftUI best practices (ObservedObject, State, bindings)
+- Comprehensive mock services for preview
+- Korean and English documentation
+- Clean code organization with MARK comments
+
+Integration:
+- Works with FoodDetailViewModel (subtask 5.1)
+- Ready for navigation from FoodSearchView
+- Can be used in DailyMealView for editing (future)
+- Components can be extracted in subtasks 5.3 and 5.4
+
+Commit: 1f079b7
+Next: Subtask 5.3 - ServingSizePicker component extraction
+

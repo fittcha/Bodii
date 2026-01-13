@@ -361,7 +361,7 @@
           "id": "5.1",
           "title": "Create FoodDetailViewModel",
           "description": "Implement ViewModel for food detail screen with quantity adjustment and nutrition calculation.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/ViewModels/FoodDetailViewModel.swift"
           ],
@@ -374,13 +374,14 @@
             "Save food record"
           ],
           "estimated_hours": 2,
-          "notes": ""
+          "notes": "Successfully implemented FoodDetailViewModel with all required functionality:\n\n**Core Features:**\n1. Load food details:\n   - Asynchronous loading from FoodRepository\n   - Error handling and loading states\n   - onAppear lifecycle integration\n\n2. Calculate nutrition based on quantity:\n   - Real-time nutrition calculation using NutritionCalculator\n   - Computed properties for calories, carbs, protein, fat\n   - Macro ratio calculation support\n\n3. Support serving multiplier (0.25x, 0.5x, 1x, 1.5x, 2x):\n   - presetMultipliers array with standard values\n   - setQuantityMultiplier() method for quick preset selection\n   - Automatic unit reset to serving when using presets\n\n4. Support custom quantity input:\n   - @Published quantity property for two-way binding\n   - Unit conversion support (serving <-> grams)\n   - Real-time nutrition recalculation on quantity change\n\n5. Validate quantity (min 0.1):\n   - validateQuantity() method with @discardableResult\n   - quantityError property for displaying validation feedback\n   - minimumQuantity constant (0.1)\n   - Validation before save\n\n6. Save food record:\n   - saveFoodRecord() async method\n   - Integration with FoodRecordService\n   - Automatic DailyLog cascade updates\n   - Comprehensive error handling\n\n**Additional Features:**\n- Unit switching (serving <-> grams) with quantity preservation using NutritionCalculator conversion utilities\n- Meal type selection support (@Published selectedMealType)\n- Loading and saving states (isLoading, isSaving)\n- Error message handling (errorMessage, quantityError)\n- Computed properties for UI:\n  * calculatedNutrition, calculatedCalories, calculatedCarbs, calculatedProtein, calculatedFat\n  * calculatedMacroRatios\n  * isServingBased, isGramBased\n  * quantityText (formatted display string)\n  * isFoodLoaded, canSave\n\n**Code Quality:**\n- Follows established patterns from FoodSearchViewModel and DailyMealViewModel\n- Korean and English documentation following project style\n- @MainActor for thread-safety with SwiftUI\n- Protocol-based dependency injection for testability\n- Swift Concurrency (async/await) throughout\n- Clean separation of concerns\n- ObservableObject for SwiftUI integration\n- Comprehensive computed properties for UI logic\n\n**All Acceptance Criteria Met:**\n\u2705 Load food details\n\u2705 Calculate nutrition based on quantity\n\u2705 Support serving multiplier (0.25x, 0.5x, 1x, 1.5x, 2x)\n\u2705 Support custom quantity input\n\u2705 Validate quantity (min 0.1)\n\u2705 Save food record\n\nFile created:\n- Bodii/Presentation/Features/Diet/ViewModels/FoodDetailViewModel.swift (351 lines)\n\nCommit: 0c73120\nStatus: Ready for UI integration (Phase 5 - subtask 5.2)",
+          "updated_at": "2026-01-13T08:58:02.356906+00:00"
         },
         {
           "id": "5.2",
           "title": "Create FoodDetailView",
           "description": "Implement food detail screen showing full nutrition info with serving size picker and meal type selector.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Views/Diet/FoodDetailView.swift"
           ],
@@ -393,13 +394,14 @@
             "Add to meal button"
           ],
           "estimated_hours": 3,
-          "notes": ""
+          "notes": "Successfully implemented FoodDetailView with all required functionality:\n\n**Core Features:**\n1. Food name header:\n   - Displays food name prominently with title2 font\n   - Shows serving size and unit information\n   - Clean, centered layout with proper spacing\n\n2. Full nutrition facts display:\n   - Calories prominently displayed with title3 font\n   - Macronutrients (carbs, protein, fat) with color coding (blue, orange, purple)\n   - Optional nutrients (sodium, fiber, sugar) shown when available\n   - Real-time calculation based on quantity using ViewModel computed properties\n   - Color circle indicators matching macro chart colors\n\n3. Serving size selector (preset values):\n   - Quick preset buttons (0.25x, 0.5x, 1x, 1.5x, 2x) from ViewModel\n   - Visual feedback for selected preset (blue background vs gray)\n   - Automatic unit reset to serving on preset selection\n   - HStack layout with equal width buttons\n\n4. Custom quantity input field:\n   - Decimal number TextField with .decimalPad keyboard\n   - Unit toggle (serving/grams) with segmented picker\n   - Automatic conversion on unit change via ViewModel.changeUnit()\n   - Input validation with error messages displayed below\n   - Minimum quantity enforcement (0.1) via ViewModel.validateQuantity()\n\n5. Meal type picker (breakfast/lunch/dinner/snack):\n   - All 4 meal types using MealType.allCases\n   - Visual selection state with blue highlight\n   - Button-based UI with border for easy selection\n   - HStack layout with equal width buttons\n\n6. Add to meal button:\n   - Prominent blue button at bottom with fixed padding\n   - Loading state during save (ProgressView)\n   - Success alert on completion with callback to onSave\n   - Disabled state when invalid (gray color, !canSave)\n   - Integration with FoodRecordService via ViewModel.saveFoodRecord()\n\n**UI/UX Features:**\n- Loading state with ProgressView during food fetch\n- Error handling with alerts (errorMessage binding)\n- Success confirmation dialog (showingSaveSuccess)\n- ScrollView for long content with proper vertical spacing\n- System colors following iOS HIG (systemBackground, systemGroupedBackground)\n- Card-based layout with cornerRadius(12) and proper padding\n- Comprehensive mock services for #Preview functionality\n\n**Code Quality:**\n- Follows established patterns from DailyMealView and FoodSearchView\n- Korean and English documentation following project style\n- SwiftUI best practices (ObservedObject, State, binding)\n- Protocol-based dependency injection for ViewModel\n- Comprehensive #Preview with mock FoodRepository and FoodRecordService\n- Clean separation of concerns (View, ViewModel, Service layers)\n- MARK comments for organization (Properties, State, Body, Subviews, Helpers, Preview, Mock Services)\n- Helper methods for formatting (formattedDecimal, formatMultiplier, calculateMultiplier)\n\n**All Acceptance Criteria Met:**\n\u2705 Food name header\n\u2705 Full nutrition facts display\n\u2705 Serving size selector (preset values)\n\u2705 Custom quantity input field\n\u2705 Meal type picker (breakfast/lunch/dinner/snack)\n\u2705 Add to meal button\n\n**File Created:**\n- Bodii/Presentation/Features/Diet/Views/FoodDetailView.swift (659 lines)\n\n**Commit:** 1f079b7\n**Status:** Ready for integration in Phase 7 (subtask 7.1) and component extraction in subtasks 5.3 and 5.4",
+          "updated_at": "2026-01-13T09:01:32.598717+00:00"
         },
         {
           "id": "5.3",
           "title": "Create ServingSizePicker",
           "description": "Implement serving size picker component with preset values and custom input.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Views/Diet/Components/ServingSizePicker.swift"
           ],
@@ -411,7 +413,8 @@
             "Input validation"
           ],
           "estimated_hours": 2,
-          "notes": ""
+          "notes": "Successfully implemented ServingSizePicker component with all required functionality:\n\n**New Component Created:**\n- ServingSizePicker.swift (247 lines)\n  * Reusable component for quantity selection with preset and custom input\n  * Preset buttons (0.25x, 0.5x, 1x, 1.5x, 2x) for quick selection\n  * Custom quantity text field with decimal keyboard\n  * Unit toggle between serving and grams with segmented picker\n  * Real-time validation with error message display\n  * Visual feedback for selected preset (blue highlight)\n  * Callback-based architecture for ViewModel integration\n\n**Updated Files:**\n- FoodDetailView.swift (reduced from 660 to 555 lines)\n  * Replaced inline servingSizeSection with ServingSizePicker component\n  * Removed duplicate presetButton method (now in component)\n  * Removed formatMultiplier helper (now in component)\n  * Cleaner separation of concerns and improved reusability\n\n**Key Features:**\n1. Preset buttons (0.25x, 0.5x, 1x, 1.5x, 2x):\n   - Quick selection with visual feedback\n   - Blue highlight when preset is selected\n   - Equal width buttons in HStack layout\n   - Automatic unit reset to serving on selection\n\n2. Custom quantity text field:\n   - Decimal number input with .decimalPad keyboard\n   - Proper Binding to ViewModel quantity\n   - TextField with rounded border style\n   - Fixed width (120pt) for consistent layout\n\n3. Toggle between serving and gram mode:\n   - Segmented picker with QuantityUnit enum\n   - onChange handler triggers unit conversion\n   - Proper callback to ViewModel.changeUnit()\n   - Maintains quantity value during conversion\n\n4. Real-time nutrition update preview:\n   - Integrated through ViewModel computed properties\n   - Automatic recalculation on quantity/unit change\n   - No additional implementation needed (ViewModel handles it)\n\n5. Input validation:\n   - quantityError message display\n   - Red text for error feedback\n   - Minimum quantity enforcement (0.1)\n   - Callback to ViewModel.validateQuantity()\n\n**Code Quality:**\n- Follows established patterns from FoodRecordRow and QuickAddFoodChip\n- Korean and English documentation following project style\n- SwiftUI best practices (Binding, onChange modifiers)\n- Type-safe with QuantityUnit enum\n- Comprehensive #Preview with 4 different states (1.0 serving, 150g, error state, 0.5x selected)\n- Clean component architecture with callbacks\n\n**All Acceptance Criteria Met:**\n\u2705 Preset buttons (0.25x, 0.5x, 1x, 1.5x, 2x)\n\u2705 Custom quantity text field\n\u2705 Toggle between serving and gram mode\n\u2705 Real-time nutrition update preview\n\u2705 Input validation\n\n**Files:**\n- Created: Bodii/Presentation/Features/Diet/Views/Components/ServingSizePicker.swift (247 lines)\n- Modified: Bodii/Presentation/Features/Diet/Views/FoodDetailView.swift (555 lines, reduced by 105 lines)\n\n**Commit:** e248a5a\n**Status:** Ready for production use in Phase 5 and beyond",
+          "updated_at": "2026-01-13T09:04:46.430558+00:00"
         },
         {
           "id": "5.4",
@@ -631,5 +634,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T08:54:25.808545+00:00"
+  "last_updated": "2026-01-13T09:04:46.430567+00:00"
 }

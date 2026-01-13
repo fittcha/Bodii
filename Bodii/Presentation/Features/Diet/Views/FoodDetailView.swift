@@ -89,7 +89,15 @@ struct FoodDetailView: View {
                         foodHeaderSection(food: food)
 
                         // 영양 정보 카드
-                        nutritionFactsSection(food: food)
+                        NutritionFactsCard(
+                            food: food,
+                            quantity: viewModel.quantity,
+                            quantityUnit: viewModel.quantityUnit,
+                            calculatedCalories: viewModel.calculatedCalories,
+                            calculatedCarbs: viewModel.calculatedCarbs,
+                            calculatedProtein: viewModel.calculatedProtein,
+                            calculatedFat: viewModel.calculatedFat
+                        )
 
                         // 섭취량 선택 섹션
                         ServingSizePicker(
@@ -176,135 +184,6 @@ struct FoodDetailView: View {
         .padding()
         .frame(maxWidth: .infinity)
         .background(Color(.systemBackground))
-    }
-
-    /// 영양 정보 섹션
-    ///
-    /// 계산된 영양 정보를 표시합니다.
-    ///
-    /// - Parameter food: 음식 정보
-    /// - Returns: 영양 정보 카드 뷰
-    private func nutritionFactsSection(food: Food) -> some View {
-        VStack(spacing: 16) {
-            // 섹션 헤더
-            HStack {
-                Text("영양 정보")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                Spacer()
-                Text(viewModel.quantityText)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-
-            Divider()
-
-            // 칼로리 (큼직하게 표시)
-            HStack {
-                Text("칼로리")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-
-                Spacer()
-
-                Text("\(viewModel.calculatedCalories) kcal")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-            }
-
-            Divider()
-
-            // 탄수화물
-            nutritionRow(
-                name: "탄수화물",
-                value: viewModel.calculatedCarbs,
-                unit: "g",
-                color: .blue
-            )
-
-            // 단백질
-            nutritionRow(
-                name: "단백질",
-                value: viewModel.calculatedProtein,
-                unit: "g",
-                color: .orange
-            )
-
-            // 지방
-            nutritionRow(
-                name: "지방",
-                value: viewModel.calculatedFat,
-                unit: "g",
-                color: .purple
-            )
-
-            // 나트륨 (선택적)
-            if let sodium = food.sodium {
-                Divider()
-                nutritionRow(
-                    name: "나트륨",
-                    value: sodium * calculateMultiplier(food: food),
-                    unit: "mg",
-                    color: .gray
-                )
-            }
-
-            // 식이섬유 (선택적)
-            if let fiber = food.fiber {
-                nutritionRow(
-                    name: "식이섬유",
-                    value: fiber * calculateMultiplier(food: food),
-                    unit: "g",
-                    color: .green
-                )
-            }
-
-            // 당류 (선택적)
-            if let sugar = food.sugar {
-                nutritionRow(
-                    name: "당류",
-                    value: sugar * calculateMultiplier(food: food),
-                    unit: "g",
-                    color: .pink
-                )
-            }
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .padding(.horizontal)
-    }
-
-    /// 영양소 행
-    ///
-    /// 개별 영양소 정보를 표시하는 행입니다.
-    ///
-    /// - Parameters:
-    ///   - name: 영양소 이름
-    ///   - value: 값
-    ///   - unit: 단위
-    ///   - color: 색상
-    /// - Returns: 영양소 행 뷰
-    private func nutritionRow(name: String, value: Decimal, unit: String, color: Color) -> some View {
-        HStack {
-            HStack(spacing: 8) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 8, height: 8)
-
-                Text(name)
-                    .font(.body)
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
-            Text("\(formattedDecimal(value)) \(unit)")
-                .font(.body)
-                .fontWeight(.medium)
-                .foregroundColor(.primary)
-        }
     }
 
     /// 끼니 선택 섹션
@@ -418,21 +297,6 @@ struct FoodDetailView: View {
         formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = 2
         return formatter.string(from: nsDecimal) ?? "0"
-    }
-
-    /// 현재 섭취량에 대한 배수 계산
-    ///
-    /// 선택적 영양소 표시를 위한 배수 계산입니다.
-    ///
-    /// - Parameter food: 음식 정보
-    /// - Returns: 배수 값
-    private func calculateMultiplier(food: Food) -> Decimal {
-        if viewModel.quantityUnit == .serving {
-            return viewModel.quantity
-        } else {
-            // 그램 단위일 경우: quantity / servingSize
-            return viewModel.quantity / food.servingSize
-        }
     }
 }
 
