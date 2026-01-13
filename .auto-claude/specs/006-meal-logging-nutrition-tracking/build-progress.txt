@@ -227,3 +227,150 @@ All acceptance criteria met:
 Commit: 437bd1a
 Status: Ready for UI integration in Phase 4 (subtask 4.1 - FoodSearchView)
 
+[2026-01-13 17:32] Subtask 3.1 - DailyMealViewModel - COMPLETED
+=================================================================
+Created DailyMealViewModel for the daily meal view screen following established patterns.
+
+Key features implemented:
+1. Date navigation:
+   - navigateToPreviousDay(): Move to previous day
+   - navigateToNextDay(): Move to next day
+   - navigateToDate(date): Jump to specific date
+   - Auto-reload data on date change
+
+2. Data loading:
+   - Parallel async queries for DailyLog and FoodRecords (performance optimization)
+   - getOrCreate pattern for DailyLog (auto-creates if not exists)
+   - Loads Food details for each FoodRecord
+   - Efficient grouping by MealType
+
+3. Meal grouping:
+   - Groups FoodRecords by all 4 MealTypes (breakfast, lunch, dinner, snack)
+   - Pre-initializes empty arrays for all meal types
+   - Returns organized dictionary for easy UI rendering
+
+4. Daily nutrition summary:
+   - Exposes DailyLog for total calories and macros
+   - Computed properties for remaining calories
+   - Calorie intake percentage calculation
+   - Per-meal calorie totals
+
+5. Delete functionality:
+   - deleteFoodRecord(id): Remove food record
+   - Auto-refreshes data after deletion
+   - DailyLog automatically updated via service layer
+
+6. UI state management:
+   - @MainActor for thread-safety with SwiftUI
+   - Loading states (isLoading)
+   - Error handling with user-friendly messages
+   - Empty state detection (hasAnyMeals, hasMeals(for:))
+   - Date helpers (isToday, isFuture, dateString)
+
+Helper models:
+- FoodRecordWithFood: Combines FoodRecord and Food for efficient UI rendering
+
+Implementation details:
+- Uses FoodRecordServiceProtocol for food record operations
+- Uses DailyLogRepositoryProtocol for daily log access
+- Uses FoodRepositoryProtocol for food details
+- @MainActor for thread safety with SwiftUI
+- Protocol-based dependency injection for testability
+- Comprehensive computed properties for UI logic
+
+Files created:
+- Bodii/Presentation/Features/Diet/ViewModels/DailyMealViewModel.swift (358 lines)
+
+All acceptance criteria met:
+✅ Load meals for selected date
+✅ Group meals by meal type (breakfast, lunch, dinner, snack)
+✅ Calculate and display daily totals
+✅ Support date navigation (previous/next day)
+✅ Handle empty state
+
+Commit: fba039b
+Status: Ready for UI integration in Phase 3 (subtask 3.2 - DailyMealView)
+
+[2026-01-13 17:35] Subtask 3.2 - DailyMealView - COMPLETED
+=============================================================
+Created DailyMealView with complete UI implementation for daily meal tracking.
+
+Implementation details:
+- DailyMealView: Main view container with navigation and layout
+- NutritionSummaryCardView: Daily nutrition overview component
+- MealSectionView: Reusable meal section component
+- FoodRecordRowView: Individual food record display
+
+Key features implemented:
+1. Date selector header with navigation arrows:
+   - Previous day button with chevron.left icon
+   - Next day button with chevron.right icon
+   - Date display with Korean formatting (M월 d일 (E))
+   - "오늘" badge when viewing today
+   - Future date navigation disabled
+
+2. Four meal sections (breakfast, lunch, dinner, snack):
+   - MealSectionView component for each meal type
+   - Displays meal type name using MealType.displayName
+   - Shows total calories per meal section
+   - Empty state message when no foods recorded
+   - Add food button (+) in section header
+
+3. Daily calorie/macro summary card:
+   - Total calories consumed vs TDEE display
+   - Progress bar with color coding:
+     * Blue: < 50% intake
+     * Green: 50-90% intake
+     * Orange: 90-110% intake
+     * Red: > 110% intake
+   - Remaining calories with color indication (green if positive, red if negative)
+   - Macro breakdown showing carbs, protein, fat in grams
+   - Percentage display for each macro with colored badges (blue/orange/purple)
+
+4. Food record display:
+   - FoodRecordRowView component for individual foods
+   - Shows food name, quantity (with unit), and calculated calories
+   - Swipe-to-delete functionality using .swipeActions modifier
+   - Supports both serving and gram units with proper formatting
+
+5. UI/UX Features:
+   - Loading state with ProgressView
+   - Error alert with user-friendly messages
+   - Empty state with helpful guidance message ("기록된 식단이 없습니다")
+   - Refresh button in navigation bar
+   - System colors following iOS design guidelines (.systemBackground, .systemGroupedBackground)
+   - Card-based layout with subtle shadows
+   - ScrollView for long meal lists
+
+6. Integration with ViewModel:
+   - Uses DailyMealViewModel for data management
+   - Observes @Published properties for reactive UI updates
+   - Handles date navigation through ViewModel methods
+   - Calls deleteFoodRecord on swipe action
+   - onAppear lifecycle to load initial data
+   - Proper error handling with alert presentation
+
+Code quality:
+- Follows established SwiftUI patterns from ContentView
+- Korean and English documentation
+- Private subviews for clean code organization (dateHeaderView, emptyStateView)
+- Proper spacing and padding following iOS HIG (16pt standard spacing)
+- Mock services for SwiftUI preview functionality
+- Helper methods for formatting (quantityText, formattedDecimal, calorieColor)
+- Color coding for visual feedback (calorie progress, remaining calories, macro badges)
+
+Files created:
+- Bodii/Presentation/Features/Diet/Views/DailyMealView.swift (688 lines)
+
+All acceptance criteria met:
+✅ Date selector header with navigation arrows
+✅ Four meal sections (breakfast, lunch, dinner, snack)
+✅ Add food button per section
+✅ Daily calorie/macro summary card
+✅ Empty state for no meals
+
+Commit: 7587229
+Status: Ready for next phase (subtask 3.3 - MealSectionView components refinement, or subtask 3.4 - NutritionSummaryCard enhancements)
+
+Note: The MealSectionView and NutritionSummaryCard are currently implemented as private structs within DailyMealView.swift. Subtasks 3.3 and 3.4 may involve extracting these into separate component files if needed for reusability.
+

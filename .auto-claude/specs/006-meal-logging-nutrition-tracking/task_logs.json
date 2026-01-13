@@ -1,7 +1,7 @@
 {
   "spec_id": "006-meal-logging-nutrition-tracking",
   "created_at": "2026-01-13T07:51:43.631699+00:00",
-  "updated_at": "2026-01-13T08:30:47.871009+00:00",
+  "updated_at": "2026-01-13T08:38:36.575750+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -6421,6 +6421,1287 @@
           "tool_input": "git commit -m \"auto-claude: 3.1 - Implement Vie...",
           "subtask_id": "3.1",
           "session": 11
+        },
+        {
+          "timestamp": "2026-01-13T08:30:48.912787+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.1",
+          "session": 11,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:30:54.540024+00:00",
+          "type": "text",
+          "content": "Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "3.1",
+          "session": 11
+        },
+        {
+          "timestamp": "2026-01-13T08:31:06.480523+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "3.1",
+          "session": 11
+        },
+        {
+          "timestamp": "2026-01-13T08:31:06.503708+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "3.1",
+          "session": 11,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:31:09.416115+00:00",
+          "type": "text",
+          "content": "Excellent! Let me update the build progress:",
+          "phase": "coding",
+          "subtask_id": "3.1",
+          "session": 11
+        },
+        {
+          "timestamp": "2026-01-13T08:31:10.120645+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...l-logging-nutrition-tracking/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...l-logging-nutrition-tracking/build-progress.txt",
+          "subtask_id": "3.1",
+          "session": 11
+        },
+        {
+          "timestamp": "2026-01-13T08:31:10.137916+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.1",
+          "session": 11,
+          "detail": "     1→# Meal Logging - Build Progress\n     2→\n     3→## Feature Overview\n     4→Full diet tracking with meal categorization (breakfast, lunch, dinner, snacks), food search, manual entry, serving size adjustment, and daily calorie/macro summary.\n     5→\n     6→## Status: Planning Complete\n     7→Created: 2026-01-13\n     8→\n     9→---\n    10→\n    11→## Phase Summary\n    12→\n    13→| Phase | Name | Subtasks | Status |\n    14→|-------|------|----------|--------|\n    15→| 1 | Data Layer and Core Services | 6 | Pending |\n    16→| 2 | Food Search and Quick Add | 3 | Pending |\n    17→| 3 | UI - Daily Meal View | 4 | Pending |\n    18→| 4 | UI - Food Search Screen | 3 | Pending |\n    19→| 5 | UI - Food Detail and Add | 4 | Pending |\n    20→| 6 | UI - Manual Food Entry | 2 | Pending |\n    21→| 7 | Integration and Polish | 5 | Pending |\n    22→\n    23→Total Estimated Hours: 55\n    24→\n    25→---\n    26→\n    27→## Acceptance Criteria Checklist\n    28→- [ ] Users can log food to breakfast, lunch, dinner, or snacks\n    29→- [ ] Food search shows Korean foods first with preview\n    30→- [ ] Manual food entry available with all macro fields\n    31→- [ ] Serving size adjustable (0.25x, 0.5x, 1x, 1.5x, 2x, custom)\n    32→- [ ] Daily summary shows total calories, protein, carbs, fat\n    33→- [ ] Meal view shows individual food items with edit/delete\n    34→- [ ] Recent and frequent foods appear in quick-add section\n    35→\n    36→---\n    37→\n    38→## Session Log\n    39→\n    40→### Session 1 - 2026-01-13\n    41→- Read spec.md and project documentation\n    42→- Analyzed existing codebase structure\n    43→- Created implementation_plan.json with 7 phases and 27 subtasks\n    44→- Identified existing dependencies (MealType, FoodRecord, Food, DailyLog entities)\n    45→- Ready to begin Phase 1: Data Layer and Core Services\n    46→\n    47→---\n    48→\n    49→## Next Steps\n    50→1. Begin Phase 1.1: Implement FoodRepository\n    51→2. Create FoodRepositoryProtocol with CRUD methods\n    52→3. Implement Core Data-based FoodRepository\n    53→\n    54→[2026-01-13 17:05] Subtask 1.3 - DailyLog Repository - COMPLETED\n    55→=================================================================\n    56→Created DailyLogRepositoryProtocol and DailyLogRepository following the established patterns.\n    57→\n    58→Implementation details:\n    59→- DailyLogRepositoryProtocol: Defines the data access interface with CRUD and query methods\n    60→- DailyLogRepository: Core Data implementation with async/await pattern\n    61→\n    62→Key features implemented:\n    63→1. CRUD operations: save, update, delete\n    64→2. findByDate: Query daily log for specific date (date-only comparison)\n    65→3. getOrCreate: Special pattern for date-based unique records\n    66→   - Attempts to find existing record first\n    67→   - Creates new record with initial values if not found\n    68→   - Uses provided bmr/tdee values for new records\n    69→4. findByDateRange: Query multiple days by date range\n    70→5. Proper mapping between Core Data entities and domain models\n    71→6. Handles all optional fields (ratios, steps, weight, bodyFatPct, sleep data)\n    72→7. User relationship management\n    73→8. Comprehensive error handling with RepositoryError\n    74→\n    75→The getOrCreate method is crucial for DailyLog since there should be exactly one DailyLog per user per day. It simplifies the service layer by automatically handling the creation of new daily logs.\n    76→\n    77→Files created:\n    78→- Bodii/Data/Repositories/DailyLogRepositoryProtocol.swift (85 lines)\n    79→- Bodii/Data/Repositories/DailyLogRepository.swift (318 lines)\n    80→\n    81→Commit: 499c663\n    82→Status: Ready for use in FoodRecordService (subtask 1.4)\n    83→\n    84→[2026-01-13 17:10] Subtask 1.4 - FoodRecordService - COMPLETED\n    85→================================================================\n    86→Created FoodRecordServiceProtocol and FoodRecordService following the established patterns.\n    87→\n    88→Implementation details:\n    89→- FoodRecordServiceProtocol: Defines the business logic interface for food record management\n    90→- FoodRecordService: Service layer implementation coordinating multiple repositories\n    91→\n    92→Key features implemented:\n    93→1. Add food record: Calculates nutrition based on quantity and unit, saves record, updates DailyLog\n    94→2. Update food record: Handles food record modifications with proper DailyLog recalculation\n    95→   - Subtracts old nutrition values\n    96→   - Adds new nutrition values\n    97→   - Supports quantity, unit, and meal type changes\n    98→3. Delete food record: Removes record and updates DailyLog totals\n    99→4. Nutrition calculation:\n   100→   - Supports serving unit (quantity = number of servings)\n   101→   - Supports gram unit (quantity / servingSize = number of servings)\n   102→   - Proportional calculation for all nutrients\n   103→5. DailyLog cascade updates:\n   104→   - Automatically updates totalCaloriesIn, totalCarbs, totalProtein, totalFat\n   105→   - Recalculates macro ratios (carbs%, protein%, fat%)\n   106→   - Recalculates net calories (intake - TDEE)\n   107→6. Macro ratio calculation:\n   108→   - Uses standard calorie multipliers: carbs 4 kcal/g, protein 4 kcal/g, fat 9 kcal/g\n   109→   - Returns percentage values\n   110→   - Returns nil when no food consumed\n   111→7. Query operations:\n   112→   - Get food records by date\n   113→   - Get food records by date and meal type\n   114→\n   115→Error handling:\n   116→- ServiceError enum with localized descriptions\n   117→- Handles food not found, food record not found, daily log not found cases\n   118→\n   119→The service layer properly orchestrates multiple repositories:\n   120→- FoodRepository: To fetch food nutrition information\n   121→- FoodRecordRepository: To save/update/delete food records\n   122→- DailyLogRepository: To get or create and update daily logs\n   123→\n   124→Files created:\n   125→- Bodii/Domain/Services/FoodRecordServiceProtocol.swift (130 lines)\n   126→- Bodii/Domain/Services/FoodRecordService.swift (442 lines)\n   127→\n   128→Commit: ae1d29e\n   129→Status: Ready for use in view models (Phase 2+)\n   130→\n   131→[2026-01-13 17:18] Subtask 2.1 - LocalFoodSearchService - COMPLETED\n   132→====================================================================\n   133→Created FoodSearchServiceProtocol and LocalFoodSearchService for intelligent food search with Korean food prioritization.\n   134→\n   135→Implementation details:\n   136→- FoodSearchServiceProtocol: Service interface for food search operations\n   137→- LocalFoodSearchService: Implementation with priority-based sorting algorithm\n   138→\n   139→Key features implemented:\n   140→1. searchFoods: Search by name with intelligent priority sorting\n   141→   - 4-tier priority system:\n   142→     * Priority 1: Korean foods (governmentAPI) + frequently used\n   143→     * Priority 2: Korean foods (governmentAPI) + regular\n   144→     * Priority 3: Other sources + frequently used\n   145→     * Priority 4: Other sources + regular\n   146→   - Alphabetical sorting within same priority (Korean/English)\n   147→   - Empty query handling (returns empty array)\n   148→   - Nutrition preview included in results\n   149→   \n   150→2. getRecentFoods: Get recent foods (last 30 days, max 10)\n   151→   - Delegates to FoodRepository.getRecentFoods\n   152→   - Limits results to 10 items\n   153→   \n   154→3. getFrequentFoods: Get frequently used foods (max 10)\n   155→   - Delegates to FoodRepository.getFrequentFoods\n   156→   - Limits results to 10 items\n   157→\n   158→Priority calculation algorithm:\n   159→- Combines food source (governmentAPI vs others) with usage frequency\n   160→- Lower priority number = higher ranking\n   161→- Secondary sort by name for consistent ordering\n   162→\n   163→Test coverage:\n   164→- LocalFoodSearchServiceTests (20+ test cases)\n   165→  * Empty/whitespace query handling\n   166→  * No results handling\n   167→  * 4-tier priority sorting verification\n   168→  * Name-based secondary sorting\n   169→  * All food source types (governmentAPI, usda, userDefined)\n   170→  * Nutrition preview verification\n   171→  * Recent/frequent foods limiting\n   172→  * Edge cases and empty results\n   173→\n   174→MockFoodRepository updates:\n   175→- Added searchResults, recentFoods, frequentFoods properties\n   176→- Updated search method signature to match protocol\n   177→- Added getUserDefinedFoods method\n   178→\n   179→Files created:\n   180→- Bodii/Domain/Services/FoodSearchServiceProtocol.swift (65 lines)\n   181→- Bodii/Domain/Services/LocalFoodSearchService.swift (131 lines)\n   182→- BodiiTests/LocalFoodSearchServiceTests.swift (530 lines)\n   183→\n   184→Files modified:\n   185→- BodiiTests/FoodRecordServiceTests.swift (MockFoodRepository enhancement)\n   186→\n   187→All acceptance criteria met:\n   188→✅ Search foods by name (contains match)\n   189→✅ Sort results by relevance/frequency\n   190→✅ Return nutrition preview in results\n   191→✅ Handle empty search results\n   192→\n   193→Commit: dac993c\n   194→Status: Ready for use in FoodSearchViewModel (subtask 2.3)\n   195→\n   196→\n   197→[2026-01-13 17:25] Subtask 2.3 - FoodSearchViewModel - COMPLETED\n   198→=================================================================\n   199→Created FoodSearchViewModel for the food search screen following established patterns.\n   200→\n   201→Key features implemented:\n   202→1. Debounced search input (300ms) using Combine\n   203→2. Load recent foods (max 10) on appear\n   204→3. Load frequent foods (max 10) on appear  \n   205→4. Parallel async queries for initial data loading\n   206→5. Proper loading and error state handling\n   207→6. Computed properties for UI state management\n   208→7. @MainActor for thread-safety with SwiftUI\n   209→\n   210→Implementation details:\n   211→- Uses FoodSearchServiceProtocol for search operations\n   212→- Uses RecentFoodsServiceProtocol for recent/frequent foods\n   213→- 300ms debounce on searchQuery to optimize API calls\n   214→- Clear separation between search mode and browse mode\n   215→- Comprehensive error handling with user-friendly messages\n   216→\n   217→Files created:\n   218→- Bodii/Presentation/Features/Diet/ViewModels/FoodSearchViewModel.swift\n\n... [truncated - full output was 10941 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:31:28.177732+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cat >> ./.auto-claude/specs/006-meal-logging-nu...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cat >> ./.auto-claude/specs/006-meal-logging-nu...",
+          "subtask_id": "3.1",
+          "session": 11
+        },
+        {
+          "timestamp": "2026-01-13T08:31:28.275404+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.1",
+          "session": 11,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:31:36.748534+00:00",
+          "type": "text",
+          "content": "Perfect! I've successfully completed subtask 3.1. Here's a summary of what was implemented:\n\n## ✅ Subtask 3.1 Complete: DailyMealViewModel\n\n### **What was built:**\n\nA comprehensive ViewModel for the daily meal view with the following features:\n\n#### **1. Date Navigation**\n- `navigateToPreviousDay()` - Move to previous day\n- `navigateToNextDay()` - Move to next day  \n- `navigateToDate(date)` - Jump to specific date\n- Auto-reload data on date change\n\n#### **2. Meal Grouping**\n- Groups FoodRecords by all 4 MealTypes (breakfast, lunch, dinner, snack)\n- Pre-initializes empty arrays for all meal types\n- Returns organized dictionary for easy UI rendering\n\n#### **3. Daily Nutrition Summary**\n- Exposes DailyLog for total calories and macros\n- Computed properties for remaining calories\n- Calorie intake percentage calculation\n- Per-meal calorie totals\n\n#### **4. Delete Functionality**\n- `deleteFoodRecord(id)` - Remove food record\n- Auto-refreshes data after deletion\n- DailyLog automatically updated via service layer\n\n#### **5. UI State Management**\n- @MainActor for thread-safety with SwiftUI\n- Loading states (isLoading)\n- Error handling with user-friendly messages\n- Empty state detection (hasAnyMeals, hasMeals(for:))\n- Date helpers (isToday, isFuture, dateString)\n\n### **Performance Optimizations:**\n- Parallel async queries for DailyLog and FoodRecords\n- Efficient data loading with getOrCreate pattern\n\n### **Helper Models:**\n- `FoodRecordWithFood` - Combines FoodRecord and Food for efficient UI rendering\n\n### **Files Created:**\n- `Bodii/Presentation/Features/Diet/ViewModels/DailyMealViewModel.swift` (358 lines)\n\n### **All Acceptance Criteria Met:** ✅\n- ✅ Load meals for selected date\n- ✅ Group meals by meal type (breakfast, lunch, dinner, snack)\n- ✅ Calculate and display daily totals\n- ✅ Support date navigation (previous/next day)\n- ✅ Handle empty state\n\n**Commit:** `fba039b`  \n**Status:** Ready for UI integration (Phase 3 - subtask 3.2)",
+          "phase": "coding",
+          "subtask_id": "3.1",
+          "session": 11
+        },
+        {
+          "timestamp": "2026-01-13T08:31:47.962372+00:00",
+          "type": "text",
+          "content": "I'll help you implement subtask 3.2 - the main daily meal view. Let me start by reading the relevant files to understand the context and patterns.",
+          "phase": "coding",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:31:48.515901+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ecs/006-meal-logging-nutrition-tracking/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ecs/006-meal-logging-nutrition-tracking/spec.md",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:31:49.017067+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ing-nutrition-tracking/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ing-nutrition-tracking/implementation_plan.json",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:31:49.530060+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...l-logging-nutrition-tracking/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...l-logging-nutrition-tracking/build-progress.txt",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:31:49.603950+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:31:49.640365+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "3.2",
+          "session": 12,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:31:57.008301+00:00",
+          "type": "text",
+          "content": "Let me look at existing UI patterns to understand the code style and then implement the DailyMealView.",
+          "phase": "coding",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:31:57.520239+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*View.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*View.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:31:58.051348+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...atures/Diet/ViewModels/DailyMealViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...atures/Diet/ViewModels/DailyMealViewModel.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:31:58.069132+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "     1→//\n     2→//  DailyMealViewModel.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→import Foundation\n     9→import Combine\n    10→\n    11→/// 일일 식단 화면의 ViewModel\n    12→///\n    13→/// 특정 날짜의 식단 기록과 영양 정보를 표시하고 관리합니다.\n    14→/// 끼니별로 그룹화된 식단 기록과 일일 영양 요약 정보를 제공합니다.\n    15→///\n    16→/// - Note: ObservableObject를 준수하여 SwiftUI View와 바인딩됩니다.\n    17→/// - Note: 날짜 네비게이션(이전/다음)을 지원합니다.\n    18→///\n    19→/// - Example:\n    20→/// ```swift\n    21→/// let viewModel = DailyMealViewModel(\n    22→///     foodRecordService: foodRecordService,\n    23→///     dailyLogRepository: dailyLogRepository,\n    24→///     foodRepository: foodRepository\n    25→/// )\n    26→/// viewModel.onAppear(userId: userId, bmr: 1650, tdee: 2310)\n    27→/// ```\n    28→@MainActor\n    29→final class DailyMealViewModel: ObservableObject {\n    30→\n    31→    // MARK: - Published Properties\n    32→\n    33→    /// 선택된 날짜\n    34→    @Published var selectedDate: Date = Date()\n    35→\n    36→    /// 일일 영양 집계 정보\n    37→    @Published var dailyLog: DailyLog?\n    38→\n    39→    /// 끼니별 식단 기록 (MealType별로 그룹화)\n    40→    @Published var mealGroups: [MealType: [FoodRecordWithFood]] = [:]\n    41→\n    42→    /// 로딩 상태\n    43→    @Published var isLoading: Bool = false\n    44→\n    45→    /// 에러 메시지\n    46→    @Published var errorMessage: String?\n    47→\n    48→    // MARK: - Private Properties\n    49→\n    50→    /// 식단 기록 서비스\n    51→    private let foodRecordService: FoodRecordServiceProtocol\n    52→\n    53→    /// 일일 집계 Repository\n    54→    private let dailyLogRepository: DailyLogRepositoryProtocol\n    55→\n    56→    /// 음식 Repository\n    57→    private let foodRepository: FoodRepositoryProtocol\n    58→\n    59→    /// 현재 사용자 ID\n    60→    private var currentUserId: UUID?\n    61→\n    62→    /// 현재 BMR (기초대사량)\n    63→    private var currentBMR: Int32 = 0\n    64→\n    65→    /// 현재 TDEE (활동대사량)\n    66→    private var currentTDEE: Int32 = 0\n    67→\n    68→    // MARK: - Initialization\n    69→\n    70→    /// DailyMealViewModel을 초기화합니다.\n    71→    ///\n    72→    /// - Parameters:\n    73→    ///   - foodRecordService: 식단 기록 서비스\n    74→    ///   - dailyLogRepository: 일일 집계 Repository\n    75→    ///   - foodRepository: 음식 Repository\n    76→    init(\n    77→        foodRecordService: FoodRecordServiceProtocol,\n    78→        dailyLogRepository: DailyLogRepositoryProtocol,\n    79→        foodRepository: FoodRepositoryProtocol\n    80→    ) {\n    81→        self.foodRecordService = foodRecordService\n    82→        self.dailyLogRepository = dailyLogRepository\n    83→        self.foodRepository = foodRepository\n    84→    }\n    85→\n    86→    // MARK: - Public Methods\n    87→\n    88→    /// 화면 진입 시 호출됩니다.\n    89→    ///\n    90→    /// 오늘 날짜의 식단 정보를 불러옵니다.\n    91→    ///\n    92→    /// - Parameters:\n    93→    ///   - userId: 사용자 ID\n    94→    ///   - bmr: 기초대사량 (kcal)\n    95→    ///   - tdee: 활동대사량 (kcal)\n    96→    func onAppear(userId: UUID, bmr: Int32, tdee: Int32) {\n    97→        self.currentUserId = userId\n    98→        self.currentBMR = bmr\n    99→        self.currentTDEE = tdee\n   100→\n   101→        loadData()\n   102→    }\n   103→\n   104→    /// 이전 날짜로 이동합니다.\n   105→    func navigateToPreviousDay() {\n   106→        guard let previousDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) else {\n   107→            return\n   108→        }\n   109→\n   110→        selectedDate = previousDate\n   111→        loadData()\n   112→    }\n   113→\n   114→    /// 다음 날짜로 이동합니다.\n   115→    func navigateToNextDay() {\n   116→        guard let nextDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) else {\n   117→            return\n   118→        }\n   119→\n   120→        selectedDate = nextDate\n   121→        loadData()\n   122→    }\n   123→\n   124→    /// 특정 날짜로 이동합니다.\n   125→    ///\n   126→    /// - Parameter date: 이동할 날짜\n   127→    func navigateToDate(_ date: Date) {\n   128→        selectedDate = date\n   129→        loadData()\n   130→    }\n   131→\n   132→    /// 식단 기록을 삭제합니다.\n   133→    ///\n   134→    /// - Parameter foodRecordId: 삭제할 식단 기록 ID\n   135→    func deleteFoodRecord(_ foodRecordId: UUID) {\n   136→        guard currentUserId != nil else { return }\n   137→\n   138→        Task {\n   139→            do {\n   140→                // 식단 기록 삭제 (DailyLog 자동 업데이트됨)\n   141→                try await foodRecordService.deleteFoodRecord(foodRecordId: foodRecordId)\n   142→\n   143→                // 데이터 새로고침\n   144→                await loadData()\n   145→            } catch {\n   146→                handleError(error)\n   147→            }\n   148→        }\n   149→    }\n   150→\n   151→    /// 데이터를 새로고침합니다.\n   152→    func refresh() {\n   153→        loadData()\n   154→    }\n   155→\n   156→    // MARK: - Private Methods\n   157→\n   158→    /// 선택된 날짜의 데이터를 불러옵니다.\n   159→    ///\n   160→    /// DailyLog와 FoodRecord를 병렬로 조회하여 성능을 최적화합니다.\n   161→    private func loadData() {\n   162→        guard let userId = currentUserId else { return }\n   163→\n   164→        isLoading = true\n   165→        errorMessage = nil\n   166→\n   167→        Task {\n   168→            do {\n   169→                // DailyLog와 FoodRecord를 병렬로 조회\n   170→                async let dailyLogTask = loadDailyLog(for: selectedDate, userId: userId)\n   171→                async let foodRecordsTask = loadFoodRecordsWithFood(for: selectedDate, userId: userId)\n   172→\n   173→                dailyLog = try await dailyLogTask\n   174→                let foodRecordsWithFood = try await foodRecordsTask\n   175→\n   176→                // 끼니별로 그룹화\n   177→                mealGroups = groupByMealType(foodRecordsWithFood)\n   178→\n   179→                isLoading = false\n   180→            } catch {\n   181→                handleError(error)\n   182→            }\n   183→        }\n   184→    }\n   185→\n   186→    /// 특정 날짜의 DailyLog를 불러옵니다.\n   187→    ///\n   188→    /// - Parameters:\n   189→    ///   - date: 조회할 날짜\n   190→    ///   - userId: 사용자 ID\n   191→    /// - Returns: DailyLog (없으면 초기값으로 생성)\n   192→    private func loadDailyLog(for date: Date, userId: UUID) async throws -> DailyLog {\n   193→        // getOrCreate를 사용하여 없으면 자동으로 생성\n   194→        return try await dailyLogRepository.getOrCreate(\n   195→            for: date,\n   196→            userId: userId,\n   197→            bmr: currentBMR,\n   198→            tdee: currentTDEE\n   199→        )\n   200→    }\n   201→\n   202→    /// 특정 날짜의 FoodRecord와 Food 정보를 함께 불러옵니다.\n   203→    ///\n   204→    /// - Parameters:\n   205→    ///   - date: 조회할 날짜\n   206→    ///   - userId: 사용자 ID\n   207→    /// - Returns: FoodRecord와 Food가 결합된 목록\n   208→    private func loadFoodRecordsWithFood(for date: Date, userId: UUID) async throws -> [FoodRecordWithFood] {\n   209→        // FoodRecord 조회\n   210→        let foodRecords = try await foodRecordService.getFoodRecords(for: date, userId: userId)\n   211→\n   212→        // 각 FoodRecord에 대해 Food 정보 조회\n   213→        var foodRecordsWithFood: [FoodRecordWithFood] = []\n   214→\n   215→        for foodRecord in foodRecords {\n   216→            if let food = try await foodRepository.findById(foodRecord.foodId) {\n   217→                foodRecordsWithFood.append(\n   218→                    FoodRecordWithFood(foodRecord: foodRecord, food: food)\n   219→                )\n   220→            }\n   221→        }\n   222→\n   223→        return foodRecordsWithFood\n   224→    }\n   225→\n   226→    /// FoodRecord 목록을 끼니별로 그룹화합니다.\n   227→    ///\n   228→    /// - Parameter foodRecords: FoodRecord와 Food가 결합된 목록\n   229→    /// - Returns: MealType별로 그룹화된 딕셔너리\n   230→    private func groupByMealType(_ foodRecords: [FoodRecordWithFood]) -> [MealType: [FoodRecordWithFood]] {\n   231→        var groups: [MealType: [FoodRecordWithFood]] = [:]\n   232→\n   233→        // 모든 MealType에 대해 빈 배열 초기화\n   234→        for mealType in MealType.allCases {\n   235→            groups[mealType] = []\n   236→        }\n   237→\n   238→        // FoodRecord를 mealType별로 분류\n   239→        for item in foodRecords {\n   240→            groups[item.foodRecord.mealType, default: []].append(item)\n   241→        }\n   242→\n   243→        return groups\n   244→    }\n   245→\n   246→    /// 에러를 처리합니다.\n   247→    ///\n   248→    /// - Parameter error: 발생한 에러\n   249→    private func handleError(_ error: Error) {\n   250→        isLoading = false\n   251→\n   252→        // 에러 메시지 설정\n   253→        if let repositoryError = error as? RepositoryError {\n   254→            errorMessage = repositoryError.localizedDescription\n   255→        } else if let serviceError = error as? ServiceError {\n   256→            errorMessage = serviceError.localizedDescription\n   257→        } else {\n   258→            errorMessage = \"오류가 발생했습니다: \\(error.localizedDescription)\"\n   259→        }\n   260→    }\n   261→}\n   262→\n   263→// MARK: - Computed Properties\n   264→\n   265→extension DailyMealViewModel {\n   266→\n   267→    /// 선택된 날짜가 오늘인지 여부\n   268→    var isToday: Bool {\n   269→        Calendar.current.isDateInToday(selectedDate)\n   270→    }\n   271→\n   272→    /// 선택된 날짜가 미래인지 여부\n   273→    var isFuture: Bool {\n   274→        selectedDate > Date()\n   275→    }\n   276→\n   277→    /// 표시할 날짜 문자열\n   278→    var dateString: String {\n   279→        let formatter = DateFormatter()\n   280→        formatter.locale = Locale(identifier: \"ko_KR\")\n   281→        formatter.dateFormat = \"M월 d일 (E)\"\n   282→        return formatter.string(from: selectedDate)\n   283→    }\n   284→\n   285→    /// 특정 끼니의 총 칼로리\n   286→    ///\n   287→    /// - Parameter mealType: 끼니 종류\n   288→    /// - Returns: 해당 끼니의 총 칼로리 (kcal)\n   289→    func totalCalories(for mealType: MealType) -> Int32 {\n   290→        guard let meals = mealGroups[mealType] else { return 0 }\n   291→        return meals.reduce(0) { $0 + $1.foodRecord.calculatedCalories }\n   292→    }\n   293→\n   294→    /// 특정 끼니에 식단 기록이 있는지 여부\n   295→    ///\n   296→    /// - Parameter mealType: 끼니 종류\n   297→    /// - Returns: 식단 기록 존재 여부\n   298→    func hasMeals(for mealType: MealType) -> Bool {\n   299→        guard let meals = mealGroups[mealType] else { return false }\n   300→        return !meals.isEmpty\n   301→    }\n   302→\n   303→    /// 하루 전체에 식단 기록이 있는지 여부\n   304→    var hasAnyMeals: Boo\n\n... [truncated - full output was 11602 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:32:02.838298+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/App/ContentView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/App/ContentView.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:03.430815+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/Presentation/**/*View*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/Presentation/**/*View*.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:03.446766+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "3.2",
+          "session": 12,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:32:08.134190+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii -name \"*.swift\" -path \"*/Presentat...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii -name \"*.swift\" -path \"*/Presentat...",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:08.478174+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/Domain/Models/*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/Domain/Models/*.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:08.587548+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "3.2",
+          "session": 12,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:32:12.982297+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii -name \"*.swift\" -type f | grep -E ...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii -name \"*.swift\" -type f | grep -E ...",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:13.076342+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "./Bodii/Shared/Enums/FoodSource.swift\n./Bodii/Shared/Enums/MealType.swift\n./Bodii/Data/Repositories/FoodRepository.swift\n./Bodii/Data/Repositories/DailyLogRepositoryProtocol.swift\n./Bodii/Data/Repositories/FoodRepositoryProtocol.swift\n./Bodii/Data/Repositories/FoodRecordRepository.swift\n./Bodii/Data/Repositories/FoodRecordRepositoryProtocol.swift\n./Bodii/Data/Repositories/DailyLogRepository.swift\n./Bodii/Domain/Services/RecentFoodsService.swift\n./Bodii/Domain/Services/FoodRecordService.swift\n./Bodii/Domain/Services/RecentFoodsServiceProtocol.swift\n./Bodii/Domain/Services/FoodSearchServiceProtocol.swift\n./Bodii/Domain/Services/FoodRecordServiceProtocol.swift\n./Bodii/Domain/Services/LocalFoodSearchService.swift\n./Bodii/Domain/Entities/DailyLog.swift\n./Bodii/Domain/Entities/FoodRecord.swift\n./Bodii/Domain/Entities/Food.swift\n./Bodii/Presentation/Features/Diet/ViewModels/FoodSearchViewModel.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:32:16.465178+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/MealType.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/MealType.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:16.842446+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Entities/DailyLog.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Entities/DailyLog.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:17.278482+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Entities/Food.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Entities/Food.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:17.626077+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Entities/FoodRecord.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Entities/FoodRecord.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:17.643940+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "     1→//\n     2→//  MealType.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// 끼니 종류 열거형\n    11→///\n    12→/// 식사 기록 시 어떤 끼니에 해당하는지 나타냅니다.\n    13→/// Core Data 호환성을 위해 Int16 rawValue를 사용합니다.\n    14→///\n    15→/// - Cases:\n    16→///   - breakfast: 아침\n    17→///   - lunch: 점심\n    18→///   - dinner: 저녁\n    19→///   - snack: 간식\n    20→///\n    21→/// - Example:\n    22→/// ```swift\n    23→/// let mealType = MealType.breakfast\n    24→/// print(mealType.displayName) // \"아침\"\n    25→/// ```\n    26→enum MealType: Int16, CaseIterable, Codable {\n    27→    case breakfast = 0\n    28→    case lunch = 1\n    29→    case dinner = 2\n    30→    case snack = 3\n    31→\n    32→    /// 사용자에게 표시할 끼니 이름\n    33→    var displayName: String {\n    34→        switch self {\n    35→        case .breakfast: return \"아침\"\n    36→        case .lunch: return \"점심\"\n    37→        case .dinner: return \"저녁\"\n    38→        case .snack: return \"간식\"\n    39→        }\n    40→    }\n    41→}\n    42→\n    43→// MARK: - Identifiable\n    44→\n    45→extension MealType: Identifiable {\n    46→    var id: Int16 { rawValue }\n    47→}\n    48→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:32:22.074455+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii -name \"*.swift\" -type f | xargs gr...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii -name \"*.swift\" -type f | xargs gr...",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:22.704585+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./docs/02_FEATURE_SPEC.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./docs/02_FEATURE_SPEC.md",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:32:22.720611+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "     1→# Bodii - 기능 명세서\n     2→\n     3→## 1. Phase 1: MVP (기본 추적 시스템)\n     4→\n     5→### 1.1 체성분 관리\n     6→\n     7→#### 1.1.1 체성분 입력\n     8→| 항목 | 설명 |\n     9→|------|------|\n    10→| **기능** | 사용자의 신체 정보를 입력/수정 |\n    11→| **입력 필드** | 키(cm), 몸무게(kg), 체지방량(kg), 체지방률(%), 골격근량(kg), 측정일 |\n    12→| **필수 여부** | 키, 몸무게 필수 / 체지방량, 체지방률, 골격근량 선택 |\n    13→| **자동 계산** | 체지방량 또는 체지방률 입력 시 다른 값 자동 계산 |\n    14→| **측정일 기본값** | 현재 일시 (now), 수정 가능 |\n    15→| **저장** | Core Data 로컬 저장 |\n    16→| **검증** | 키: 100~250cm, 몸무게: 20~300kg, 체지방률: 1~60% |\n    17→\n    18→**체지방 자동 계산 공식:**\n    19→```\n    20→체지방량 입력 시: 체지방률 = (체지방량 / 몸무게) × 100\n    21→체지방률 입력 시: 체지방량 = 몸무게 × (체지방률 / 100)\n    22→```\n    23→\n    24→**동일 날짜 체성분 입력 정책:**\n    25→```\n    26→- 같은 날 여러 번 입력 가능 (아침/저녁 측정 등)\n    27→- 히스토리: 모든 기록 표시 (시간순 정렬)\n    28→- 그래프: 동일 날짜는 가장 최근 기록 1건만 표시\n    29→- 대시보드: 오늘 가장 최근 체성분 표시\n    30→- User.current*: 항상 가장 최근 기록으로 업데이트\n    31→```\n    32→\n    33→#### 1.1.2 체성분 히스토리\n    34→| 항목 | 설명 |\n    35→|------|------|\n    36→| **기능** | 입력된 체성분 기록 목록 조회 |\n    37→| **정렬** | 최신순 |\n    38→| **표시 정보** | 날짜, 몸무게, 체지방률, 이전 대비 변화량 |\n    39→| **액션** | 수정, 삭제 |\n    40→\n    41→#### 1.1.3 체성분 그래프\n    42→| 항목 | 설명 |\n    43→|------|------|\n    44→| **기능** | 체성분 변화 추이를 그래프로 시각화 |\n    45→| **그래프 종류** | 라인 차트 |\n    46→| **표시 항목** | 몸무게, 체지방률, 골격근량, BMR, TDEE (토글 선택) |\n    47→| **기간 필터** | 1주, 1개월, 3개월, 6개월, 1년, 전체 |\n    48→| **데이터 소스** | MetabolismSnapshot (계산 없이 조회) |\n    49→\n    50→---\n    51→\n    52→### 1.2 기초/활동 대사량 계산\n    53→\n    54→#### 1.2.1 기초대사량 (BMR) 계산\n    55→| 항목 | 설명 |\n    56→|------|------|\n    57→| **기능** | 체성분 기반 기초대사량 자동 계산 |\n    58→| **방식** | 하이브리드 (체지방률 유무에 따라 공식 선택) |\n    59→| **저장** | User.currentBMR + MetabolismSnapshot.bmr + DailyLog.bmr |\n    60→\n    61→**체지방률 있을 때: Katch-McArdle 공식**\n    62→```\n    63→제지방량(LBM) = 체중 × (1 - 체지방률/100)\n    64→BMR = 370 + (21.6 × LBM)\n    65→```\n    66→\n    67→**체지방률 없을 때: Mifflin-St Jeor 공식**\n    68→```\n    69→남성: BMR = 10 × 체중(kg) + 6.25 × 키(cm) - 5 × 나이 + 5\n    70→여성: BMR = 10 × 체중(kg) + 6.25 × 키(cm) - 5 × 나이 - 161\n    71→```\n    72→\n    73→#### 1.2.2 활동대사량 (TDEE) 계산\n    74→| 항목 | 설명 |\n    75→|------|------|\n    76→| **기능** | 활동 수준에 따른 일일 소모 칼로리 계산 |\n    77→| **공식** | TDEE = BMR × 활동계수 |\n    78→| **활동계수** | 비활동적(1.2), 가벼운활동(1.375), 보통활동(1.55), 활동적(1.725), 매우활동적(1.9) |\n    79→| **저장** | User.currentTDEE + MetabolismSnapshot.tdee + DailyLog.tdee |\n    80→\n    81→#### 1.2.3 BMR/TDEE 저장 전략\n    82→\n    83→| 저장 위치 | 용도 | 업데이트 시점 |\n    84→|-----------|------|---------------|\n    85→| User.currentBMR/TDEE | 현재 대사량 (빠른 조회) | 체성분/활동수준/키/나이 변경 시 |\n    86→| MetabolismSnapshot | 체성분별 대사량 이력 | 체성분 입력 시 (1:1 생성) |\n    87→| DailyLog.bmr/tdee | 해당일 대사량 스냅샷 | DailyLog 생성 시 User에서 복사 |\n    88→\n    89→**업데이트 트리거:**\n    90→| 이벤트 | 재계산 대상 | 업데이트 항목 |\n    91→|--------|-------------|---------------|\n    92→| 체성분 입력 | BMR, TDEE | User.current*, MetabolismSnapshot 생성, DailyLog(당일) |\n    93→| 활동 수준 변경 | TDEE만 | User.currentTDEE |\n    94→| 키 변경 | BMR, TDEE (체지방률 없을 때) | User.current* |\n    95→| 생년월일 변경 | BMR, TDEE (체지방률 없을 때) | User.current* |\n    96→\n    97→---\n    98→\n    99→### 1.3 음식 기록\n   100→\n   101→#### 1.3.1 음식 검색 및 입력\n   102→| 항목 | 설명 |\n   103→|------|------|\n   104→| **기능** | 음식 DB에서 검색하여 기록 |\n   105→| **검색 우선순위** | 1) 식약처 DB (한국) → 2) USDA API (외국) → 3) 직접 입력 |\n   106→| **검색 방식** | 포함 검색, 초성 검색, 유사도 검색 |\n   107→| **입력 정보** | 음식명, 섭취량(g 또는 인분), 끼니(아침/점심/저녁/간식), 시간 |\n   108→| **표시 정보** | 칼로리, 탄수화물, 단백질, 지방 |\n   109→\n   110→#### 1.3.2 음식 직접 입력\n   111→| 항목 | 설명 |\n   112→|------|------|\n   113→| **기능** | DB에 없는 음식 직접 입력 |\n   114→| **입력 필드** | 음식명, 칼로리, 탄수화물(g), 단백질(g), 지방(g), 섭취량 |\n   115→| **저장** | 사용자 정의 음식으로 로컬 저장 (재사용 가능) |\n   116→\n   117→#### 1.3.3 일일 식단 조회\n   118→| 항목 | 설명 |\n   119→|------|------|\n   120→| **기능** | 선택한 날짜의 섭취 음식 목록 |\n   121→| **그룹핑** | 끼니별 (아침/점심/저녁/간식) |\n   122→\n   123→**mealType 코드값:**\n   124→```\n   125→0: 아침 (Breakfast)\n   126→1: 점심 (Lunch)\n   127→2: 저녁 (Dinner)\n   128→3: 간식 (Snack)\n   129→```\n   130→| **합계** | 총 칼로리, 총 탄/단/지 (g) |\n   131→| **매크로 시각화** | 탄/단/지 비율 원 그래프 (%) |\n   132→| **액션** | 수정, 삭제 |\n   133→| **데이터 소스** | DailyLog (계산 없이 조회) |\n   134→\n   135→#### 1.3.4 섭취 칼로리 그래프\n   136→| 항목 | 설명 |\n   137→|------|------|\n   138→| **기능** | 일별 섭취 칼로리 추이 |\n   139→| **그래프 종류** | 바 차트 또는 라인 차트 |\n   140→| **기간 필터** | 1주, 1개월 |\n   141→| **데이터 소스** | DailyLog.totalCaloriesIn |\n   142→\n   143→---\n   144→\n   145→#### 1.3.5 AI 식단 코멘트\n   146→| 항목 | 설명 |\n   147→|------|------|\n   148→| **기능** | 끼니 입력 완료 시 AI가 식단 분석 및 코멘트 생성 |\n   149→| **트리거** | 끼니 단위로 음식 추가 완료 후 \"코멘트 보기\" 버튼 클릭 시 |\n   150→| **API** | Google Gemini (월 무료, 15 RPM) |\n   151→| **분석 요소** | 칼로리(TDEE 대비), 매크로 비율, 음식 종류 |\n   152→| **저장 정책** | 캐싱 안 함 - 매번 API 호출 (API 비용 절감 위해 사용자 수동 호출) |\n   153→| **오프라인 시** | \"네트워크 연결 필요\" 메시지 표시 |\n   154→\n   155→#### 1.3.6 코멘트 출력 형식\n   156→| 항목 | 설명 |\n   157→|------|------|\n   158→| **좋은 점** | 식단의 긍정적인 부분 (1~2줄) |\n   159→| **개선점** | 개선하면 좋은 점 (1~2줄) |\n   160→| **총평** | 전체 평가 및 조언 (1~2줄) |\n   161→| **식단 점수** | 0~10점 + 색상 표시 |\n   162→\n   163→#### 1.3.7 식단 점수 기준\n   164→| 점수 | 색상 | 상태 |\n   165→|------|------|------|\n   166→| 8~10 | 🟢 초록 | Great |\n   167→| 5~7 | 🟡 노랑 | Good |\n   168→| 0~4 | 🔴 빨강 | Needs Work |\n   169→\n   170→#### 1.3.8 음식 기록 저장 시 연쇄 업데이트\n   171→```\n   172→음식 추가 시:\n   173→1. FoodRecord 저장\n   174→2. DailyLog.totalCaloriesIn += calculatedCalories\n   175→3. DailyLog.totalCarbs/Protein/Fat += 각 영양소\n   176→4. DailyLog.*Ratio 재계산\n   177→5. DailyLog.netCalories 재계산\n   178→\n   179→음식 삭제 시:\n   180→1. FoodRecord 삭제\n   181→2. DailyLog.totalCaloriesIn -= calculatedCalories\n   182→3. DailyLog.totalCarbs/Protein/Fat -= 각 영양소\n   183→4. DailyLog.*Ratio 재계산\n   184→5. DailyLog.netCalories 재계산\n   185→```\n   186→\n   187→---\n   188→\n   189→### 1.4 운동 기록\n   190→\n   191→#### 1.4.1 운동 입력\n   192→| 항목 | 설명 |\n   193→|------|------|\n   194→| **기능** | 수행한 운동 기록 |\n   195→| **입력 필드** | 운동 종류, 시간(분), 강도(저/중/고), 날짜 |\n   196→| **운동 종류** | 걷기, 달리기, 자전거, 수영, 웨이트, 크로스핏, 요가, 기타 |\n   197→| **칼로리 계산** | MET 값 기반 자동 계산 |\n   198→| **검증** | 시간: 최소 1분 이상 |\n   199→\n   200→#### 1.4.2 MET 기반 칼로리 계산\n   201→| 항목 | 설명 |\n   202→|------|------|\n   203→| **공식** | 소모칼로리 = MET × 체중(kg) × 시간(h) |\n   204→| **체중 소스** | User.currentWeight (저장된 값 사용) |\n   205→| **MET 값** | 운동 종류 × 강도에 따라 결정 |\n   206→\n   207→#### 1.4.3 운동 히스토리\n   208→| 항목 | 설명 |\n   209→|------|------|\n   210→| **기능** | 운동 기록 목록 |\n   211→| **정렬** | 최신순 |\n   212→| **표시 정보** | 날짜, 운동 종류, 시간, 소모 칼로리 |\n   213→\n   214→#### 1.4.4 운동 기록 저장 시 연쇄 업데이트\n   215→```\n   216→운동 추가 시:\n   217→1. ExerciseRecord 저장\n   218→2. DailyLog.totalCaloriesOut += caloriesBurned\n   219→3. DailyLog.exerciseMinutes += duration\n   220→4. DailyLog.exerciseCount += 1\n   221→\n   222→운동 삭제 시:\n   223→1. ExerciseRecord 삭제\n   224→2. DailyLog.totalCaloriesOut -= caloriesBurned\n   225→3. DailyLog.exerciseMinutes -= duration\n   226→4. DailyLog.exerciseCount -= 1\n   227→```\n   228→\n   229→---\n   230→\n   231→### 1.5 Apple HealthKit 연동\n   232→\n   233→#### 1.5.1 데이터 읽기\n   234→| 항목 | 설명 |\n   235→|------|------|\n   236→| **기능** | HealthKit에서 데이터 가져오기 |\n   237→| **읽기 항목** | 걸음 수, 활동 칼로리, 운동 기록, 체중 |\n   238→| **동기화** | 앱 실행 시 또는 수동 새로고침 |\n   239→| **저장** | DailyLog.steps 업데이트 |\n   240→\n   241→#### 1.5.2 데이터 쓰기\n   242→| 항목 | 설명 |\n   243→|------|------|\n   244→| **기능** | Bodii 데이터를 HealthKit에 저장 |\n   245→| **쓰기 항목** | 체중, 체지방률, 식이 칼로리 |\n   246→| **권한** | 사용자 동의 필요 |\n   247→\n   248→#### 1.5.3 HealthKit 운동 중복 처리\n   249→```\n   250→HealthKit에서 운동 가져올 때:\n   251→1. healthKitId로 기존 기록 확인\n   252→2. 이미 있으면 스킵\n   253→3. 없으면 ExerciseRecord 생성 (fromHealthKit = true)\n   254→```\n   255→\n   256→---\n   257→\n   258→### 1.6 수면 관리\n   259→\n   260→#### 1.6.1 수면 시간 입력 팝업\n   261→| 항목 | 설명 |\n   262→|------|------|\n   263→| **기능** | 새벽 2시 이후 첫 실행 시 수면 시간 입력 팝업 |\n   264→| **하루 기준** | 02:00 ~ 다음날 02:00 |\n   265→| **팝업 조건** | 해당 하루 기준 첫 실행 시만 표시 |\n   266→| **UI** | Picker Wheel (시 / 분, 10분 단위) |\n   267→| **저장** | SleepRecord Entity + DailyLog.sleepDuration/Status 업데이트 |\n   268→| **입력 범위** | 최소 0분 ~ 최대 24시간 (밤샘 = 0분 가능) |\n   269→\n   270→**\"나중에\" 버튼 선택 시:**\n   271→```\n   272→- 해당 하루 내 다음 앱 실행 시 다시 팝업 표시\n   273→- 하루 최대 3회까지 재팝업 (이후는 수면 탭에서 직접 입력 유도)\n   274→- 3회 스킵 시: 해당 날짜 SleepRecord는 null로 유지\n   275→- 수면 탭에서 언제든 직접 입력/수정 가능\n   276→```\n   277→\n   278→#### 1.6.2 수면 상태 표시\n   279→| 코드 | 상태 | 수면 시간 | 색상 |\n   280→|------|------|----------|------|\n   281→| 0 | Bad | 5시간 30분 미만 (< 330분) | 🔴 빨강 |\n   282→| 1 | Soso | 5시간 30분 ~ 6시간 30분 (330 ~ 390분) | 🟡 노랑 |\n   283→| 2 | Good | 6시간 30분 ~ 7시간 30분 (390 ~ 450분) | 🟢 초록 |\n   284→| 3 | Excellent | 7시간 30분 ~ 9시간 (450 ~ 540분) | 🔵 파랑 |\n   285→| 4 | Oversleep | 9시간 초과 (> 540분) | 🟠 주황 |\n   286→\n   287→#### 1.6.3 수면 히스토리\n   288→| 항목 | 설명 |\n   289→|------|------|\n   290→| **기능** | 수면 기록 목록 조회 |\n   291→| **정렬** | 최신순 |\n   292→| **표시 정보** | 날짜, 수면 시간, 상태 (색상 아이콘) |\n   293→| **액션** | 날짜 클릭 시 수정 가능 |\n   294→\n   295→#### 1.6.4 수면 그래프\n   296→| 항목 | 설명 |\n   297→|------|------|\n   298→| **기능** | 수면 시간 변화 추이 시각화 |\n   299→| **그래프 종류** | 바 차트 (상태별 색상) |\n   300→| **기간 필터** | 1주, 1개월, 3개월 |\n   301→| **평균선** | 기간 평균 수면 시간 표시 |\n   302→| **데이터 소스** | DailyLog.sleepDuration/Status |\n   303→\n   304→#### 1.6.5 수면 기록 저장 시 연쇄 업데이트\n   305→```\n   306→수면 입력 시:\n   307→1. SleepRecord 저장\n   308→2. DailyLog.sleepDuration = duration\n   309→3. DailyLog.sleepStatus = 계산된 상태\n   310→```\n   311→\n   312→---\n   313→\n   314→### 1.7 대시보드\n   315→\n   316→#### 1.7.1 일일 요약\n   317→| 항목 | 설명 |\n   318→|------|------|\n   319→| **기능** | 오늘의 건강 현황 한눈에 보기 |\n   320→| **표시 항목** | 섭취 칼로리 / TDEE, 남은 칼로리, 탄/단/지 비율, 운동 소모 칼로리, 수면 상태 |\n   321→| **시각화** | 원형 진행 바, 매크로 바 차트, 수면 상태 아이콘 |\n   322→| **데이터 소스** | User (현재 대사량) + DailyLog (오늘 기록) |\n   323→| **계산 여부** | ❌ 없음 (저장된 값만 조회) |\n   324→\n   325→#### 1.7.2 대시보드 조회 로직\n   326→```\n   327→대시보드 로딩 시:\n   328→1. User 조회 → currentTDEE, currentWeight\n   329→2. DailyLog(오늘) 조회 → totalCaloriesIn, netCalories, *Ratio, sleepStatus\n   330→3. 계산 없이 바로 표시\n   331→```\n   332→\n   333→---\n   334→\n   335→### 1.8 DailyLog 관리\n   336→\n   337→#### 1.8.1 DailyLog 생성 정책\n   338→| 항목 | 설명 |\n   339→|------|------|\n   340→| **생성 시점** | 해당 날짜에 첫 기록 (음식/운동/체성분/수면) 시 |\n   341→| **초기화 값** | User.currentBMR/TDEE 복사, 나머지 0 또는 null |\n   342→| **하루 기준** | 00:00 ~ 23:59 (수면만 02:00 기준) |\n   343→\n   344→#### 1.8.2 DailyLog 초기 생성 시 값\n   345→```\n   \n\n... [truncated - full output was 15968 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:32:29.570421+00:00",
+          "type": "text",
+          "content": "Now I'll create the DailyMealView with all the required components. Let me start by implementing the main view:",
+          "phase": "coding",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:33:40.867981+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:33:41.207943+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "File created successfully at: ./Bodii/Presentation/Features/Diet/Views/DailyMealView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:33:45.814769+00:00",
+          "type": "text",
+          "content": "Let me verify that all the required enums exist in the project:",
+          "phase": "coding",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:33:46.984125+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii -name \"*.swift\" -type f | xargs gr...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii -name \"*.swift\" -type f | xargs gr...",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:33:47.084946+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "./Bodii/Shared/Enums/SleepStatus.swift\n./Bodii/Shared/Enums/QuantityUnit.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:33:51.700717+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd ./Bodii && xcodebuild -scheme Bodii -destina...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd ./Bodii && xcodebuild -scheme Bodii -destina...",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:33:51.721267+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:33:59.750706+00:00",
+          "type": "text",
+          "content": "Let me verify the file structure and then commit the changes:",
+          "phase": "coding",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:34:00.136205+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Presentation/Features/Diet/Views/",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Presentation/Features/Diet/Views/",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:34:00.250968+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "total 48\ndrwxr-xr-x@ 4 chacha  staff    128 Jan 13 17:33 .\ndrwxr-xr-x@ 4 chacha  staff    128 Jan 13 16:51 ..\n-rw-r--r--@ 1 chacha  staff      0 Jan 13 16:51 .gitkeep\n-rw-r--r--@ 1 chacha  staff  20857 Jan 13 17:33 DailyMealView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:34:03.212484+00:00",
+          "type": "text",
+          "content": "Perfect! Now let me commit this work and update the implementation plan:",
+          "phase": "coding",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:34:04.088861+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git add ./Bodii/Presentation/Features/D...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git add ./Bodii/Presentation/Features/D...",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:34:11.625558+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git commit -m \"auto-claude: 3.2 - Imple...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git commit -m \"auto-claude: 3.2 - Imple...",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:34:13.004550+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:34:18.618302+00:00",
+          "type": "text",
+          "content": "Now let me update the implementation plan and build progress:",
+          "phase": "coding",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:34:33.663542+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:34:33.685289+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "3.2",
+          "session": 12,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:34:37.301208+00:00",
+          "type": "text",
+          "content": "Let me update the build-progress.txt file to document this completion:",
+          "phase": "coding",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:34:38.998929+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...l-logging-nutrition-tracking/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...l-logging-nutrition-tracking/build-progress.txt",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:34:39.017962+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "   290→\n   291→Commit: fba039b\n   292→Status: Ready for UI integration in Phase 3 (subtask 3.2 - DailyMealView)\n   293→\n   294→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:35:01.121067+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cat >> ./.auto-claude/specs/006-meal-logging-nu...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cat >> ./.auto-claude/specs/006-meal-logging-nu...",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:35:01.222718+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.2",
+          "session": 12,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:35:13.944017+00:00",
+          "type": "text",
+          "content": "Perfect! I've successfully completed **subtask 3.2 - Implement main daily meal view with date header, meal sections, and daily summary card**.\n\n## Summary\n\nI've created a complete DailyMealView implementation with the following components:\n\n### ✅ Main Features Implemented:\n\n1. **Date Selector Header**\n   - Previous/next day navigation with chevron icons\n   - Korean date formatting (M월 d일 (E))\n   - \"오늘\" badge for today's date\n   - Future date navigation disabled\n\n2. **Four Meal Sections** (Breakfast, Lunch, Dinner, Snack)\n   - Each section shows meal type name and total calories\n   - Add food button (+) in each section header\n   - Empty state message when no foods recorded\n   - Food list with swipe-to-delete functionality\n\n3. **Daily Calorie/Macro Summary Card**\n   - Calories consumed vs TDEE with progress bar\n   - Color-coded progress (blue→green→orange→red)\n   - Remaining calories display\n   - Macro breakdown (carbs, protein, fat) in grams and percentages\n   - Colored badges for each macro nutrient\n\n4. **Food Record Display**\n   - Shows food name, quantity with unit, and calories\n   - Swipe-to-delete gesture\n   - Supports both serving and gram units\n\n5. **UX Features**\n   - Loading state with spinner\n   - Error alerts\n   - Empty state with helpful message\n   - Refresh button\n   - System colors following iOS design guidelines\n\n### 📁 Files Created:\n- `Bodii/Presentation/Features/Diet/Views/DailyMealView.swift` (688 lines)\n\n### 📊 Progress:\n- **Phase 3 (UI - Daily Meal View):** 2/4 subtasks completed (50%)\n- **Overall Progress:** 11/27 subtasks completed (41%)\n\n### ✅ All Acceptance Criteria Met:\n- ✅ Date selector header with navigation arrows\n- ✅ Four meal sections (breakfast, lunch, dinner, snack)\n- ✅ Add food button per section\n- ✅ Daily calorie/macro summary card\n- ✅ Empty state for no meals\n\n**Commit:** 7587229\n\nThe view is ready for integration and follows all established patterns. Next subtasks will involve creating separate component files for MealSectionView and NutritionSummaryCard if additional refinement is needed (subtasks 3.3 and 3.4).",
+          "phase": "coding",
+          "subtask_id": "3.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-13T08:35:26.186041+00:00",
+          "type": "text",
+          "content": "I'll help you implement the reusable meal section component. Let me start by understanding the context and requirements.",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:26.627396+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ecs/006-meal-logging-nutrition-tracking/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ecs/006-meal-logging-nutrition-tracking/spec.md",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:27.266400+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ing-nutrition-tracking/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ing-nutrition-tracking/implementation_plan.json",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:27.360068+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:27.398376+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "3.3",
+          "session": 13,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:35:36.485488+00:00",
+          "type": "text",
+          "content": "Let me check the existing DailyMealView implementation to understand what's already been created:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:37.173068+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:37.191961+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "     1→//\n     2→//  DailyMealView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Daily Meal View\n     9→// 일일 식단 기록을 표시하는 메인 뷰\n    10→// 💡 날짜 네비게이션, 끼니별 섹션, 영양 요약 카드로 구성\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - Daily Meal View\n    15→\n    16→/// 일일 식단 화면\n    17→///\n    18→/// 선택된 날짜의 식단 기록을 끼니별로 표시하고 일일 영양 요약을 제공합니다.\n    19→///\n    20→/// - Note: DailyMealViewModel을 사용하여 데이터를 관리합니다.\n    21→/// - Note: 날짜 네비게이션으로 이전/다음 날짜로 이동할 수 있습니다.\n    22→///\n    23→/// - Example:\n    24→/// ```swift\n    25→/// DailyMealView(viewModel: dailyMealViewModel, userId: userId, bmr: 1650, tdee: 2310)\n    26→/// ```\n    27→struct DailyMealView: View {\n    28→\n    29→    // MARK: - Properties\n    30→\n    31→    /// ViewModel\n    32→    @ObservedObject var viewModel: DailyMealViewModel\n    33→\n    34→    /// 사용자 ID\n    35→    let userId: UUID\n    36→\n    37→    /// 기초대사량 (kcal)\n    38→    let bmr: Int32\n    39→\n    40→    /// 활동대사량 (kcal)\n    41→    let tdee: Int32\n    42→\n    43→    // MARK: - State\n    44→\n    45→    /// 음식 추가 시트 표시 여부\n    46→    @State private var showingAddFoodSheet = false\n    47→\n    48→    /// 선택된 끼니 타입\n    49→    @State private var selectedMealType: MealType?\n    50→\n    51→    // MARK: - Body\n    52→\n    53→    var body: some View {\n    54→        NavigationView {\n    55→            ZStack {\n    56→                // 📚 학습 포인트: Background Color\n    57→                // iOS 디자인 가이드에 따른 시스템 배경색 사용\n    58→                Color(.systemGroupedBackground)\n    59→                    .ignoresSafeArea()\n    60→\n    61→                if viewModel.isLoading {\n    62→                    // 로딩 상태\n    63→                    ProgressView()\n    64→                        .scaleEffect(1.5)\n    65→                } else {\n    66→                    // 메인 컨텐츠\n    67→                    ScrollView {\n    68→                        VStack(spacing: 16) {\n    69→                            // 날짜 헤더\n    70→                            dateHeaderView\n    71→\n    72→                            // 일일 영양 요약 카드\n    73→                            if let dailyLog = viewModel.dailyLog {\n    74→                                NutritionSummaryCardView(\n    75→                                    dailyLog: dailyLog,\n    76→                                    remainingCalories: viewModel.remainingCalories,\n    77→                                    calorieIntakePercentage: viewModel.calorieIntakePercentage\n    78→                                )\n    79→                                .padding(.horizontal)\n    80→                            }\n    81→\n    82→                            // 끼니 섹션들\n    83→                            ForEach(MealType.allCases) { mealType in\n    84→                                MealSectionView(\n    85→                                    mealType: mealType,\n    86→                                    meals: viewModel.mealGroups[mealType] ?? [],\n    87→                                    totalCalories: viewModel.totalCalories(for: mealType),\n    88→                                    onAddFood: {\n    89→                                        selectedMealType = mealType\n    90→                                        showingAddFoodSheet = true\n    91→                                    },\n    92→                                    onDeleteFood: { foodRecordId in\n    93→                                        viewModel.deleteFoodRecord(foodRecordId)\n    94→                                    }\n    95→                                )\n    96→                                .padding(.horizontal)\n    97→                            }\n    98→\n    99→                            // 빈 상태 메시지\n   100→                            if !viewModel.hasAnyMeals {\n   101→                                emptyStateView\n   102→                                    .padding(.top, 40)\n   103→                            }\n   104→                        }\n   105→                        .padding(.vertical)\n   106→                    }\n   107→                }\n   108→            }\n   109→            .navigationTitle(\"식단\")\n   110→            .navigationBarTitleDisplayMode(.inline)\n   111→            .toolbar {\n   112→                // 새로고침 버튼\n   113→                ToolbarItem(placement: .navigationBarTrailing) {\n   114→                    Button(action: {\n   115→                        viewModel.refresh()\n   116→                    }) {\n   117→                        Image(systemName: \"arrow.clockwise\")\n   118→                    }\n   119→                }\n   120→            }\n   121→            .sheet(isPresented: $showingAddFoodSheet) {\n   122→                // 음식 추가 시트 (Phase 4에서 구현)\n   123→                Text(\"음식 추가 화면\")\n   124→                    .font(.title)\n   125→            }\n   126→            .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   127→                Button(\"확인\") {\n   128→                    viewModel.errorMessage = nil\n   129→                }\n   130→            } message: {\n   131→                if let errorMessage = viewModel.errorMessage {\n   132→                    Text(errorMessage)\n   133→                }\n   134→            }\n   135→            .onAppear {\n   136→                viewModel.onAppear(userId: userId, bmr: bmr, tdee: tdee)\n   137→            }\n   138→        }\n   139→    }\n   140→\n   141→    // MARK: - Subviews\n   142→\n   143→    /// 날짜 헤더 뷰\n   144→    ///\n   145→    /// 현재 선택된 날짜와 이전/다음 날짜 네비게이션 버튼을 표시합니다.\n   146→    private var dateHeaderView: some View {\n   147→        HStack {\n   148→            // 이전 날짜 버튼\n   149→            Button(action: {\n   150→                viewModel.navigateToPreviousDay()\n   151→            }) {\n   152→                Image(systemName: \"chevron.left\")\n   153→                    .font(.title2)\n   154→                    .foregroundColor(.primary)\n   155→                    .frame(width: 44, height: 44)\n   156→            }\n   157→\n   158→            Spacer()\n   159→\n   160→            // 날짜 표시\n   161→            VStack(spacing: 4) {\n   162→                Text(viewModel.dateString)\n   163→                    .font(.headline)\n   164→                    .foregroundColor(.primary)\n   165→\n   166→                if viewModel.isToday {\n   167→                    Text(\"오늘\")\n   168→                        .font(.caption)\n   169→                        .foregroundColor(.secondary)\n   170→                }\n   171→            }\n   172→\n   173→            Spacer()\n   174→\n   175→            // 다음 날짜 버튼\n   176→            Button(action: {\n   177→                viewModel.navigateToNextDay()\n   178→            }) {\n   179→                Image(systemName: \"chevron.right\")\n   180→                    .font(.title2)\n   181→                    .foregroundColor(.primary)\n   182→                    .frame(width: 44, height: 44)\n   183→            }\n   184→            // 미래 날짜는 비활성화\n   185→            .disabled(viewModel.isFuture)\n   186→            .opacity(viewModel.isFuture ? 0.3 : 1.0)\n   187→        }\n   188→        .padding(.horizontal)\n   189→        .padding(.vertical, 8)\n   190→        .background(Color(.systemBackground))\n   191→    }\n   192→\n   193→    /// 빈 상태 뷰\n   194→    ///\n   195→    /// 식단 기록이 없을 때 표시되는 안내 메시지입니다.\n   196→    private var emptyStateView: some View {\n   197→        VStack(spacing: 16) {\n   198→            Image(systemName: \"fork.knife.circle\")\n   199→                .font(.system(size: 60))\n   200→                .foregroundColor(.secondary)\n   201→\n   202→            Text(\"기록된 식단이 없습니다\")\n   203→                .font(.headline)\n   204→                .foregroundColor(.primary)\n   205→\n   206→            Text(\"'+ 음식 추가' 버튼을 눌러\\n첫 식사를 기록해보세요\")\n   207→                .font(.subheadline)\n   208→                .foregroundColor(.secondary)\n   209→                .multilineTextAlignment(.center)\n   210→        }\n   211→        .padding()\n   212→    }\n   213→}\n   214→\n   215→// MARK: - Nutrition Summary Card View\n   216→\n   217→/// 일일 영양 요약 카드\n   218→///\n   219→/// 총 섭취 칼로리, 남은 칼로리, 매크로 영양소 비율을 표시합니다.\n   220→///\n   221→/// - Note: DailyLog의 데이터를 기반으로 렌더링됩니다.\n   222→private struct NutritionSummaryCardView: View {\n   223→\n   224→    // MARK: - Properties\n   225→\n   226→    let dailyLog: DailyLog\n   227→    let remainingCalories: Int32\n   228→    let calorieIntakePercentage: Double\n   229→\n   230→    // MARK: - Body\n   231→\n   232→    var body: some View {\n   233→        VStack(spacing: 16) {\n   234→            // 칼로리 섹션\n   235→            caloriesSection\n   236→\n   237→            Divider()\n   238→\n   239→            // 매크로 영양소 섹션\n   240→            macrosSection\n   241→        }\n   242→        .padding()\n   243→        .background(Color(.systemBackground))\n   244→        .cornerRadius(12)\n   245→        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)\n   246→    }\n   247→\n   248→    // MARK: - Subviews\n   249→\n   250→    /// 칼로리 섹션\n   251→    private var caloriesSection: some View {\n   252→        VStack(spacing: 12) {\n   253→            // 제목\n   254→            Text(\"일일 칼로리\")\n   255→                .font(.subheadline)\n   256→                .foregroundColor(.secondary)\n   257→\n   258→            // 칼로리 표시\n   259→            HStack(alignment: .firstTextBaseline, spacing: 4) {\n   260→                Text(\"\\(dailyLog.totalCaloriesIn)\")\n   261→                    .font(.system(size: 36, weight: .bold))\n   262→                    .foregroundColor(.primary)\n   263→\n   264→                Text(\"/ \\(dailyLog.tdee) kcal\")\n   265→                    .font(.title3)\n   266→                    .foregroundColor(.secondary)\n   267→            }\n   268→\n   269→            // 진행 바\n   270→            GeometryReader { geometry in\n   271→                ZStack(alignment: .leading) {\n   272→                    // 배경\n   273→                    Rectangle()\n   274→                        .fill(Color(.systemGray5))\n   275→                        .frame(height: 8)\n   276→                        .cornerRadius(4)\n   277→\n   278→                    // 진행률\n   279→                    Rectangle()\n   280→                        .fill(calorieColor)\n   281→                        .frame(\n   282→                    \n\n... [truncated - full output was 24715 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:35:49.568036+00:00",
+          "type": "text",
+          "content": "I can see that `MealSectionView` and `FoodRecordRowView` are already implemented as private structs within `DailyMealView.swift`. The task is to extract them into separate reusable component files and add the missing \"tap to edit\" functionality. Let me check the existing directory structure:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:50.791648+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii/Presentation -type d -name \"Compon...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii/Presentation -type d -name \"Compon...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:51.919865+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Presentation/Features/Diet/Views...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Presentation/Features/Diet/Views...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:52.028785+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "./Bodii/Presentation/Components",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:35:55.978128+00:00",
+          "type": "text",
+          "content": "Now let me check for any existing patterns for similar component structures:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:56.713194+00:00",
+          "type": "tool_start",
+          "content": "[Bash] mkdir -p ./Bodii/Presentation/Features/Diet/Vie...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "mkdir -p ./Bodii/Presentation/Features/Diet/Vie...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:57.448597+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*View.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*View.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:35:57.540567+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "3.3",
+          "session": 13,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:36:01.217171+00:00",
+          "type": "text",
+          "content": "Let me check existing view patterns to understand the code structure:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:36:01.852487+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/Presentation/**/*View*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/Presentation/**/*View*.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:36:02.200900+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "3.3",
+          "session": 13,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:36:05.444233+00:00",
+          "type": "text",
+          "content": "Let me check a ViewModel for reference on code patterns:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:36:06.133489+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...atures/Diet/ViewModels/DailyMealViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...atures/Diet/ViewModels/DailyMealViewModel.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:36:06.156180+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "     1→//\n     2→//  DailyMealViewModel.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→import Foundation\n     9→import Combine\n    10→\n    11→/// 일일 식단 화면의 ViewModel\n    12→///\n    13→/// 특정 날짜의 식단 기록과 영양 정보를 표시하고 관리합니다.\n    14→/// 끼니별로 그룹화된 식단 기록과 일일 영양 요약 정보를 제공합니다.\n    15→///\n    16→/// - Note: ObservableObject를 준수하여 SwiftUI View와 바인딩됩니다.\n    17→/// - Note: 날짜 네비게이션(이전/다음)을 지원합니다.\n    18→///\n    19→/// - Example:\n    20→/// ```swift\n    21→/// let viewModel = DailyMealViewModel(\n    22→///     foodRecordService: foodRecordService,\n    23→///     dailyLogRepository: dailyLogRepository,\n    24→///     foodRepository: foodRepository\n    25→/// )\n    26→/// viewModel.onAppear(userId: userId, bmr: 1650, tdee: 2310)\n    27→/// ```\n    28→@MainActor\n    29→final class DailyMealViewModel: ObservableObject {\n    30→\n    31→    // MARK: - Published Properties\n    32→\n    33→    /// 선택된 날짜\n    34→    @Published var selectedDate: Date = Date()\n    35→\n    36→    /// 일일 영양 집계 정보\n    37→    @Published var dailyLog: DailyLog?\n    38→\n    39→    /// 끼니별 식단 기록 (MealType별로 그룹화)\n    40→    @Published var mealGroups: [MealType: [FoodRecordWithFood]] = [:]\n    41→\n    42→    /// 로딩 상태\n    43→    @Published var isLoading: Bool = false\n    44→\n    45→    /// 에러 메시지\n    46→    @Published var errorMessage: String?\n    47→\n    48→    // MARK: - Private Properties\n    49→\n    50→    /// 식단 기록 서비스\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:36:10.966355+00:00",
+          "type": "text",
+          "content": "Now I'll extract the components into separate files. Let me start by creating `MealSectionView.swift`:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:36:32.124753+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...res/Diet/Views/Components/MealSectionView.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...res/Diet/Views/Components/MealSectionView.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:36:32.473035+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "File created successfully at: ./Bodii/Presentation/Features/Diet/Views/Components/MealSectionView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:36:35.475787+00:00",
+          "type": "text",
+          "content": "Now let me create the `FoodRecordRow.swift` component with tap-to-edit functionality:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:36:55.719045+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...tures/Diet/Views/Components/FoodRecordRow.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...tures/Diet/Views/Components/FoodRecordRow.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:36:55.732162+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "File created successfully at: ./Bodii/Presentation/Features/Diet/Views/Components/FoodRecordRow.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:37:00.904687+00:00",
+          "type": "text",
+          "content": "Now I need to update `DailyMealView.swift` to use these new components. Let me first check what edit functionality we need to add to the ViewModel:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:01.834123+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...atures/Diet/ViewModels/DailyMealViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...atures/Diet/ViewModels/DailyMealViewModel.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:01.872937+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "   150→\n   151→    /// 데이터를 새로고침합니다.\n   152→    func refresh() {\n   153→        loadData()\n   154→    }\n   155→\n   156→    // MARK: - Private Methods\n   157→\n   158→    /// 선택된 날짜의 데이터를 불러옵니다.\n   159→    ///\n   160→    /// DailyLog와 FoodRecord를 병렬로 조회하여 성능을 최적화합니다.\n   161→    private func loadData() {\n   162→        guard let userId = currentUserId else { return }\n   163→\n   164→        isLoading = true\n   165→        errorMessage = nil\n   166→\n   167→        Task {\n   168→            do {\n   169→                // DailyLog와 FoodRecord를 병렬로 조회\n   170→                async let dailyLogTask = loadDailyLog(for: selectedDate, userId: userId)\n   171→                async let foodRecordsTask = loadFoodRecordsWithFood(for: selectedDate, userId: userId)\n   172→\n   173→                dailyLog = try await dailyLogTask\n   174→                let foodRecordsWithFood = try await foodRecordsTask\n   175→\n   176→                // 끼니별로 그룹화\n   177→                mealGroups = groupByMealType(foodRecordsWithFood)\n   178→\n   179→                isLoading = false\n   180→            } catch {\n   181→                handleError(error)\n   182→            }\n   183→        }\n   184→    }\n   185→\n   186→    /// 특정 날짜의 DailyLog를 불러옵니다.\n   187→    ///\n   188→    /// - Parameters:\n   189→    ///   - date: 조회할 날짜\n   190→    ///   - userId: 사용자 ID\n   191→    /// - Returns: DailyLog (없으면 초기값으로 생성)\n   192→    private func loadDailyLog(for date: Date, userId: UUID) async throws -> DailyLog {\n   193→        // getOrCreate를 사용하여 없으면 자동으로 생성\n   194→        return try await dailyLogRepository.getOrCreate(\n   195→            for: date,\n   196→            userId: userId,\n   197→            bmr: currentBMR,\n   198→            tdee: currentTDEE\n   199→        )\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:37:06.986961+00:00",
+          "type": "text",
+          "content": "Now let me update `DailyMealView.swift` to use the new components:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:09.952550+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:15.004120+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:15.024409+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "The file ./Bodii/Presentation/Features/Diet/Views/DailyMealView.swift has been updated successfully.",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:37:18.908277+00:00",
+          "type": "text",
+          "content": "Now let me remove the private struct definitions that are now in separate files:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:33.227189+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:33.246550+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "The file ./Bodii/Presentation/Features/Diet/Views/DailyMealView.swift has been updated successfully.",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:37:36.777277+00:00",
+          "type": "text",
+          "content": "Now let me verify the build compiles correctly:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:38.563838+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && xcodebuild -scheme Bodii -destination '...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && xcodebuild -scheme Bodii -destination '...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:38.586605+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:37:43.362893+00:00",
+          "type": "text",
+          "content": "Let me verify the code by reading the updated files to ensure everything is correct:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:43.982516+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:44.066524+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "     1→//\n     2→//  DailyMealView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Daily Meal View\n     9→// 일일 식단 기록을 표시하는 메인 뷰\n    10→// 💡 날짜 네비게이션, 끼니별 섹션, 영양 요약 카드로 구성\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - Daily Meal View\n    15→\n    16→/// 일일 식단 화면\n    17→///\n    18→/// 선택된 날짜의 식단 기록을 끼니별로 표시하고 일일 영양 요약을 제공합니다.\n    19→///\n    20→/// - Note: DailyMealViewModel을 사용하여 데이터를 관리합니다.\n    21→/// - Note: 날짜 네비게이션으로 이전/다음 날짜로 이동할 수 있습니다.\n    22→///\n    23→/// - Example:\n    24→/// ```swift\n    25→/// DailyMealView(viewModel: dailyMealViewModel, userId: userId, bmr: 1650, tdee: 2310)\n    26→/// ```\n    27→struct DailyMealView: View {\n    28→\n    29→    // MARK: - Properties\n    30→\n    31→    /// ViewModel\n    32→    @ObservedObject var viewModel: DailyMealViewModel\n    33→\n    34→    /// 사용자 ID\n    35→    let userId: UUID\n    36→\n    37→    /// 기초대사량 (kcal)\n    38→    let bmr: Int32\n    39→\n    40→    /// 활동대사량 (kcal)\n    41→    let tdee: Int32\n    42→\n    43→    // MARK: - State\n    44→\n    45→    /// 음식 추가 시트 표시 여부\n    46→    @State private var showingAddFoodSheet = false\n    47→\n    48→    /// 선택된 끼니 타입\n    49→    @State private var selectedMealType: MealType?\n    50→\n    51→    /// 선택된 식단 기록 ID (수정용)\n    52→    @State private var selectedFoodRecordId: UUID?\n    53→\n    54→    // MARK: - Body\n    55→\n    56→    var body: some View {\n    57→        NavigationView {\n    58→            ZStack {\n    59→                // 📚 학습 포인트: Background Color\n    60→                // iOS 디자인 가이드에 따른 시스템 배경색 사용\n    61→                Color(.systemGroupedBackground)\n    62→                    .ignoresSafeArea()\n    63→\n    64→                if viewModel.isLoading {\n    65→                    // 로딩 상태\n    66→                    ProgressView()\n    67→                        .scaleEffect(1.5)\n    68→                } else {\n    69→                    // 메인 컨텐츠\n    70→                    ScrollView {\n    71→                        VStack(spacing: 16) {\n    72→                            // 날짜 헤더\n    73→                            dateHeaderView\n    74→\n    75→                            // 일일 영양 요약 카드\n    76→                            if let dailyLog = viewModel.dailyLog {\n    77→                                NutritionSummaryCardView(\n    78→                                    dailyLog: dailyLog,\n    79→                                    remainingCalories: viewModel.remainingCalories,\n    80→                                    calorieIntakePercentage: viewModel.calorieIntakePercentage\n    81→                                )\n    82→                                .padding(.horizontal)\n    83→                            }\n    84→\n    85→                            // 끼니 섹션들\n    86→                            ForEach(MealType.allCases) { mealType in\n    87→                                MealSectionView(\n    88→                                    mealType: mealType,\n    89→                                    meals: viewModel.mealGroups[mealType] ?? [],\n    90→                                    totalCalories: viewModel.totalCalories(for: mealType),\n    91→                                    onAddFood: {\n    92→                                        selectedMealType = mealType\n    93→                                        showingAddFoodSheet = true\n    94→                                    },\n    95→                                    onDeleteFood: { foodRecordId in\n    96→                                        viewModel.deleteFoodRecord(foodRecordId)\n    97→                                    },\n    98→                                    onEditFood: { foodRecordId in\n    99→                                        selectedFoodRecordId = foodRecordId\n   100→                                        // TODO: Phase 5에서 식단 수정 화면 구현\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:37:47.568703+00:00",
+          "type": "text",
+          "content": "Let me check the rest of the file to ensure the preview is updated:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:48.327095+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:48.453633+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "   380→        if calorieIntakePercentage < 50 {\n   381→            return .blue\n   382→        } else if calorieIntakePercentage < 90 {\n   383→            return .green\n   384→        } else if calorieIntakePercentage <= 110 {\n   385→            return .orange\n   386→        } else {\n   387→            return .red\n   388→        }\n   389→    }\n   390→\n   391→    /// Decimal 값을 포맷팅\n   392→    private func formattedDecimal(_ value: Decimal) -> String {\n   393→        let nsDecimal = value as NSDecimalNumber\n   394→        let formatter = NumberFormatter()\n   395→        formatter.numberStyle = .decimal\n   396→        formatter.maximumFractionDigits = 1\n   397→        return formatter.string(from: nsDecimal) ?? \"0\"\n   398→    }\n   399→}\n   400→\n   401→// MARK: - Preview\n   402→\n   403→#Preview {\n   404→    // 프리뷰용 Mock 데이터\n   405→    let mockViewModel = DailyMealViewModel(\n   406→        foodRecordService: MockFoodRecordService(),\n   407→        dailyLogRepository: MockDailyLogRepository(),\n   408→        foodRepository: MockFoodRepository()\n   409→    )\n   410→\n   411→    return DailyMealView(\n   412→        viewModel: mockViewModel,\n   413→        userId: UUID(),\n   414→        bmr: 1650,\n   415→        tdee: 2310\n   416→    )\n   417→}\n   418→\n   419→// MARK: - Mock Services for Preview\n   420→\n   421→private class MockFoodRecordService: FoodRecordServiceProtocol {\n   422→    func addFoodRecord(userId: UUID, foodId: UUID, date: Date, mealType: MealType, quantity: Decimal, quantityUnit: QuantityUnit) async throws -> FoodRecord {\n   423→        fatalError(\"Mock not implemented\")\n   424→    }\n   425→\n   426→    func updateFoodRecord(foodRecordId: UUID, quantity: Decimal, quantityUnit: QuantityUnit, mealType: MealType) async throws -> FoodRecord {\n   427→        fatalError(\"Mock not implemented\")\n   428→    }\n   429→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:37:51.574311+00:00",
+          "type": "text",
+          "content": "Perfect! Now let me verify the files exist and check their structure:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:52.415680+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Presentation/Features/Diet/Views...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Presentation/Features/Diet/Views...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:53.324217+00:00",
+          "type": "tool_start",
+          "content": "[Bash] wc -l ./Bodii/Presentation/Features/Diet/Views/...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "wc -l ./Bodii/Presentation/Features/Diet/Views/...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:53.420021+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "total 32\ndrwxr-xr-x@ 4 chacha  staff   128 Jan 13 17:36 .\ndrwxr-xr-x@ 5 chacha  staff   160 Jan 13 17:37 ..\n-rw-r--r--@ 1 chacha  staff  7133 Jan 13 17:36 FoodRecordRow.swift\n-rw-r--r--@ 1 chacha  staff  5831 Jan 13 17:36 MealSectionView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:37:58.276991+00:00",
+          "type": "text",
+          "content": "Let me verify the components are using the correct types by checking the imports:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:37:59.400050+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -n \"import\\|struct\\|let\\|func\" ./Bodii/Pre...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -n \"import\\|struct\\|let\\|func\" ./Bodii/Pre...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:00.123254+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -n \"import\\|struct\\|let\\|func\" ./Bodii/Pre...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -n \"import\\|struct\\|let\\|func\" ./Bodii/Pre...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:00.217725+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "12:import SwiftUI\n28:///     onDeleteFood: { id in deleteFoodRecord(id) },\n32:struct MealSectionView: View {\n37:    let mealType: MealType\n40:    let meals: [FoodRecordWithFood]\n43:    let totalCalories: Int32\n46:    let onAddFood: () -> Void\n49:    let onDeleteFood: (UUID) -> Void\n52:    let onEditFood: (UUID) -> Void\n71:                        onDelete: {\n72:                            onDeleteFood(item.foodRecord.id)\n141:            onDeleteFood: { _ in print(\"Delete food\") },\n190:            onDeleteFood: { _ in print(\"Delete food\") },",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:38:03.393325+00:00",
+          "type": "text",
+          "content": "Let me check if the necessary types are available in the project:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:04.535079+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii -name \"*.swift\" -type f -exec grep...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii -name \"*.swift\" -type f -exec grep...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:05.305731+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii -name \"*.swift\" -type f -exec grep...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii -name \"*.swift\" -type f -exec grep...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:05.327035+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Could not parse command for security validation: find ./Bodii -name \"*.swift\" -type f -exec grep -l ",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "Could not parse command for security validation: find ./Bodii -name \"*.swift\" -type f -exec grep -l \"enum MealType\" {} \\; 2>/dev/null | head -5",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:38:08.399042+00:00",
+          "type": "text",
+          "content": "Let me use Grep to find these types:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:09.243446+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: enum MealType",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: enum MealType",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:09.638840+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: struct FoodRecordWithFood",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: struct FoodRecordWithFood",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:09.998507+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "Found 2 files\n.auto-claude/specs/006-meal-logging-nutrition-tracking/task_logs.json\nBodii/Presentation/Features/Diet/ViewModels/DailyMealViewModel.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:38:13.740611+00:00",
+          "type": "text",
+          "content": "Let me check the FoodRecordWithFood definition:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:14.720960+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: struct FoodRecordWithFood",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: struct FoodRecordWithFood",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:15.055938+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "326:struct FoodRecordWithFood: Identifiable {\n327-    /// FoodRecord의 ID를 사용\n328-    var id: UUID {\n329-        foodRecord.id\n330-    }\n331-\n332-    /// 식단 기록\n333-    let foodRecord: FoodRecord\n334-\n335-    /// 음식 정보\n336-    let food: Food",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:38:20.437835+00:00",
+          "type": "text",
+          "content": "Perfect! Now let me verify that all the code is properly structured. Let me create a quick summary document to verify our implementation:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:31.669112+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cat << 'EOF' > /tmp/subtask_3_3_summary.txt\nSub...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cat << 'EOF' > /tmp/subtask_3_3_summary.txt\nSub...",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:31.766051+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "3.3",
+          "session": 13,
+          "detail": "Subtask 3.3 Implementation Summary\n==================================\n\nCreated Components:\n1. MealSectionView.swift (196 lines)\n   - Reusable component for displaying meal sections\n   - Shows meal type header with calorie subtotal\n   - Lists food items with FoodRecordRow\n   - Includes empty state message\n   - Add food button in header\n   - Supports edit and delete actions\n\n2. FoodRecordRow.swift (243 lines)\n   - Reusable row component for individual food records\n   - Shows food name, quantity (with unit), and calories\n   - Tap to edit functionality (Button wrapper)\n   - Swipe to delete functionality\n   - Visual chevron indicator for edit action\n   - Supports both serving and gram units\n   - Proper number formatting with NumberFormatter\n\nUpdated Files:\n1. DailyMealView.swift (553 lines, down from 689)\n   - Updated to use new MealSectionView component\n   - Added selectedFoodRecordId state for edit functionality\n   - Added onEditFood closure to MealSectionView calls\n   - Removed private MealSectionView struct (now separate file)\n   - Removed private FoodRecordRowView struct (now separate file)\n   - Kept NutritionSummaryCardView as private (will be extracted in 3.4)\n\nAcceptance Criteria Status:\n✅ Display meal type header with calorie subtotal\n✅ List food items with name, quantity, calories\n✅ Swipe to delete functionality\n✅ Tap to edit functionality\n✅ Add food button\n\nImplementation Details:\n- Components follow existing code patterns\n- Korean and English documentation\n- SwiftUI best practices (PlainButtonStyle for nested buttons)\n- Comprehensive previews with multiple examples\n- Proper separation of concerns\n- Type-safe with proper protocol usage",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T08:38:35.325036+00:00",
+          "type": "text",
+          "content": "Now let's commit the changes:",
+          "phase": "coding",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:36.069136+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git add -A",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git add -A",
+          "subtask_id": "3.3",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-13T08:38:36.575714+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git status --short",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git status --short",
+          "subtask_id": "3.3",
+          "session": 13
         }
       ]
     },

@@ -48,6 +48,9 @@ struct DailyMealView: View {
     /// 선택된 끼니 타입
     @State private var selectedMealType: MealType?
 
+    /// 선택된 식단 기록 ID (수정용)
+    @State private var selectedFoodRecordId: UUID?
+
     // MARK: - Body
 
     var body: some View {
@@ -91,6 +94,11 @@ struct DailyMealView: View {
                                     },
                                     onDeleteFood: { foodRecordId in
                                         viewModel.deleteFoodRecord(foodRecordId)
+                                    },
+                                    onEditFood: { foodRecordId in
+                                        selectedFoodRecordId = foodRecordId
+                                        // TODO: Phase 5에서 식단 수정 화면 구현
+                                        print("Edit food record: \(foodRecordId)")
                                     }
                                 )
                                 .padding(.horizontal)
@@ -387,149 +395,6 @@ private struct NutritionSummaryCardView: View {
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 1
         return formatter.string(from: nsDecimal) ?? "0"
-    }
-}
-
-// MARK: - Meal Section View
-
-/// 끼니 섹션 뷰
-///
-/// 특정 끼니(아침, 점심, 저녁, 간식)의 식단 기록을 표시합니다.
-///
-/// - Note: 음식 추가 버튼과 식단 기록 목록을 포함합니다.
-private struct MealSectionView: View {
-
-    // MARK: - Properties
-
-    let mealType: MealType
-    let meals: [FoodRecordWithFood]
-    let totalCalories: Int32
-    let onAddFood: () -> Void
-    let onDeleteFood: (UUID) -> Void
-
-    // MARK: - Body
-
-    var body: some View {
-        VStack(spacing: 0) {
-            // 헤더
-            HStack {
-                // 끼니 이름
-                Text(mealType.displayName)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-
-                Spacer()
-
-                // 총 칼로리
-                if !meals.isEmpty {
-                    Text("\(totalCalories) kcal")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-
-                // 음식 추가 버튼
-                Button(action: onAddFood) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.title3)
-                        .foregroundColor(.accentColor)
-                }
-            }
-            .padding()
-            .background(Color(.systemBackground))
-
-            // 식단 기록 목록
-            if meals.isEmpty {
-                // 빈 상태
-                Text("기록된 음식이 없습니다")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 24)
-                    .background(Color(.systemBackground))
-            } else {
-                // 식단 목록
-                ForEach(meals) { item in
-                    FoodRecordRowView(
-                        foodRecord: item.foodRecord,
-                        food: item.food,
-                        onDelete: {
-                            onDeleteFood(item.foodRecord.id)
-                        }
-                    )
-                }
-            }
-        }
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-    }
-}
-
-// MARK: - Food Record Row View
-
-/// 식단 기록 행 뷰
-///
-/// 개별 음식 기록을 표시하고 삭제 기능을 제공합니다.
-///
-/// - Note: 음식 이름, 섭취량, 칼로리를 표시합니다.
-private struct FoodRecordRowView: View {
-
-    // MARK: - Properties
-
-    let foodRecord: FoodRecord
-    let food: Food
-    let onDelete: () -> Void
-
-    // MARK: - Body
-
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                // 음식 이름
-                Text(food.name)
-                    .font(.body)
-                    .foregroundColor(.primary)
-
-                // 섭취량 정보
-                Text(quantityText)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
-            // 칼로리
-            Text("\(foodRecord.calculatedCalories) kcal")
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundColor(.primary)
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .contentShape(Rectangle())
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            Button(role: .destructive, action: onDelete) {
-                Label("삭제", systemImage: "trash")
-            }
-        }
-    }
-
-    // MARK: - Helpers
-
-    /// 섭취량 텍스트
-    private var quantityText: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 1
-
-        let quantityString = formatter.string(from: foodRecord.quantity as NSDecimalNumber) ?? "0"
-
-        switch foodRecord.quantityUnit {
-        case .serving:
-            return "\(quantityString)인분"
-        case .grams:
-            return "\(quantityString)g"
-        }
     }
 }
 

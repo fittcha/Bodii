@@ -209,7 +209,7 @@
           "id": "3.1",
           "title": "Create DailyMealViewModel",
           "description": "Implement ViewModel for daily meal view with date navigation, meal grouping, and nutrition summary.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/ViewModels/DailyMealViewModel.swift"
           ],
@@ -221,13 +221,14 @@
             "Handle empty state"
           ],
           "estimated_hours": 2.5,
-          "notes": ""
+          "notes": "Successfully implemented DailyMealViewModel with all required functionality:\n\n**Core Features:**\n1. Date navigation:\n   - navigateToPreviousDay(): Move to previous day\n   - navigateToNextDay(): Move to next day\n   - navigateToDate(date): Jump to specific date\n   - Auto-reload data on date change\n\n2. Data loading:\n   - Parallel async queries for DailyLog and FoodRecords (performance optimization)\n   - getOrCreate pattern for DailyLog (auto-creates if not exists)\n   - Loads Food details for each FoodRecord\n   - Efficient grouping by MealType\n\n3. Meal grouping:\n   - Groups FoodRecords by all 4 MealTypes (breakfast, lunch, dinner, snack)\n   - Pre-initializes empty arrays for all meal types\n   - Returns organized dictionary for easy UI rendering\n\n4. Daily nutrition summary:\n   - Exposes DailyLog for total calories and macros\n   - Computed properties for remaining calories\n   - Calorie intake percentage calculation\n   - Per-meal calorie totals\n\n5. Delete functionality:\n   - deleteFoodRecord(id): Remove food record\n   - Auto-refreshes data after deletion\n   - DailyLog automatically updated via service layer\n\n6. UI state management:\n   - @MainActor for thread-safety with SwiftUI\n   - Loading states (isLoading)\n   - Error handling with user-friendly messages\n   - Empty state detection (hasAnyMeals, hasMeals(for:))\n   - Date helpers (isToday, isFuture, dateString)\n\n**Helper Models:**\n- FoodRecordWithFood: Combines FoodRecord and Food for efficient UI rendering\n- Identifiable protocol for SwiftUI List support\n\n**Code Quality:**\n- Follows established patterns from FoodSearchViewModel\n- Korean and English documentation\n- Swift Concurrency (async/await) throughout\n- Protocol-based dependency injection for testability\n- Comprehensive computed properties for UI logic\n- Clean separation of concerns\n\n**Files Created:**\n- Bodii/Presentation/Features/Diet/ViewModels/DailyMealViewModel.swift (358 lines)\n\nAll acceptance criteria met:\n\u2705 Load meals for selected date\n\u2705 Group meals by meal type (breakfast, lunch, dinner, snack)\n\u2705 Calculate and display daily totals\n\u2705 Support date navigation (previous/next day)\n\u2705 Handle empty state\n\nCommit: fba039b\nStatus: Ready for UI integration (Phase 3 - subtask 3.2)",
+          "updated_at": "2026-01-13T08:31:06.488281+00:00"
         },
         {
           "id": "3.2",
           "title": "Create DailyMealView",
           "description": "Implement main daily meal view with date header, meal sections, and daily summary card.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Views/Diet/DailyMealView.swift"
           ],
@@ -239,7 +240,8 @@
             "Empty state for no meals"
           ],
           "estimated_hours": 3,
-          "notes": ""
+          "notes": "Successfully implemented DailyMealView with all required functionality:\n\n**Core Features:**\n1. Date selector header with navigation arrows:\n   - Previous day button with chevron.left icon\n   - Next day button with chevron.right icon\n   - Date display with Korean formatting (M\uc6d4 d\uc77c (E))\n   - \"\uc624\ub298\" badge when viewing today\n   - Future date navigation disabled\n\n2. Four meal sections (breakfast, lunch, dinner, snack):\n   - MealSectionView component for each meal type\n   - Displays meal type name using MealType.displayName\n   - Shows total calories per meal section\n   - Empty state message when no foods recorded\n   - Add food button (+) in section header\n\n3. Daily calorie/macro summary card:\n   - Total calories consumed vs TDEE display\n   - Progress bar with color coding (blue < 50%, green 50-90%, orange 90-110%, red > 110%)\n   - Remaining calories with color indication (green if positive, red if negative)\n   - Macro breakdown showing carbs, protein, fat in grams\n   - Percentage display for each macro with colored badges\n\n4. Food record display:\n   - FoodRecordRowView component for individual foods\n   - Shows food name, quantity (with unit), and calculated calories\n   - Swipe-to-delete functionality\n   - Supports both serving and gram units\n\n5. UI/UX Features:\n   - Loading state with ProgressView\n   - Error alert with user-friendly messages\n   - Empty state with helpful guidance message\n   - Refresh button in navigation bar\n   - System colors following iOS design guidelines\n   - Card-based layout with shadows\n   - ScrollView for long meal lists\n\n6. Integration with ViewModel:\n   - Uses DailyMealViewModel for data management\n   - Observes @Published properties for UI updates\n   - Handles date navigation through ViewModel\n   - Calls deleteFoodRecord on swipe action\n   - onAppear lifecycle management\n\n**Code Quality:**\n- Follows established SwiftUI patterns from ContentView\n- Korean and English documentation\n- Private subviews for clean code organization\n- Proper spacing and padding following iOS HIG\n- Mock services for SwiftUI preview functionality\n- Helper methods for formatting (quantityText, formattedDecimal)\n- Color coding for visual feedback\n\n**Files Created:**\n- Bodii/Presentation/Features/Diet/Views/DailyMealView.swift (688 lines)\n\nAll acceptance criteria met:\n\u2705 Date selector header with navigation arrows\n\u2705 Four meal sections (breakfast, lunch, dinner, snack)\n\u2705 Add food button per section\n\u2705 Daily calorie/macro summary card\n\u2705 Empty state for no meals\n\nCommit: 7587229\nStatus: Ready for integration in Phase 7 (subtask 7.1)",
+          "updated_at": "2026-01-13T08:34:33.671418+00:00"
         },
         {
           "id": "3.3",
@@ -624,5 +626,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T08:27:56.452221+00:00"
+  "last_updated": "2026-01-13T08:34:33.671427+00:00"
 }
