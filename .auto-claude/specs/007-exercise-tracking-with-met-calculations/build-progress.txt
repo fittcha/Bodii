@@ -147,8 +147,67 @@ All acceptance criteria met ✓
 
 All acceptance criteria met ✓
 
+[2026-01-13 - Subtask 2.1 COMPLETED]
+✅ ExerciseViewModel Implementation
+- Created Bodii/Features/Exercise/ViewModels/ExerciseViewModel.swift
+- Manages exercise list and date navigation
+- Loads exercises for selected date via ExerciseRecordService
+- Date navigation: goToPreviousDay(), goToNextDay(), goToToday()
+- Daily statistics from DailyLog: totalCaloriesBurned, totalExerciseMinutes, exerciseCount
+- CRUD operations: addExercise(), updateExercise(), deleteExercise()
+- Loading and error state management with @Published properties
+- Auto-refresh after data changes
+- Follows SwiftUI ObservableObject pattern with @MainActor
+- Committed: [previous commit]
+
+All acceptance criteria met ✓
+
+[2026-01-13 - Subtask 2.2 COMPLETED]
+✅ ExerciseInputViewModel Implementation
+- Created Bodii/Features/Exercise/ViewModels/ExerciseInputViewModel.swift
+- Manages exercise input form state
+- Real-time calorie preview with Combine debounced at 300ms
+- Validates duration >= 1 minute with validation messages
+- Save action calls ExerciseRecordService for create/update
+- Edit mode support with existing record initialization
+- Sets shouldDismiss flag on successful save for modal dismissal
+- Uses ExerciseCalcService for calorie calculation
+- Comprehensive error handling with async/await
+- Committed: [previous commit]
+
+All acceptance criteria met ✓
+
+[2026-01-13 - Subtask 2.3 COMPLETED]
+✅ ExerciseListView Implementation
+- Created Bodii/Features/Exercise/Views/ExerciseListView.swift
+- Date navigation header:
+  * Previous/Next day buttons with chevron icons
+  * Date display with "오늘" button (shows when not today)
+  * DateFormatter with Korean locale (yyyy년 M월 d일)
+- Daily summary card:
+  * Total calories burned with flame icon (orange)
+  * Total exercise minutes with clock icon (green)
+  * Exercise count with checkmark icon (blue)
+  * Data from ViewModel's DailyLog statistics
+- Exercise list:
+  * Cards with exercise type icon, name, duration, intensity, calories
+  * SF Symbol icons: figure.walk, figure.run, bicycle, figure.pool.swim, etc.
+  * Color-coded by exercise type (running: blue, cycling: orange, etc.)
+  * Intensity icons: circle (low), circle.lefthalf.filled (medium), circle.fill (high)
+- Swipe-to-delete with confirmation alert
+- Tap-to-edit functionality (modal placeholder for ExerciseInputView)
+- Floating add button (blue circle, bottom-right)
+- Empty state view with helpful message
+- Loading and error alerts
+- SwiftUI preview with mock dependencies
+- Committed: 41e3854
+
+All acceptance criteria met ✓
+
 ## Next Steps
-- Phase 1 Core Services Layer is complete!
-- Start Phase 2: UI Layer - ViewModels and Views
-  * Subtask 2.1: Create ExerciseViewModel
-  * Subtask 2.2: Create ExerciseInputViewModel
+- Phase 2 UI Layer in progress (3/7 completed)
+- Continue with remaining UI components:
+  * Subtask 2.4: Create ExerciseInputView modal
+  * Subtask 2.5: Create ExerciseCardView component
+  * Subtask 2.6: Create ExerciseTypeGridView component
+  * Subtask 2.7: Add SF Symbol icons to ExerciseType enum
