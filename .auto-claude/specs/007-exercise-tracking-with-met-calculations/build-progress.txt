@@ -10,13 +10,13 @@ Total estimated time: ~10 hours
 ## Phases Overview
 1. Phase 1: Core Services Layer (5 subtasks)
    - ExerciseCalcService, Repositories, ExerciseRecordService
-   
+
 2. Phase 2: UI Layer (7 subtasks)
    - ViewModels, Views, Components
-   
+
 3. Phase 3: Integration and Navigation (2 subtasks)
    - DIContainer, TabView integration
-   
+
 4. Phase 4: Testing (2 subtasks)
    - Unit tests for calc service and enum
 
@@ -27,7 +27,7 @@ Total estimated time: ~10 hours
 - [x] Read spec and project documentation
 - [x] Analyzed existing codebase structure
 - [x] Created implementation_plan.json
-- [ ] Phase 1: Core Services Layer
+- [ ] Phase 1: Core Services Layer (4/5 completed)
 - [ ] Phase 2: UI Layer
 - [ ] Phase 3: Integration and Navigation
 - [ ] Phase 4: Testing
@@ -80,3 +80,38 @@ All acceptance criteria met ✓
 - Committed: e78fa88
 
 All acceptance criteria met ✓
+
+[2026-01-13 - Subtask 1.3 COMPLETED]
+✅ DailyLogRepository Implementation
+- Created Bodii/Infrastructure/Repositories/DailyLogRepository.swift
+- Implemented key operations:
+  * getOrCreate(userId, date, defaultBMR, defaultTDEE): Returns existing or creates new DailyLog
+  * fetch(by userId, date): Returns single DailyLog with proper calendar day comparison
+  * update(dailyLog): Saves changes to existing DailyLog
+- Proper domain entity to Core Data managed object conversion (convertToDomain)
+- User relationship handling (setUserRelationship)
+- Date comparison uses calendar-based start/end of day
+- Comprehensive error handling with RepositoryError enum
+- Well documented with comprehensive examples
+- Committed: [commit hash in git log]
+
+All acceptance criteria met ✓
+
+[2026-01-13 - Subtask 1.4 COMPLETED]
+✅ UserRepository Implementation
+- Created Bodii/Infrastructure/Repositories/UserRepository.swift
+- Implemented fetch operations:
+  * fetchCurrentUser(): Returns the single User in the app (first User record)
+  * getCurrentWeight(): Returns user's currentWeight as Decimal
+- Handles case when no user exists (returns nil)
+- Proper domain entity to Core Data managed object conversion (convertToDomain)
+- Follows established repository pattern with Core Data integration
+- Comprehensive error handling using RepositoryError enum
+- Full conversion of all User fields including optional currentWeight, currentBodyFatPct, etc.
+- Well documented with comprehensive examples
+- Committed: 8292393
+
+All acceptance criteria met ✓
+
+## Next Steps
+- Subtask 1.5: Create ExerciseRecordService with DailyLog cascade updates
