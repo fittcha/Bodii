@@ -49,8 +49,8 @@
           "id": "1.3",
           "title": "Create ExerciseRecordLocalDataSource",
           "description": "Implement Core Data operations for ExerciseRecord entity. Map between Core Data managed objects and domain entities.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Created ExerciseRecordLocalDataSource with full Core Data CRUD operations. Implemented async/await pattern throughout for modern Swift concurrency. Added mapping between NSManagedObject and domain ExerciseRecord entity. Supports filtering by date, date range, and user ID. Includes utility methods (count, totalDuration, totalCaloriesBurned) and proper error handling with DataSourceError enum. All operations use context.perform for thread safety.",
           "files": [
             "Bodii/Data/DataSources/Local/ExerciseRecordLocalDataSource.swift"
           ],
@@ -59,14 +59,15 @@
             "Maps NSManagedObject to domain ExerciseRecord entity",
             "Proper error handling",
             "Supports filtering by date and user"
-          ]
+          ],
+          "updated_at": "2026-01-13T10:07:52.101865+00:00"
         },
         {
           "id": "1.4",
           "title": "Implement ExerciseRecordRepositoryImpl",
           "description": "Implement the repository that coordinates between data sources and domain layer. Use ExerciseRecordLocalDataSource for persistence.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Created ExerciseRecordRepositoryImpl that coordinates between data sources and domain layer. Implements ExerciseRecordRepository protocol with full CRUD operations. Delegates all operations to ExerciseRecordLocalDataSource for Core Data persistence. Includes comprehensive documentation, Korean learning comments, and follows async/await pattern throughout. Supports all repository methods (create, read by ID/date/date range/all, update, delete) and utility methods (count, totalDuration, totalCaloriesBurned).",
           "files": [
             "Bodii/Data/Repositories/ExerciseRecordRepositoryImpl.swift"
           ],
@@ -75,7 +76,8 @@
             "Uses ExerciseRecordLocalDataSource for data operations",
             "Proper entity mapping",
             "Handles Core Data save context"
-          ]
+          ],
+          "updated_at": "2026-01-13T10:10:06.113540+00:00"
         },
         {
           "id": "1.5",
@@ -428,5 +430,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T10:02:07.200747+00:00"
+  "last_updated": "2026-01-13T10:10:06.113549+00:00"
 }
