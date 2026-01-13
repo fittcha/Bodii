@@ -92,7 +92,18 @@ struct FoodDetailView: View {
                         nutritionFactsSection(food: food)
 
                         // 섭취량 선택 섹션
-                        servingSizeSection
+                        ServingSizePicker(
+                            quantity: $viewModel.quantity,
+                            quantityUnit: $viewModel.quantityUnit,
+                            quantityError: viewModel.quantityError,
+                            presetMultipliers: viewModel.presetMultipliers,
+                            onSetQuantityMultiplier: { multiplier in
+                                viewModel.setQuantityMultiplier(multiplier)
+                            },
+                            onChangeUnit: { newUnit in
+                                viewModel.changeUnit(to: newUnit)
+                            }
+                        )
 
                         // 끼니 선택 섹션
                         mealTypeSection
@@ -296,106 +307,6 @@ struct FoodDetailView: View {
         }
     }
 
-    /// 섭취량 선택 섹션
-    ///
-    /// 프리셋 배수 버튼과 커스텀 수량 입력 필드를 제공합니다.
-    private var servingSizeSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // 섹션 헤더
-            Text("섭취량")
-                .font(.headline)
-                .foregroundColor(.primary)
-                .padding(.horizontal)
-
-            VStack(spacing: 16) {
-                // 프리셋 배수 버튼
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("빠른 선택")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-
-                    HStack(spacing: 12) {
-                        ForEach(viewModel.presetMultipliers, id: \.self) { multiplier in
-                            presetButton(multiplier: multiplier)
-                        }
-                    }
-                }
-
-                Divider()
-
-                // 커스텀 수량 입력
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("직접 입력")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-
-                    HStack(spacing: 12) {
-                        // 수량 입력 필드
-                        TextField("수량", value: $viewModel.quantity, format: .number)
-                            .keyboardType(.decimalPad)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(maxWidth: 120)
-
-                        // 단위 선택 (인분 / 그램)
-                        Picker("단위", selection: $viewModel.quantityUnit) {
-                            ForEach(QuantityUnit.allCases) { unit in
-                                Text(unit.displayName).tag(unit)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .onChange(of: viewModel.quantityUnit) { oldValue, newValue in
-                            if oldValue != newValue {
-                                viewModel.changeUnit(to: newValue)
-                            }
-                        }
-
-                        Spacer()
-                    }
-
-                    // 유효성 검증 에러 메시지
-                    if let quantityError = viewModel.quantityError {
-                        Text(quantityError)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
-                }
-            }
-            .padding()
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
-            .padding(.horizontal)
-        }
-    }
-
-    /// 프리셋 배수 버튼
-    ///
-    /// 빠른 선택을 위한 프리셋 배수 버튼입니다.
-    ///
-    /// - Parameter multiplier: 배수 값
-    /// - Returns: 프리셋 버튼 뷰
-    private func presetButton(multiplier: Decimal) -> some View {
-        Button(action: {
-            viewModel.setQuantityMultiplier(multiplier)
-        }) {
-            Text("\(formatMultiplier(multiplier))x")
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundColor(
-                    viewModel.isServingBased && viewModel.quantity == multiplier
-                        ? .white
-                        : .primary
-                )
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .background(
-                    viewModel.isServingBased && viewModel.quantity == multiplier
-                        ? Color.blue
-                        : Color(.systemGray5)
-                )
-                .cornerRadius(8)
-        }
-    }
-
     /// 끼니 선택 섹션
     ///
     /// 끼니 타입을 선택합니다.
@@ -507,21 +418,6 @@ struct FoodDetailView: View {
         formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = 2
         return formatter.string(from: nsDecimal) ?? "0"
-    }
-
-    /// 배수 값을 포맷팅
-    ///
-    /// 배수 값을 간결하게 표시합니다 (예: 0.25, 0.5, 1, 1.5, 2)
-    ///
-    /// - Parameter value: 배수 값
-    /// - Returns: 포맷팅된 문자열
-    private func formatMultiplier(_ value: Decimal) -> String {
-        let nsDecimal = value as NSDecimalNumber
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.minimumFractionDigits = 0
-        formatter.maximumFractionDigits = 2
-        return formatter.string(from: nsDecimal) ?? "1"
     }
 
     /// 현재 섭취량에 대한 배수 계산
