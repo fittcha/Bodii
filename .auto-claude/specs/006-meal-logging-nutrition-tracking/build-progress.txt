@@ -554,3 +554,57 @@ Integration:
 Commit: 1f079b7
 Next: Subtask 5.3 - ServingSizePicker component extraction
 
+
+================================================================================
+Subtask 5.4: Implement nutrition facts card - COMPLETED
+================================================================================
+Date: 2026-01-13
+Status: ✅ COMPLETED
+Files Modified:
+  - Bodii/Presentation/Features/Diet/Views/Components/NutritionFactsCard.swift (NEW, 394 lines)
+  - Bodii/Presentation/Features/Diet/Views/FoodDetailView.swift (reduced from 556 to 419 lines)
+
+Summary:
+Successfully implemented NutritionFactsCard component with all required acceptance criteria:
+
+1. Calories prominently displayed ✅
+   - Large, bold font (title3)
+   - Separate section with divider
+   - Clear kcal unit display
+
+2. Carbohydrates with fiber/sugar breakdown ✅
+   - Carbs shown in macros section (blue color)
+   - Fiber shown in optional nutrients section (green color) when available
+   - Sugar shown in optional nutrients section (pink color) when available
+
+3. Protein amount ✅
+   - Displayed with orange color indicator
+   - Formatted with g unit
+
+4. Fat amount ✅
+   - Displayed with purple color indicator
+   - Formatted with g unit
+
+5. Sodium amount (if available) ✅
+   - Shows in optional nutrients section (gray color)
+   - Only displayed when food has sodium data
+   - Formatted with mg unit
+
+6. Serving size info ✅
+   - Displayed in header with quantity
+   - Supports both serving and grams units
+   - Shows as "1.5인분" or "150g" format
+
+Key Implementation Details:
+- Extracted from FoodDetailView.swift into reusable component
+- Follows nutrition label format for clarity
+- Color-coded nutrients matching other components
+- Computed properties for serving size text and multiplier calculation
+- Conditional rendering for optional nutrients (sodium, fiber, sugar)
+- Real-time recalculation based on quantity and unit changes
+
+Commit: 74748f7
+Next: Phase 6.1 - ManualFoodEntryViewModel
+
+Phase 5 (UI - Food Detail & Screen) Status: ✅ COMPLETED (4/4 subtasks)
+

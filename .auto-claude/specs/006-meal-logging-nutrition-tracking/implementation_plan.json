@@ -420,7 +420,7 @@
           "id": "5.4",
           "title": "Create NutritionFactsCard",
           "description": "Implement nutrition facts card showing detailed breakdown like a nutrition label.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Views/Diet/Components/NutritionFactsCard.swift"
           ],
@@ -433,7 +433,8 @@
             "Serving size info"
           ],
           "estimated_hours": 1.5,
-          "notes": ""
+          "notes": "Successfully implemented NutritionFactsCard component with all required functionality:\n\n**New Component Created:**\n- NutritionFactsCard.swift (394 lines)\n  * Reusable card component for displaying nutrition facts\n  * Shows calories prominently with title3 font\n  * Displays carbohydrates, protein, fat with color coding (blue, orange, purple)\n  * Shows optional nutrients (sodium, fiber, sugar) when available\n  * Includes serving size/quantity info in header\n  * Real-time calculation based on quantity and unit\n  * Follows nutrition label format for clarity\n\n**Updated Files:**\n- FoodDetailView.swift (reduced from 556 to 419 lines)\n  * Removed nutritionFactsSection method (91 lines)\n  * Removed nutritionRow helper method (19 lines)\n  * Removed calculateMultiplier helper method (8 lines)\n  * Now uses extracted NutritionFactsCard component\n  * Cleaner separation of concerns and improved reusability\n\n**Key Features:**\n1. Calories prominently displayed:\n   - Large, bold font (title3)\n   - Separate section with divider\n   - Clear kcal unit display\n\n2. Carbohydrates with fiber/sugar breakdown:\n   - Carbs shown in macros section (blue color)\n   - Fiber shown in optional nutrients section (green color) when available\n   - Sugar shown in optional nutrients section (pink color) when available\n\n3. Protein amount:\n   - Displayed with orange color indicator\n   - Formatted with g unit\n\n4. Fat amount:\n   - Displayed with purple color indicator\n   - Formatted with g unit\n\n5. Sodium amount (if available):\n   - Shows in optional nutrients section (gray color)\n   - Only displayed when food has sodium data\n   - Formatted with mg unit\n\n6. Serving size info:\n   - Displayed in header with quantity\n   - Supports both serving and grams units\n   - Shows as \"1.5\uc778\ubd84\" or \"150g\" format\n\n**Code Quality:**\n- Follows established patterns from NutritionSummaryCard and ServingSizePicker\n- Korean and English documentation following project style\n- SwiftUI best practices with proper view composition\n- Type-safe with comprehensive computed properties\n- Comprehensive #Preview with 4 different examples:\n  * Basic nutrients only (\ubc31\ubbf8\ubc25)\n  * All nutrients included (\ub2ed\uac00\uc2b4\uc0b4 1.5\uc778\ubd84)\n  * Grams unit (\uace0\uad6c\ub9c8 150g)\n  * Fractional serving (\uc544\ubcf4\uce74\ub3c4 0.5\uc778\ubd84)\n- Proper color coding for visual hierarchy\n\n**All Acceptance Criteria Met:**\n\u2705 Calories prominently displayed\n\u2705 Carbohydrates with fiber/sugar breakdown\n\u2705 Protein amount\n\u2705 Fat amount\n\u2705 Sodium amount (if available)\n\u2705 Serving size info\n\nFile created:\n- Bodii/Presentation/Features/Diet/Views/Components/NutritionFactsCard.swift (394 lines)\n\nFile modified:\n- Bodii/Presentation/Features/Diet/Views/FoodDetailView.swift (419 lines, reduced by 137 lines)\n\nCommit: 74748f7\nStatus: Ready for production use in Phase 5 and beyond",
+          "updated_at": "2026-01-13T09:07:20.495633+00:00"
         }
       ]
     },
@@ -447,7 +448,7 @@
           "id": "6.1",
           "title": "Create ManualFoodEntryViewModel",
           "description": "Implement ViewModel for manual food entry with validation and save functionality.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/ViewModels/ManualFoodEntryViewModel.swift"
           ],
@@ -459,7 +460,8 @@
             "Add to meal after saving"
           ],
           "estimated_hours": 2,
-          "notes": ""
+          "notes": "Successfully implemented ManualFoodEntryViewModel with all required functionality:\n\n**Core Features:**\n1. Input fields for all nutrition values:\n   - Required fields: foodName, calories, servingSize\n   - Optional fields: servingUnit, carbohydrates, protein, fat, sodium, fiber, sugar\n   - All fields use @Published for SwiftUI binding\n\n2. Validate required fields (name, calories, servingSize):\n   - foodName: Non-empty, max 100 characters\n   - calories: Required, 0-9999 range\n   - servingSize: Required, > 0, max 9999g\n   - User-friendly Korean error messages\n\n3. Validate numeric values:\n   - All numeric fields validated for non-negative values\n   - Proper decimal parsing with fallback to 0\n   - Optional fields (sodium, fiber, sugar) return nil when empty\n   - Range validation for all fields\n\n4. Save as user-defined food:\n   - Creates Food entity with FoodSource.userDefined\n   - Sets createdByUserId to current user\n   - Saves to FoodRepository\n   - Includes all nutrition information (required + optional)\n\n5. Add to meal after saving:\n   - Automatically adds saved food to meal via FoodRecordService\n   - Uses default quantity of 1.0 serving\n   - Updates DailyLog automatically through service layer\n   - Maintains date, mealType, BMR, and TDEE context\n\n**Additional Features:**\n- ValidationErrors struct for field-specific error messages\n- clearFields() method to reset form\n- Computed properties for parsed values (parsedCalories, parsedServingSize, etc.)\n- canSave and hasRequiredFields computed properties for UI state\n- Error handling with user-friendly messages\n- Loading state management (isSaving)\n\n**Code Quality:**\n- Follows established patterns from FoodDetailViewModel\n- Korean and English documentation\n- @MainActor for thread-safety with SwiftUI\n- Protocol-based dependency injection for testability\n- Swift Concurrency (async/await)\n- ObservableObject for SwiftUI integration\n- Comprehensive computed properties for UI logic\n\n**All Acceptance Criteria Met:**\n\u2705 Input fields for all nutrition values\n\u2705 Validate required fields (name, calories)\n\u2705 Validate numeric values\n\u2705 Save as user-defined food\n\u2705 Add to meal after saving\n\nFile created:\n- Bodii/Presentation/Features/Diet/ViewModels/ManualFoodEntryViewModel.swift (470 lines)\n\nCommit: b9c7a89\nStatus: Ready for UI integration (Phase 6 - subtask 6.2)",
+          "updated_at": "2026-01-13T09:10:28.368506+00:00"
         },
         {
           "id": "6.2",
@@ -634,5 +636,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T09:04:46.430567+00:00"
+  "last_updated": "2026-01-13T09:10:28.368519+00:00"
 }
