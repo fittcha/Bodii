@@ -239,9 +239,57 @@ All acceptance criteria met ✓
 
 All 8 acceptance criteria met ✓
 
+[2026-01-13 - Subtask 2.5 COMPLETED]
+✅ ExerciseCardView Component Implementation
+- Created Bodii/Features/Exercise/Views/Components/ExerciseCardView.swift
+- Reusable card component for displaying single exercise record
+- Shows exercise type icon with colored circular background:
+  * SF Symbols: figure.walk, figure.run, bicycle, figure.pool.swim, etc.
+  * 50x50 circle with 15% opacity background
+  * Color-coded by type (walking: green, running: blue, cycling: orange, etc.)
+- Shows exercise type name using ExerciseType.displayName
+- Shows duration in minutes with clock icon
+- Shows intensity level with visual indicators:
+  * Low: circle icon
+  * Medium: circle.lefthalf.filled icon
+  * High: circle.fill icon
+- Shows calories burned prominently (title3 font, bold, orange color)
+- Consistent styling with ExerciseListView:
+  * Rounded corners (12pt radius)
+  * Shadow effects (black 5% opacity)
+  * Proper padding and spacing
+- Helper methods for icon, color, and intensity mapping
+- Comprehensive SwiftUI preview with multiple exercise examples
+- Committed: 2d2430d
+
+All 6 acceptance criteria met ✓
+
+[2026-01-13 - Subtask 2.6 COMPLETED]
+✅ ExerciseTypeGridView Component Implementation
+- Created Bodii/Features/Exercise/Views/Components/ExerciseTypeGridView.swift
+- Reusable grid component for selecting exercise type
+- Grid layout:
+  * LazyVGrid with 4 columns, 12pt spacing
+  * Displays all 8 exercise types
+  * Flexible layout adapts to available space
+- Exercise type buttons:
+  * 50×50pt circular icons (accessible tap targets)
+  * SF Symbols: figure.walk, figure.run, bicycle, figure.pool.swim, dumbbell.fill,
+    figure.cross.training, figure.yoga, figure.mixed.cardio
+  * Color-coded by type: green/walking, blue/running, orange/cycling, cyan/swimming,
+    red/weight, purple/crossfit, pink/yoga, gray/other
+- Selection state with visual highlighting:
+  * Selected: filled circle with type color, white icon, colored semibold label
+  * Unselected: gray circle background, primary icon, regular label
+- Binding<ExerciseType> parameter for two-way data flow
+- Extracted from ExerciseInputView for better code reusability
+- Helper methods for icon and color mapping
+- Comprehensive SwiftUI preview with multiple selection states
+- Committed: 8f0ff5f
+
+All 4 acceptance criteria met ✓
+
 ## Next Steps
-- Phase 2 UI Layer in progress (4/7 completed)
+- Phase 2 UI Layer in progress (6/7 completed)
 - Continue with remaining UI components:
-  * Subtask 2.5: Create ExerciseCardView component
-  * Subtask 2.6: Create ExerciseTypeGridView component
   * Subtask 2.7: Add SF Symbol icons to ExerciseType enum
