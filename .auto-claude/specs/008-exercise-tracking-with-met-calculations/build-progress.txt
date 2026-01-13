@@ -11,13 +11,13 @@ Implement exercise logging with activity type selection, duration input, and aut
 
 | Phase | Name | Subtasks | Status |
 |-------|------|----------|--------|
-| 1 | Core Services and Data Layer | 5 | In Progress (2/5) |
+| 1 | Core Services and Data Layer | 5 | Completed (5/5) |
 | 2 | Use Cases and Business Logic | 4 | Pending |
 | 3 | UI - Exercise List View | 4 | Pending |
 | 4 | UI - Exercise Input Modal | 5 | Pending |
 | 5 | Integration and Testing | 5 | Pending |
 
-**Total Subtasks: 23 | Completed: 2 | In Progress: 3 | Pending: 18**
+**Total Subtasks: 23 | Completed: 5 | In Progress: 0 | Pending: 18**
 
 ---
 
@@ -78,12 +78,47 @@ Example: Running 30 min, high intensity, 75kg
   - Comprehensive documentation with usage examples
   - Located in: Bodii/Domain/Interfaces/ExerciseRecordRepository.swift
 
+- ✅ [1.3] Created ExerciseRecordLocalDataSource
+  - Core Data operations with async/await pattern
+  - CRUD operations: create, update, delete
+  - Multiple read methods with date filtering
+  - Utility methods: count, totalDuration, totalCaloriesBurned
+  - Thread-safe context.perform blocks
+  - NSManagedObject ↔ Domain Entity mapping
+  - Comprehensive Korean learning comments
+  - Located in: Bodii/Data/DataSources/Local/ExerciseRecordLocalDataSource.swift
+
+- ✅ [1.4] Implemented ExerciseRecordRepositoryImpl
+  - Implements ExerciseRecordRepository protocol
+  - Delegates all operations to ExerciseRecordLocalDataSource
+  - Clean Architecture separation between domain and data layers
+  - Comprehensive documentation with pattern explanations
+  - Located in: Bodii/Data/Repositories/ExerciseRecordRepositoryImpl.swift
+
+- ✅ [1.5] Created DailyLogService and infrastructure
+  - **DailyLogRepository protocol**: getOrCreate, addExercise, removeExercise, updateExercise methods
+  - **DailyLogLocalDataSource**: Core Data operations for DailyLog entity
+    - Date normalization to startOfDay for consistency
+    - Thread-safe async/await pattern
+    - Automatic User relationship management
+    - Exercise field increment/decrement with negative value protection
+  - **DailyLogRepositoryImpl**: Clean Architecture implementation
+  - **DailyLogService**: High-level service for DailyLog updates
+    - getOrCreate with User.currentBMR/TDEE values
+    - addExercise ensures DailyLog exists before updating
+    - removeExercise decrements totalCaloriesOut, exerciseMinutes, exerciseCount
+    - updateExercise applies difference calculation
+    - Comprehensive documentation with usage examples
+  - Files:
+    - Bodii/Domain/Interfaces/DailyLogRepository.swift
+    - Bodii/Data/DataSources/Local/DailyLogLocalDataSource.swift
+    - Bodii/Data/Repositories/DailyLogRepositoryImpl.swift
+    - Bodii/Domain/Services/DailyLogService.swift
+
 ---
 
 ## Next Steps
-1. ⏳ Subtask 1.3: Create ExerciseRecordLocalDataSource (Core Data implementation)
-2. Subtask 1.4: Implement ExerciseRecordRepositoryImpl
-3. Subtask 1.5: Create DailyLogService for exercise updates
-4. Phase 2: Build use cases for CRUD operations
-5. Phase 3-4: Implement UI components
-6. Phase 5: Integrate and test
+1. Phase 2: Build use cases for CRUD operations (AddExerciseRecordUseCase, UpdateExerciseRecordUseCase, etc.)
+2. Phase 3: Implement Exercise List UI (ViewModel, Views, Components)
+3. Phase 4: Implement Exercise Input Modal (ViewModel, Views, Components)
+4. Phase 5: Integrate with DI container and write tests
