@@ -128,3 +128,68 @@ Files created:
 Commit: ae1d29e
 Status: Ready for use in view models (Phase 2+)
 
+[2026-01-13 17:18] Subtask 2.1 - LocalFoodSearchService - COMPLETED
+====================================================================
+Created FoodSearchServiceProtocol and LocalFoodSearchService for intelligent food search with Korean food prioritization.
+
+Implementation details:
+- FoodSearchServiceProtocol: Service interface for food search operations
+- LocalFoodSearchService: Implementation with priority-based sorting algorithm
+
+Key features implemented:
+1. searchFoods: Search by name with intelligent priority sorting
+   - 4-tier priority system:
+     * Priority 1: Korean foods (governmentAPI) + frequently used
+     * Priority 2: Korean foods (governmentAPI) + regular
+     * Priority 3: Other sources + frequently used
+     * Priority 4: Other sources + regular
+   - Alphabetical sorting within same priority (Korean/English)
+   - Empty query handling (returns empty array)
+   - Nutrition preview included in results
+   
+2. getRecentFoods: Get recent foods (last 30 days, max 10)
+   - Delegates to FoodRepository.getRecentFoods
+   - Limits results to 10 items
+   
+3. getFrequentFoods: Get frequently used foods (max 10)
+   - Delegates to FoodRepository.getFrequentFoods
+   - Limits results to 10 items
+
+Priority calculation algorithm:
+- Combines food source (governmentAPI vs others) with usage frequency
+- Lower priority number = higher ranking
+- Secondary sort by name for consistent ordering
+
+Test coverage:
+- LocalFoodSearchServiceTests (20+ test cases)
+  * Empty/whitespace query handling
+  * No results handling
+  * 4-tier priority sorting verification
+  * Name-based secondary sorting
+  * All food source types (governmentAPI, usda, userDefined)
+  * Nutrition preview verification
+  * Recent/frequent foods limiting
+  * Edge cases and empty results
+
+MockFoodRepository updates:
+- Added searchResults, recentFoods, frequentFoods properties
+- Updated search method signature to match protocol
+- Added getUserDefinedFoods method
+
+Files created:
+- Bodii/Domain/Services/FoodSearchServiceProtocol.swift (65 lines)
+- Bodii/Domain/Services/LocalFoodSearchService.swift (131 lines)
+- BodiiTests/LocalFoodSearchServiceTests.swift (530 lines)
+
+Files modified:
+- BodiiTests/FoodRecordServiceTests.swift (MockFoodRepository enhancement)
+
+All acceptance criteria met:
+✅ Search foods by name (contains match)
+✅ Sort results by relevance/frequency
+✅ Return nutrition preview in results
+✅ Handle empty search results
+
+Commit: dac993c
+Status: Ready for use in FoodSearchViewModel (subtask 2.3)
+
