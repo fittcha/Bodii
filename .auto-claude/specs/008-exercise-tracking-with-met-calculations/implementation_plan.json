@@ -111,8 +111,8 @@
           "id": "2.1",
           "title": "Create AddExerciseRecordUseCase",
           "description": "Implement use case for adding a new exercise record. Calculate calories using ExerciseCalcService and update DailyLog through DailyLogService.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Created AddExerciseRecordUseCase with complete business logic flow. The use case validates exercise duration (minimum 1 minute), calculates calories using ExerciseCalcService.calculateCalories() with MET formula, creates and saves ExerciseRecord via ExerciseRecordRepository.create(), and updates DailyLog via DailyLogService.addExercise() (increments totalCaloriesOut, exerciseMinutes, exerciseCount). Accepts user parameters (weight, BMR, TDEE) to avoid tight coupling to UserRepository. Includes comprehensive documentation with usage examples and Clean Architecture pattern explanations.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/AddExerciseRecordUseCase.swift"
           ],
@@ -121,7 +121,8 @@
             "Saves ExerciseRecord via repository",
             "Updates DailyLog via DailyLogService",
             "Validates exercise duration (min 1 minute)"
-          ]
+          ],
+          "updated_at": "2026-01-13T19:20:00.000Z"
         },
         {
           "id": "2.2",
@@ -431,5 +432,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T10:15:20.441587+00:00"
+  "last_updated": "2026-01-13T19:20:00.000000+00:00"
 }
