@@ -1,0 +1,432 @@
+{
+  "feature": "Exercise Tracking with MET Calculations",
+  "description": "Exercise logging with activity type selection, duration input, and automatic calorie burn calculation using MET (Metabolic Equivalent of Task) values. Track both cardio and strength training with appropriate calculations.",
+  "created_at": "2026-01-13T09:55:58.414Z",
+  "updated_at": "2026-01-13T19:00:00.000Z",
+  "status": "in_progress",
+  "planStatus": "ready",
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Core Services & Data Layer",
+      "description": "Implement the core calculation service, repository interfaces, and data access layer for exercise records",
+      "subtasks": [
+        {
+          "id": "1.1",
+          "title": "Create ExerciseCalcService for MET-based calorie calculation",
+          "description": "Implement the service that calculates calories burned using the MET formula: calories = MET \u00d7 weight(kg) \u00d7 duration(hours). Use ExerciseType.baseMET and Intensity.metMultiplier for accurate calculations.",
+          "status": "completed",
+          "notes": "Implemented ExerciseCalcService with MET-based calorie calculation. Service correctly applies formula: calories = MET \u00d7 weight(kg) \u00d7 duration(hours), with intensity multipliers (0.8, 1.0, 1.2) applied to base MET values. Returns Int32 and handles all 8 exercise types.",
+          "files": [
+            "Bodii/Domain/Services/ExerciseCalcService.swift"
+          ],
+          "acceptance_criteria": [
+            "Service uses formula: MET \u00d7 weight(kg) \u00d7 duration(hours)",
+            "Correctly applies intensity multipliers (0.8, 1.0, 1.2)",
+            "Returns Int32 for calories burned",
+            "Handles all 8 exercise types with correct MET values"
+          ],
+          "updated_at": "2026-01-13T10:02:07.200738+00:00"
+        },
+        {
+          "id": "1.2",
+          "title": "Create ExerciseRecordRepository protocol",
+          "description": "Define the repository interface for ExerciseRecord CRUD operations following the Clean Architecture pattern. Include methods for create, read (by date, by ID), update, and delete.",
+          "status": "completed",
+          "notes": "Created ExerciseRecordRepository protocol with full CRUD operations (create, update, delete) and multiple read methods (fetchById, fetchByDate, fetchByDateRange, fetchAll). Added utility methods for aggregations (count, totalDuration, totalCaloriesBurned). Uses async/await pattern throughout for modern Swift concurrency. Includes comprehensive documentation with examples.",
+          "files": [
+            "Bodii/Domain/Interfaces/ExerciseRecordRepository.swift"
+          ],
+          "acceptance_criteria": [
+            "Protocol defines create, read, update, delete methods",
+            "Includes fetchByDate and fetchByDateRange methods",
+            "Follows existing repository patterns in codebase",
+            "Uses async/await or Combine for async operations"
+          ],
+          "updated_at": "2026-01-13T19:15:00.000Z"
+        },
+        {
+          "id": "1.3",
+          "title": "Create ExerciseRecordLocalDataSource",
+          "description": "Implement Core Data operations for ExerciseRecord entity. Map between Core Data managed objects and domain entities.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Data/DataSources/Local/ExerciseRecordLocalDataSource.swift"
+          ],
+          "acceptance_criteria": [
+            "CRUD operations using Core Data",
+            "Maps NSManagedObject to domain ExerciseRecord entity",
+            "Proper error handling",
+            "Supports filtering by date and user"
+          ]
+        },
+        {
+          "id": "1.4",
+          "title": "Implement ExerciseRecordRepositoryImpl",
+          "description": "Implement the repository that coordinates between data sources and domain layer. Use ExerciseRecordLocalDataSource for persistence.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Data/Repositories/ExerciseRecordRepositoryImpl.swift"
+          ],
+          "acceptance_criteria": [
+            "Implements ExerciseRecordRepository protocol",
+            "Uses ExerciseRecordLocalDataSource for data operations",
+            "Proper entity mapping",
+            "Handles Core Data save context"
+          ]
+        },
+        {
+          "id": "1.5",
+          "title": "Create DailyLogService for exercise updates",
+          "description": "Implement service to update DailyLog when exercise records are added/modified/deleted. Update totalCaloriesOut, exerciseMinutes, and exerciseCount fields.",
+          "status": "pending",
+          "notes": "May need DailyLogRepository if not existing",
+          "files": [
+            "Bodii/Domain/Services/DailyLogService.swift",
+            "Bodii/Domain/Interfaces/DailyLogRepository.swift",
+            "Bodii/Data/DataSources/Local/DailyLogLocalDataSource.swift",
+            "Bodii/Data/Repositories/DailyLogRepositoryImpl.swift"
+          ],
+          "acceptance_criteria": [
+            "getOrCreate(for date) method returns or creates DailyLog",
+            "addExercise method increments totalCaloriesOut, exerciseMinutes, exerciseCount",
+            "removeExercise method decrements the fields",
+            "updateExercise method adjusts the difference",
+            "Uses User.currentBMR/TDEE when creating new DailyLog"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "Use Cases & Business Logic",
+      "description": "Implement use cases that orchestrate the business logic for exercise tracking",
+      "subtasks": [
+        {
+          "id": "2.1",
+          "title": "Create AddExerciseRecordUseCase",
+          "description": "Implement use case for adding a new exercise record. Calculate calories using ExerciseCalcService and update DailyLog through DailyLogService.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Domain/UseCases/Exercise/AddExerciseRecordUseCase.swift"
+          ],
+          "acceptance_criteria": [
+            "Calculates calories using ExerciseCalcService",
+            "Saves ExerciseRecord via repository",
+            "Updates DailyLog via DailyLogService",
+            "Validates exercise duration (min 1 minute)"
+          ]
+        },
+        {
+          "id": "2.2",
+          "title": "Create UpdateExerciseRecordUseCase",
+          "description": "Implement use case for updating an existing exercise record. Recalculate calories and adjust DailyLog accordingly.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Domain/UseCases/Exercise/UpdateExerciseRecordUseCase.swift"
+          ],
+          "acceptance_criteria": [
+            "Recalculates calories if type, duration, or intensity changed",
+            "Updates ExerciseRecord via repository",
+            "Adjusts DailyLog with difference in calories/minutes"
+          ]
+        },
+        {
+          "id": "2.3",
+          "title": "Create DeleteExerciseRecordUseCase",
+          "description": "Implement use case for deleting an exercise record. Update DailyLog to remove the calories and minutes.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Domain/UseCases/Exercise/DeleteExerciseRecordUseCase.swift"
+          ],
+          "acceptance_criteria": [
+            "Deletes ExerciseRecord via repository",
+            "Decrements DailyLog fields by deleted record values",
+            "Decrements exerciseCount by 1"
+          ]
+        },
+        {
+          "id": "2.4",
+          "title": "Create GetExerciseRecordsUseCase",
+          "description": "Implement use case for fetching exercise records by date or date range.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Domain/UseCases/Exercise/GetExerciseRecordsUseCase.swift"
+          ],
+          "acceptance_criteria": [
+            "Fetches records for a specific date",
+            "Fetches records for a date range",
+            "Returns sorted by date (newest first or by creation time)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "name": "UI - Exercise List View",
+      "description": "Implement the main exercise list view showing daily exercise records",
+      "subtasks": [
+        {
+          "id": "3.1",
+          "title": "Create ExerciseListViewModel",
+          "description": "Implement the ViewModel for ExerciseListView. Manage state for exercise records, loading, and daily summary. Use GetExerciseRecordsUseCase for data fetching.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseListViewModel.swift"
+          ],
+          "acceptance_criteria": [
+            "Fetches exercise records for selected date",
+            "Exposes totalCaloriesOut, exerciseMinutes, exerciseCount from DailyLog",
+            "Handles loading and error states",
+            "Supports date navigation (previous/next day)"
+          ]
+        },
+        {
+          "id": "3.2",
+          "title": "Create ExerciseCardView component",
+          "description": "Create a reusable card component showing exercise details: type icon, name, duration, intensity, and calories burned.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Presentation/Components/ExerciseCardView.swift"
+          ],
+          "acceptance_criteria": [
+            "Shows exercise type icon and name",
+            "Shows duration in minutes",
+            "Shows intensity level (\uc800/\uc911/\uace0)",
+            "Shows calories burned",
+            "Supports swipe-to-delete gesture"
+          ]
+        },
+        {
+          "id": "3.3",
+          "title": "Create ExerciseListView",
+          "description": "Implement the main exercise tab view with date navigation, daily summary, exercise list, and add button.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift"
+          ],
+          "acceptance_criteria": [
+            "Date header with left/right navigation",
+            "Daily summary card (total calories, total minutes, exercise count)",
+            "List of ExerciseCardView for each record",
+            "Floating add button or navigation bar button",
+            "Empty state when no exercises",
+            "Pull-to-refresh support"
+          ]
+        },
+        {
+          "id": "3.4",
+          "title": "Create DailySummaryCardView for exercises",
+          "description": "Create a summary card showing today's exercise totals: calories burned, total minutes, and exercise count.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Presentation/Features/Exercise/Views/Components/ExerciseDailySummaryCard.swift"
+          ],
+          "acceptance_criteria": [
+            "Shows total calories burned with icon",
+            "Shows total exercise time in hours:minutes format",
+            "Shows number of workout sessions",
+            "Visual distinction when no exercises logged"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "name": "UI - Exercise Input Modal",
+      "description": "Implement the exercise input/edit modal with real-time calorie calculation",
+      "subtasks": [
+        {
+          "id": "4.1",
+          "title": "Create ExerciseInputViewModel",
+          "description": "Implement ViewModel for the exercise input modal. Handle form state, validation, real-time calorie preview, and save action.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseInputViewModel.swift"
+          ],
+          "acceptance_criteria": [
+            "Manages form state (type, duration, intensity, note)",
+            "Calculates preview calories in real-time using ExerciseCalcService",
+            "Gets user weight from User.currentWeight for calculation",
+            "Validates minimum duration (1 minute)",
+            "Calls AddExerciseRecordUseCase on save"
+          ]
+        },
+        {
+          "id": "4.2",
+          "title": "Create ExerciseTypeGridView component",
+          "description": "Create a grid of exercise type buttons for selection. Each button shows icon and name, with selected state highlighting.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Presentation/Features/Exercise/Views/Components/ExerciseTypeGridView.swift"
+          ],
+          "acceptance_criteria": [
+            "Grid layout with all 8 exercise types",
+            "Each item shows icon and Korean name",
+            "Visual feedback for selected type",
+            "Tappable with animation"
+          ]
+        },
+        {
+          "id": "4.3",
+          "title": "Create IntensityPickerView component",
+          "description": "Create a segmented control or picker for intensity selection (\uc800\uac15\ub3c4/\uc911\uac15\ub3c4/\uace0\uac15\ub3c4).",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Presentation/Features/Exercise/Views/Components/IntensityPickerView.swift"
+          ],
+          "acceptance_criteria": [
+            "Three options: \uc800\uac15\ub3c4, \uc911\uac15\ub3c4, \uace0\uac15\ub3c4",
+            "Segmented control or horizontal buttons",
+            "Default selection: \uc911\uac15\ub3c4",
+            "Shows MET multiplier info (optional)"
+          ]
+        },
+        {
+          "id": "4.4",
+          "title": "Create DurationInputView component",
+          "description": "Create duration input with stepper or slider. Show duration in minutes with quick increment buttons.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Presentation/Features/Exercise/Views/Components/DurationInputView.swift"
+          ],
+          "acceptance_criteria": [
+            "Numeric input for minutes",
+            "Quick buttons for common durations (15, 30, 45, 60 min)",
+            "Stepper for fine adjustment",
+            "Minimum 1 minute validation"
+          ]
+        },
+        {
+          "id": "4.5",
+          "title": "Create ExerciseInputView modal",
+          "description": "Implement the full exercise input modal combining all components. Show real-time calorie preview as user makes selections.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Presentation/Features/Exercise/Views/ExerciseInputView.swift"
+          ],
+          "acceptance_criteria": [
+            "Sheet modal presentation",
+            "Exercise type grid selection",
+            "Duration input with validation",
+            "Intensity picker",
+            "Optional note input",
+            "Real-time calorie preview",
+            "Save and Cancel buttons",
+            "Loading state during save"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "name": "Integration & Testing",
+      "description": "Integrate with DI container, add to tab navigation, and write tests",
+      "subtasks": [
+        {
+          "id": "5.1",
+          "title": "Register exercise services in DIContainer",
+          "description": "Register all exercise-related services, repositories, and use cases in DIContainer for dependency injection.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "acceptance_criteria": [
+            "ExerciseCalcService registered",
+            "ExerciseRecordRepository registered",
+            "DailyLogService registered",
+            "All use cases registered",
+            "ViewModels can resolve dependencies"
+          ]
+        },
+        {
+          "id": "5.2",
+          "title": "Integrate ExerciseListView into TabView",
+          "description": "Add ExerciseListView to the main tab navigation with appropriate icon and label.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/App/ContentView.swift"
+          ],
+          "acceptance_criteria": [
+            "Exercise tab visible in TabView",
+            "Appropriate icon (figure.run or similar)",
+            "Korean label: \uc6b4\ub3d9",
+            "Correct tab order per design"
+          ]
+        },
+        {
+          "id": "5.3",
+          "title": "Write unit tests for ExerciseCalcService",
+          "description": "Test MET-based calorie calculations for all exercise types and intensity levels.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "BodiiTests/ExerciseCalcServiceTests.swift"
+          ],
+          "acceptance_criteria": [
+            "Test walking at all intensity levels",
+            "Test running at all intensity levels",
+            "Test all 8 exercise types",
+            "Verify formula: MET \u00d7 weight \u00d7 hours",
+            "Edge cases: 1 minute, large durations"
+          ]
+        },
+        {
+          "id": "5.4",
+          "title": "Write unit tests for DailyLog exercise updates",
+          "description": "Test that DailyLog correctly updates when exercises are added, updated, or deleted.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "BodiiTests/DailyLogServiceTests.swift"
+          ],
+          "acceptance_criteria": [
+            "Test adding exercise updates totals correctly",
+            "Test removing exercise decrements totals",
+            "Test updating exercise adjusts difference",
+            "Test exerciseCount increments/decrements"
+          ]
+        },
+        {
+          "id": "5.5",
+          "title": "Add exercise validation to ValidationService",
+          "description": "Add validation rules for exercise input (duration, intensity) to existing ValidationService.",
+          "status": "pending",
+          "notes": "",
+          "files": [
+            "Bodii/Shared/Utils/ValidationService.swift",
+            "BodiiTests/ValidationServiceTests.swift"
+          ],
+          "acceptance_criteria": [
+            "validateExerciseDuration method (min 1 minute)",
+            "validateExerciseIntensity method (0, 1, or 2)",
+            "Add tests for exercise validation"
+          ]
+        }
+      ]
+    }
+  ],
+  "qa_sign_off": {
+    "status": "pending",
+    "tests_passed": "",
+    "issues": ""
+  },
+  "last_updated": "2026-01-13T10:02:07.200747+00:00"
+}

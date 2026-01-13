@@ -1,0 +1,89 @@
+# Exercise Tracking with MET Calculations - Build Progress
+
+## Feature Overview
+Implement exercise logging with activity type selection, duration input, and automatic calorie burn calculation using MET (Metabolic Equivalent of Task) values.
+
+---
+
+## Implementation Plan Created: 2026-01-13
+
+### Phases Overview
+
+| Phase | Name | Subtasks | Status |
+|-------|------|----------|--------|
+| 1 | Core Services and Data Layer | 5 | In Progress (2/5) |
+| 2 | Use Cases and Business Logic | 4 | Pending |
+| 3 | UI - Exercise List View | 4 | Pending |
+| 4 | UI - Exercise Input Modal | 5 | Pending |
+| 5 | Integration and Testing | 5 | Pending |
+
+**Total Subtasks: 23 | Completed: 2 | In Progress: 3 | Pending: 18**
+
+---
+
+## Existing Infrastructure (Already Implemented)
+
+- ExerciseRecord domain entity (Bodii/Domain/Entities/ExerciseRecord.swift)
+- ExerciseType enum with baseMET values (Bodii/Shared/Enums/ExerciseType.swift)
+- Intensity enum with metMultiplier (Bodii/Shared/Enums/Intensity.swift)
+- DailyLog entity with exercise fields (totalCaloriesOut, exerciseMinutes, exerciseCount)
+- User entity with currentWeight for MET calculations
+- Core Data model for ExerciseRecord entity
+- PersistenceController for Core Data operations
+- Folder structure exists (Presentation/Features/Exercise/Views, ViewModels)
+- ValidationService exists (can be extended)
+
+---
+
+## Key MET Calculation Formula
+
+```
+Calories Burned = MET x Weight(kg) x Duration(hours)
+```
+
+Intensity Multipliers:
+- Low (저강도): 0.8
+- Medium (중강도): 1.0
+- High (고강도): 1.2
+
+Example: Running 30 min, high intensity, 75kg
+- Base MET for running: 8.0
+- Adjusted MET: 8.0 x 1.2 = 9.6
+- Calories: 9.6 x 75 x 0.5 = 360 kcal
+
+---
+
+## Progress Log
+
+### 2026-01-13
+
+**Planning & Discovery**
+- [PLAN] Created detailed implementation plan with 5 phases, 23 subtasks
+- [DISCOVERY] ExerciseType.baseMET and metValue(for:) already implemented
+- [DISCOVERY] Intensity.metMultiplier already implemented
+- [DISCOVERY] Core Data ExerciseRecord entity exists with all fields
+
+**Phase 1: Core Services & Data Layer**
+- ✅ [1.1] Implemented ExerciseCalcService with MET-based calorie calculation
+  - Supports all 8 exercise types with correct MET values
+  - Applies intensity multipliers (0.8, 1.0, 1.2)
+  - Returns Int32 for calories burned
+  - Includes overload for Decimal weight type
+
+- ✅ [1.2] Created ExerciseRecordRepository protocol
+  - Full CRUD operations: create, update, delete
+  - Multiple read methods: fetchById, fetchByDate, fetchByDateRange, fetchAll
+  - Utility methods: count, totalDuration, totalCaloriesBurned
+  - Uses async/await pattern for modern Swift concurrency
+  - Comprehensive documentation with usage examples
+  - Located in: Bodii/Domain/Interfaces/ExerciseRecordRepository.swift
+
+---
+
+## Next Steps
+1. ⏳ Subtask 1.3: Create ExerciseRecordLocalDataSource (Core Data implementation)
+2. Subtask 1.4: Implement ExerciseRecordRepositoryImpl
+3. Subtask 1.5: Create DailyLogService for exercise updates
+4. Phase 2: Build use cases for CRUD operations
+5. Phase 3-4: Implement UI components
+6. Phase 5: Integrate and test
