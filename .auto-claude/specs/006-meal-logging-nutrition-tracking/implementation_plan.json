@@ -537,7 +537,7 @@
           "id": "7.3",
           "title": "Add Sample Food Data",
           "description": "Create sample Korean food data for testing and initial app usage.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/SampleData/SampleFoods.swift"
           ],
@@ -548,7 +548,8 @@
             "Add serving size information"
           ],
           "estimated_hours": 2,
-          "notes": ""
+          "notes": "Successfully created comprehensive sample Korean food data with all required functionality:\n\n**Foods Created (22 total, exceeds 20+ requirement):**\n\n1. **\ubc25\ub958 (Rice & Grains) - 2 foods:**\n   - \ubc31\ubbf8\ubc25 (White Rice): 300 kcal, 210g per serving\n   - \ud604\ubbf8\ubc25 (Brown Rice): 330 kcal, 210g per serving\n\n2. **\uad6d/\ucc0c\uac1c\ub958 (Soups & Stews) - 6 foods:**\n   - \uae40\uce58\ucc0c\uac1c (Kimchi Stew): 180 kcal, 350g per serving\n   - \ub41c\uc7a5\ucc0c\uac1c (Soybean Paste Stew): 150 kcal, 350g per serving\n   - \ubbf8\uc5ed\uad6d (Seaweed Soup): 80 kcal, 350g per serving\n   - \ucf69\ub098\ubb3c\uad6d (Bean Sprout Soup): 60 kcal, 350g per serving\n   - \uc21c\ub450\ubd80\ucc0c\uac1c (Soft Tofu Stew): 200 kcal, 400g per serving\n   - \uc0bc\uacc4\ud0d5 (Ginseng Chicken Soup): 900 kcal, 800g per serving\n\n3. **\uba54\uc778 \uc694\ub9ac (Main Dishes) - 6 foods:**\n   - \ubd88\uace0\uae30 (Bulgogi): 280 kcal, 150g per serving\n   - \ube44\ube54\ubc25 (Bibimbap): 550 kcal, 450g per serving\n   - \uae40\ubc25 (Kimbap): 420 kcal, 200g per serving\n   - \ub5a1\ubcf6\uc774 (Tteokbokki): 380 kcal, 300g per serving\n   - \ub77c\uba74 (Ramyeon): 510 kcal, 120g per serving\n   - \uce58\ud0a8 (Fried Chicken): 520 kcal, 200g per serving\n\n4. **\ub2e8\ubc31\uc9c8 \uc2dd\ud488 (Protein) - 3 foods:**\n   - \ub2ed\uac00\uc2b4\uc0b4 (Chicken Breast): 165 kcal, 100g per serving\n   - \uacc4\ub780 (Egg): 72 kcal, 50g per serving (1\uac1c)\n   - \ub450\ubd80 (Tofu): 110 kcal, 150g per serving (1/2\ubaa8)\n\n5. **\ucc44\uc18c/\uae40\uce58 (Vegetables) - 1 food:**\n   - \uae40\uce58 (Kimchi): 18 kcal, 40g per serving\n\n6. **\uac04\uc2dd/\uacfc\uc77c (Snacks & Fruits) - 4 foods:**\n   - \uace0\uad6c\ub9c8 (Sweet Potato): 115 kcal, 130g per serving\n   - \ubc14\ub098\ub098 (Banana): 108 kcal, 120g per serving\n   - \uc0ac\uacfc (Apple): 104 kcal, 200g per serving\n   - \uc544\ubcf4\uce74\ub3c4 (Avocado): 240 kcal, 150g per serving\n\n**Nutrition Data Accuracy:**\n- All foods include complete macronutrient data (calories, carbs, protein, fat)\n- Optional nutrients included where appropriate (sodium, fiber, sugar)\n- Data based on Korean government food database standards\n- Realistic serving sizes with Korean units (\uacf5\uae30, \uc778\ubd84, \uac1c, etc.)\n\n**Meal Coverage:**\n- \u2705 Breakfast foods: Rice, eggs, soup\n- \u2705 Lunch foods: Main dishes, stews, bibimbap\n- \u2705 Dinner foods: Bulgogi, soups, rice\n- \u2705 Snacks: Fruits, sweet potato, chicken\n- \u2705 Protein options for all meals\n\n**Code Quality:**\n- All foods use FoodSource.governmentAPI\n- Comprehensive Korean documentation for each food\n- Helper method foods(in:) for category-based retrieval\n- FoodCategory enum for organization\n- Static allFoods property for easy access\n- Follows established code patterns from Food entity\n\n**File Details:**\n- File: Bodii/Data/SampleData/SampleFoods.swift (615 lines)\n- 22 static food properties\n- Category-based organization\n- Korean and English documentation\n\n**All Acceptance Criteria Met:**\n\u2705 Create 20+ common Korean foods (created 22)\n\u2705 Include accurate nutrition data (complete macros + optional nutrients)\n\u2705 Cover breakfast, lunch, dinner categories (all meal types covered)\n\u2705 Add serving size information (all foods have servingSize and servingUnit)\n\n**Usage Example:**\n```swift\n// Get all sample foods\nlet foods = SampleFoods.allFoods\n\n// Get foods by category\nlet riceFoods = SampleFoods.foods(in: .rice)\nlet proteinFoods = SampleFoods.foods(in: .protein)\n\n// Insert into database\nfor food in SampleFoods.allFoods {\n    try await foodRepository.save(food)\n}\n```\n\nCommit: 79875c6\nStatus: Ready for testing and initial app usage",
+          "updated_at": "2026-01-13T09:21:49.483274+00:00"
         },
         {
           "id": "7.4",
@@ -639,5 +640,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T09:18:54.739055+00:00"
+  "last_updated": "2026-01-13T09:21:49.483282+00:00"
 }
