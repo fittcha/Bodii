@@ -29,7 +29,7 @@ Total estimated time: ~10 hours
 - [x] Created implementation_plan.json
 - [x] Phase 1: Core Services Layer (5/5 completed)
 - [x] Phase 2: UI Layer (7/7 completed)
-- [ ] Phase 3: Integration and Navigation
+- [ ] Phase 3: Integration and Navigation (1/2 completed)
 - [ ] Phase 4: Testing
 - [ ] Phase 5: Custom Exercise Support
 
@@ -308,8 +308,28 @@ All 4 acceptance criteria met ✓
 
 All acceptance criteria met ✓
 
+[2026-01-13 - Subtask 3.1 COMPLETED]
+✅ DIContainer Exercise Dependencies Registration
+- Modified Bodii/App/DIContainer.swift
+- Registered all exercise-related repositories:
+  * UserRepository: lazy var with Core Data context injection
+  * ExerciseRecordRepository: lazy var with Core Data context injection
+  * DailyLogRepository: lazy var with Core Data context injection
+- Registered exercise services:
+  * ExerciseCalcService: documented as static service (enum with static methods)
+  * ExerciseRecordService: lazy var with full dependency injection
+    - exerciseRecordRepository
+    - dailyLogRepository
+    - userRepository
+- Added factory methods for ViewModels:
+  * makeExerciseViewModel(): creates ExerciseViewModel with exerciseRecordService
+  * makeExerciseInputViewModel(existingRecord:): creates ExerciseInputViewModel for create/edit modes
+- Used lazy var pattern for efficient memory usage
+- All dependencies properly initialized with PersistenceController.shared.container.viewContext
+- Committed: 53750d9
+
+All 5 acceptance criteria met ✓
+
 ## Next Steps
-- Phase 2 UI Layer completed (7/7) ✓
-- Continue with Phase 3: Integration and Navigation
-  * Subtask 3.1: Update DIContainer with exercise dependencies
+- Phase 3: Integration and Navigation (1/2 completed)
   * Subtask 3.2: Add exercise tab to main TabView
