@@ -1,7 +1,7 @@
 {
   "spec_id": "007-exercise-tracking-with-met-calculations",
   "created_at": "2026-01-13T09:18:15.815020+00:00",
-  "updated_at": "2026-01-13T09:45:49.197383+00:00",
+  "updated_at": "2026-01-13T09:47:11.355809+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -4424,6 +4424,240 @@
           "phase": "coding",
           "tool_name": "Bash",
           "tool_input": "cd . && git add -A && git commit -m \"docs: Upda...",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:45:51.842196+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "[auto-claude/007-exercise-tracking-with-met-calculations 295af08] docs: Update implementation plan and build progress for subtask 2.4\n 3 files changed, 177 insertions(+), 5 deletions(-)",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:46:04.753007+00:00",
+          "type": "text",
+          "content": "Perfect! I've successfully completed **Subtask 2.4: Create ExerciseInputView modal** for the exercise tracking feature. Here's what was implemented:\n\n## ✅ Implementation Summary\n\n### **ExerciseInputView.swift** (414 lines)\nA comprehensive sheet modal for adding/editing exercise records with:\n\n#### 1. **Exercise Type Selection Grid** (4x2 layout)\n   - All 8 exercise types with SF Symbol icons and labels\n   - Visual selection state with color-coded circles\n   - Icons: `figure.walk`, `figure.run`, `bicycle`, `figure.pool.swim`, `dumbbell.fill`, `figure.cross.training`, `figure.yoga`, `figure.mixed.cardio`\n   - Color-coded: running (blue), cycling (orange), swimming (cyan), weight (red), etc.\n\n#### 2. **Duration Input Section**\n   - TextField with number keyboard for manual input\n   - +10/-10 minute stepper buttons for quick adjustments\n   - Real-time validation with error messages (minimum 1 minute)\n\n#### 3. **Intensity Selector**\n   - Three buttons: 저강도 (low), 중강도 (medium), 고강도 (high)\n   - Visual indicators with icons: `circle`, `circle.lefthalf.filled`, `circle.fill`\n   - Color-coded: low (green), medium (orange), high (red)\n\n#### 4. **Date Picker**\n   - Compact date picker for selecting exercise date\n\n#### 5. **Real-Time Calorie Preview**\n   - Large flame icon with calorie count display\n   - Beautiful gradient background (orange to red)\n   - Updates automatically via ExerciseInputViewModel's Combine bindings\n\n#### 6. **Navigation & Actions**\n   - Cancel button (dismisses modal)\n   - Save button (disabled when validation fails)\n   - Dynamic title: \"운동 추가\" (add) or \"운동 수정\" (edit)\n   - Error alerts for failed operations\n\n#### 7. **Integration**\n   - Added `makeInputViewModel()` helper to ExerciseViewModel\n   - Updated ExerciseListView to use ExerciseInputView instead of placeholder\n   - Supports both create and edit modes seamlessly\n\n### **All 8 Acceptance Criteria Met** ✓\n- [x] Exercise type grid with icons and labels for all 8 types\n- [x] Duration input with stepper or number field (minutes)\n- [x] Intensity selector (low/medium/high) with visual indicators\n- [x] Date picker for exercise date\n- [x] Real-time calorie burn preview\n- [x] Save and Cancel buttons\n- [x] Form validation feedback\n- [x] Edit mode shows existing values\n\n### **Commits**\n- `21fa3d2` - ExerciseInputView implementation\n- `295af08` - Documentation updates\n\nThe exercise input modal is now fully functional and ready for use! 🎉",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:13.251191+00:00",
+          "type": "text",
+          "content": "I'll help you implement the ExerciseCardView component. Let me start by reading the relevant context files.",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:13.767841+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...exercise-tracking-with-met-calculations/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...exercise-tracking-with-met-calculations/spec.md",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:14.278067+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...-with-met-calculations/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...-with-met-calculations/implementation_plan.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:14.686011+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ise-tracking-with-met-calculations/context.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ise-tracking-with-met-calculations/context.json",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:14.704856+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→# Exercise Tracking with MET Calculations\n     2→\n     3→Exercise logging with activity type selection, duration input, and automatic calorie burn calculation using MET (Metabolic Equivalent of Task) values. Track both cardio and strength training with appropriate calculations.\n     4→\n     5→## Rationale\n     6→Completes the calorie in/out equation by tracking expenditure. Integrated with body composition and diet data to show net daily balance - something fragmented apps require multiple tools to achieve. Addresses user goal of 'maintaining consistent daily records of health metrics'.\n     7→\n     8→## User Stories\n     9→- As a fitness enthusiast, I want to log my workouts so that I can track my activity level\n    10→- As a user, I want automatic calorie burn calculations so that I know my daily expenditure\n    11→\n    12→## Acceptance Criteria\n    13→- [ ] Users can select from common exercise types (running, cycling, swimming, weights, etc.)\n    14→- [ ] Duration input in minutes with automatic calorie calculation\n    15→- [ ] MET values used for accurate calorie burn based on body weight\n    16→- [ ] Exercise records linked to daily log for aggregation\n    17→- [ ] Daily exercise summary shows total activity calories\n    18→- [ ] Custom exercise entry available for unlisted activities\n    19→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:46:20.522741+00:00",
+          "type": "text",
+          "content": "Now let me check the ExerciseListView to understand how cards are currently being displayed, and look at pattern files for consistent styling:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:21.132703+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Features/Exercise/Views/ExerciseListView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Features/Exercise/Views/ExerciseListView.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:21.453315+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: Bodii/Features/*/Views/Components/*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: Bodii/Features/*/Views/Components/*.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:21.471920+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "session": 1,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:46:29.422804+00:00",
+          "type": "text",
+          "content": "Let me check the ExerciseRecord entity and some other view files to understand the patterns better:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:30.248704+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Entities/ExerciseRecord.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Entities/ExerciseRecord.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:30.863778+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: Bodii/Shared/Enums/*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: Bodii/Shared/Enums/*.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:30.883188+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "session": 1,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:46:34.554655+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/ExerciseType.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/ExerciseType.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:35.062536+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/Intensity.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/Intensity.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:35.080825+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "session": 1,
+          "detail": "     1→//\n     2→//  ExerciseType.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// 운동 종류 열거형\n    11→///\n    12→/// 운동 기록 시 운동의 종류를 나타냅니다.\n    13→/// Core Data 호환성을 위해 Int16 rawValue를 사용합니다.\n    14→///\n    15→/// - Cases:\n    16→///   - walking: 걷기\n    17→///   - running: 러닝\n    18→///   - cycling: 자전거\n    19→///   - swimming: 수영\n    20→///   - weight: 웨이트\n    21→///   - crossfit: 크로스핏\n    22→///   - yoga: 요가\n    23→///   - other: 기타\n    24→///\n    25→/// - Example:\n    26→/// ```swift\n    27→/// let exercise = ExerciseType.running\n    28→/// print(exercise.displayName) // \"러닝\"\n    29→/// print(exercise.baseMET) // 8.0\n    30→/// print(exercise.metValue(for: 2)) // 9.6 (고강도)\n    31→/// ```\n    32→enum ExerciseType: Int16, CaseIterable, Codable {\n    33→    case walking = 0\n    34→    case running = 1\n    35→    case cycling = 2\n    36→    case swimming = 3\n    37→    case weight = 4\n    38→    case crossfit = 5\n    39→    case yoga = 6\n    40→    case other = 7\n    41→\n    42→    /// 사용자에게 표시할 운동 종류 이름\n    43→    var displayName: String {\n    44→        switch self {\n    45→        case .walking: return \"걷기\"\n    46→        case .running: return \"러닝\"\n    47→        case .cycling: return \"자전거\"\n    48→        case .swimming: return \"수영\"\n    49→        case .weight: return \"웨이트\"\n    50→        case .crossfit: return \"크로스핏\"\n    51→        case .yoga: return \"요가\"\n    52→        case .other: return \"기타\"\n    53→        }\n    54→    }\n    55→\n    56→    /// 기본 MET 값 (중강도 기준)\n    57→    ///\n    58→    /// MET (Metabolic Equivalent of Task): 안정 시 산소 소비량 대비 활동 시 산소 소비량의 비율\n    59→    /// 1 MET = 약 1 kcal/kg/hour\n    60→    ///\n    61→    /// - Returns: 중강도 기준 MET 값\n    62→    var baseMET: Double {\n    63→        switch self {\n    64→        case .walking: return 3.5\n    65→        case .running: return 8.0\n    66→        case .cycling: return 6.0\n    67→        case .swimming: return 7.0\n    68→        case .weight: return 6.0\n    69→        case .crossfit: return 8.0\n    70→        case .yoga: return 3.0\n    71→        case .other: return 5.0\n    72→        }\n    73→    }\n    74→\n    75→    /// 강도별 MET 값 조회\n    76→    ///\n    77→    /// 강도 보정 계수:\n    78→    /// - 저강도: 기본 MET × 0.8\n    79→    /// - 중강도: 기본 MET × 1.0\n    80→    /// - 고강도: 기본 MET × 1.2\n    81→    ///\n    82→    /// - Parameter intensity: 운동 강도 (0: 저강도, 1: 중강도, 2: 고강도)\n    83→    /// - Returns: 강도에 따른 MET 값\n    84→    func metValue(for intensity: Int16) -> Double {\n    85→        let multiplier: Double\n    86→        switch intensity {\n    87→        case 0: multiplier = 0.8  // 저강도\n    88→        case 2: multiplier = 1.2  // 고강도\n    89→        default: multiplier = 1.0  // 중강도\n    90→        }\n    91→        return baseMET * multiplier\n    92→    }\n    93→}\n    94→\n    95→// MARK: - Identifiable\n    96→\n    97→extension ExerciseType: Identifiable {\n    98→    var id: Int16 { rawValue }\n    99→}\n   100→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:46:41.507765+00:00",
+          "type": "text",
+          "content": "Perfect! Now I have all the context I need. Let me create the ExerciseCardView component by extracting the card implementation from ExerciseListView:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:58.021293+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...xercise/Views/Components/ExerciseCardView.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...xercise/Views/Components/ExerciseCardView.swift",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:46:58.363214+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "session": 1,
+          "detail": "File created successfully at: ./Bodii/Features/Exercise/Views/Components/ExerciseCardView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:47:03.578377+00:00",
+          "type": "text",
+          "content": "Perfect! I've successfully created the ExerciseCardView component. Let me verify the file structure and commit the changes:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:47:04.352904+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Features/Exercise/Views/Components/",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Features/Exercise/Views/Components/",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:47:04.458352+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "session": 1,
+          "detail": "total 16\ndrwxr-xr-x@ 3 chacha  staff    96 Jan 13 18:46 .\ndrwxr-xr-x@ 5 chacha  staff   160 Jan 13 18:46 ..\n-rw-r--r--@ 1 chacha  staff  5102 Jan 13 18:46 ExerciseCardView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:47:07.771358+00:00",
+          "type": "text",
+          "content": "Excellent! Now let me commit the changes:",
+          "phase": "coding",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:47:09.265166+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add .",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add .",
+          "session": 1
+        },
+        {
+          "timestamp": "2026-01-13T09:47:11.355777+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git commit -m \"auto-claude: 2.5 - Build a reusa...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git commit -m \"auto-claude: 2.5 - Build a reusa...",
           "session": 1
         }
       ]
