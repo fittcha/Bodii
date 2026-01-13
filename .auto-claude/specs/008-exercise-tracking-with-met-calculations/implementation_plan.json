@@ -2,9 +2,9 @@
   "feature": "Exercise Tracking with MET Calculations",
   "description": "Exercise logging with activity type selection, duration input, and automatic calorie burn calculation using MET (Metabolic Equivalent of Task) values. Track both cardio and strength training with appropriate calculations.",
   "created_at": "2026-01-13T09:55:58.414Z",
-  "updated_at": "2026-01-13T19:00:00.000Z",
+  "updated_at": "2026-01-13T10:19:05.212Z",
   "status": "in_progress",
-  "planStatus": "ready",
+  "planStatus": "in_progress",
   "phases": [
     {
       "id": "phase-1",
@@ -14,14 +14,14 @@
         {
           "id": "1.1",
           "title": "Create ExerciseCalcService for MET-based calorie calculation",
-          "description": "Implement the service that calculates calories burned using the MET formula: calories = MET \u00d7 weight(kg) \u00d7 duration(hours). Use ExerciseType.baseMET and Intensity.metMultiplier for accurate calculations.",
+          "description": "Implement the service that calculates calories burned using the MET formula: calories = MET × weight(kg) × duration(hours). Use ExerciseType.baseMET and Intensity.metMultiplier for accurate calculations.",
           "status": "completed",
-          "notes": "Implemented ExerciseCalcService with MET-based calorie calculation. Service correctly applies formula: calories = MET \u00d7 weight(kg) \u00d7 duration(hours), with intensity multipliers (0.8, 1.0, 1.2) applied to base MET values. Returns Int32 and handles all 8 exercise types.",
+          "notes": "Implemented ExerciseCalcService with MET-based calorie calculation. Service correctly applies formula: calories = MET × weight(kg) × duration(hours), with intensity multipliers (0.8, 1.0, 1.2) applied to base MET values. Returns Int32 and handles all 8 exercise types.",
           "files": [
             "Bodii/Domain/Services/ExerciseCalcService.swift"
           ],
           "acceptance_criteria": [
-            "Service uses formula: MET \u00d7 weight(kg) \u00d7 duration(hours)",
+            "Service uses formula: MET × weight(kg) × duration(hours)",
             "Correctly applies intensity multipliers (0.8, 1.0, 1.2)",
             "Returns Int32 for calories burned",
             "Handles all 8 exercise types with correct MET values"
@@ -112,7 +112,7 @@
           "title": "Create AddExerciseRecordUseCase",
           "description": "Implement use case for adding a new exercise record. Calculate calories using ExerciseCalcService and update DailyLog through DailyLogService.",
           "status": "completed",
-          "notes": "Created AddExerciseRecordUseCase with complete business logic flow. The use case validates exercise duration (minimum 1 minute), calculates calories using ExerciseCalcService.calculateCalories() with MET formula, creates and saves ExerciseRecord via ExerciseRecordRepository.create(), and updates DailyLog via DailyLogService.addExercise() (increments totalCaloriesOut, exerciseMinutes, exerciseCount). Accepts user parameters (weight, BMR, TDEE) to avoid tight coupling to UserRepository. Includes comprehensive documentation with usage examples and Clean Architecture pattern explanations.",
+          "notes": "Created AddExerciseRecordUseCase with complete business logic flow. The use case validates exercise duration (minimum 1 minute), calculates calories using ExerciseCalcService.calculateCalories() with MET formula, creates and saves ExerciseRecord via ExerciseRecordRepository.create(), and updates DailyLog via DailyLogService.addExercise() (increments totalCaloriesOut, exerciseMinutes, exerciseCount). Accepts user parameters (weight, BMR, TDEE) to avoid tight coupling to UserRepository. Includes comprehensive documentation with usage examples and Clean Architecture pattern explanations. All acceptance criteria met.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/AddExerciseRecordUseCase.swift"
           ],
@@ -122,7 +122,7 @@
             "Updates DailyLog via DailyLogService",
             "Validates exercise duration (min 1 minute)"
           ],
-          "updated_at": "2026-01-13T19:20:00.000Z"
+          "updated_at": "2026-01-13T10:25:00.000Z"
         },
         {
           "id": "2.2",
@@ -204,7 +204,7 @@
           "acceptance_criteria": [
             "Shows exercise type icon and name",
             "Shows duration in minutes",
-            "Shows intensity level (\uc800/\uc911/\uace0)",
+            "Shows intensity level (저/중/고)",
             "Shows calories burned",
             "Supports swipe-to-delete gesture"
           ]
@@ -286,16 +286,16 @@
         {
           "id": "4.3",
           "title": "Create IntensityPickerView component",
-          "description": "Create a segmented control or picker for intensity selection (\uc800\uac15\ub3c4/\uc911\uac15\ub3c4/\uace0\uac15\ub3c4).",
+          "description": "Create a segmented control or picker for intensity selection (저강도/중강도/고강도).",
           "status": "pending",
           "notes": "",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/Components/IntensityPickerView.swift"
           ],
           "acceptance_criteria": [
-            "Three options: \uc800\uac15\ub3c4, \uc911\uac15\ub3c4, \uace0\uac15\ub3c4",
+            "Three options: 저강도, 중강도, 고강도",
             "Segmented control or horizontal buttons",
-            "Default selection: \uc911\uac15\ub3c4",
+            "Default selection: 중강도",
             "Shows MET multiplier info (optional)"
           ]
         },
@@ -371,7 +371,7 @@
           "acceptance_criteria": [
             "Exercise tab visible in TabView",
             "Appropriate icon (figure.run or similar)",
-            "Korean label: \uc6b4\ub3d9",
+            "Korean label: 운동",
             "Correct tab order per design"
           ]
         },
@@ -388,7 +388,7 @@
             "Test walking at all intensity levels",
             "Test running at all intensity levels",
             "Test all 8 exercise types",
-            "Verify formula: MET \u00d7 weight \u00d7 hours",
+            "Verify formula: MET × weight × hours",
             "Edge cases: 1 minute, large durations"
           ]
         },
@@ -432,5 +432,6 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T19:20:00.000000+00:00"
+  "last_updated": "2026-01-13T10:15:20.441587+00:00",
+  "recoveryNote": "Task recovered from stuck state at 2026-01-13T10:19:05.179Z"
 }
