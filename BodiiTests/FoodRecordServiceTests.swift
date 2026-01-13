@@ -773,6 +773,9 @@ class MockDailyLogRepository: DailyLogRepositoryProtocol {
 /// Mock FoodRepository for testing
 class MockFoodRepository: FoodRepositoryProtocol {
     var foodToReturn: Food?
+    var foodsToReturn: [Food] = []
+    var recentFoodsToReturn: [Food] = []
+    var frequentFoodsToReturn: [Food] = []
 
     func save(_ food: Food) async throws -> Food {
         return food
@@ -793,15 +796,19 @@ class MockFoodRepository: FoodRepositoryProtocol {
     func delete(_ id: UUID) async throws {
     }
 
-    func search(by name: String) async throws -> [Food] {
-        return []
+    func search(name: String) async throws -> [Food] {
+        return foodsToReturn
     }
 
-    func getRecentFoods(userId: UUID, days: Int, limit: Int) async throws -> [Food] {
-        return []
+    func getRecentFoods(userId: UUID) async throws -> [Food] {
+        return recentFoodsToReturn
     }
 
-    func getFrequentFoods(userId: UUID, limit: Int) async throws -> [Food] {
+    func getFrequentFoods(userId: UUID) async throws -> [Food] {
+        return frequentFoodsToReturn
+    }
+
+    func getUserDefinedFoods(userId: UUID) async throws -> [Food] {
         return []
     }
 
