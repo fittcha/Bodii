@@ -1,0 +1,62 @@
+# Exercise Tracking with MET Calculations - Build Progress
+
+## Status: Planning Complete
+Created: 2026-01-13
+
+## Summary
+Implementation plan created with 5 phases and 16 subtasks.
+Total estimated time: ~10 hours
+
+## Phases Overview
+1. Phase 1: Core Services Layer (5 subtasks)
+   - ExerciseCalcService, Repositories, ExerciseRecordService
+   
+2. Phase 2: UI Layer (7 subtasks)
+   - ViewModels, Views, Components
+   
+3. Phase 3: Integration and Navigation (2 subtasks)
+   - DIContainer, TabView integration
+   
+4. Phase 4: Testing (2 subtasks)
+   - Unit tests for calc service and enum
+
+5. Phase 5: Custom Exercise Support (1 subtask)
+   - Enhanced 'Other' exercise type with custom MET
+
+## Current Progress
+- [x] Read spec and project documentation
+- [x] Analyzed existing codebase structure
+- [x] Created implementation_plan.json
+- [ ] Phase 1: Core Services Layer
+- [ ] Phase 2: UI Layer
+- [ ] Phase 3: Integration and Navigation
+- [ ] Phase 4: Testing
+- [ ] Phase 5: Custom Exercise Support
+
+## Key Decisions
+1. Using existing ExerciseType.baseMET and metValue(for:) for MET calculations
+2. Repositories pattern for Core Data access
+3. Service layer handles DailyLog cascade updates
+4. Custom MET stored in note field as JSON for 'Other' exercise type
+
+## Dependencies Identified
+- Existing: ExerciseRecord, DailyLog, User domain entities
+- Existing: ExerciseType, Intensity enums with MET data
+- Existing: PersistenceController for Core Data
+- Need to create: Repositories, Services, ViewModels, Views
+
+[2026-01-13 - Subtask 1.1 COMPLETED]
+✅ ExerciseCalcService Implementation
+- Created Bodii/Services/ExerciseCalcService.swift
+- Implemented calculateCaloriesBurned() method
+- Formula: Calories = MET × weight(kg) × duration(hours)
+- Uses ExerciseType.baseMET and Intensity.metMultiplier
+- Converts duration from minutes to hours (duration/60)
+- Returns rounded Int32 result
+- Handles edge cases:
+  * Returns 0 when duration is 0
+  * Returns 0 when weight is 0 or negative
+- Well documented with comprehensive examples
+- Committed: a58e02b
+
+All acceptance criteria met ✓

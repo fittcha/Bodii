@@ -1,0 +1,396 @@
+{
+  "spec_id": "007-exercise-tracking-with-met-calculations",
+  "title": "Exercise Tracking with MET Calculations",
+  "description": "Exercise logging with activity type selection, duration input, and automatic calorie burn calculation using MET (Metabolic Equivalent of Task) values. Track both cardio and strength training with appropriate calculations.",
+  "created_at": "2026-01-13",
+  "phases": [
+    {
+      "phase_id": "phase-1",
+      "name": "Core Services Layer",
+      "description": "Build the foundational services for exercise calorie calculation and data management",
+      "subtasks": [
+        {
+          "subtask_id": "1.1",
+          "title": "Create ExerciseCalcService for MET-based calorie calculation",
+          "description": "Implement the service that calculates calories burned using MET values. Formula: Calories = MET × weight(kg) × duration(hours). MET values vary by exercise type and are adjusted by intensity multiplier (low: 0.8, medium: 1.0, high: 1.2).",
+          "acceptance_criteria": [
+            "calculateCaloriesBurned(exerciseType, duration, intensity, weight) returns Int32",
+            "Uses baseMET from ExerciseType enum",
+            "Applies intensity multiplier from Intensity enum",
+            "Converts duration from minutes to hours for calculation",
+            "Rounds result to nearest integer",
+            "Handles edge cases (zero duration, zero weight)"
+          ],
+          "files_to_create": [
+            "Bodii/Services/ExerciseCalcService.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "30 minutes",
+          "status": "completed",
+          "notes": "Successfully implemented ExerciseCalcService with calculateCaloriesBurned method. Uses MET formula (Calories = MET × weight × duration/60), applies intensity multipliers (0.8, 1.0, 1.2), handles edge cases (zero duration/weight), and returns rounded Int32 result."
+        },
+        {
+          "subtask_id": "1.2",
+          "title": "Create ExerciseRecordRepository for Core Data operations",
+          "description": "Implement the repository layer for CRUD operations on ExerciseRecord entities in Core Data. Handles conversion between domain entities and managed objects.",
+          "acceptance_criteria": [
+            "save(exerciseRecord) creates/updates a record",
+            "fetch(by id) returns single record",
+            "fetchAll(for userId, on date) returns records for a specific date",
+            "fetchAll(for userId) returns all records for a user",
+            "delete(by id) removes a record",
+            "Proper conversion between domain ExerciseRecord and Core Data ExerciseRecord"
+          ],
+          "files_to_create": [
+            "Bodii/Infrastructure/Repositories/ExerciseRecordRepository.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "45 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "1.3",
+          "title": "Create DailyLogRepository for Core Data operations",
+          "description": "Implement the repository layer for DailyLog entity operations. Supports getOrCreate pattern for automatic DailyLog creation when needed.",
+          "acceptance_criteria": [
+            "getOrCreate(userId, date, defaultBMR, defaultTDEE) returns existing or creates new DailyLog",
+            "fetch(by userId, date) returns single DailyLog or nil",
+            "update(dailyLog) saves changes to existing DailyLog",
+            "Proper date comparison (same calendar day)"
+          ],
+          "files_to_create": [
+            "Bodii/Infrastructure/Repositories/DailyLogRepository.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "45 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "1.4",
+          "title": "Create UserRepository for fetching current user data",
+          "description": "Implement repository for User entity to fetch current user and their weight for calorie calculations.",
+          "acceptance_criteria": [
+            "fetchCurrentUser() returns the single User in the app",
+            "getCurrentWeight() returns user's currentWeight as Decimal",
+            "Handles case when no user exists"
+          ],
+          "files_to_create": [
+            "Bodii/Infrastructure/Repositories/UserRepository.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "30 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "1.5",
+          "title": "Create ExerciseRecordService with DailyLog cascade updates",
+          "description": "Implement the service layer that handles exercise record business logic and automatically updates DailyLog when exercises are added/modified/deleted.",
+          "acceptance_criteria": [
+            "addExercise() creates ExerciseRecord and updates DailyLog (totalCaloriesOut += calories, exerciseMinutes += duration, exerciseCount += 1)",
+            "updateExercise() modifies record and adjusts DailyLog delta",
+            "deleteExercise() removes record and decrements DailyLog values",
+            "Uses ExerciseCalcService for calorie calculation",
+            "Creates DailyLog if doesn't exist (using DailyLogRepository.getOrCreate)",
+            "Validates duration >= 1 minute"
+          ],
+          "files_to_create": [
+            "Bodii/Services/ExerciseRecordService.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "60 minutes",
+          "status": "pending",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-2",
+      "name": "UI Layer - Views and ViewModels",
+      "description": "Build the user interface components for exercise tracking",
+      "subtasks": [
+        {
+          "subtask_id": "2.1",
+          "title": "Create ExerciseViewModel for exercise list management",
+          "description": "Implement ViewModel that manages exercise records for display, handles date navigation, and provides data for the exercise list view.",
+          "acceptance_criteria": [
+            "Loads exercises for selected date",
+            "Supports date navigation (previous/next day)",
+            "Calculates daily totals (calories, minutes, count) from DailyLog",
+            "Provides methods to add, edit, delete exercises",
+            "Loading and error state management",
+            "Refreshes data after changes"
+          ],
+          "files_to_create": [
+            "Bodii/Features/Exercise/ViewModels/ExerciseViewModel.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "45 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "2.2",
+          "title": "Create ExerciseInputViewModel for exercise input form",
+          "description": "Implement ViewModel for the exercise input modal that handles form state, real-time calorie preview calculation, and validation.",
+          "acceptance_criteria": [
+            "Manages form state (exerciseType, duration, intensity, date)",
+            "Real-time calorie preview as user changes inputs",
+            "Validates duration >= 1 minute",
+            "Save action calls ExerciseRecordService",
+            "Edit mode support for modifying existing records",
+            "Dismisses modal on successful save"
+          ],
+          "files_to_create": [
+            "Bodii/Features/Exercise/ViewModels/ExerciseInputViewModel.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "45 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "2.3",
+          "title": "Create ExerciseListView for displaying daily exercises",
+          "description": "Build the main exercise list view showing exercises for the selected date with date navigation, daily summary, and add button.",
+          "acceptance_criteria": [
+            "Date header with left/right navigation arrows",
+            "Today button to jump to current date",
+            "Daily summary card (total calories, total minutes, exercise count)",
+            "List of exercise cards with type icon, name, duration, calories",
+            "Swipe to delete functionality",
+            "Tap to edit functionality",
+            "Floating add button",
+            "Empty state when no exercises"
+          ],
+          "files_to_create": [
+            "Bodii/Features/Exercise/Views/ExerciseListView.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "60 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "2.4",
+          "title": "Create ExerciseInputView modal for adding/editing exercises",
+          "description": "Build the sheet modal for inputting exercise details with exercise type grid, duration picker, intensity selector, and calorie preview.",
+          "acceptance_criteria": [
+            "Exercise type grid with icons and labels for all 8 types",
+            "Duration input with stepper or number field (minutes)",
+            "Intensity selector (low/medium/high) with visual indicators",
+            "Date picker for exercise date",
+            "Real-time calorie burn preview",
+            "Save and Cancel buttons",
+            "Form validation feedback",
+            "Edit mode shows existing values"
+          ],
+          "files_to_create": [
+            "Bodii/Features/Exercise/Views/ExerciseInputView.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "60 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "2.5",
+          "title": "Create ExerciseCardView component",
+          "description": "Build a reusable card component for displaying a single exercise record in the list.",
+          "acceptance_criteria": [
+            "Shows exercise type icon",
+            "Shows exercise type name",
+            "Shows duration in minutes",
+            "Shows intensity level",
+            "Shows calories burned",
+            "Consistent styling with app design"
+          ],
+          "files_to_create": [
+            "Bodii/Features/Exercise/Views/Components/ExerciseCardView.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "20 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "2.6",
+          "title": "Create ExerciseTypeGridView component",
+          "description": "Build a grid component for selecting exercise type with icons.",
+          "acceptance_criteria": [
+            "Grid layout showing all 8 exercise types",
+            "Icon for each exercise type",
+            "Selection highlight",
+            "Accessible tap targets"
+          ],
+          "files_to_create": [
+            "Bodii/Features/Exercise/Views/Components/ExerciseTypeGridView.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "25 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "2.7",
+          "title": "Add SF Symbol icons to ExerciseType enum",
+          "description": "Extend ExerciseType enum to include SF Symbol icon names for each exercise type.",
+          "acceptance_criteria": [
+            "Each ExerciseType has an iconName property returning SF Symbol name",
+            "Icons: walking (figure.walk), running (figure.run), cycling (bicycle), swimming (figure.pool.swim), weight (dumbbell.fill), crossfit (figure.cross.training), yoga (figure.yoga), other (figure.mixed.cardio)"
+          ],
+          "files_to_create": [],
+          "files_to_modify": [
+            "Bodii/Shared/Enums/ExerciseType.swift"
+          ],
+          "estimated_time": "10 minutes",
+          "status": "pending",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-3",
+      "name": "Integration and Navigation",
+      "description": "Integrate exercise feature into the app navigation and ensure proper DI setup",
+      "subtasks": [
+        {
+          "subtask_id": "3.1",
+          "title": "Update DIContainer with exercise dependencies",
+          "description": "Register all exercise-related services and repositories in the dependency injection container.",
+          "acceptance_criteria": [
+            "ExerciseCalcService registered",
+            "ExerciseRecordRepository registered",
+            "DailyLogRepository registered",
+            "UserRepository registered",
+            "ExerciseRecordService registered with dependencies"
+          ],
+          "files_to_create": [],
+          "files_to_modify": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "estimated_time": "20 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "3.2",
+          "title": "Add exercise tab to main TabView",
+          "description": "Add the exercise feature to the app's main tab navigation.",
+          "acceptance_criteria": [
+            "Exercise tab with appropriate icon (figure.run)",
+            "Tab label '운동'",
+            "ExerciseListView as the tab content",
+            "Proper ViewModel injection"
+          ],
+          "files_to_create": [],
+          "files_to_modify": [
+            "Bodii/App/ContentView.swift"
+          ],
+          "estimated_time": "15 minutes",
+          "status": "pending",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-4",
+      "name": "Testing",
+      "description": "Write unit tests for core exercise functionality",
+      "subtasks": [
+        {
+          "subtask_id": "4.1",
+          "title": "Create ExerciseCalcServiceTests",
+          "description": "Write unit tests for the MET-based calorie calculation service.",
+          "acceptance_criteria": [
+            "Test calculation for each exercise type at each intensity level",
+            "Test with various durations (1 min, 30 min, 60 min, 90 min)",
+            "Test with various weights (50kg, 75kg, 100kg)",
+            "Test edge cases (zero duration, very high values)",
+            "Verify formula: MET × weight × (duration/60)"
+          ],
+          "files_to_create": [
+            "BodiiTests/Services/ExerciseCalcServiceTests.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "45 minutes",
+          "status": "pending",
+          "notes": ""
+        },
+        {
+          "subtask_id": "4.2",
+          "title": "Create ExerciseTypeTests",
+          "description": "Write unit tests for ExerciseType enum MET values and intensity calculations.",
+          "acceptance_criteria": [
+            "Test baseMET values for all exercise types",
+            "Test metValue(for:) with all intensity levels",
+            "Test displayName for all types",
+            "Test iconName for all types"
+          ],
+          "files_to_create": [
+            "BodiiTests/Enums/ExerciseTypeTests.swift"
+          ],
+          "files_to_modify": [],
+          "estimated_time": "30 minutes",
+          "status": "pending",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-5",
+      "name": "Custom Exercise Support",
+      "description": "Add support for custom exercise entries for unlisted activities",
+      "subtasks": [
+        {
+          "subtask_id": "5.1",
+          "title": "Enhance 'Other' exercise type with custom MET input",
+          "description": "For the 'Other' exercise type, allow users to optionally specify a custom MET value or use the default (5.0).",
+          "acceptance_criteria": [
+            "When 'Other' is selected, show optional MET input field",
+            "Default MET for 'Other' is 5.0",
+            "Custom MET range: 1.0 - 20.0",
+            "Store custom MET in exercise note field as JSON metadata",
+            "Calorie calculation uses custom MET when provided"
+          ],
+          "files_to_create": [],
+          "files_to_modify": [
+            "Bodii/Features/Exercise/Views/ExerciseInputView.swift",
+            "Bodii/Features/Exercise/ViewModels/ExerciseInputViewModel.swift",
+            "Bodii/Services/ExerciseCalcService.swift"
+          ],
+          "estimated_time": "45 minutes",
+          "status": "pending",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "qa_sign_off": {
+    "status": "pending",
+    "issues": "",
+    "tests_passed": ""
+  },
+  "total_estimated_time": "10 hours",
+  "dependencies": {
+    "existing_files": [
+      "Bodii/Domain/Entities/ExerciseRecord.swift",
+      "Bodii/Domain/Entities/DailyLog.swift",
+      "Bodii/Domain/Entities/User.swift",
+      "Bodii/Shared/Enums/ExerciseType.swift",
+      "Bodii/Shared/Enums/Intensity.swift",
+      "Bodii/Infrastructure/Persistence/PersistenceController.swift",
+      "Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld"
+    ],
+    "external_dependencies": []
+  },
+  "notes": [
+    "MET formula: Calories = MET × weight(kg) × duration(hours)",
+    "Intensity multipliers: low=0.8, medium=1.0, high=1.2",
+    "DailyLog must be updated atomically when exercise records change",
+    "User.currentWeight is used for calorie calculations",
+    "ExerciseType already has baseMET and metValue(for:) implemented"
+  ]
+}
