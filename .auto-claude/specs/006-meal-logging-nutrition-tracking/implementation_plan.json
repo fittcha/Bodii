@@ -1,0 +1,621 @@
+{
+  "feature": "Meal Logging & Nutrition Tracking",
+  "description": "Full diet tracking with meal categorization (breakfast, lunch, dinner, snacks), food search, manual entry, serving size adjustment, and daily calorie/macro summary. Support flexible meal slots without arbitrary limitations.",
+  "spec_id": "006-meal-logging-nutrition-tracking",
+  "created_at": "2026-01-13T07:51:40.627Z",
+  "updated_at": "2026-01-13T08:00:00.000Z",
+  "status": "in_progress",
+  "planStatus": "approved",
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Data Layer & Core Services",
+      "description": "Implement data layer services for food records and daily log management",
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": "1.1",
+          "title": "Implement FoodRepository",
+          "description": "Create repository for Food entity CRUD operations with Core Data. Include methods for searching foods, getting recent foods, and managing user-defined foods.",
+          "status": "completed",
+          "files": [
+            "Bodii/Data/Repositories/FoodRepository.swift",
+            "Bodii/Data/Repositories/FoodRepositoryProtocol.swift"
+          ],
+          "acceptance_criteria": [
+            "Create FoodRepositoryProtocol with CRUD methods",
+            "Implement FoodRepository using Core Data",
+            "Search by name (contains match)",
+            "Get recent foods (last 30 days)",
+            "Get frequently used foods",
+            "Save user-defined foods"
+          ],
+          "estimated_hours": 3,
+          "notes": "Successfully implemented FoodRepository and FoodRepositoryProtocol with all required functionality:\n- CRUD operations (save, findById, findAll, update, delete)\n- Search by name with case-insensitive contains match\n- Recent foods query (last 30 days)\n- Frequent foods query (top 20 by usage count)\n- User-defined foods management\n- Source-based filtering\nAll methods use Swift Concurrency async/await pattern and proper error handling.",
+          "updated_at": "2026-01-13T08:00:29.462487+00:00"
+        },
+        {
+          "id": "1.2",
+          "title": "Implement FoodRecordRepository",
+          "description": "Create repository for FoodRecord entity operations. Handle meal type grouping and date filtering.",
+          "status": "completed",
+          "files": [
+            "Bodii/Data/Repositories/FoodRecordRepository.swift",
+            "Bodii/Data/Repositories/FoodRecordRepositoryProtocol.swift"
+          ],
+          "acceptance_criteria": [
+            "Create FoodRecordRepositoryProtocol with CRUD methods",
+            "Implement FoodRecordRepository using Core Data",
+            "Fetch records by date",
+            "Fetch records by date and meal type",
+            "Delete food record",
+            "Update food record"
+          ],
+          "estimated_hours": 2,
+          "notes": "Successfully implemented FoodRecordRepository and FoodRecordRepositoryProtocol with all required functionality:\n- CRUD operations (save, findById, update, delete)\n- Fetch records by date with proper date range handling (startOfDay to endOfDay)\n- Fetch records by date and meal type\n- Proper relationship handling for User and Food entities\n- Swift Concurrency async/await pattern\n- Comprehensive error handling using RepositoryError\n- Korean documentation following established patterns\nAll methods properly handle Core Data context operations and include proper entity mapping between Core Data and domain models.",
+          "updated_at": "2026-01-13T08:02:51.306950+00:00"
+        },
+        {
+          "id": "1.3",
+          "title": "Implement DailyLogRepository",
+          "description": "Create repository for DailyLog entity to fetch and update daily summaries.",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/Repositories/DailyLogRepository.swift",
+            "Bodii/Data/Repositories/DailyLogRepositoryProtocol.swift"
+          ],
+          "acceptance_criteria": [
+            "Create DailyLogRepositoryProtocol",
+            "Implement getOrCreate(for date) method",
+            "Fetch daily log by date",
+            "Update daily log fields"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        },
+        {
+          "id": "1.4",
+          "title": "Implement FoodRecordService",
+          "description": "Create service layer for food record management with cascade updates to DailyLog. Handle nutrition calculations based on quantity.",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Services/FoodRecordService.swift",
+            "Bodii/Domain/Services/FoodRecordServiceProtocol.swift"
+          ],
+          "acceptance_criteria": [
+            "Create FoodRecordServiceProtocol",
+            "Add food record with nutrition calculation",
+            "Update DailyLog on food addition (calories, carbs, protein, fat)",
+            "Update DailyLog on food deletion",
+            "Calculate macro ratios",
+            "Calculate net calories"
+          ],
+          "estimated_hours": 3,
+          "notes": ""
+        },
+        {
+          "id": "1.5",
+          "title": "Implement NutritionCalculator",
+          "description": "Create utility for calculating nutrition values based on serving size and quantity. Handle serving vs gram conversions.",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Services/NutritionCalculator.swift"
+          ],
+          "acceptance_criteria": [
+            "Calculate calories based on quantity and serving size",
+            "Calculate macros (carbs, protein, fat) proportionally",
+            "Support serving unit (1x, 0.5x, etc.)",
+            "Support gram-based quantity",
+            "Calculate macro ratios from totals"
+          ],
+          "estimated_hours": 1.5,
+          "notes": ""
+        },
+        {
+          "id": "1.6",
+          "title": "Write Unit Tests for Services",
+          "description": "Create comprehensive unit tests for FoodRecordService and NutritionCalculator.",
+          "status": "pending",
+          "files": [
+            "BodiiTests/FoodRecordServiceTests.swift",
+            "BodiiTests/NutritionCalculatorTests.swift"
+          ],
+          "acceptance_criteria": [
+            "Test nutrition calculation accuracy",
+            "Test DailyLog cascade updates",
+            "Test macro ratio calculations",
+            "Test edge cases (0 quantity, very large values)"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "Food Search & Quick Add",
+      "description": "Implement food search functionality with recent and frequent foods",
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": "2.1",
+          "title": "Implement LocalFoodSearchService",
+          "description": "Create service for searching locally stored foods (user-defined and cached API results). Prioritize Korean foods and show nutrition preview.",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Services/LocalFoodSearchService.swift",
+            "Bodii/Domain/Services/FoodSearchServiceProtocol.swift"
+          ],
+          "acceptance_criteria": [
+            "Search foods by name (contains match)",
+            "Sort results by relevance/frequency",
+            "Return nutrition preview in results",
+            "Handle empty search results"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        },
+        {
+          "id": "2.2",
+          "title": "Implement RecentFoodsService",
+          "description": "Create service to track and retrieve recently consumed and frequently consumed foods for quick-add functionality.",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Services/RecentFoodsService.swift"
+          ],
+          "acceptance_criteria": [
+            "Get recent foods (last 30 days)",
+            "Get frequently consumed foods",
+            "Sort by recency and frequency",
+            "Limit results (top 10 each)"
+          ],
+          "estimated_hours": 1.5,
+          "notes": ""
+        },
+        {
+          "id": "2.3",
+          "title": "Create FoodSearchViewModel",
+          "description": "Implement ViewModel for food search screen with debounced search, recent foods, and search results.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/ViewModels/FoodSearchViewModel.swift"
+          ],
+          "acceptance_criteria": [
+            "Debounced search input (300ms)",
+            "Load recent foods on appear",
+            "Load frequent foods on appear",
+            "Handle loading states",
+            "Handle error states"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "name": "UI - Daily Meal View",
+      "description": "Implement the daily meal view screen showing meals by category",
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": "3.1",
+          "title": "Create DailyMealViewModel",
+          "description": "Implement ViewModel for daily meal view with date navigation, meal grouping, and nutrition summary.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/ViewModels/DailyMealViewModel.swift"
+          ],
+          "acceptance_criteria": [
+            "Load meals for selected date",
+            "Group meals by meal type (breakfast, lunch, dinner, snack)",
+            "Calculate and display daily totals",
+            "Support date navigation (previous/next day)",
+            "Handle empty state"
+          ],
+          "estimated_hours": 2.5,
+          "notes": ""
+        },
+        {
+          "id": "3.2",
+          "title": "Create DailyMealView",
+          "description": "Implement main daily meal view with date header, meal sections, and daily summary card.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/DailyMealView.swift"
+          ],
+          "acceptance_criteria": [
+            "Date selector header with navigation arrows",
+            "Four meal sections (breakfast, lunch, dinner, snack)",
+            "Add food button per section",
+            "Daily calorie/macro summary card",
+            "Empty state for no meals"
+          ],
+          "estimated_hours": 3,
+          "notes": ""
+        },
+        {
+          "id": "3.3",
+          "title": "Create MealSectionView",
+          "description": "Implement reusable meal section component showing foods for a specific meal type with edit/delete actions.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/Components/MealSectionView.swift",
+            "Bodii/Presentation/Views/Diet/Components/FoodRecordRow.swift"
+          ],
+          "acceptance_criteria": [
+            "Display meal type header with calorie subtotal",
+            "List food items with name, quantity, calories",
+            "Swipe to delete functionality",
+            "Tap to edit functionality",
+            "Add food button"
+          ],
+          "estimated_hours": 2.5,
+          "notes": ""
+        },
+        {
+          "id": "3.4",
+          "title": "Create NutritionSummaryCard",
+          "description": "Implement daily nutrition summary card showing calories and macro breakdown with visual charts.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/Components/NutritionSummaryCard.swift",
+            "Bodii/Presentation/Views/Diet/Components/MacroRatioChart.swift"
+          ],
+          "acceptance_criteria": [
+            "Display total calories consumed vs TDEE",
+            "Show remaining calories",
+            "Display macro breakdown (carbs, protein, fat in grams)",
+            "Pie chart for macro ratios",
+            "Color coding for each macro"
+          ],
+          "estimated_hours": 2.5,
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "name": "UI - Food Search Screen",
+      "description": "Implement food search and selection screen",
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": "4.1",
+          "title": "Create FoodSearchView",
+          "description": "Implement food search screen with search bar, recent/frequent foods, and search results.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/FoodSearchView.swift"
+          ],
+          "acceptance_criteria": [
+            "Search bar with clear button",
+            "Recent foods section (when not searching)",
+            "Frequent foods section (when not searching)",
+            "Search results list with nutrition preview",
+            "Manual entry button at bottom"
+          ],
+          "estimated_hours": 3,
+          "notes": ""
+        },
+        {
+          "id": "4.2",
+          "title": "Create FoodSearchResultRow",
+          "description": "Implement search result row component showing food name, serving info, and key nutrition facts.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/Components/FoodSearchResultRow.swift"
+          ],
+          "acceptance_criteria": [
+            "Food name display",
+            "Serving size info",
+            "Calories per serving",
+            "Compact macro preview (P/C/F)",
+            "Chevron for navigation"
+          ],
+          "estimated_hours": 1.5,
+          "notes": ""
+        },
+        {
+          "id": "4.3",
+          "title": "Create QuickAddSection",
+          "description": "Implement quick-add section showing recent and frequently consumed foods in a horizontal scroll or grid.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/Components/QuickAddSection.swift",
+            "Bodii/Presentation/Views/Diet/Components/QuickAddFoodChip.swift"
+          ],
+          "acceptance_criteria": [
+            "Section header (Recent/Frequent)",
+            "Horizontal scrollable food chips",
+            "Food chip shows name and calories",
+            "Tap to add with default quantity",
+            "Long press for quantity picker"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "name": "UI - Food Detail & Add Screen",
+      "description": "Implement food detail screen with serving size adjustment",
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": "5.1",
+          "title": "Create FoodDetailViewModel",
+          "description": "Implement ViewModel for food detail screen with quantity adjustment and nutrition calculation.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/ViewModels/FoodDetailViewModel.swift"
+          ],
+          "acceptance_criteria": [
+            "Load food details",
+            "Calculate nutrition based on quantity",
+            "Support serving multiplier (0.25x, 0.5x, 1x, 1.5x, 2x)",
+            "Support custom quantity input",
+            "Validate quantity (min 0.1)",
+            "Save food record"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        },
+        {
+          "id": "5.2",
+          "title": "Create FoodDetailView",
+          "description": "Implement food detail screen showing full nutrition info with serving size picker and meal type selector.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/FoodDetailView.swift"
+          ],
+          "acceptance_criteria": [
+            "Food name header",
+            "Full nutrition facts display",
+            "Serving size selector (preset values)",
+            "Custom quantity input field",
+            "Meal type picker (breakfast/lunch/dinner/snack)",
+            "Add to meal button"
+          ],
+          "estimated_hours": 3,
+          "notes": ""
+        },
+        {
+          "id": "5.3",
+          "title": "Create ServingSizePicker",
+          "description": "Implement serving size picker component with preset values and custom input.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/Components/ServingSizePicker.swift"
+          ],
+          "acceptance_criteria": [
+            "Preset buttons (0.25x, 0.5x, 1x, 1.5x, 2x)",
+            "Custom quantity text field",
+            "Toggle between serving and gram mode",
+            "Real-time nutrition update preview",
+            "Input validation"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        },
+        {
+          "id": "5.4",
+          "title": "Create NutritionFactsCard",
+          "description": "Implement nutrition facts card showing detailed breakdown like a nutrition label.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/Components/NutritionFactsCard.swift"
+          ],
+          "acceptance_criteria": [
+            "Calories prominently displayed",
+            "Carbohydrates with fiber/sugar breakdown",
+            "Protein amount",
+            "Fat amount",
+            "Sodium amount (if available)",
+            "Serving size info"
+          ],
+          "estimated_hours": 1.5,
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-6",
+      "name": "UI - Manual Food Entry",
+      "description": "Implement manual food entry for foods not in database",
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": "6.1",
+          "title": "Create ManualFoodEntryViewModel",
+          "description": "Implement ViewModel for manual food entry with validation and save functionality.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/ViewModels/ManualFoodEntryViewModel.swift"
+          ],
+          "acceptance_criteria": [
+            "Input fields for all nutrition values",
+            "Validate required fields (name, calories)",
+            "Validate numeric values",
+            "Save as user-defined food",
+            "Add to meal after saving"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        },
+        {
+          "id": "6.2",
+          "title": "Create ManualFoodEntryView",
+          "description": "Implement manual food entry screen with form for entering food details.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/ManualFoodEntryView.swift"
+          ],
+          "acceptance_criteria": [
+            "Food name text field (required)",
+            "Serving size and unit fields",
+            "Calories field (required)",
+            "Carbohydrates field",
+            "Protein field",
+            "Fat field",
+            "Optional: sodium, fiber, sugar",
+            "Save button with validation"
+          ],
+          "estimated_hours": 2.5,
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-7",
+      "name": "Integration & Polish",
+      "description": "Wire up all components and add final polish",
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": "7.1",
+          "title": "Integrate with Tab Navigation",
+          "description": "Add Diet tab to main tab view and set up navigation flow between all diet screens.",
+          "status": "pending",
+          "files": [
+            "Bodii/App/ContentView.swift",
+            "Bodii/Presentation/Views/Diet/DietTabView.swift"
+          ],
+          "acceptance_criteria": [
+            "Add Diet tab to TabView",
+            "Navigation from daily view to search",
+            "Navigation from search to detail",
+            "Navigation from search to manual entry",
+            "Proper back navigation"
+          ],
+          "estimated_hours": 1.5,
+          "notes": ""
+        },
+        {
+          "id": "7.2",
+          "title": "Register Services in DI Container",
+          "description": "Register all new services and repositories in the dependency injection container.",
+          "status": "pending",
+          "files": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "acceptance_criteria": [
+            "Register FoodRepository",
+            "Register FoodRecordRepository",
+            "Register DailyLogRepository",
+            "Register FoodRecordService",
+            "Register LocalFoodSearchService",
+            "Register RecentFoodsService"
+          ],
+          "estimated_hours": 1,
+          "notes": ""
+        },
+        {
+          "id": "7.3",
+          "title": "Add Sample Food Data",
+          "description": "Create sample Korean food data for testing and initial app usage.",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/SampleData/SampleFoods.swift"
+          ],
+          "acceptance_criteria": [
+            "Create 20+ common Korean foods",
+            "Include accurate nutrition data",
+            "Cover breakfast, lunch, dinner categories",
+            "Add serving size information"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        },
+        {
+          "id": "7.4",
+          "title": "Write Integration Tests",
+          "description": "Create integration tests for the complete meal logging flow.",
+          "status": "pending",
+          "files": [
+            "BodiiTests/MealLoggingIntegrationTests.swift"
+          ],
+          "acceptance_criteria": [
+            "Test add food flow end-to-end",
+            "Test DailyLog updates correctly",
+            "Test delete food updates totals",
+            "Test date navigation"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        },
+        {
+          "id": "7.5",
+          "title": "UI Polish & Accessibility",
+          "description": "Add final UI polish including loading states, animations, and accessibility labels.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Views/Diet/*.swift"
+          ],
+          "acceptance_criteria": [
+            "Add loading indicators",
+            "Add success/error toasts",
+            "Smooth transitions between screens",
+            "VoiceOver accessibility labels",
+            "Dynamic Type support"
+          ],
+          "estimated_hours": 2,
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "total_estimated_hours": 55,
+  "dependencies": {
+    "external": [
+      "Core Data model already set up with Food, FoodRecord, DailyLog entities",
+      "MealType, QuantityUnit, FoodSource enums already defined",
+      "ValidationService for input validation",
+      "Date utilities for date handling"
+    ],
+    "internal": {
+      "phase-2": [
+        "phase-1"
+      ],
+      "phase-3": [
+        "phase-1",
+        "phase-2"
+      ],
+      "phase-4": [
+        "phase-2"
+      ],
+      "phase-5": [
+        "phase-1",
+        "phase-4"
+      ],
+      "phase-6": [
+        "phase-1"
+      ],
+      "phase-7": [
+        "phase-3",
+        "phase-4",
+        "phase-5",
+        "phase-6"
+      ]
+    }
+  },
+  "qa_checklist": {
+    "status": "pending",
+    "items": [
+      "Users can log food to breakfast, lunch, dinner, or snacks",
+      "Food search shows nutrition preview",
+      "Manual food entry available with all macro fields",
+      "Serving size adjustable (0.25x, 0.5x, 1x, 1.5x, 2x, custom)",
+      "Daily summary shows total calories, protein, carbs, fat",
+      "Meal view shows individual food items with edit/delete",
+      "Recent and frequent foods appear in quick-add section",
+      "DailyLog correctly updates on food add/delete",
+      "Macro ratios calculate correctly",
+      "Net calories (intake - TDEE) displays correctly"
+    ],
+    "tests_passed": "",
+    "issues": ""
+  },
+  "last_updated": "2026-01-13T08:02:51.306957+00:00"
+}
