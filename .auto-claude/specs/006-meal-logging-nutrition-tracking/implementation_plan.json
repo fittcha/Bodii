@@ -99,7 +99,7 @@
           "id": "1.5",
           "title": "Implement NutritionCalculator",
           "description": "Create utility for calculating nutrition values based on serving size and quantity. Handle serving vs gram conversions.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Domain/Services/NutritionCalculator.swift"
           ],
@@ -111,7 +111,8 @@
             "Calculate macro ratios from totals"
           ],
           "estimated_hours": 1.5,
-          "notes": ""
+          "notes": "Successfully implemented NutritionCalculator utility with all required functionality:\n\n**Core Features:**\n1. calculateNutrition: Calculate calories and macros based on quantity and unit\n   - Supports serving unit (multiplier = quantity)\n   - Supports gram unit (multiplier = quantity / servingSize)\n   - Returns NutritionValues with calories, carbs, protein, fat\n\n2. calculateMacroRatios: Calculate percentage breakdown of macros\n   - Uses standard calorie multipliers (carbs: 4 kcal/g, protein: 4 kcal/g, fat: 9 kcal/g)\n   - Returns MacroRatios with percentages\n   - Handles edge case when total calories = 0 (returns nil)\n\n3. Conversion utilities:\n   - gramsToServings: Convert grams to servings\n   - servingsToGrams: Convert servings to grams\n\n**Refactoring:**\n- Updated FoodRecordService to use NutritionCalculator\n- Removed duplicate calculateNutrition and calculateMacroRatios methods\n- Removed duplicate Decimal.rounded extension (now in NutritionCalculator)\n\n**Code Quality:**\n- Comprehensive documentation with examples\n- Follows existing code patterns (Korean docs, structured comments)\n- Stateless utility using static methods\n- Type-safe with dedicated result structs (NutritionValues, MacroRatios)\n\nFile created: Bodii/Domain/Services/NutritionCalculator.swift (330 lines)\nCommit: 2a05ca1",
+          "updated_at": "2026-01-13T08:12:18.006268+00:00"
         },
         {
           "id": "1.6",
@@ -619,5 +620,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T08:09:19.064832+00:00"
+  "last_updated": "2026-01-13T08:12:18.006274+00:00"
 }
