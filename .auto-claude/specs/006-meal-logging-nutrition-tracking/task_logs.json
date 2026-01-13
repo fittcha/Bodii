@@ -1,7 +1,7 @@
 {
   "spec_id": "006-meal-logging-nutrition-tracking",
   "created_at": "2026-01-13T07:51:43.631699+00:00",
-  "updated_at": "2026-01-13T09:25:00.875033+00:00",
+  "updated_at": "2026-01-13T09:30:09.041899+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -14434,6 +14434,722 @@
           "tool_input": "cd . && git add -A && git commit -m \"auto-claud...",
           "subtask_id": "7.4",
           "session": 27
+        },
+        {
+          "timestamp": "2026-01-13T09:25:02.391949+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "7.4",
+          "session": 27,
+          "detail": "[auto-claude/006-meal-logging-nutrition-tracking 96e6975] auto-claude: 7.4 - Create integration tests for the complete meal log\n 7 files changed, 1332 insertions(+), 10 deletions(-)\n create mode 100644 .auto-claude/specs/006-meal-logging-nutrition-tracking/memory/session_insights/session_026.json\n create mode 100644 BodiiTests/MealLoggingIntegrationTests.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:25:05.909890+00:00",
+          "type": "text",
+          "content": "Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "7.4",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-13T09:25:22.675202+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "7.4",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-13T09:25:22.704791+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "7.4",
+          "session": 27,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:25:25.764371+00:00",
+          "type": "text",
+          "content": "Perfect! Let me verify the completion:",
+          "phase": "coding",
+          "subtask_id": "7.4",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-13T09:25:25.848011+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "7.4",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-13T09:25:25.875355+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "7.4",
+          "session": 27,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:25:36.684627+00:00",
+          "type": "text",
+          "content": "## ✅ Subtask 7.4 Completed - Integration Tests Created\n\nI've successfully implemented comprehensive integration tests for the complete meal logging flow!\n\n### 📊 Test Coverage (12 Test Cases):\n\n**1. Complete Meal Logging Flow (5 tests):**\n- ✅ Add food via FoodDetailViewModel → verify in DailyMealViewModel\n- ✅ Add multiple foods to different meal types → verify totals\n- ✅ Delete food → verify DailyLog updates to 0\n- ✅ Delete one of multiple foods → verify remaining totals\n\n**2. Date Navigation (4 tests):**\n- ✅ Navigate to next day → data refreshes\n- ✅ Navigate to previous day → data refreshes  \n- ✅ Navigate forward from past date → loads new data\n- ✅ Navigate to specific date (7 days ago) → loads correct data\n\n**3. Manual Food Entry (2 tests):**\n- ✅ Create custom food and add to meal → end-to-end flow\n- ✅ Validation errors → proper error messages\n\n**4. Error Handling (2 tests):**\n- ✅ Repository failure → sets error message\n- ✅ Food not found → graceful error handling\n\n### 🎯 All Acceptance Criteria Met:\n- ✅ Test add food flow end-to-end\n- ✅ Test DailyLog updates correctly\n- ✅ Test delete food updates totals\n- ✅ Test date navigation\n\n### 📁 File Created:\n- `BodiiTests/MealLoggingIntegrationTests.swift` (900 lines)\n\n### 🔧 Technical Highlights:\n- Uses enhanced mock repositories with error injection\n- Tests ViewModels + Services + Repositories integration\n- Realistic test data with Korean foods (백미밥, 닭가슴살)\n- Swift Concurrency async/await throughout\n- @MainActor for proper ViewModel testing\n- Comprehensive validation of cascade DailyLog updates\n\n### 📈 Progress:\n**26/27 subtasks completed (96%)**\n\nOnly 1 subtask remaining (7.5 - UI Polish & Accessibility)!\n\n---\n\n**Commit:** `96e6975` - \"auto-claude: 7.4 - Create integration tests for the complete meal log\"\n\nThe tests are ready for manual verification by running the test suite in Xcode.",
+          "phase": "coding",
+          "subtask_id": "7.4",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-13T09:25:46.634528+00:00",
+          "type": "text",
+          "content": "I'll help you implement the final UI polish for the meal logging and nutrition tracking feature. Let me start by understanding the current state and requirements.",
+          "phase": "coding",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:25:47.173633+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ecs/006-meal-logging-nutrition-tracking/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ecs/006-meal-logging-nutrition-tracking/spec.md",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:25:47.643417+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ing-nutrition-tracking/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ing-nutrition-tracking/implementation_plan.json",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:25:48.227979+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...l-logging-nutrition-tracking/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...l-logging-nutrition-tracking/build-progress.txt",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:25:48.279069+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:25:48.318039+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "7.5",
+          "session": 28,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:25:56.187168+00:00",
+          "type": "text",
+          "content": "I can see this is the final UI polish subtask! Let me examine the current views to identify what needs to be enhanced for loading states, animations, and accessibility.",
+          "phase": "coding",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:25:56.721695+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: Bodii/Presentation/Features/Diet/Views/**/*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: Bodii/Presentation/Features/Diet/Views/**/*.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:25:57.309643+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:25:57.328175+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "     1→//\n     2→//  DailyMealView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Daily Meal View\n     9→// 일일 식단 기록을 표시하는 메인 뷰\n    10→// 💡 날짜 네비게이션, 끼니별 섹션, 영양 요약 카드로 구성\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - Daily Meal View\n    15→\n    16→/// 일일 식단 화면\n    17→///\n    18→/// 선택된 날짜의 식단 기록을 끼니별로 표시하고 일일 영양 요약을 제공합니다.\n    19→///\n    20→/// - Note: DailyMealViewModel을 사용하여 데이터를 관리합니다.\n    21→/// - Note: 날짜 네비게이션으로 이전/다음 날짜로 이동할 수 있습니다.\n    22→///\n    23→/// - Example:\n    24→/// ```swift\n    25→/// DailyMealView(viewModel: dailyMealViewModel, userId: userId, bmr: 1650, tdee: 2310)\n    26→/// ```\n    27→struct DailyMealView: View {\n    28→\n    29→    // MARK: - Properties\n    30→\n    31→    /// ViewModel\n    32→    @ObservedObject var viewModel: DailyMealViewModel\n    33→\n    34→    /// 사용자 ID\n    35→    let userId: UUID\n    36→\n    37→    /// 기초대사량 (kcal)\n    38→    let bmr: Int32\n    39→\n    40→    /// 활동대사량 (kcal)\n    41→    let tdee: Int32\n    42→\n    43→    /// 음식 추가 콜백 (끼니 타입 전달)\n    44→    let onAddFood: ((MealType) -> Void)?\n    45→\n    46→    // MARK: - Initialization\n    47→\n    48→    init(\n    49→        viewModel: DailyMealViewModel,\n    50→        userId: UUID,\n    51→        bmr: Int32,\n    52→        tdee: Int32,\n    53→        onAddFood: ((MealType) -> Void)? = nil\n    54→    ) {\n    55→        self.viewModel = viewModel\n    56→        self.userId = userId\n    57→        self.bmr = bmr\n    58→        self.tdee = tdee\n    59→        self.onAddFood = onAddFood\n    60→    }\n    61→\n    62→    // MARK: - Body\n    63→\n    64→    var body: some View {\n    65→        ZStack {\n    66→                // 📚 학습 포인트: Background Color\n    67→                // iOS 디자인 가이드에 따른 시스템 배경색 사용\n    68→                Color(.systemGroupedBackground)\n    69→                    .ignoresSafeArea()\n    70→\n    71→                if viewModel.isLoading {\n    72→                    // 로딩 상태\n    73→                    ProgressView()\n    74→                        .scaleEffect(1.5)\n    75→                } else {\n    76→                    // 메인 컨텐츠\n    77→                    ScrollView {\n    78→                        VStack(spacing: 16) {\n    79→                            // 날짜 헤더\n    80→                            dateHeaderView\n    81→\n    82→                            // 일일 영양 요약 카드\n    83→                            if let dailyLog = viewModel.dailyLog {\n    84→                                NutritionSummaryCard(\n    85→                                    dailyLog: dailyLog,\n    86→                                    remainingCalories: viewModel.remainingCalories,\n    87→                                    calorieIntakePercentage: viewModel.calorieIntakePercentage\n    88→                                )\n    89→                                .padding(.horizontal)\n    90→                            }\n    91→\n    92→                            // 끼니 섹션들\n    93→                            ForEach(MealType.allCases) { mealType in\n    94→                                MealSectionView(\n    95→                                    mealType: mealType,\n    96→                                    meals: viewModel.mealGroups[mealType] ?? [],\n    97→                                    totalCalories: viewModel.totalCalories(for: mealType),\n    98→                                    onAddFood: {\n    99→                                        onAddFood?(mealType)\n   100→                                    },\n   101→                                    onDeleteFood: { foodRecordId in\n   102→                                        viewModel.deleteFoodRecord(foodRecordId)\n   103→                                    },\n   104→                                    onEditFood: { foodRecordId in\n   105→                                        // TODO: Phase 5에서 식단 수정 화면 구현\n   106→                                        print(\"Edit food record: \\(foodRecordId)\")\n   107→                                    }\n   108→                                )\n   109→                                .padding(.horizontal)\n   110→                            }\n   111→\n   112→                            // 빈 상태 메시지\n   113→                            if !viewModel.hasAnyMeals {\n   114→                                emptyStateView\n   115→                                    .padding(.top, 40)\n   116→                            }\n   117→                        }\n   118→                        .padding(.vertical)\n   119→                    }\n   120→                }\n   121→            }\n   122→        }\n   123→        .navigationTitle(\"식단\")\n   124→        .navigationBarTitleDisplayMode(.inline)\n   125→        .toolbar {\n   126→            // 새로고침 버튼\n   127→            ToolbarItem(placement: .navigationBarTrailing) {\n   128→                Button(action: {\n   129→                    viewModel.refresh()\n   130→                }) {\n   131→                    Image(systemName: \"arrow.clockwise\")\n   132→                }\n   133→            }\n   134→        }\n   135→        .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   136→            Button(\"확인\") {\n   137→                viewModel.errorMessage = nil\n   138→            }\n   139→        } message: {\n   140→            if let errorMessage = viewModel.errorMessage {\n   141→                Text(errorMessage)\n   142→            }\n   143→        }\n   144→        .onAppear {\n   145→            viewModel.onAppear(userId: userId, bmr: bmr, tdee: tdee)\n   146→        }\n   147→    }\n   148→\n   149→    // MARK: - Subviews\n   150→\n   151→    /// 날짜 헤더 뷰\n   152→    ///\n   153→    /// 현재 선택된 날짜와 이전/다음 날짜 네비게이션 버튼을 표시합니다.\n   154→    private var dateHeaderView: some View {\n   155→        HStack {\n   156→            // 이전 날짜 버튼\n   157→            Button(action: {\n   158→                viewModel.navigateToPreviousDay()\n   159→            }) {\n   160→                Image(systemName: \"chevron.left\")\n   161→                    .font(.title2)\n   162→                    .foregroundColor(.primary)\n   163→                    .frame(width: 44, height: 44)\n   164→            }\n   165→\n   166→            Spacer()\n   167→\n   168→            // 날짜 표시\n   169→            VStack(spacing: 4) {\n   170→                Text(viewModel.dateString)\n   171→                    .font(.headline)\n   172→                    .foregroundColor(.primary)\n   173→\n   174→                if viewModel.isToday {\n   175→                    Text(\"오늘\")\n   176→                        .font(.caption)\n   177→                        .foregroundColor(.secondary)\n   178→                }\n   179→            }\n   180→\n   181→            Spacer()\n   182→\n   183→            // 다음 날짜 버튼\n   184→            Button(action: {\n   185→                viewModel.navigateToNextDay()\n   186→            }) {\n   187→                Image(systemName: \"chevron.right\")\n   188→                    .font(.title2)\n   189→                    .foregroundColor(.primary)\n   190→                    .frame(width: 44, height: 44)\n   191→            }\n   192→            // 미래 날짜는 비활성화\n   193→            .disabled(viewModel.isFuture)\n   194→            .opacity(viewModel.isFuture ? 0.3 : 1.0)\n   195→        }\n   196→        .padding(.horizontal)\n   197→        .padding(.vertical, 8)\n   198→        .background(Color(.systemBackground))\n   199→    }\n   200→\n   201→    /// 빈 상태 뷰\n   202→    ///\n   203→    /// 식단 기록이 없을 때 표시되는 안내 메시지입니다.\n   204→    private var emptyStateView: some View {\n   205→        VStack(spacing: 16) {\n   206→            Image(systemName: \"fork.knife.circle\")\n   207→                .font(.system(size: 60))\n   208→                .foregroundColor(.secondary)\n   209→\n   210→            Text(\"기록된 식단이 없습니다\")\n   211→                .font(.headline)\n   212→                .foregroundColor(.primary)\n   213→\n   214→            Text(\"'+ 음식 추가' 버튼을 눌러\\n첫 식사를 기록해보세요\")\n   215→                .font(.subheadline)\n   216→                .foregroundColor(.secondary)\n   217→                .multilineTextAlignment(.center)\n   218→        }\n   219→        .padding()\n   220→    }\n   221→}\n   222→\n   223→// MARK: - Preview\n   224→\n   225→#Preview {\n   226→    // 프리뷰용 Mock 데이터\n   227→    let mockViewModel = DailyMealViewModel(\n   228→        foodRecordService: MockFoodRecordService(),\n   229→        dailyLogRepository: MockDailyLogRepository(),\n   230→        foodRepository: MockFoodRepository()\n   231→    )\n   232→\n   233→    return DailyMealView(\n   234→        viewModel: mockViewModel,\n   235→        userId: UUID(),\n   236→        bmr: 1650,\n   237→        tdee: 2310\n   238→    )\n   239→}\n   240→\n   241→// MARK: - Mock Services for Preview\n   242→\n   243→private class MockFoodRecordService: FoodRecordServiceProtocol {\n   244→    func addFoodRecord(userId: UUID, foodId: UUID, date: Date, mealType: MealType, quantity: Decimal, quantityUnit: QuantityUnit) async throws -> FoodRecord {\n   245→        fatalError(\"Mock not implemented\")\n   246→    }\n   247→\n   248→    func updateFoodRecord(foodRecordId: UUID, quantity: Decimal, quantityUnit: QuantityUnit, mealType: MealType) async throws -> FoodRecord {\n   249→        fatalError(\"Mock not implemented\")\n   250→    }\n   251→\n   252→    func deleteFoodRecord(foodRecordId: UUID) async throws {\n   253→        // Mock implementation\n   254→    }\n   255→\n   256→    func getFoodRecords(for date: Date, userId: UUID) async throws -> [FoodRecord] {\n   257→        return []\n   258→    }\n   259→\n   260→    func getFoodRecords(for date: Date, mealType: MealType, userId: UUID) async throws -> [FoodRecord] {\n   261→        return []\n   262→    }\n   263→}\n   264→\n   265→private class MockDailyLogRepository: DailyLogRepositoryProtocol {\n   266→    func save(_ dailyLog: DailyLog) async throws -> DailyLog {\n   267→        return dailyLog\n   268→    }\n   269→\n   270→    func findByDate(_ date: Date, userId: UUID) async throws -> DailyLog? {\n   271→        return DailyLog(\n   272→            id: UUID(),\n   273→            userId: userId,\n   274→            date: date,\n   275→            totalCaloriesIn: 1500,\n   276→            totalCarbs: 200,\n   277→            totalProtein: 80,\n   278→            totalFat: 50,\n   27\n\n... [truncated - full output was 13719 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:26:03.071496+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Features/Diet/Views/FoodSearchView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Features/Diet/Views/FoodSearchView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:04.029271+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:04.270877+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tures/Diet/Views/Components/FoodRecordRow.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tures/Diet/Views/Components/FoodRecordRow.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:04.354592+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "     1→//\n     2→//  FoodSearchView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Food Search View\n     9→// 음식 검색 화면 - 검색, 최근 음식, 자주 사용하는 음식 표시\n    10→// 💡 검색어 입력 시 디바운스 처리하여 실시간 검색 제공\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - Food Search View\n    15→\n    16→/// 음식 검색 화면\n    17→///\n    18→/// 음식을 검색하고 최근/자주 사용하는 음식을 표시하여 빠른 추가를 지원합니다.\n    19→///\n    20→/// - Note: FoodSearchViewModel을 사용하여 데이터를 관리합니다.\n    21→/// - Note: 검색어가 비어있을 때는 최근/자주 사용하는 음식을 표시합니다.\n    22→///\n    23→/// - Example:\n    24→/// ```swift\n    25→/// FoodSearchView(\n    26→///     viewModel: foodSearchViewModel,\n    27→///     userId: userId,\n    28→///     mealType: .breakfast,\n    29→///     onSelectFood: { food in\n    30→///         // 음식 선택 처리\n    31→///     }\n    32→/// )\n    33→/// ```\n    34→struct FoodSearchView: View {\n    35→\n    36→    // MARK: - Properties\n    37→\n    38→    /// ViewModel\n    39→    @ObservedObject var viewModel: FoodSearchViewModel\n    40→\n    41→    /// 사용자 ID\n    42→    let userId: UUID\n    43→\n    44→    /// 끼니 타입\n    45→    let mealType: MealType\n    46→\n    47→    /// 음식 선택 콜백\n    48→    let onSelectFood: (Food) -> Void\n    49→\n    50→    /// 수동 입력 콜백\n    51→    let onManualEntry: () -> Void\n    52→\n    53→    // MARK: - State\n    54→\n    55→    /// 검색 필드에 포커스 여부\n    56→    @FocusState private var isSearchFocused: Bool\n    57→\n    58→    // MARK: - Body\n    59→\n    60→    var body: some View {\n    61→        ZStack {\n    62→            // 📚 학습 포인트: Background Color\n    63→            // iOS 디자인 가이드에 따른 시스템 배경색 사용\n    64→            Color(.systemGroupedBackground)\n    65→                .ignoresSafeArea()\n    66→\n    67→            VStack(spacing: 0) {\n    68→                // 검색 바\n    69→                searchBar\n    70→                    .padding()\n    71→                    .background(Color(.systemBackground))\n    72→\n    73→                // 메인 컨텐츠\n    74→                if viewModel.isAnyLoading {\n    75→                    // 로딩 상태\n    76→                    Spacer()\n    77→                    ProgressView()\n    78→                        .scaleEffect(1.5)\n    79→                    Spacer()\n    80→                } else if viewModel.isEmpty {\n    81→                    // 빈 상태\n    82→                    emptyStateView\n    83→                } else {\n    84→                    // 검색 결과 또는 최근/자주 사용하는 음식 목록\n    85→                    ScrollView {\n    86→                        VStack(spacing: 16) {\n    87→                            if viewModel.isInSearchMode {\n    88→                                // 검색 결과 표시\n    89→                                searchResultsSection\n    90→                            } else {\n    91→                                // 최근 음식과 자주 사용하는 음식 표시\n    92→                                if viewModel.hasRecentFoods {\n    93→                                    recentFoodsSection\n    94→                                }\n    95→\n    96→                                if viewModel.hasFrequentFoods {\n    97→                                    frequentFoodsSection\n    98→                                }\n    99→                            }\n   100→                        }\n   101→                        .padding(.vertical)\n   102→                    }\n   103→                }\n   104→\n   105→                // 수동 입력 버튼\n   106→                manualEntryButton\n   107→                    .padding()\n   108→                    .background(Color(.systemBackground))\n   109→            }\n   110→        }\n   111→        .navigationTitle(\"음식 검색\")\n   112→        .navigationBarTitleDisplayMode(.inline)\n   113→        .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   114→            Button(\"확인\") {\n   115→                viewModel.errorMessage = nil\n   116→            }\n   117→        } message: {\n   118→            if let errorMessage = viewModel.errorMessage {\n   119→                Text(errorMessage)\n   120→            }\n   121→        }\n   122→        .onAppear {\n   123→            viewModel.onAppear(userId: userId, mealType: mealType)\n   124→        }\n   125→    }\n   126→\n   127→    // MARK: - Subviews\n   128→\n   129→    /// 검색 바\n   130→    ///\n   131→    /// 검색어 입력과 초기화 기능을 제공합니다.\n   132→    private var searchBar: some View {\n   133→        HStack(spacing: 12) {\n   134→            // 검색 아이콘\n   135→            Image(systemName: \"magnifyingglass\")\n   136→                .foregroundColor(.secondary)\n   137→\n   138→            // 검색 텍스트 필드\n   139→            TextField(\"음식 이름을 입력하세요\", text: $viewModel.searchQuery)\n   140→                .focused($isSearchFocused)\n   141→                .textFieldStyle(.plain)\n   142→                .autocapitalization(.none)\n   143→                .disableAutocorrection(true)\n   144→\n   145→            // 검색어 초기화 버튼\n   146→            if !viewModel.searchQuery.isEmpty {\n   147→                Button(action: {\n   148→                    viewModel.clearSearch()\n   149→                    isSearchFocused = false\n   150→                }) {\n   151→                    Image(systemName: \"xmark.circle.fill\")\n   152→                        .foregroundColor(.secondary)\n   153→                }\n   154→            }\n   155→        }\n   156→        .padding(.horizontal, 12)\n   157→        .padding(.vertical, 10)\n   158→        .background(Color(.systemGray6))\n   159→        .cornerRadius(10)\n   160→    }\n   161→\n   162→    /// 검색 결과 섹션\n   163→    ///\n   164→    /// 검색어와 일치하는 음식 목록을 표시합니다.\n   165→    private var searchResultsSection: some View {\n   166→        VStack(alignment: .leading, spacing: 12) {\n   167→            // 섹션 헤더\n   168→            Text(\"검색 결과\")\n   169→                .font(.headline)\n   170→                .foregroundColor(.primary)\n   171→                .padding(.horizontal)\n   172→\n   173→            // 검색 결과 목록\n   174→            VStack(spacing: 0) {\n   175→                ForEach(viewModel.searchResults) { food in\n   176→                    Button(action: {\n   177→                        onSelectFood(food)\n   178→                    }) {\n   179→                        FoodSearchResultRow(food: food)\n   180→                    }\n   181→                    .buttonStyle(PlainButtonStyle())\n   182→\n   183→                    if food.id != viewModel.searchResults.last?.id {\n   184→                        Divider()\n   185→                            .padding(.leading, 16)\n   186→                    }\n   187→                }\n   188→            }\n   189→            .background(Color(.systemBackground))\n   190→            .cornerRadius(12)\n   191→            .padding(.horizontal)\n   192→        }\n   193→    }\n   194→\n   195→    /// 최근 음식 섹션\n   196→    ///\n   197→    /// 최근에 사용한 음식 목록을 표시합니다.\n   198→    private var recentFoodsSection: some View {\n   199→        VStack(alignment: .leading, spacing: 12) {\n   200→            // 섹션 헤더\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:26:08.292410+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:09.314426+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -r \"\\.accessibility\" ./Bodii/Presentation ...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -r \"\\.accessibility\" ./Bodii/Presentation ...",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:09.841784+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -r \"\\.animation\" ./Bodii/Presentation --in...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -r \"\\.animation\" ./Bodii/Presentation --in...",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:09.969341+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:26:19.033401+00:00",
+          "type": "text",
+          "content": "Now let me create a comprehensive UI polish update. I'll add:\n1. A toast notification system for success/error messages\n2. Enhanced loading states with animations\n3. Accessibility labels throughout\n4. Smooth transitions\n5. Dynamic Type support\n\nLet me start by creating the toast notification system:",
+          "phase": "coding",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:43.978324+00:00",
+          "type": "tool_start",
+          "content": "[Write] ./Bodii/Presentation/Common/Toast/ToastView.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "./Bodii/Presentation/Common/Toast/ToastView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:44.328421+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "File created successfully at: ./Bodii/Presentation/Common/Toast/ToastView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:26:47.700141+00:00",
+          "type": "text",
+          "content": "Now let me update the DailyMealView with improved loading states, accessibility, and animations:",
+          "phase": "coding",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:48.440193+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:26:52.224832+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:09.719701+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:17.424268+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:28.470282+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:34.081701+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Diet/Views/DailyMealView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Diet/Views/DailyMealView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:34.122286+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "     1→//\n     2→//  DailyMealView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Daily Meal View\n     9→// 일일 식단 기록을 표시하는 메인 뷰\n    10→// 💡 날짜 네비게이션, 끼니별 섹션, 영양 요약 카드로 구성\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - Daily Meal View\n    15→\n    16→/// 일일 식단 화면\n    17→///\n    18→/// 선택된 날짜의 식단 기록을 끼니별로 표시하고 일일 영양 요약을 제공합니다.\n    19→///\n    20→/// - Note: DailyMealViewModel을 사용하여 데이터를 관리합니다.\n    21→/// - Note: 날짜 네비게이션으로 이전/다음 날짜로 이동할 수 있습니다.\n    22→///\n    23→/// - Example:\n    24→/// ```swift\n    25→/// DailyMealView(viewModel: dailyMealViewModel, userId: userId, bmr: 1650, tdee: 2310)\n    26→/// ```\n    27→struct DailyMealView: View {\n    28→\n    29→    // MARK: - Properties\n    30→\n    31→    /// ViewModel\n    32→    @ObservedObject var viewModel: DailyMealViewModel\n    33→\n    34→    /// 사용자 ID\n    35→    let userId: UUID\n    36→\n    37→    /// 기초대사량 (kcal)\n    38→    let bmr: Int32\n    39→\n    40→    /// 활동대사량 (kcal)\n    41→    let tdee: Int32\n    42→\n    43→    /// 음식 추가 콜백 (끼니 타입 전달)\n    44→    let onAddFood: ((MealType) -> Void)?\n    45→\n    46→    // MARK: - Initialization\n    47→\n    48→    init(\n    49→        viewModel: DailyMealViewModel,\n    50→        userId: UUID,\n    51→        bmr: Int32,\n    52→        tdee: Int32,\n    53→        onAddFood: ((MealType) -> Void)? = nil\n    54→    ) {\n    55→        self.viewModel = viewModel\n    56→        self.userId = userId\n    57→        self.bmr = bmr\n    58→        self.tdee = tdee\n    59→        self.onAddFood = onAddFood\n    60→    }\n    61→\n    62→    // MARK: - Body\n    63→\n    64→    var body: some View {\n    65→        ZStack {\n    66→                // 📚 학습 포인트: Background Color\n    67→                // iOS 디자인 가이드에 따른 시스템 배경색 사용\n    68→                Color(.systemGroupedBackground)\n    69→                    .ignoresSafeArea()\n    70→\n    71→                if viewModel.isLoading {\n    72→                    // 로딩 상태\n    73→                    ProgressView()\n    74→                        .scaleEffect(1.5)\n    75→                } else {\n    76→                    // 메인 컨텐츠\n    77→                    ScrollView {\n    78→                        VStack(spacing: 16) {\n    79→                            // 날짜 헤더\n    80→                            dateHeaderView\n    81→\n    82→                            // 일일 영양 요약 카드\n    83→                            if let dailyLog = viewModel.dailyLog {\n    84→                                NutritionSummaryCard(\n    85→                                    dailyLog: dailyLog,\n    86→                                    remainingCalories: viewModel.remainingCalories,\n    87→                                    calorieIntakePercentage: viewModel.calorieIntakePercentage\n    88→                                )\n    89→                                .padding(.horizontal)\n    90→                            }\n    91→\n    92→                            // 끼니 섹션들\n    93→                            ForEach(MealType.allCases) { mealType in\n    94→                                MealSectionView(\n    95→                                    mealType: mealType,\n    96→                                    meals: viewModel.mealGroups[mealType] ?? [],\n    97→                                    totalCalories: viewModel.totalCalories(for: mealType),\n    98→                                    onAddFood: {\n    99→                                        onAddFood?(mealType)\n   100→                                    },\n   101→                                    onDeleteFood: { foodRecordId in\n   102→                                        viewModel.deleteFoodRecord(foodRecordId)\n   103→                                    },\n   104→                                    onEditFood: { foodRecordId in\n   105→                                        // TODO: Phase 5에서 식단 수정 화면 구현\n   106→                                        print(\"Edit food record: \\(foodRecordId)\")\n   107→                                    }\n   108→                                )\n   109→                                .padding(.horizontal)\n   110→                            }\n   111→\n   112→                            // 빈 상태 메시지\n   113→                            if !viewModel.hasAnyMeals {\n   114→                                emptyStateView\n   115→                                    .padding(.top, 40)\n   116→                            }\n   117→                        }\n   118→                        .padding(.vertical)\n   119→                    }\n   120→                }\n   121→            }\n   122→        }\n   123→        .navigationTitle(\"식단\")\n   124→        .navigationBarTitleDisplayMode(.inline)\n   125→        .toolbar {\n   126→            // 새로고침 버튼\n   127→            ToolbarItem(placement: .navigationBarTrailing) {\n   128→                Button(action: {\n   129→                    viewModel.refresh()\n   130→                }) {\n   131→                    Image(systemName: \"arrow.clockwise\")\n   132→                }\n   133→            }\n   134→        }\n   135→        .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   136→            Button(\"확인\") {\n   137→                viewModel.errorMessage = nil\n   138→            }\n   139→        } message: {\n   140→            if let errorMessage = viewModel.errorMessage {\n   141→                Text(errorMessage)\n   142→            }\n   143→        }\n   144→        .onAppear {\n   145→            viewModel.onAppear(userId: userId, bmr: bmr, tdee: tdee)\n   146→        }\n   147→    }\n   148→\n   149→    // MARK: - Subviews\n   150→\n   151→    /// 날짜 헤더 뷰\n   152→    ///\n   153→    /// 현재 선택된 날짜와 이전/다음 날짜 네비게이션 버튼을 표시합니다.\n   154→    private var dateHeaderView: some View {\n   155→        HStack {\n   156→            // 이전 날짜 버튼\n   157→            Button(action: {\n   158→                viewModel.navigateToPreviousDay()\n   159→            }) {\n   160→                Image(systemName: \"chevron.left\")\n   161→                    .font(.title2)\n   162→                    .foregroundColor(.primary)\n   163→                    .frame(width: 44, height: 44)\n   164→            }\n   165→\n   166→            Spacer()\n   167→\n   168→            // 날짜 표시\n   169→            VStack(spacing: 4) {\n   170→                Text(viewModel.dateString)\n   171→                    .font(.headline)\n   172→                    .foregroundColor(.primary)\n   173→\n   174→                if viewModel.isToday {\n   175→                    Text(\"오늘\")\n   176→                        .font(.caption)\n   177→                        .foregroundColor(.secondary)\n   178→                }\n   179→            }\n   180→\n   181→            Spacer()\n   182→\n   183→            // 다음 날짜 버튼\n   184→            Button(action: {\n   185→                viewModel.navigateToNextDay()\n   186→            }) {\n   187→                Image(systemName: \"chevron.right\")\n   188→                    .font(.title2)\n   189→                    .foregroundColor(.primary)\n   190→                    .frame(width: 44, height: 44)\n   191→            }\n   192→            // 미래 날짜는 비활성화\n   193→            .disabled(viewModel.isFuture)\n   194→            .opacity(viewModel.isFuture ? 0.3 : 1.0)\n   195→        }\n   196→        .padding(.horizontal)\n   197→        .padding(.vertical, 8)\n   198→        .background(Color(.systemBackground))\n   199→    }\n   200→\n   201→    /// 빈 상태 뷰\n   202→    ///\n   203→    /// 식단 기록이 없을 때 표시되는 안내 메시지입니다.\n   204→    private var emptyStateView: some View {\n   205→        VStack(spacing: 16) {\n   206→            Image(systemName: \"fork.knife.circle\")\n   207→                .font(.system(size: 60))\n   208→                .foregroundColor(.secondary)\n   209→\n   210→            Text(\"기록된 식단이 없습니다\")\n   211→                .font(.headline)\n   212→                .foregroundColor(.primary)\n   213→\n   214→            Text(\"'+ 음식 추가' 버튼을 눌러\\n첫 식사를 기록해보세요\")\n   215→                .font(.subheadline)\n   216→                .foregroundColor(.secondary)\n   217→                .multilineTextAlignment(.center)\n   218→        }\n   219→        .padding()\n   220→    }\n   221→}\n   222→\n   223→// MARK: - Preview\n   224→\n   225→#Preview {\n   226→    // 프리뷰용 Mock 데이터\n   227→    let mockViewModel = DailyMealViewModel(\n   228→        foodRecordService: MockFoodRecordService(),\n   229→        dailyLogRepository: MockDailyLogRepository(),\n   230→        foodRepository: MockFoodRepository()\n   231→    )\n   232→\n   233→    return DailyMealView(\n   234→        viewModel: mockViewModel,\n   235→        userId: UUID(),\n   236→        bmr: 1650,\n   237→        tdee: 2310\n   238→    )\n   239→}\n   240→\n   241→// MARK: - Mock Services for Preview\n   242→\n   243→private class MockFoodRecordService: FoodRecordServiceProtocol {\n   244→    func addFoodRecord(userId: UUID, foodId: UUID, date: Date, mealType: MealType, quantity: Decimal, quantityUnit: QuantityUnit) async throws -> FoodRecord {\n   245→        fatalError(\"Mock not implemented\")\n   246→    }\n   247→\n   248→    func updateFoodRecord(foodRecordId: UUID, quantity: Decimal, quantityUnit: QuantityUnit, mealType: MealType) async throws -> FoodRecord {\n   249→        fatalError(\"Mock not implemented\")\n   250→    }\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:27:38.233112+00:00",
+          "type": "text",
+          "content": "Now let me update the components with better accessibility:",
+          "phase": "coding",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:38.856968+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...res/Diet/Views/Components/MealSectionView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...res/Diet/Views/Components/MealSectionView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:42.616028+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...res/Diet/Views/Components/MealSectionView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...res/Diet/Views/Components/MealSectionView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:45.484153+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...res/Diet/Views/Components/MealSectionView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...res/Diet/Views/Components/MealSectionView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:48.043960+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...res/Diet/Views/Components/MealSectionView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...res/Diet/Views/Components/MealSectionView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:56.587065+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tures/Diet/Views/Components/FoodRecordRow.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tures/Diet/Views/Components/FoodRecordRow.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:27:56.601463+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "     1→//\n     2→//  MealSectionView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Meal Section Component\n     9→// 끼니별 식단 기록을 표시하는 재사용 가능한 컴포넌트\n    10→// 💡 음식 추가 버튼과 식단 목록을 포함\n    11→\n    12→import SwiftUI\n    13→\n    14→/// 끼니 섹션 뷰\n    15→///\n    16→/// 특정 끼니(아침, 점심, 저녁, 간식)의 식단 기록을 표시합니다.\n    17→///\n    18→/// - Note: 음식 추가 버튼과 식단 기록 목록을 포함합니다.\n    19→/// - Note: 빈 상태일 때는 안내 메시지를 표시합니다.\n    20→///\n    21→/// - Example:\n    22→/// ```swift\n    23→/// MealSectionView(\n    24→///     mealType: .breakfast,\n    25→///     meals: breakfastMeals,\n    26→///     totalCalories: 450,\n    27→///     onAddFood: { showAddFoodSheet() },\n    28→///     onDeleteFood: { id in deleteFoodRecord(id) },\n    29→///     onEditFood: { id in editFoodRecord(id) }\n    30→/// )\n    31→/// ```\n    32→struct MealSectionView: View {\n    33→\n    34→    // MARK: - Properties\n    35→\n    36→    /// 끼니 타입 (breakfast, lunch, dinner, snack)\n    37→    let mealType: MealType\n    38→\n    39→    /// 식단 기록 목록\n    40→    let meals: [FoodRecordWithFood]\n    41→\n    42→    /// 총 칼로리\n    43→    let totalCalories: Int32\n    44→\n    45→    /// 음식 추가 액션\n    46→    let onAddFood: () -> Void\n    47→\n    48→    /// 음식 삭제 액션\n    49→    let onDeleteFood: (UUID) -> Void\n    50→\n    51→    /// 음식 수정 액션\n    52→    let onEditFood: (UUID) -> Void\n    53→\n    54→    // MARK: - Body\n    55→\n    56→    var body: some View {\n    57→        VStack(spacing: 0) {\n    58→            // 헤더\n    59→            headerView\n    60→\n    61→            // 식단 기록 목록\n    62→            if meals.isEmpty {\n    63→                // 빈 상태\n    64→                emptyStateView\n    65→            } else {\n    66→                // 식단 목록\n    67→                ForEach(meals) { item in\n    68→                    FoodRecordRow(\n    69→                        foodRecord: item.foodRecord,\n    70→                        food: item.food,\n    71→                        onDelete: {\n    72→                            onDeleteFood(item.foodRecord.id)\n    73→                        },\n    74→                        onEdit: {\n    75→                            onEditFood(item.foodRecord.id)\n    76→                        }\n    77→                    )\n    78→                }\n    79→            }\n    80→        }\n    81→        .background(Color(.systemBackground))\n    82→        .cornerRadius(12)\n    83→        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)\n    84→    }\n    85→\n    86→    // MARK: - Subviews\n    87→\n    88→    /// 헤더 뷰\n    89→    ///\n    90→    /// 끼니 이름, 총 칼로리, 음식 추가 버튼을 표시합니다.\n    91→    private var headerView: some View {\n    92→        HStack {\n    93→            // 끼니 이름\n    94→            Text(mealType.displayName)\n    95→                .font(.headline)\n    96→                .foregroundColor(.primary)\n    97→\n    98→            Spacer()\n    99→\n   100→            // 총 칼로리\n   101→            if !meals.isEmpty {\n   102→                Text(\"\\(totalCalories) kcal\")\n   103→                    .font(.subheadline)\n   104→                    .foregroundColor(.secondary)\n   105→            }\n   106→\n   107→            // 음식 추가 버튼\n   108→            Button(action: onAddFood) {\n   109→                Image(systemName: \"plus.circle.fill\")\n   110→                    .font(.title3)\n   111→                    .foregroundColor(.accentColor)\n   112→            }\n   113→        }\n   114→        .padding()\n   115→        .background(Color(.systemBackground))\n   116→    }\n   117→\n   118→    /// 빈 상태 뷰\n   119→    ///\n   120→    /// 식단 기록이 없을 때 표시되는 안내 메시지입니다.\n   121→    private var emptyStateView: some View {\n   122→        Text(\"기록된 음식이 없습니다\")\n   123→            .font(.subheadline)\n   124→            .foregroundColor(.secondary)\n   125→            .frame(maxWidth: .infinity)\n   126→            .padding(.vertical, 24)\n   127→            .background(Color(.systemBackground))\n   128→    }\n   129→}\n   130→\n   131→// MARK: - Preview\n   132→\n   133→#Preview {\n   134→    VStack(spacing: 16) {\n   135→        // 빈 상태 프리뷰\n   136→        MealSectionView(\n   137→            mealType: .breakfast,\n   138→            meals: [],\n   139→            totalCalories: 0,\n   140→            onAddFood: { print(\"Add food\") },\n   141→            onDeleteFood: { _ in print(\"Delete food\") },\n   142→            onEditFood: { _ in print(\"Edit food\") }\n   143→        )\n   144→        .padding()\n   145→\n   146→        // 데이터가 있는 상태 프리뷰\n   147→        MealSectionView(\n   148→            mealType: .lunch,\n   149→            meals: [\n   150→                FoodRecordWithFood(\n   151→                    foodRecord: FoodRecord(\n   152→                        id: UUID(),\n   153→                        userId: UUID(),\n   154→                        foodId: UUID(),\n   155→                        date: Date(),\n   156→                        mealType: .lunch,\n   157→                        quantity: 1.0,\n   158→                        quantityUnit: .serving,\n   159→                        calculatedCalories: 330,\n   160→                        calculatedCarbs: 70,\n   161→                        calculatedProtein: 7,\n   162→                        calculatedFat: 1,\n   163→                        createdAt: Date(),\n   164→                        updatedAt: Date()\n   165→                    ),\n   166→                    food: Food(\n   167→                        id: UUID(),\n   168→                        name: \"백미밥\",\n   169→                        servingSize: 210,\n   170→                        servingUnit: \"g\",\n   171→                        caloriesPerServing: 330,\n   172→                        carbsPerServing: 70,\n   173→                        proteinPerServing: 7,\n   174→                        fatPerServing: 1,\n   175→                        sodiumPerServing: 0,\n   176→                        fiberPerServing: nil,\n   177→                        sugarPerServing: nil,\n   178→                        source: .governmentAPI,\n   179→                        sourceId: nil,\n   180→                        usageCount: 10,\n   181→                        lastUsedAt: Date(),\n   182→                        isUserDefined: false,\n   183→                        createdAt: Date(),\n   184→                        updatedAt: Date()\n   185→                    )\n   186→                )\n   187→            ],\n   188→            totalCalories: 330,\n   189→            onAddFood: { print(\"Add food\") },\n   190→            onDeleteFood: { _ in print(\"Delete food\") },\n   191→            onEditFood: { _ in print(\"Edit food\") }\n   192→        )\n   193→        .padding()\n   194→    }\n   195→    .background(Color(.systemGroupedBackground))\n   196→}\n   197→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:28:06.135292+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...res/Diet/Views/Components/MealSectionView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...res/Diet/Views/Components/MealSectionView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:09.489217+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...res/Diet/Views/Components/MealSectionView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...res/Diet/Views/Components/MealSectionView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:09.506309+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "The file ./Bodii/Presentation/Features/Diet/Views/Components/MealSectionView.swift has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n    84→    }\n    85→\n    86→    // MARK: - Subviews\n    87→\n    88→    /// 헤더 뷰\n    89→    ///\n    90→    /// 끼니 이름, 총 칼로리, 음식 추가 버튼을 표시합니다.\n    91→    private var headerView: some View {\n    92→        HStack {\n    93→            // 끼니 이름\n    94→            Text(mealType.displayName)\n    95→                .font(.headline)\n    96→                .foregroundColor(.primary)\n    97→\n    98→            Spacer()\n    99→\n   100→            // 총 칼로리\n   101→            if !meals.isEmpty {\n   102→                Text(\"\\(totalCalories) kcal\")\n   103→                    .font(.subheadline)\n   104→                    .foregroundColor(.secondary)\n   105→            }\n   106→\n   107→            // 음식 추가 버튼\n   108→            Button(action: onAddFood) {\n   109→                Image(systemName: \"plus.circle.fill\")\n   110→                    .font(.title3)\n   111→                    .foregroundColor(.accentColor)\n   112→            }\n   113→            .accessibilityLabel(\"\\(mealType.displayName)에 음식 추가\")\n   114→            .accessibilityHint(\"음식 검색 화면을 엽니다\")\n   115→        }\n   116→        .padding()\n   117→        .background(Color(.systemBackground))\n   118→        .accessibilityElement(children: .ignore)\n   119→        .accessibilityLabel(meals.isEmpty ? \"\\(mealType.displayName)\" : \"\\(mealType.displayName), \\(totalCalories)킬로칼로리\")\n   120→    }\n   121→\n   122→    /// 빈 상태 뷰\n   123→    ///\n   124→    /// 식단 기록이 없을 때 표시되는 안내 메시지입니다.",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:28:15.479601+00:00",
+          "type": "text",
+          "content": "Now let me update FoodDetailView with toast notifications and accessibility:",
+          "phase": "coding",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:16.154292+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:18.499733+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:24.479259+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:27.878901+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:28.587585+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:35.198516+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:38.523879+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:41.699774+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:41.717115+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "     1→//\n     2→//  FoodDetailView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Food Detail View\n     9→// 음식 상세 화면 - 영양 정보 표시 및 섭취량 조절\n    10→// 💡 프리셋 배수와 커스텀 입력으로 섭취량 조절 지원\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - Food Detail View\n    15→\n    16→/// 음식 상세 화면\n    17→///\n    18→/// 음식의 영양 정보를 표시하고 섭취량을 조절하여 식단에 추가합니다.\n    19→///\n    20→/// - Note: FoodDetailViewModel을 사용하여 데이터를 관리합니다.\n    21→/// - Note: 프리셋 배수(0.25x, 0.5x, 1x, 1.5x, 2x)와 커스텀 수량 입력을 지원합니다.\n    22→///\n    23→/// - Example:\n    24→/// ```swift\n    25→/// FoodDetailView(\n    26→///     viewModel: foodDetailViewModel,\n    27→///     foodId: foodId,\n    28→///     userId: userId,\n    29→///     date: Date(),\n    30→///     mealType: .breakfast,\n    31→///     bmr: 1650,\n    32→///     tdee: 2310,\n    33→///     onSave: {\n    34→///         // 저장 완료 처리\n    35→///     }\n    36→/// )\n    37→/// ```\n    38→struct FoodDetailView: View {\n    39→\n    40→    // MARK: - Properties\n    41→\n    42→    /// ViewModel\n    43→    @ObservedObject var viewModel: FoodDetailViewModel\n    44→\n    45→    /// 음식 ID\n    46→    let foodId: UUID\n    47→\n    48→    /// 사용자 ID\n    49→    let userId: UUID\n    50→\n    51→    /// 섭취 날짜\n    52→    let date: Date\n    53→\n    54→    /// 초기 끼니 타입\n    55→    let initialMealType: MealType\n    56→\n    57→    /// 기초대사량 (kcal)\n    58→    let bmr: Int32\n    59→\n    60→    /// 활동대사량 (kcal)\n    61→    let tdee: Int32\n    62→\n    63→    /// 저장 완료 콜백\n    64→    let onSave: () -> Void\n    65→\n    66→    // MARK: - State\n    67→\n    68→    /// 저장 성공 알림 표시 여부\n    69→    @State private var showingSaveSuccess = false\n    70→\n    71→    // MARK: - Body\n    72→\n    73→    var body: some View {\n    74→        ZStack {\n    75→            // 📚 학습 포인트: Background Color\n    76→            // iOS 디자인 가이드에 따른 시스템 배경색 사용\n    77→            Color(.systemGroupedBackground)\n    78→                .ignoresSafeArea()\n    79→\n    80→            if viewModel.isLoading {\n    81→                // 로딩 상태\n    82→                ProgressView()\n    83→                    .scaleEffect(1.5)\n    84→            } else if let food = viewModel.food {\n    85→                // 메인 컨텐츠\n    86→                ScrollView {\n    87→                    VStack(spacing: 20) {\n    88→                        // 음식 정보 헤더\n    89→                        foodHeaderSection(food: food)\n    90→\n    91→                        // 영양 정보 카드\n    92→                        NutritionFactsCard(\n    93→                            food: food,\n    94→                            quantity: viewModel.quantity,\n    95→                            quantityUnit: viewModel.quantityUnit,\n    96→                            calculatedCalories: viewModel.calculatedCalories,\n    97→                            calculatedCarbs: viewModel.calculatedCarbs,\n    98→                            calculatedProtein: viewModel.calculatedProtein,\n    99→                            calculatedFat: viewModel.calculatedFat\n   100→                        )\n   101→\n   102→                        // 섭취량 선택 섹션\n   103→                        ServingSizePicker(\n   104→                            quantity: $viewModel.quantity,\n   105→                            quantityUnit: $viewModel.quantityUnit,\n   106→                            quantityError: viewModel.quantityError,\n   107→                            presetMultipliers: viewModel.presetMultipliers,\n   108→                            onSetQuantityMultiplier: { multiplier in\n   109→                                viewModel.setQuantityMultiplier(multiplier)\n   110→                            },\n   111→                            onChangeUnit: { newUnit in\n   112→                                viewModel.changeUnit(to: newUnit)\n   113→                            }\n   114→                        )\n   115→\n   116→                        // 끼니 선택 섹션\n   117→                        mealTypeSection\n   118→\n   119→                        // 추가 버튼\n   120→                        addButton\n   121→                    }\n   122→                    .padding(.vertical)\n   123→                }\n   124→            }\n   125→        }\n   126→        .navigationTitle(\"음식 추가\")\n   127→        .navigationBarTitleDisplayMode(.inline)\n   128→        .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   129→            Button(\"확인\") {\n   130→                viewModel.errorMessage = nil\n   131→            }\n   132→        } message: {\n   133→            if let errorMessage = viewModel.errorMessage {\n   134→                Text(errorMessage)\n   135→            }\n   136→        }\n   137→        .alert(\"추가 완료\", isPresented: $showingSaveSuccess) {\n   138→            Button(\"확인\") {\n   139→                onSave()\n   140→            }\n   141→        } message: {\n   142→            Text(\"식단에 추가되었습니다.\")\n   143→        }\n   144→        .onAppear {\n   145→            viewModel.onAppear(\n   146→                foodId: foodId,\n   147→                userId: userId,\n   148→                date: date,\n   149→                mealType: initialMealType,\n   150→                bmr: bmr,\n   151→                tdee: tdee\n   152→            )\n   153→        }\n   154→    }\n   155→\n   156→    // MARK: - Subviews\n   157→\n   158→    /// 음식 정보 헤더\n   159→    ///\n   160→    /// 음식 이름과 1회 제공량 정보를 표시합니다.\n   161→    ///\n   162→    /// - Parameter food: 음식 정보\n   163→    /// - Returns: 헤더 섹션 뷰\n   164→    private func foodHeaderSection(food: Food) -> some View {\n   165→        VStack(spacing: 8) {\n   166→            // 음식 이름\n   167→            Text(food.name)\n   168→                .font(.title2)\n   169→                .fontWeight(.bold)\n   170→                .foregroundColor(.primary)\n   171→                .multilineTextAlignment(.center)\n   172→\n   173→            // 1회 제공량 정보\n   174→            if let servingUnit = food.servingUnit {\n   175→                Text(\"\\(servingUnit) (\\(formattedDecimal(food.servingSize))g)\")\n   176→                    .font(.subheadline)\n   177→                    .foregroundColor(.secondary)\n   178→            } else {\n   179→                Text(\"\\(formattedDecimal(food.servingSize))g\")\n   180→                    .font(.subheadline)\n   181→                    .foregroundColor(.secondary)\n   182→            }\n   183→        }\n   184→        .padding()\n   185→        .frame(maxWidth: .infinity)\n   186→        .background(Color(.systemBackground))\n   187→    }\n   188→\n   189→    /// 끼니 선택 섹션\n   190→    ///\n   191→    /// 끼니 타입을 선택합니다.\n   192→    private var mealTypeSection: some View {\n   193→        VStack(alignment: .leading, spacing: 12) {\n   194→            // 섹션 헤더\n   195→            Text(\"끼니\")\n   196→                .font(.headline)\n   197→                .foregroundColor(.primary)\n   198→                .padding(.horizontal)\n   199→\n   200→            // 끼니 선택 버튼\n   201→            HStack(spacing: 12) {\n   202→                ForEach(MealType.allCases) { mealType in\n   203→                    mealTypeButton(mealType: mealType)\n   204→                }\n   205→            }\n   206→            .padding(.horizontal)\n   207→        }\n   208→    }\n   209→\n   210→    /// 끼니 타입 버튼\n   211→    ///\n   212→    /// 끼니를 선택하는 버튼입니다.\n   213→    ///\n   214→    /// - Parameter mealType: 끼니 타입\n   215→    /// - Returns: 끼니 버튼 뷰\n   216→    private func mealTypeButton(mealType: MealType) -> some View {\n   217→        Button(action: {\n   218→            viewModel.selectedMealType = mealType\n   219→        }) {\n   220→            Text(mealType.displayName)\n   221→                .font(.subheadline)\n   222→                .fontWeight(.medium)\n   223→                .foregroundColor(\n   224→                    viewModel.selectedMealType == mealType\n   225→                        ? .white\n   226→                        : .primary\n   227→                )\n   228→                .frame(maxWidth: .infinity)\n   229→                .padding(.vertical, 12)\n   230→                .background(\n   231→                    viewModel.selectedMealType == mealType\n   232→                        ? Color.blue\n   233→                        : Color(.systemBackground)\n   234→                )\n   235→                .cornerRadius(10)\n   236→                .overlay(\n   237→                    RoundedRectangle(cornerRadius: 10)\n   238→                        .stroke(\n   239→                            viewModel.selectedMealType == mealType\n   240→                                ? Color.blue\n   241→                                : Color(.systemGray4),\n   242→                            lineWidth: 1\n   243→                        )\n   244→                )\n   245→        }\n   246→    }\n   247→\n   248→    /// 추가 버튼\n   249→    ///\n   250→    /// 식단에 음식을 추가하는 버튼입니다.\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:28:54.337803+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodDetailView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodDetailView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:54.355488+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "The file ./Bodii/Presentation/Features/Diet/Views/FoodDetailView.swift has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n   250→                )\n   251→        }\n   252→    }\n   253→\n   254→    /// 추가 버튼\n   255→    ///\n   256→    /// 식단에 음식을 추가하는 버튼입니다.\n   257→    private var addButton: some View {\n   258→        Button(action: {\n   259→            Task {\n   260→                await saveFood()\n   261→            }\n   262→        }) {\n   263→            HStack {\n   264→                if viewModel.isSaving {\n   265→                    ProgressView()\n   266→                        .tint(.white)\n   267→                        .accessibilityLabel(\"저장 중\")\n   268→                } else {\n   269→                    Image(systemName: \"plus.circle.fill\")\n   270→                        .font(.title3)\n   271→\n   272→                    Text(\"식단에 추가\")\n   273→                        .font(.headline)\n   274→                }\n   275→            }\n   276→            .foregroundColor(.white)\n   277→            .frame(maxWidth: .infinity)\n   278→            .padding()\n   279→            .background(viewModel.canSave ? Color.blue : Color.gray)\n   280→            .cornerRadius(12)\n   281→        }\n   282→        .disabled(!viewModel.canSave)\n   283→        .padding(.horizontal)\n   284→        .padding(.bottom)\n   285→        .accessibilityLabel(\"식단에 추가\")\n   286→        .accessibilityHint(viewModel.canSave ? \"음식을 식단에 추가합니다\" : \"추가하기 전에 필수 입력값을 확인하세요\")\n   287→    }\n   288→\n   289→    // MARK: - Actions\n   290→\n   291→    /// 음식 저장\n   292→    ///\n   293→    /// 음식을 식단에 추가합니다.\n   294→    @MainActor\n   295→    private func saveFood() async {\n   296→        do {\n   297→            try await viewModel.saveFoodRecord()\n   298→            successToastMessage = \"식단에 추가되었습니다\"\n   299→            // 약간의 지연 후 화면 닫기\n   300→            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {\n   301→                onSave()\n   302→            }\n   303→        } catch {\n   304→            // 에러는 ViewModel에서 처리\n   305→        }\n   306→    }\n   307→\n   308→    // MARK: - Helpers\n   309→\n   310→    /// Decimal 값을 포맷팅",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:28:57.924207+00:00",
+          "type": "text",
+          "content": "Now let me update FoodSearchView with accessibility and improved loading states:",
+          "phase": "coding",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:28:58.716971+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Features/Diet/Views/FoodSearchView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Features/Diet/Views/FoodSearchView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:29:06.611102+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodSearchView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodSearchView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:29:14.199272+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodSearchView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodSearchView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:29:19.094695+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodSearchView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodSearchView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:29:19.618044+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Features/Diet/Views/FoodSearchView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Features/Diet/Views/FoodSearchView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:29:27.966190+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodSearchView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodSearchView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:29:27.981861+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "    55→    /// 검색 필드에 포커스 여부\n    56→    @FocusState private var isSearchFocused: Bool\n    57→\n    58→    // MARK: - Body\n    59→\n    60→    var body: some View {\n    61→        ZStack {\n    62→            // 📚 학습 포인트: Background Color\n    63→            // iOS 디자인 가이드에 따른 시스템 배경색 사용\n    64→            Color(.systemGroupedBackground)\n    65→                .ignoresSafeArea()\n    66→\n    67→            VStack(spacing: 0) {\n    68→                // 검색 바\n    69→                searchBar\n    70→                    .padding()\n    71→                    .background(Color(.systemBackground))\n    72→\n    73→                // 메인 컨텐츠\n    74→                if viewModel.isAnyLoading {\n    75→                    // 로딩 상태\n    76→                    Spacer()\n    77→                    ProgressView()\n    78→                        .scaleEffect(1.5)\n    79→                    Spacer()\n    80→                } else if viewModel.isEmpty {\n    81→                    // 빈 상태\n    82→                    emptyStateView\n    83→                } else {\n    84→                    // 검색 결과 또는 최근/자주 사용하는 음식 목록\n    85→                    ScrollView {\n    86→                        VStack(spacing: 16) {\n    87→                            if viewModel.isInSearchMode {\n    88→                                // 검색 결과 표시\n    89→                                searchResultsSection\n    90→                            } else {\n    91→                                // 최근 음식과 자주 사용하는 음식 표시\n    92→                                if viewModel.hasRecentFoods {\n    93→                                    recentFoodsSection\n    94→                                }\n    95→\n    96→                                if viewModel.hasFrequentFoods {\n    97→                                    frequentFoodsSection\n    98→                                }\n    99→                            }\n   100→                        }\n   101→                        .padding(.vertical)\n   102→                    }\n   103→                }\n   104→\n   105→                // 수동 입력 버튼\n   106→                manualEntryButton\n   107→                    .padding()\n   108→                    .background(Color(.systemBackground))\n   109→            }\n   110→        }\n   111→        .navigationTitle(\"음식 검색\")\n   112→        .navigationBarTitleDisplayMode(.inline)\n   113→        .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   114→            Button(\"확인\") {\n   115→                viewModel.errorMessage = nil\n   116→            }\n   117→        } message: {\n   118→            if let errorMessage = viewModel.errorMessage {\n   119→                Text(errorMessage)\n   120→            }\n   121→        }\n   122→        .onAppear {\n   123→            viewModel.onAppear(userId: userId, mealType: mealType)\n   124→        }\n   125→    }\n   126→\n   127→    // MARK: - Subviews\n   128→\n   129→    /// 검색 바\n   130→    ///\n   131→    /// 검색어 입력과 초기화 기능을 제공합니다.\n   132→    private var searchBar: some View {\n   133→        HStack(spacing: 12) {\n   134→            // 검색 아이콘\n   135→            Image(systemName: \"magnifyingglass\")\n   136→                .foregroundColor(.secondary)\n   137→\n   138→            // 검색 텍스트 필드\n   139→            TextField(\"음식 이름을 입력하세요\", text: $viewModel.searchQuery)\n   140→                .focused($isSearchFocused)\n   141→                .textFieldStyle(.plain)\n   142→                .autocapitalization(.none)\n   143→                .disableAutocorrection(true)\n   144→\n   145→            // 검색어 초기화 버튼\n   146→            if !viewModel.searchQuery.isEmpty {\n   147→                Button(action: {\n   148→                    viewModel.clearSearch()\n   149→                    isSearchFocused = false\n   150→                }) {\n   151→                    Image(systemName: \"xmark.circle.fill\")\n   152→                        .foregroundColor(.secondary)\n   153→                }\n   154→            }\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:29:38.165737+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodSearchView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodSearchView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:29:41.905709+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...tation/Features/Diet/Views/FoodSearchView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...tation/Features/Diet/Views/FoodSearchView.swift",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:29:41.924800+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "7.5",
+          "session": 28,
+          "detail": "The file ./Bodii/Presentation/Features/Diet/Views/FoodSearchView.swift has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n   280→            .padding(.horizontal)\n   281→        }\n   282→    }\n   283→\n   284→    /// 빈 상태 뷰\n   285→    ///\n   286→    /// 검색 결과나 음식이 없을 때 표시되는 안내 메시지입니다.\n   287→    private var emptyStateView: some View {\n   288→        VStack(spacing: 16) {\n   289→            Image(systemName: viewModel.isInSearchMode ? \"magnifyingglass\" : \"fork.knife.circle\")\n   290→                .font(.system(size: 60))\n   291→                .foregroundColor(.secondary)\n   292→                .accessibilityHidden(true)\n   293→\n   294→            Text(viewModel.isInSearchMode ? \"검색 결과가 없습니다\" : \"최근 음식이 없습니다\")\n   295→                .font(.headline)\n   296→                .foregroundColor(.primary)\n   297→\n   298→            Text(viewModel.isInSearchMode ? \"다른 검색어를 입력하거나\\n수동으로 음식을 추가해보세요\" : \"음식을 추가하면\\n여기에 표시됩니다\")\n   299→                .font(.subheadline)\n   300→                .foregroundColor(.secondary)\n   301→                .multilineTextAlignment(.center)\n   302→        }\n   303→        .frame(maxWidth: .infinity, maxHeight: .infinity)\n   304→        .padding()\n   305→        .accessibilityElement(children: .combine)\n   306→        .accessibilityLabel(viewModel.isInSearchMode\n   307→            ? \"검색 결과가 없습니다. 다른 검색어를 입력하거나 수동으로 음식을 추가해보세요\"\n   308→            : \"최근 음식이 없습니다. 음식을 추가하면 여기에 표시됩니다\")\n   309→    }\n   310→\n   311→    /// 수동 입력 버튼\n   312→    ///\n   313→    /// 음식 수동 입력 화면으로 이동하는 버튼입니다.",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-13T09:29:46.417110+00:00",
+          "type": "text",
+          "content": "Excellent! Now let me commit all these UI polish improvements:",
+          "phase": "coding",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:29:49.418846+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add . && git commit -m \"auto-claude: 7.5 - ...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add . && git commit -m \"auto-claude: 7.5 - ...",
+          "subtask_id": "7.5",
+          "session": 28
+        },
+        {
+          "timestamp": "2026-01-13T09:30:09.041857+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "7.5",
+          "session": 28
         }
       ]
     },

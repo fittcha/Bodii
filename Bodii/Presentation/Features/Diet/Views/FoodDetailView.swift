@@ -65,8 +65,8 @@ struct FoodDetailView: View {
 
     // MARK: - State
 
-    /// 저장 성공 알림 표시 여부
-    @State private var showingSaveSuccess = false
+    /// 성공 토스트 메시지
+    @State private var successToastMessage: String?
 
     // MARK: - Body
 
@@ -76,11 +76,22 @@ struct FoodDetailView: View {
             // iOS 디자인 가이드에 따른 시스템 배경색 사용
             Color(.systemGroupedBackground)
                 .ignoresSafeArea()
+                .accessibilityHidden(true)
 
             if viewModel.isLoading {
-                // 로딩 상태
-                ProgressView()
-                    .scaleEffect(1.5)
+                // 로딩 상태 (개선된 애니메이션)
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                        .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+
+                    Text("음식 정보 불러오는 중...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("음식 정보 불러오는 중")
+                .transition(.opacity)
             } else if let food = viewModel.food {
                 // 메인 컨텐츠
                 ScrollView {
@@ -134,13 +145,7 @@ struct FoodDetailView: View {
                 Text(errorMessage)
             }
         }
-        .alert("추가 완료", isPresented: $showingSaveSuccess) {
-            Button("확인") {
-                onSave()
-            }
-        } message: {
-            Text("식단에 추가되었습니다.")
-        }
+        .successToast(message: $successToastMessage)
         .onAppear {
             viewModel.onAppear(
                 foodId: foodId,
@@ -196,6 +201,7 @@ struct FoodDetailView: View {
                 .font(.headline)
                 .foregroundColor(.primary)
                 .padding(.horizontal)
+                .accessibilityAddTraits(.isHeader)
 
             // 끼니 선택 버튼
             HStack(spacing: 12) {
@@ -251,18 +257,14 @@ struct FoodDetailView: View {
     private var addButton: some View {
         Button(action: {
             Task {
-                do {
-                    try await viewModel.saveFoodRecord()
-                    showingSaveSuccess = true
-                } catch {
-                    // 에러는 ViewModel에서 처리됨
-                }
+                await saveFood()
             }
         }) {
             HStack {
                 if viewModel.isSaving {
                     ProgressView()
                         .tint(.white)
+                        .accessibilityLabel("저장 중")
                 } else {
                     Image(systemName: "plus.circle.fill")
                         .font(.title3)
@@ -280,6 +282,27 @@ struct FoodDetailView: View {
         .disabled(!viewModel.canSave)
         .padding(.horizontal)
         .padding(.bottom)
+        .accessibilityLabel("식단에 추가")
+        .accessibilityHint(viewModel.canSave ? "음식을 식단에 추가합니다" : "추가하기 전에 필수 입력값을 확인하세요")
+    }
+
+    // MARK: - Actions
+
+    /// 음식 저장
+    ///
+    /// 음식을 식단에 추가합니다.
+    @MainActor
+    private func saveFood() async {
+        do {
+            try await viewModel.saveFoodRecord()
+            successToastMessage = "식단에 추가되었습니다"
+            // 약간의 지연 후 화면 닫기
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                onSave()
+            }
+        } catch {
+            // 에러는 ViewModel에서 처리
+        }
     }
 
     // MARK: - Helpers

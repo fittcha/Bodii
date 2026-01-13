@@ -110,9 +110,13 @@ struct MealSectionView: View {
                     .font(.title3)
                     .foregroundColor(.accentColor)
             }
+            .accessibilityLabel("\(mealType.displayName)에 음식 추가")
+            .accessibilityHint("음식 검색 화면을 엽니다")
         }
         .padding()
         .background(Color(.systemBackground))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(meals.isEmpty ? "\(mealType.displayName)" : "\(mealType.displayName), \(totalCalories)킬로칼로리")
     }
 
     /// 빈 상태 뷰
@@ -125,6 +129,8 @@ struct MealSectionView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 24)
             .background(Color(.systemBackground))
+            .accessibilityLabel("\(mealType.displayName)에 기록된 음식이 없습니다")
+            .accessibilityHint("플러스 버튼을 눌러 음식을 추가하세요")
     }
 }
 

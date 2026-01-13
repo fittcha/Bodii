@@ -43,6 +43,14 @@ struct DailyMealView: View {
     /// 음식 추가 콜백 (끼니 타입 전달)
     let onAddFood: ((MealType) -> Void)?
 
+    // MARK: - State
+
+    /// 성공 토스트 메시지
+    @State private var successToastMessage: String?
+
+    /// 정보 토스트 메시지
+    @State private var infoToastMessage: String?
+
     // MARK: - Initialization
 
     init(
@@ -63,61 +71,78 @@ struct DailyMealView: View {
 
     var body: some View {
         ZStack {
-                // 📚 학습 포인트: Background Color
-                // iOS 디자인 가이드에 따른 시스템 배경색 사용
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea()
+            // 📚 학습 포인트: Background Color
+            // iOS 디자인 가이드에 따른 시스템 배경색 사용
+            Color(.systemGroupedBackground)
+                .ignoresSafeArea()
+                .accessibilityHidden(true)
 
-                if viewModel.isLoading {
-                    // 로딩 상태
+            if viewModel.isLoading {
+                // 로딩 상태 (개선된 애니메이션)
+                VStack(spacing: 16) {
                     ProgressView()
                         .scaleEffect(1.5)
-                } else {
-                    // 메인 컨텐츠
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            // 날짜 헤더
-                            dateHeaderView
+                        .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
 
-                            // 일일 영양 요약 카드
-                            if let dailyLog = viewModel.dailyLog {
-                                NutritionSummaryCard(
-                                    dailyLog: dailyLog,
-                                    remainingCalories: viewModel.remainingCalories,
-                                    calorieIntakePercentage: viewModel.calorieIntakePercentage
-                                )
-                                .padding(.horizontal)
-                            }
-
-                            // 끼니 섹션들
-                            ForEach(MealType.allCases) { mealType in
-                                MealSectionView(
-                                    mealType: mealType,
-                                    meals: viewModel.mealGroups[mealType] ?? [],
-                                    totalCalories: viewModel.totalCalories(for: mealType),
-                                    onAddFood: {
-                                        onAddFood?(mealType)
-                                    },
-                                    onDeleteFood: { foodRecordId in
-                                        viewModel.deleteFoodRecord(foodRecordId)
-                                    },
-                                    onEditFood: { foodRecordId in
-                                        // TODO: Phase 5에서 식단 수정 화면 구현
-                                        print("Edit food record: \(foodRecordId)")
-                                    }
-                                )
-                                .padding(.horizontal)
-                            }
-
-                            // 빈 상태 메시지
-                            if !viewModel.hasAnyMeals {
-                                emptyStateView
-                                    .padding(.top, 40)
-                            }
-                        }
-                        .padding(.vertical)
-                    }
+                    Text("식단 불러오는 중...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("식단 불러오는 중")
+                .transition(.opacity)
+            } else {
+                // 메인 컨텐츠
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // 날짜 헤더
+                        dateHeaderView
+
+                        // 일일 영양 요약 카드
+                        if let dailyLog = viewModel.dailyLog {
+                            NutritionSummaryCard(
+                                dailyLog: dailyLog,
+                                remainingCalories: viewModel.remainingCalories,
+                                calorieIntakePercentage: viewModel.calorieIntakePercentage
+                            )
+                            .padding(.horizontal)
+                            .transition(.scale.combined(with: .opacity))
+                        }
+
+                        // 끼니 섹션들
+                        ForEach(MealType.allCases) { mealType in
+                            MealSectionView(
+                                mealType: mealType,
+                                meals: viewModel.mealGroups[mealType] ?? [],
+                                totalCalories: viewModel.totalCalories(for: mealType),
+                                onAddFood: {
+                                    onAddFood?(mealType)
+                                },
+                                onDeleteFood: { foodRecordId in
+                                    Task {
+                                        await deleteFoodWithFeedback(foodRecordId)
+                                    }
+                                },
+                                onEditFood: { foodRecordId in
+                                    // TODO: Phase 5에서 식단 수정 화면 구현
+                                    print("Edit food record: \(foodRecordId)")
+                                }
+                            )
+                            .padding(.horizontal)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                        }
+
+                        // 빈 상태 메시지
+                        if !viewModel.hasAnyMeals {
+                            emptyStateView
+                                .padding(.top, 40)
+                                .transition(.scale.combined(with: .opacity))
+                        }
+                    }
+                    .padding(.vertical)
+                }
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.mealGroups)
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.hasAnyMeals)
             }
         }
         .navigationTitle("식단")
@@ -126,10 +151,15 @@ struct DailyMealView: View {
             // 새로고침 버튼
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    viewModel.refresh()
+                    Task {
+                        await refreshWithFeedback()
+                    }
                 }) {
                     Image(systemName: "arrow.clockwise")
+                        .accessibilityLabel("새로고침")
+                        .accessibilityHint("식단 데이터를 다시 불러옵니다")
                 }
+                .disabled(viewModel.isLoading)
             }
         }
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
@@ -141,8 +171,32 @@ struct DailyMealView: View {
                 Text(errorMessage)
             }
         }
+        .successToast(message: $successToastMessage)
+        .infoToast(message: $infoToastMessage)
         .onAppear {
             viewModel.onAppear(userId: userId, bmr: bmr, tdee: tdee)
+        }
+    }
+
+    // MARK: - Actions
+
+    /// 음식 삭제 및 피드백 표시
+    ///
+    /// - Parameter foodRecordId: 삭제할 음식 기록 ID
+    @MainActor
+    private func deleteFoodWithFeedback(_ foodRecordId: UUID) async {
+        await viewModel.deleteFoodRecord(foodRecordId)
+        if viewModel.errorMessage == nil {
+            successToastMessage = "식단에서 삭제되었습니다"
+        }
+    }
+
+    /// 새로고침 및 피드백 표시
+    @MainActor
+    private func refreshWithFeedback() async {
+        await viewModel.refresh()
+        if viewModel.errorMessage == nil {
+            infoToastMessage = "데이터를 새로고침했습니다"
         }
     }
 
@@ -155,13 +209,17 @@ struct DailyMealView: View {
         HStack {
             // 이전 날짜 버튼
             Button(action: {
-                viewModel.navigateToPreviousDay()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    viewModel.navigateToPreviousDay()
+                }
             }) {
                 Image(systemName: "chevron.left")
                     .font(.title2)
                     .foregroundColor(.primary)
                     .frame(width: 44, height: 44)
             }
+            .accessibilityLabel("이전 날짜")
+            .accessibilityHint("전날 식단 보기")
 
             Spacer()
 
@@ -177,12 +235,16 @@ struct DailyMealView: View {
                         .foregroundColor(.secondary)
                 }
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(viewModel.isToday ? "오늘, \(viewModel.dateString)" : viewModel.dateString)
 
             Spacer()
 
             // 다음 날짜 버튼
             Button(action: {
-                viewModel.navigateToNextDay()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    viewModel.navigateToNextDay()
+                }
             }) {
                 Image(systemName: "chevron.right")
                     .font(.title2)
@@ -192,6 +254,8 @@ struct DailyMealView: View {
             // 미래 날짜는 비활성화
             .disabled(viewModel.isFuture)
             .opacity(viewModel.isFuture ? 0.3 : 1.0)
+            .accessibilityLabel("다음 날짜")
+            .accessibilityHint(viewModel.isFuture ? "미래 날짜는 볼 수 없습니다" : "다음 날 식단 보기")
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
@@ -206,6 +270,7 @@ struct DailyMealView: View {
             Image(systemName: "fork.knife.circle")
                 .font(.system(size: 60))
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
 
             Text("기록된 식단이 없습니다")
                 .font(.headline)
@@ -217,6 +282,8 @@ struct DailyMealView: View {
                 .multilineTextAlignment(.center)
         }
         .padding()
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("기록된 식단이 없습니다. 플러스 음식 추가 버튼을 눌러 첫 식사를 기록해보세요")
     }
 }
 

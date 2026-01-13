@@ -63,6 +63,7 @@ struct FoodSearchView: View {
             // iOS 디자인 가이드에 따른 시스템 배경색 사용
             Color(.systemGroupedBackground)
                 .ignoresSafeArea()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 // 검색 바
@@ -72,10 +73,20 @@ struct FoodSearchView: View {
 
                 // 메인 컨텐츠
                 if viewModel.isAnyLoading {
-                    // 로딩 상태
+                    // 로딩 상태 (개선된 애니메이션)
                     Spacer()
-                    ProgressView()
-                        .scaleEffect(1.5)
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+
+                        Text(viewModel.isSearching ? "검색 중..." : "불러오는 중...")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(viewModel.isSearching ? "검색 중" : "불러오는 중")
+                    .transition(.opacity)
                     Spacer()
                 } else if viewModel.isEmpty {
                     // 빈 상태
@@ -134,6 +145,7 @@ struct FoodSearchView: View {
             // 검색 아이콘
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
 
             // 검색 텍스트 필드
             TextField("음식 이름을 입력하세요", text: $viewModel.searchQuery)
@@ -141,6 +153,8 @@ struct FoodSearchView: View {
                 .textFieldStyle(.plain)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
+                .accessibilityLabel("음식 검색")
+                .accessibilityHint("음식 이름을 입력하여 검색하세요")
 
             // 검색어 초기화 버튼
             if !viewModel.searchQuery.isEmpty {
@@ -151,6 +165,7 @@ struct FoodSearchView: View {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.secondary)
                 }
+                .accessibilityLabel("검색어 지우기")
             }
         }
         .padding(.horizontal, 12)
@@ -274,6 +289,7 @@ struct FoodSearchView: View {
             Image(systemName: viewModel.isInSearchMode ? "magnifyingglass" : "fork.knife.circle")
                 .font(.system(size: 60))
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
 
             Text(viewModel.isInSearchMode ? "검색 결과가 없습니다" : "최근 음식이 없습니다")
                 .font(.headline)
@@ -286,6 +302,10 @@ struct FoodSearchView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(viewModel.isInSearchMode
+            ? "검색 결과가 없습니다. 다른 검색어를 입력하거나 수동으로 음식을 추가해보세요"
+            : "최근 음식이 없습니다. 음식을 추가하면 여기에 표시됩니다")
     }
 
     /// 수동 입력 버튼
@@ -306,6 +326,8 @@ struct FoodSearchView: View {
             .background(Color.blue)
             .cornerRadius(12)
         }
+        .accessibilityLabel("음식 직접 입력")
+        .accessibilityHint("검색 결과에 없는 음식을 직접 입력할 수 있습니다")
     }
 }
 

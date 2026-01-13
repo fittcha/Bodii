@@ -72,16 +72,22 @@ struct FoodRecordRow: View {
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .accessibilityHidden(true)
             }
             .padding()
             .background(Color(.systemBackground))
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(food.name), \(quantityText), \(foodRecord.calculatedCalories)킬로칼로리")
+        .accessibilityHint("두 번 탭하여 수정, 왼쪽으로 스와이프하여 삭제")
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(role: .destructive, action: onDelete) {
                 Label("삭제", systemImage: "trash")
             }
+            .accessibilityLabel("삭제")
+            .accessibilityHint("\(food.name)을(를) 식단에서 삭제합니다")
         }
     }
 
