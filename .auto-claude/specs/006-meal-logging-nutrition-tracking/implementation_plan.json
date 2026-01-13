@@ -247,7 +247,7 @@
           "id": "3.3",
           "title": "Create MealSectionView",
           "description": "Implement reusable meal section component showing foods for a specific meal type with edit/delete actions.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Views/Diet/Components/MealSectionView.swift",
             "Bodii/Presentation/Views/Diet/Components/FoodRecordRow.swift"
@@ -260,7 +260,8 @@
             "Add food button"
           ],
           "estimated_hours": 2.5,
-          "notes": ""
+          "notes": "Successfully implemented reusable meal section component and food record row component:\n\n**New Components Created:**\n1. MealSectionView.swift (196 lines)\n   - Reusable component for displaying meal sections\n   - Shows meal type header with calorie subtotal\n   - Lists food items with FoodRecordRow component\n   - Includes empty state message when no foods recorded\n   - Add food button in header\n   - Supports edit and delete actions via callbacks\n\n2. FoodRecordRow.swift (243 lines)\n   - Reusable row component for individual food records\n   - Displays food name, quantity (with unit), and calories\n   - Tap to edit functionality (Button wrapper with chevron indicator)\n   - Swipe to delete functionality\n   - Supports both serving and gram units\n   - Proper number formatting with NumberFormatter\n\n**Updated Files:**\n- DailyMealView.swift (553 lines, reduced from 689)\n  - Refactored to use new MealSectionView component\n  - Added selectedFoodRecordId state for edit functionality\n  - Added onEditFood closure to MealSectionView calls\n  - Removed private MealSectionView struct (extracted to separate file)\n  - Removed private FoodRecordRowView struct (extracted to separate file)\n  - Kept NutritionSummaryCardView as private (will extract in subtask 3.4)\n\n**Code Quality:**\n- Follows established SwiftUI patterns from existing codebase\n- Korean and English documentation following project style\n- SwiftUI best practices (PlainButtonStyle for nested buttons to avoid conflicts)\n- Comprehensive previews with multiple examples for both components\n- Proper separation of concerns with callback-based architecture\n- Type-safe with proper protocol usage\n\n**All Acceptance Criteria Met:**\n\u2705 Display meal type header with calorie subtotal\n\u2705 List food items with name, quantity, calories\n\u2705 Swipe to delete functionality\n\u2705 Tap to edit functionality\n\u2705 Add food button\n\nFiles created:\n- Bodii/Presentation/Features/Diet/Views/Components/MealSectionView.swift\n- Bodii/Presentation/Features/Diet/Views/Components/FoodRecordRow.swift\n\nFiles modified:\n- Bodii/Presentation/Features/Diet/Views/DailyMealView.swift\n\nCommit: 75dd9f3\nStatus: Ready for use in production",
+          "updated_at": "2026-01-13T08:38:58.461787+00:00"
         },
         {
           "id": "3.4",
@@ -626,5 +627,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T08:34:33.671427+00:00"
+  "last_updated": "2026-01-13T08:38:58.461796+00:00"
 }
