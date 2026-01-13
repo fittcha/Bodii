@@ -267,7 +267,7 @@
           "id": "3.4",
           "title": "Create NutritionSummaryCard",
           "description": "Implement daily nutrition summary card showing calories and macro breakdown with visual charts.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Views/Diet/Components/NutritionSummaryCard.swift",
             "Bodii/Presentation/Views/Diet/Components/MacroRatioChart.swift"
@@ -280,7 +280,8 @@
             "Color coding for each macro"
           ],
           "estimated_hours": 2.5,
-          "notes": ""
+          "notes": "Successfully extracted and implemented NutritionSummaryCard and MacroRatioChart components:\n\n**New Components Created:**\n1. MacroRatioChart.swift (276 lines)\n   - Visual pie chart component for macro ratios\n   - Color-coded slices (carbs: blue, protein: orange, fat: purple)\n   - Custom PieSlice shape using SwiftUI Path API\n   - Handles empty state with gray circle\n   - Comprehensive previews with different diet types (balanced, high-carb, high-protein, empty)\n\n2. NutritionSummaryCard.swift (376 lines)\n   - Enhanced nutrition summary with chart integration\n   - Calorie section:\n     * Total calories vs TDEE display\n     * Progress bar with dynamic color coding (blue < 50%, green 50-90%, orange 90-110%, red > 110%)\n     * Remaining calories with color indication\n   - Macro section:\n     * Integrated MacroRatioChart for visual representation\n     * Detailed macro list with amounts (g) and percentages (%)\n     * Color indicators matching chart colors\n   - Comprehensive previews (balanced diet, high-carb diet, empty state)\n\n**Updated Files:**\n- DailyMealView.swift (375 lines, reduced from 554)\n  - Removed private NutritionSummaryCardView struct (179 lines)\n  - Now uses extracted NutritionSummaryCard component\n  - Cleaner separation of concerns\n  - Improved maintainability and reusability\n\n**Code Quality:**\n- Follows established SwiftUI patterns from existing components\n- Korean and English documentation following project style\n- Reusable components with comprehensive #Preview\n- Type-safe with proper protocol usage\n- Proper color coding for visual feedback and user experience\n- Clean separation between data (DailyLog) and presentation (Charts)\n\n**All Acceptance Criteria Met:**\n\u2705 Display total calories consumed vs TDEE\n\u2705 Show remaining calories\n\u2705 Display macro breakdown (carbs, protein, fat in grams)\n\u2705 Pie chart for macro ratios\n\u2705 Color coding for each macro\n\nCommit: 9f0ee27\nStatus: Ready for production use in Phase 4+",
+          "updated_at": "2026-01-13T08:46:34.263106+00:00"
         }
       ]
     },
@@ -627,5 +628,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T08:38:58.461796+00:00"
+  "last_updated": "2026-01-13T08:46:34.263113+00:00"
 }

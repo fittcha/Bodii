@@ -1,0 +1,560 @@
+//
+//  FoodSearchView.swift
+//  Bodii
+//
+//  Created by Auto-Claude on 2026-01-13.
+//
+
+// 📚 학습 포인트: Food Search View
+// 음식 검색 화면 - 검색, 최근 음식, 자주 사용하는 음식 표시
+// 💡 검색어 입력 시 디바운스 처리하여 실시간 검색 제공
+
+import SwiftUI
+
+// MARK: - Food Search View
+
+/// 음식 검색 화면
+///
+/// 음식을 검색하고 최근/자주 사용하는 음식을 표시하여 빠른 추가를 지원합니다.
+///
+/// - Note: FoodSearchViewModel을 사용하여 데이터를 관리합니다.
+/// - Note: 검색어가 비어있을 때는 최근/자주 사용하는 음식을 표시합니다.
+///
+/// - Example:
+/// ```swift
+/// FoodSearchView(
+///     viewModel: foodSearchViewModel,
+///     userId: userId,
+///     mealType: .breakfast,
+///     onSelectFood: { food in
+///         // 음식 선택 처리
+///     }
+/// )
+/// ```
+struct FoodSearchView: View {
+
+    // MARK: - Properties
+
+    /// ViewModel
+    @ObservedObject var viewModel: FoodSearchViewModel
+
+    /// 사용자 ID
+    let userId: UUID
+
+    /// 끼니 타입
+    let mealType: MealType
+
+    /// 음식 선택 콜백
+    let onSelectFood: (Food) -> Void
+
+    /// 수동 입력 콜백
+    let onManualEntry: () -> Void
+
+    // MARK: - State
+
+    /// 검색 필드에 포커스 여부
+    @FocusState private var isSearchFocused: Bool
+
+    // MARK: - Body
+
+    var body: some View {
+        ZStack {
+            // 📚 학습 포인트: Background Color
+            // iOS 디자인 가이드에 따른 시스템 배경색 사용
+            Color(.systemGroupedBackground)
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                // 검색 바
+                searchBar
+                    .padding()
+                    .background(Color(.systemBackground))
+
+                // 메인 컨텐츠
+                if viewModel.isAnyLoading {
+                    // 로딩 상태
+                    Spacer()
+                    ProgressView()
+                        .scaleEffect(1.5)
+                    Spacer()
+                } else if viewModel.isEmpty {
+                    // 빈 상태
+                    emptyStateView
+                } else {
+                    // 검색 결과 또는 최근/자주 사용하는 음식 목록
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            if viewModel.isInSearchMode {
+                                // 검색 결과 표시
+                                searchResultsSection
+                            } else {
+                                // 최근 음식과 자주 사용하는 음식 표시
+                                if viewModel.hasRecentFoods {
+                                    recentFoodsSection
+                                }
+
+                                if viewModel.hasFrequentFoods {
+                                    frequentFoodsSection
+                                }
+                            }
+                        }
+                        .padding(.vertical)
+                    }
+                }
+
+                // 수동 입력 버튼
+                manualEntryButton
+                    .padding()
+                    .background(Color(.systemBackground))
+            }
+        }
+        .navigationTitle("음식 검색")
+        .navigationBarTitleDisplayMode(.inline)
+        .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
+            Button("확인") {
+                viewModel.errorMessage = nil
+            }
+        } message: {
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
+            }
+        }
+        .onAppear {
+            viewModel.onAppear(userId: userId, mealType: mealType)
+        }
+    }
+
+    // MARK: - Subviews
+
+    /// 검색 바
+    ///
+    /// 검색어 입력과 초기화 기능을 제공합니다.
+    private var searchBar: some View {
+        HStack(spacing: 12) {
+            // 검색 아이콘
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.secondary)
+
+            // 검색 텍스트 필드
+            TextField("음식 이름을 입력하세요", text: $viewModel.searchQuery)
+                .focused($isSearchFocused)
+                .textFieldStyle(.plain)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+
+            // 검색어 초기화 버튼
+            if !viewModel.searchQuery.isEmpty {
+                Button(action: {
+                    viewModel.clearSearch()
+                    isSearchFocused = false
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+    }
+
+    /// 검색 결과 섹션
+    ///
+    /// 검색어와 일치하는 음식 목록을 표시합니다.
+    private var searchResultsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // 섹션 헤더
+            Text("검색 결과")
+                .font(.headline)
+                .foregroundColor(.primary)
+                .padding(.horizontal)
+
+            // 검색 결과 목록
+            VStack(spacing: 0) {
+                ForEach(viewModel.searchResults) { food in
+                    Button(action: {
+                        onSelectFood(food)
+                    }) {
+                        FoodSearchResultRow(food: food)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+
+                    if food.id != viewModel.searchResults.last?.id {
+                        Divider()
+                            .padding(.leading, 16)
+                    }
+                }
+            }
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .padding(.horizontal)
+        }
+    }
+
+    /// 최근 음식 섹션
+    ///
+    /// 최근에 사용한 음식 목록을 표시합니다.
+    private var recentFoodsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // 섹션 헤더
+            HStack {
+                Image(systemName: "clock")
+                    .foregroundColor(.secondary)
+                Text("최근 음식")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+            }
+            .padding(.horizontal)
+
+            // 최근 음식 목록
+            VStack(spacing: 0) {
+                ForEach(viewModel.recentFoods) { food in
+                    Button(action: {
+                        onSelectFood(food)
+                    }) {
+                        FoodSearchResultRow(food: food)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+
+                    if food.id != viewModel.recentFoods.last?.id {
+                        Divider()
+                            .padding(.leading, 16)
+                    }
+                }
+            }
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .padding(.horizontal)
+        }
+    }
+
+    /// 자주 사용하는 음식 섹션
+    ///
+    /// 자주 사용한 음식 목록을 표시합니다.
+    private var frequentFoodsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // 섹션 헤더
+            HStack {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.secondary)
+                Text("자주 먹는 음식")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+            }
+            .padding(.horizontal)
+
+            // 자주 사용하는 음식 목록
+            VStack(spacing: 0) {
+                ForEach(viewModel.frequentFoods) { food in
+                    Button(action: {
+                        onSelectFood(food)
+                    }) {
+                        FoodSearchResultRow(food: food)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+
+                    if food.id != viewModel.frequentFoods.last?.id {
+                        Divider()
+                            .padding(.leading, 16)
+                    }
+                }
+            }
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .padding(.horizontal)
+        }
+    }
+
+    /// 빈 상태 뷰
+    ///
+    /// 검색 결과나 음식이 없을 때 표시되는 안내 메시지입니다.
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: viewModel.isInSearchMode ? "magnifyingglass" : "fork.knife.circle")
+                .font(.system(size: 60))
+                .foregroundColor(.secondary)
+
+            Text(viewModel.isInSearchMode ? "검색 결과가 없습니다" : "최근 음식이 없습니다")
+                .font(.headline)
+                .foregroundColor(.primary)
+
+            Text(viewModel.isInSearchMode ? "다른 검색어를 입력하거나\n수동으로 음식을 추가해보세요" : "음식을 추가하면\n여기에 표시됩니다")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+    }
+
+    /// 수동 입력 버튼
+    ///
+    /// 음식 수동 입력 화면으로 이동하는 버튼입니다.
+    private var manualEntryButton: some View {
+        Button(action: onManualEntry) {
+            HStack {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title3)
+
+                Text("음식 직접 입력")
+                    .font(.headline)
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color.blue)
+            .cornerRadius(12)
+        }
+    }
+}
+
+// MARK: - Food Search Result Row
+
+/// 음식 검색 결과 행
+///
+/// 음식 이름, 1회 제공량, 칼로리, 매크로 영양소 미리보기를 표시합니다.
+///
+/// - Note: Phase 4, subtask 4.2에서 별도 파일로 추출 예정
+///
+/// - Example:
+/// ```swift
+/// FoodSearchResultRow(food: food)
+/// ```
+private struct FoodSearchResultRow: View {
+
+    // MARK: - Properties
+
+    /// 음식 정보
+    let food: Food
+
+    // MARK: - Body
+
+    var body: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 6) {
+                // 음식 이름
+                Text(food.name)
+                    .font(.body)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+
+                // 1회 제공량 정보
+                Text(servingSizeText)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                // 매크로 미리보기 (P/C/F)
+                HStack(spacing: 8) {
+                    macroPreview("P", value: food.protein, color: .orange)
+                    macroPreview("C", value: food.carbohydrates, color: .blue)
+                    macroPreview("F", value: food.fat, color: .purple)
+                }
+            }
+
+            Spacer()
+
+            // 칼로리
+            VStack(spacing: 2) {
+                Text("\(food.calories)")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+
+                Text("kcal")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+
+            // 네비게이션 아이콘
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .contentShape(Rectangle())
+    }
+
+    // MARK: - Helpers
+
+    /// 1회 제공량 텍스트
+    ///
+    /// 제공량과 단위를 포맷팅하여 표시합니다.
+    ///
+    /// - Returns: 포맷팅된 제공량 문자열 (예: "1인분 (210g)", "100g")
+    private var servingSizeText: String {
+        let sizeString = formattedDecimal(food.servingSize)
+
+        if let unit = food.servingUnit {
+            return "\(unit) (\(sizeString)g)"
+        } else {
+            return "\(sizeString)g"
+        }
+    }
+
+    /// 매크로 영양소 미리보기
+    ///
+    /// 매크로 영양소의 짧은 정보를 표시합니다.
+    ///
+    /// - Parameters:
+    ///   - label: 영양소 레이블 (P/C/F)
+    ///   - value: 영양소 값 (g)
+    ///   - color: 표시 색상
+    /// - Returns: 매크로 미리보기 뷰
+    private func macroPreview(_ label: String, value: Decimal, color: Color) -> some View {
+        HStack(spacing: 2) {
+            Text(label)
+                .font(.caption2)
+                .fontWeight(.semibold)
+                .foregroundColor(color)
+
+            Text(formattedDecimal(value))
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(color.opacity(0.1))
+        .cornerRadius(4)
+    }
+
+    /// Decimal 값을 포맷팅
+    ///
+    /// Decimal 값을 소수점 첫째 자리까지 표시하는 문자열로 변환합니다.
+    ///
+    /// - Parameter value: 포맷팅할 Decimal 값
+    /// - Returns: 포맷팅된 문자열
+    private func formattedDecimal(_ value: Decimal) -> String {
+        let nsDecimal = value as NSDecimalNumber
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 1
+        return formatter.string(from: nsDecimal) ?? "0"
+    }
+}
+
+// MARK: - Preview
+
+#Preview {
+    // 프리뷰용 Mock 데이터
+    let mockViewModel = FoodSearchViewModel(
+        foodSearchService: MockFoodSearchService(),
+        recentFoodsService: MockRecentFoodsService()
+    )
+
+    return NavigationView {
+        FoodSearchView(
+            viewModel: mockViewModel,
+            userId: UUID(),
+            mealType: .breakfast,
+            onSelectFood: { food in
+                print("Selected: \(food.name)")
+            },
+            onManualEntry: {
+                print("Manual entry tapped")
+            }
+        )
+    }
+}
+
+// MARK: - Mock Services for Preview
+
+private class MockFoodSearchService: FoodSearchServiceProtocol {
+    func searchFoods(query: String, userId: UUID) async throws -> [Food] {
+        // 샘플 음식 데이터 반환
+        return [
+            Food(
+                id: UUID(),
+                name: "백미밥",
+                calories: 330,
+                carbohydrates: 70,
+                protein: 7,
+                fat: 1,
+                sodium: 0,
+                fiber: nil,
+                sugar: nil,
+                servingSize: 210,
+                servingUnit: "1공기",
+                source: .governmentAPI,
+                apiCode: "D000001",
+                createdByUserId: nil,
+                createdAt: Date()
+            ),
+            Food(
+                id: UUID(),
+                name: "닭가슴살",
+                calories: 165,
+                carbohydrates: 0,
+                protein: 31,
+                fat: 3.6,
+                sodium: 74,
+                fiber: nil,
+                sugar: nil,
+                servingSize: 100,
+                servingUnit: "100g",
+                source: .governmentAPI,
+                apiCode: "D000002",
+                createdByUserId: nil,
+                createdAt: Date()
+            )
+        ]
+    }
+
+    func getRecentFoods(userId: UUID, limit: Int) async throws -> [Food] {
+        return []
+    }
+
+    func getFrequentFoods(userId: UUID, limit: Int) async throws -> [Food] {
+        return []
+    }
+}
+
+private class MockRecentFoodsService: RecentFoodsServiceProtocol {
+    func getRecentFoods(userId: UUID, limit: Int) async throws -> [Food] {
+        return [
+            Food(
+                id: UUID(),
+                name: "백미밥",
+                calories: 330,
+                carbohydrates: 70,
+                protein: 7,
+                fat: 1,
+                sodium: 0,
+                fiber: nil,
+                sugar: nil,
+                servingSize: 210,
+                servingUnit: "1공기",
+                source: .governmentAPI,
+                apiCode: "D000001",
+                createdByUserId: nil,
+                createdAt: Date()
+            )
+        ]
+    }
+
+    func getFrequentFoods(userId: UUID, limit: Int) async throws -> [Food] {
+        return [
+            Food(
+                id: UUID(),
+                name: "닭가슴살",
+                calories: 165,
+                carbohydrates: 0,
+                protein: 31,
+                fat: 3.6,
+                sodium: 74,
+                fiber: nil,
+                sugar: nil,
+                servingSize: 100,
+                servingUnit: "100g",
+                source: .governmentAPI,
+                apiCode: "D000002",
+                createdByUserId: nil,
+                createdAt: Date()
+            )
+        ]
+    }
+
+    func getQuickAddFoods(userId: UUID, maxRecent: Int, maxFrequent: Int, maxTotal: Int) async throws -> [Food] {
+        return []
+    }
+}
