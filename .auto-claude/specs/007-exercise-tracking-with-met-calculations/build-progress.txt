@@ -204,10 +204,44 @@ All acceptance criteria met ✓
 
 All acceptance criteria met ✓
 
+[2026-01-13 - Subtask 2.4 COMPLETED]
+✅ ExerciseInputView Implementation
+- Created Bodii/Features/Exercise/Views/ExerciseInputView.swift
+- Sheet modal for adding/editing exercises
+- Exercise type selection grid:
+  * LazyVGrid with 4 columns
+  * All 8 exercise types with icons and labels
+  * Visual selection state (colored circle background)
+  * Icons: figure.walk, figure.run, bicycle, figure.pool.swim, dumbbell.fill, etc.
+  * Color-coded by type (running: blue, cycling: orange, swimming: cyan, etc.)
+- Duration input section:
+  * TextField with number keyboard
+  * +/-10 minute stepper buttons
+  * Validation with error messages (minimum 1 minute)
+- Intensity selector:
+  * Three buttons (low/medium/high)
+  * Visual indicators with icons (circle, circle.lefthalf.filled, circle.fill)
+  * Color-coded (low: green, medium: orange, high: red)
+- Date picker for exercise date (compact style)
+- Real-time calorie preview:
+  * Large flame icon with calorie count
+  * Gradient background (orange to red)
+  * Updates via ExerciseInputViewModel
+- Navigation toolbar:
+  * Cancel button (dismisses modal)
+  * Save button (disabled when validation fails)
+  * Dynamic title ("운동 추가" or "운동 수정")
+- Form validation and error alerts
+- Edit mode support (pre-fills existing values)
+- Integrated into ExerciseListView via makeInputViewModel() helper
+- SwiftUI preview with mock dependencies
+- Committed: 21fa3d2
+
+All 8 acceptance criteria met ✓
+
 ## Next Steps
-- Phase 2 UI Layer in progress (3/7 completed)
+- Phase 2 UI Layer in progress (4/7 completed)
 - Continue with remaining UI components:
-  * Subtask 2.4: Create ExerciseInputView modal
   * Subtask 2.5: Create ExerciseCardView component
   * Subtask 2.6: Create ExerciseTypeGridView component
   * Subtask 2.7: Add SF Symbol icons to ExerciseType enum
