@@ -55,13 +55,49 @@ final class DIContainer {
 
     // MARK: - Repositories
 
+    /// 사용자 Repository
+    /// 📚 학습 포인트: lazy var로 지연 초기화
+    /// 처음 접근할 때만 생성되어 메모리 효율적
+    lazy var userRepository: UserRepository = {
+        let context = PersistenceController.shared.container.viewContext
+        return UserRepository(context: context)
+    }()
+
+    /// 운동 기록 Repository
+    lazy var exerciseRecordRepository: ExerciseRecordRepository = {
+        let context = PersistenceController.shared.container.viewContext
+        return ExerciseRecordRepository(context: context)
+    }()
+
+    /// 일일 집계 Repository
+    lazy var dailyLogRepository: DailyLogRepository = {
+        let context = PersistenceController.shared.container.viewContext
+        return DailyLogRepository(context: context)
+    }()
+
     // TODO: Phase 3에서 추가 예정
-    // - UserRepository
     // - BodyRepository
     // - FoodRepository
-    // - ExerciseRepository
     // - SleepRepository
     // - GoalRepository
+
+    // MARK: - Services
+
+    /// 운동 칼로리 계산 서비스
+    /// 📚 학습 포인트: Static Service
+    /// ExerciseCalcService는 enum with static methods이므로
+    /// 인스턴스화 불필요 (직접 ExerciseCalcService.calculateCaloriesBurned 호출)
+
+    /// 운동 기록 서비스
+    /// 📚 학습 포인트: Service with Dependencies
+    /// 여러 Repository를 조합하여 비즈니스 로직 처리
+    lazy var exerciseRecordService: ExerciseRecordService = {
+        return ExerciseRecordService(
+            exerciseRecordRepository: exerciseRecordRepository,
+            dailyLogRepository: dailyLogRepository,
+            userRepository: userRepository
+        )
+    }()
 
     // MARK: - Use Cases
 
@@ -88,6 +124,29 @@ extension DIContainer {
     // 📚 학습 포인트: Factory Pattern
     // 의존성 생성 로직을 캡슐화
     // 테스트 시 Mock 객체로 교체 가능
+
+    // MARK: - Exercise Feature
+
+    /// 운동 목록 ViewModel 생성
+    /// 📚 학습 포인트: Factory Method
+    /// ViewModel 생성 시 필요한 의존성을 주입
+    /// 테스트 시 Mock으로 교체 가능
+    func makeExerciseViewModel() -> ExerciseViewModel {
+        return ExerciseViewModel(exerciseRecordService: exerciseRecordService)
+    }
+
+    /// 운동 입력 ViewModel 생성
+    /// 📚 학습 포인트: Factory Method with Parameters
+    /// 기존 운동 레코드를 받아 편집 모드 지원
+    ///
+    /// - Parameter existingRecord: 편집할 기존 운동 레코드 (nil이면 생성 모드)
+    /// - Returns: 생성된 ExerciseInputViewModel
+    func makeExerciseInputViewModel(existingRecord: ExerciseRecord? = nil) -> ExerciseInputViewModel {
+        return ExerciseInputViewModel(
+            exerciseRecordService: exerciseRecordService,
+            existingRecord: existingRecord
+        )
+    }
 
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel
