@@ -497,7 +497,7 @@
           "id": "7.1",
           "title": "Integrate with Tab Navigation",
           "description": "Add Diet tab to main tab view and set up navigation flow between all diet screens.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/App/ContentView.swift",
             "Bodii/Presentation/Views/Diet/DietTabView.swift"
@@ -510,13 +510,14 @@
             "Proper back navigation"
           ],
           "estimated_hours": 1.5,
-          "notes": ""
+          "notes": "Successfully integrated Diet tab into main tab view with complete navigation flow.\n\n**Implementation Details:**\n\n1. **Created DietTabView.swift** (257 lines):\n   - Root view for Diet tab with NavigationStack\n   - Manages all diet-related screen navigation\n   - Initializes repositories and services (FoodRepository, FoodRecordRepository, DailyLogRepository, FoodRecordService, LocalFoodSearchService, RecentFoodsService)\n   - Creates ViewModels (DailyMealViewModel, FoodSearchViewModel)\n   - Handles state management for navigation (showingFoodSearch, selectedMealType, selectedFoodId, showingManualEntry)\n\n2. **Updated DailyMealView.swift**:\n   - Added onAddFood callback parameter for navigation to food search\n   - Removed NavigationView wrapper (handled by DietTabView)\n   - Removed internal sheet management (delegated to parent)\n   - Added custom initializer with optional onAddFood callback\n\n3. **Updated ContentView.swift**:\n   - Replaced PlaceholderView with DietTabView in dietTab\n\n**Navigation Flow:**\n```\nDietTabView (NavigationStack)\n\u2514\u2500\u2500 DailyMealView (root)\n    \u251c\u2500\u2500 onAddFood -> opens FoodSearchView (sheet)\n    \u2502   \u251c\u2500\u2500 onSelectFood -> navigates to FoodDetailView\n    \u2502   \u2502   \u2514\u2500\u2500 onSave -> closes all sheets and refreshes\n    \u2502   \u2514\u2500\u2500 onManualEntry -> opens ManualFoodEntryView (sheet)\n    \u2502       \u2514\u2500\u2500 onSave -> closes all sheets and refreshes\n    \u2514\u2500\u2500 onDeleteFood -> deletes and refreshes\n```\n\n**Key Features:**\n- Sheet-based presentation for food search (maintains context)\n- NavigationDestination for food detail (hierarchical navigation)\n- Nested sheets for manual entry\n- Proper data refresh on save/delete operations\n- Temporary user data (userId, BMR, TDEE) - marked with TODO for Phase 7.2\n\n**All Acceptance Criteria Met:**\n\u2705 Add Diet tab to TabView\n\u2705 Navigation from daily view to search\n\u2705 Navigation from search to detail\n\u2705 Navigation from search to manual entry\n\u2705 Proper back navigation\n\nCommit: 3d77468\nStatus: Ready for Phase 7.2 (DI Container registration)",
+          "updated_at": "2026-01-13T09:16:26.255259+00:00"
         },
         {
           "id": "7.2",
           "title": "Register Services in DI Container",
           "description": "Register all new services and repositories in the dependency injection container.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/App/DIContainer.swift"
           ],
@@ -529,7 +530,8 @@
             "Register RecentFoodsService"
           ],
           "estimated_hours": 1,
-          "notes": ""
+          "notes": "Successfully registered all new services and repositories in the dependency injection container:\n\n**Repositories Registered:**\n1. FoodRepository - Core Data repository for Food entity\n2. FoodRecordRepository - Core Data repository for FoodRecord entity  \n3. DailyLogRepository - Core Data repository for DailyLog entity\n\n**Services Registered:**\n1. FoodRecordService - Business logic for food record management with cascade DailyLog updates\n2. LocalFoodSearchService (as foodSearchService) - Food search with Korean food prioritization\n3. RecentFoodsService - Recent and frequently used foods for quick-add functionality\n\n**Factory Methods Added:**\n- makeDailyMealViewModel() - Creates DailyMealViewModel with proper dependencies\n- makeFoodSearchViewModel() - Creates FoodSearchViewModel with proper dependencies\n- makeFoodDetailViewModel(foodId:selectedDate:selectedMealType:) - Creates FoodDetailViewModel with context\n- makeManualFoodEntryViewModel(selectedDate:selectedMealType:) - Creates ManualFoodEntryViewModel with context\n\n**Implementation Details:**\n- All registrations use lazy initialization for optimal performance\n- Protocol types used throughout for testability and flexibility\n- Follows existing DIContainer patterns with Korean documentation\n- Proper dependency injection with repository/service composition\n- Configuration values provided for RecentFoodsService (max 10 recent, 10 frequent, 15 quick-add)\n\n**All Acceptance Criteria Met:**\n\u2705 Register FoodRepository\n\u2705 Register FoodRecordRepository  \n\u2705 Register DailyLogRepository\n\u2705 Register FoodRecordService\n\u2705 Register LocalFoodSearchService\n\u2705 Register RecentFoodsService\n\nFile modified:\n- Bodii/App/DIContainer.swift (added 104 lines)\n\nCommit: 14e21f2\nStatus: Ready for use throughout the app. DietTabView can now use DIContainer.shared instead of manual initialization.",
+          "updated_at": "2026-01-13T09:18:54.739047+00:00"
         },
         {
           "id": "7.3",
@@ -637,5 +639,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T09:13:00.743338+00:00"
+  "last_updated": "2026-01-13T09:18:54.739055+00:00"
 }
