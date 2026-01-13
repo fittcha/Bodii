@@ -59,7 +59,7 @@
           "id": "1.3",
           "title": "Implement DailyLogRepository",
           "description": "Create repository for DailyLog entity to fetch and update daily summaries.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/Repositories/DailyLogRepository.swift",
             "Bodii/Data/Repositories/DailyLogRepositoryProtocol.swift"
@@ -71,13 +71,14 @@
             "Update daily log fields"
           ],
           "estimated_hours": 2,
-          "notes": ""
+          "notes": "Successfully implemented DailyLogRepository and DailyLogRepositoryProtocol with all required functionality:\n- CRUD operations (save, update, delete)\n- findByDate to query daily log for specific date\n- getOrCreate pattern for date-based unique records (automatically creates with initial values if not exists)\n- findByDateRange for querying multiple days\n- Proper relationship handling for User entity\n- Swift Concurrency async/await pattern\n- Comprehensive error handling using RepositoryError\n- Korean documentation following established patterns\nAll methods properly handle Core Data context operations and include proper entity mapping between Core Data and domain models, including optional fields (carbsRatio, proteinRatio, fatRatio, steps, weight, bodyFatPct, sleepDuration, sleepStatus).",
+          "updated_at": "2026-01-13T08:05:42.412320+00:00"
         },
         {
           "id": "1.4",
           "title": "Implement FoodRecordService",
           "description": "Create service layer for food record management with cascade updates to DailyLog. Handle nutrition calculations based on quantity.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Domain/Services/FoodRecordService.swift",
             "Bodii/Domain/Services/FoodRecordServiceProtocol.swift"
@@ -91,7 +92,8 @@
             "Calculate net calories"
           ],
           "estimated_hours": 3,
-          "notes": ""
+          "notes": "Successfully implemented FoodRecordServiceProtocol and FoodRecordService with all required functionality:\n- Add food record with automatic nutrition calculation based on quantity and unit\n- Update food record with proper DailyLog recalculation (subtract old values, add new values)\n- Delete food record with DailyLog cascade updates\n- Calculate macro ratios (carbs/protein/fat %) based on calorie contributions (carbs: 4 kcal/g, protein: 4 kcal/g, fat: 9 kcal/g)\n- Calculate net calories (totalCaloriesIn - tdee)\n- Query operations for fetching food records by date and meal type\n\nKey implementation details:\n1. Nutrition calculation: Supports both serving and gram units with proper multiplier calculation\n2. DailyLog cascade updates: Automatically updates totals when adding/deleting/updating records\n3. Macro ratio calculation: Uses standard calorie multipliers and returns percentages\n4. Update handling: Properly subtracts old nutrition values before adding new ones\n5. Error handling: Comprehensive error cases (food not found, food record not found, daily log not found)\n\nFiles created:\n- Bodii/Domain/Services/FoodRecordServiceProtocol.swift (130 lines)\n- Bodii/Domain/Services/FoodRecordService.swift (442 lines)\n\nCommit: ae1d29e\nStatus: Ready for use in view models (next phases)",
+          "updated_at": "2026-01-13T08:09:19.064825+00:00"
         },
         {
           "id": "1.5",
@@ -617,5 +619,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-13T08:02:51.306957+00:00"
+  "last_updated": "2026-01-13T08:09:19.064832+00:00"
 }

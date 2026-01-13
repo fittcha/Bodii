@@ -1,0 +1,130 @@
+# Meal Logging - Build Progress
+
+## Feature Overview
+Full diet tracking with meal categorization (breakfast, lunch, dinner, snacks), food search, manual entry, serving size adjustment, and daily calorie/macro summary.
+
+## Status: Planning Complete
+Created: 2026-01-13
+
+---
+
+## Phase Summary
+
+| Phase | Name | Subtasks | Status |
+|-------|------|----------|--------|
+| 1 | Data Layer and Core Services | 6 | Pending |
+| 2 | Food Search and Quick Add | 3 | Pending |
+| 3 | UI - Daily Meal View | 4 | Pending |
+| 4 | UI - Food Search Screen | 3 | Pending |
+| 5 | UI - Food Detail and Add | 4 | Pending |
+| 6 | UI - Manual Food Entry | 2 | Pending |
+| 7 | Integration and Polish | 5 | Pending |
+
+Total Estimated Hours: 55
+
+---
+
+## Acceptance Criteria Checklist
+- [ ] Users can log food to breakfast, lunch, dinner, or snacks
+- [ ] Food search shows Korean foods first with preview
+- [ ] Manual food entry available with all macro fields
+- [ ] Serving size adjustable (0.25x, 0.5x, 1x, 1.5x, 2x, custom)
+- [ ] Daily summary shows total calories, protein, carbs, fat
+- [ ] Meal view shows individual food items with edit/delete
+- [ ] Recent and frequent foods appear in quick-add section
+
+---
+
+## Session Log
+
+### Session 1 - 2026-01-13
+- Read spec.md and project documentation
+- Analyzed existing codebase structure
+- Created implementation_plan.json with 7 phases and 27 subtasks
+- Identified existing dependencies (MealType, FoodRecord, Food, DailyLog entities)
+- Ready to begin Phase 1: Data Layer and Core Services
+
+---
+
+## Next Steps
+1. Begin Phase 1.1: Implement FoodRepository
+2. Create FoodRepositoryProtocol with CRUD methods
+3. Implement Core Data-based FoodRepository
+
+[2026-01-13 17:05] Subtask 1.3 - DailyLog Repository - COMPLETED
+=================================================================
+Created DailyLogRepositoryProtocol and DailyLogRepository following the established patterns.
+
+Implementation details:
+- DailyLogRepositoryProtocol: Defines the data access interface with CRUD and query methods
+- DailyLogRepository: Core Data implementation with async/await pattern
+
+Key features implemented:
+1. CRUD operations: save, update, delete
+2. findByDate: Query daily log for specific date (date-only comparison)
+3. getOrCreate: Special pattern for date-based unique records
+   - Attempts to find existing record first
+   - Creates new record with initial values if not found
+   - Uses provided bmr/tdee values for new records
+4. findByDateRange: Query multiple days by date range
+5. Proper mapping between Core Data entities and domain models
+6. Handles all optional fields (ratios, steps, weight, bodyFatPct, sleep data)
+7. User relationship management
+8. Comprehensive error handling with RepositoryError
+
+The getOrCreate method is crucial for DailyLog since there should be exactly one DailyLog per user per day. It simplifies the service layer by automatically handling the creation of new daily logs.
+
+Files created:
+- Bodii/Data/Repositories/DailyLogRepositoryProtocol.swift (85 lines)
+- Bodii/Data/Repositories/DailyLogRepository.swift (318 lines)
+
+Commit: 499c663
+Status: Ready for use in FoodRecordService (subtask 1.4)
+
+[2026-01-13 17:10] Subtask 1.4 - FoodRecordService - COMPLETED
+================================================================
+Created FoodRecordServiceProtocol and FoodRecordService following the established patterns.
+
+Implementation details:
+- FoodRecordServiceProtocol: Defines the business logic interface for food record management
+- FoodRecordService: Service layer implementation coordinating multiple repositories
+
+Key features implemented:
+1. Add food record: Calculates nutrition based on quantity and unit, saves record, updates DailyLog
+2. Update food record: Handles food record modifications with proper DailyLog recalculation
+   - Subtracts old nutrition values
+   - Adds new nutrition values
+   - Supports quantity, unit, and meal type changes
+3. Delete food record: Removes record and updates DailyLog totals
+4. Nutrition calculation:
+   - Supports serving unit (quantity = number of servings)
+   - Supports gram unit (quantity / servingSize = number of servings)
+   - Proportional calculation for all nutrients
+5. DailyLog cascade updates:
+   - Automatically updates totalCaloriesIn, totalCarbs, totalProtein, totalFat
+   - Recalculates macro ratios (carbs%, protein%, fat%)
+   - Recalculates net calories (intake - TDEE)
+6. Macro ratio calculation:
+   - Uses standard calorie multipliers: carbs 4 kcal/g, protein 4 kcal/g, fat 9 kcal/g
+   - Returns percentage values
+   - Returns nil when no food consumed
+7. Query operations:
+   - Get food records by date
+   - Get food records by date and meal type
+
+Error handling:
+- ServiceError enum with localized descriptions
+- Handles food not found, food record not found, daily log not found cases
+
+The service layer properly orchestrates multiple repositories:
+- FoodRepository: To fetch food nutrition information
+- FoodRecordRepository: To save/update/delete food records
+- DailyLogRepository: To get or create and update daily logs
+
+Files created:
+- Bodii/Domain/Services/FoodRecordServiceProtocol.swift (130 lines)
+- Bodii/Domain/Services/FoodRecordService.swift (442 lines)
+
+Commit: ae1d29e
+Status: Ready for use in view models (Phase 2+)
+

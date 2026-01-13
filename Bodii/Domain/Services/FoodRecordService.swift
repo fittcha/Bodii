@@ -257,25 +257,14 @@ final class FoodRecordService: FoodRecordServiceProtocol {
         quantity: Decimal,
         quantityUnit: QuantityUnit
     ) -> (calories: Int32, carbs: Decimal, protein: Decimal, fat: Decimal) {
-        // Food의 영양소는 servingSize 기준
-        let multiplier: Decimal
+        // NutritionCalculator 사용
+        let nutrition = NutritionCalculator.calculateNutrition(
+            food: food,
+            quantity: quantity,
+            unit: quantityUnit
+        )
 
-        switch quantityUnit {
-        case .serving:
-            // 인분 단위: quantity는 인분 수
-            multiplier = quantity
-        case .grams:
-            // 그램 단위: quantity는 그램 수, servingSize로 나누어 인분 수 계산
-            multiplier = quantity / food.servingSize
-        }
-
-        // 영양소 계산 (비례)
-        let calories = Int32((Decimal(food.calories) * multiplier).rounded())
-        let carbs = food.carbohydrates * multiplier
-        let protein = food.protein * multiplier
-        let fat = food.fat * multiplier
-
-        return (calories, carbs, protein, fat)
+        return (nutrition.calories, nutrition.carbs, nutrition.protein, nutrition.fat)
     }
 
     /// DailyLog에 영양소를 추가하고 비율과 순 칼로리를 재계산합니다.
@@ -381,24 +370,14 @@ final class FoodRecordService: FoodRecordServiceProtocol {
         protein: Decimal,
         fat: Decimal
     ) -> (carbsRatio: Decimal?, proteinRatio: Decimal?, fatRatio: Decimal?) {
-        // 각 영양소의 칼로리 계산
-        let carbsCalories = carbs * 4
-        let proteinCalories = protein * 4
-        let fatCalories = fat * 9
+        // NutritionCalculator 사용
+        let ratios = NutritionCalculator.calculateMacroRatios(
+            carbs: carbs,
+            protein: protein,
+            fat: fat
+        )
 
-        let totalCalories = carbsCalories + proteinCalories + fatCalories
-
-        // 총 칼로리가 0이면 비율을 계산할 수 없음
-        guard totalCalories > 0 else {
-            return (nil, nil, nil)
-        }
-
-        // 비율 계산 (백분율)
-        let carbsRatio = (carbsCalories / totalCalories * 100).rounded(2)
-        let proteinRatio = (proteinCalories / totalCalories * 100).rounded(2)
-        let fatRatio = (fatCalories / totalCalories * 100).rounded(2)
-
-        return (carbsRatio, proteinRatio, fatRatio)
+        return (ratios.carbsRatio, ratios.proteinRatio, ratios.fatRatio)
     }
 }
 
@@ -425,18 +404,3 @@ enum ServiceError: Error, LocalizedError {
     }
 }
 
-// MARK: - Decimal Extensions
-
-/// Decimal 소수점 반올림을 위한 확장
-extension Decimal {
-    /// 소수점 n자리에서 반올림합니다.
-    ///
-    /// - Parameter places: 소수점 자리수
-    /// - Returns: 반올림된 Decimal 값
-    func rounded(_ places: Int) -> Decimal {
-        var result = self
-        var rounded = Decimal()
-        NSDecimalRound(&rounded, &result, places, .plain)
-        return rounded
-    }
-}
