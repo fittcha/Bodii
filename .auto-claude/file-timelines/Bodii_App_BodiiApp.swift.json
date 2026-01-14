@@ -21,8 +21,25 @@
       "commits_behind_main": 0,
       "status": "active",
       "merged_at": null
+    },
+    "009-sleep-tracking-with-5-status-system": {
+      "task_id": "009-sleep-tracking-with-5-status-system",
+      "branch_point": {
+        "commit_hash": "4e56d606f7b0d4cb74120dd392544f3fe2d4f5b4",
+        "content": "//\n//  BodiiApp.swift\n//  Bodii\n//\n//  Created by Auto-Claude on 2026-01-11.\n//\n\n// \ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8: SwiftUI App Lifecycle\n// iOS 14+\uc5d0\uc11c\ub294 App protocol \uae30\ubc18 \uc9c4\uc785\uc810 \uc0ac\uc6a9\n// \ud83d\udca1 Java \ube44\uad50: main() \uba54\uc11c\ub4dc \ub300\uc2e0 App struct \uc0ac\uc6a9\n\nimport SwiftUI\n\n// MARK: - App Entry Point\n\n@main\nstruct BodiiApp: App {\n\n    // MARK: - Properties\n\n    // \ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8: @StateObject\n    // App \uc0dd\uba85\uc8fc\uae30 \ub3d9\uc548 \uc720\uc9c0\ub418\ub294 \uc0c1\ud0dc \uac1d\uccb4\n    // Core Data\uc758 PersistenceController\ub97c \uc571 \uc804\uc5ed\uc5d0\uc11c \uc0ac\uc6a9\n    private let persistenceController = PersistenceController.shared\n\n    // MARK: - Body\n\n    // \ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8: some Scene\n    // WindowGroup\uc740 \ud50c\ub7ab\ud3fc\uc5d0 \ub9de\ub294 \uc708\ub3c4\uc6b0 \uad00\ub9ac \uc81c\uacf5\n    // iOS: \ub2e8\uc77c \uc708\ub3c4\uc6b0, macOS: \ub2e4\uc911 \uc708\ub3c4\uc6b0 \uc9c0\uc6d0\n    var body: some Scene {\n        WindowGroup {\n            ContentView()\n                // \ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8: Environment\n                // managedObjectContext\ub97c View \uacc4\uce35 \uc804\uccb4\uc5d0 \uc8fc\uc785\n                // \ud558\uc704 \ubdf0\uc5d0\uc11c @Environment(\\.managedObjectContext)\ub85c \uc811\uadfc \uac00\ub2a5\n                .environment(\\.managedObjectContext, persistenceController.viewContext)\n        }\n    }\n}\n",
+        "timestamp": "2026-01-14T21:03:40.462795"
+      },
+      "worktree_state": null,
+      "task_intent": {
+        "title": "009-sleep-tracking-with-5-status-system",
+        "description": "Sleep logging with 5-status tracking (bad, soso, good, excellent, oversleep), duration input, wake time prompts, and correlation with other health metrics. Automatic morning prompt to log previous night's sleep.",
+        "from_plan": true
+      },
+      "commits_behind_main": 0,
+      "status": "active",
+      "merged_at": null
     }
   },
   "created_at": "2026-01-11T19:04:11.929999",
-  "last_updated": "2026-01-11T19:11:51.768023"
+  "last_updated": "2026-01-14T21:03:40.754422"
 }

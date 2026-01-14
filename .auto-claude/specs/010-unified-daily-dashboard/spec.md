@@ -1,0 +1,20 @@
+# Unified Daily Dashboard
+
+Central dashboard showing all daily health metrics: calorie balance (intake vs. TDEE), macro breakdown, exercise summary, sleep quality, and body composition status. Pre-calculated values for fast loading.
+
+## Rationale
+Key differentiator: all-in-one view that competitors don't provide. Users currently need 3-4 apps. Pre-calculated DailyLog entity ensures sub-0.5s performance, directly addressing MyFitnessPal's lag complaints and Lose It's freezing issues. Clean SwiftUI native interface unlike InBody's clunky app.
+
+## User Stories
+- As a user, I want one screen showing all my health data so that I have a complete picture
+- As a busy person, I want fast app loading so that tracking doesn't waste my time
+
+## Acceptance Criteria
+- [ ] Dashboard loads in under 0.5 seconds with pre-calculated values
+- [ ] Shows today's calorie intake vs. TDEE with visual indicator
+- [ ] Displays macro breakdown (protein/carbs/fat) with progress bars
+- [ ] Shows exercise calories burned for the day
+- [ ] Displays previous night's sleep duration and quality
+- [ ] Quick-add buttons for food, exercise, and body composition
+- [ ] Date navigation to view past days
+- [ ] Pull-to-refresh updates all metrics

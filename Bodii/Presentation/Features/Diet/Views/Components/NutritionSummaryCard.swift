@@ -1,0 +1,359 @@
+//
+//  NutritionSummaryCard.swift
+//  Bodii
+//
+//  Created by Auto-Claude on 2026-01-13.
+//
+
+// 📚 학습 포인트: Nutrition Summary Card Component
+// 일일 영양 요약 카드 컴포넌트
+// 💡 칼로리, 매크로 영양소, 비율을 시각적으로 표시
+
+import SwiftUI
+
+/// 일일 영양 요약 카드
+///
+/// 총 섭취 칼로리, 남은 칼로리, 매크로 영양소 비율을 표시합니다.
+///
+/// - Note: DailyLog의 데이터를 기반으로 렌더링됩니다.
+/// - Note: 매크로 비율을 원형 차트로 시각화합니다.
+///
+/// - Example:
+/// ```swift
+/// NutritionSummaryCard(
+///     dailyLog: dailyLog,
+///     remainingCalories: 810,
+///     calorieIntakePercentage: 65.0
+/// )
+/// ```
+struct NutritionSummaryCard: View {
+
+    // MARK: - Properties
+
+    /// 일일 기록
+    let dailyLog: DailyLog
+
+    /// 남은 칼로리 (kcal)
+    let remainingCalories: Int32
+
+    /// 칼로리 섭취 비율 (%)
+    let calorieIntakePercentage: Double
+
+    // MARK: - Body
+
+    var body: some View {
+        VStack(spacing: 16) {
+            // 칼로리 섹션
+            caloriesSection
+
+            Divider()
+
+            // 매크로 영양소 섹션
+            macrosSection
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+    }
+
+    // MARK: - Subviews
+
+    /// 칼로리 섹션
+    ///
+    /// 총 섭취 칼로리, TDEE, 진행률, 남은 칼로리를 표시합니다.
+    private var caloriesSection: some View {
+        VStack(spacing: 12) {
+            // 제목
+            Text("일일 칼로리")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+
+            // 칼로리 표시
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text("\(dailyLog.totalCaloriesIn)")
+                    .font(.system(size: 36, weight: .bold))
+                    .foregroundColor(.primary)
+
+                Text("/ \(dailyLog.tdee) kcal")
+                    .font(.title3)
+                    .foregroundColor(.secondary)
+            }
+
+            // 진행 바
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    // 배경
+                    Rectangle()
+                        .fill(Color(.systemGray5))
+                        .frame(height: 8)
+                        .cornerRadius(4)
+
+                    // 진행률
+                    Rectangle()
+                        .fill(calorieColor)
+                        .frame(
+                            width: min(
+                                geometry.size.width * CGFloat(calorieIntakePercentage / 100),
+                                geometry.size.width
+                            ),
+                            height: 8
+                        )
+                        .cornerRadius(4)
+                }
+            }
+            .frame(height: 8)
+
+            // 남은 칼로리
+            HStack {
+                Text("남은 칼로리")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                Text("\(remainingCalories) kcal")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(remainingCalories >= 0 ? .green : .red)
+            }
+        }
+    }
+
+    /// 매크로 영양소 섹션
+    ///
+    /// 탄수화물, 단백질, 지방의 섭취량과 비율을 표시합니다.
+    /// 원형 차트로 비율을 시각화합니다.
+    private var macrosSection: some View {
+        VStack(spacing: 12) {
+            // 제목
+            Text("매크로 영양소")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            HStack(spacing: 20) {
+                // 매크로 차트
+                MacroRatioChart(
+                    carbsRatio: dailyLog.carbsRatio,
+                    proteinRatio: dailyLog.proteinRatio,
+                    fatRatio: dailyLog.fatRatio,
+                    size: 100
+                )
+
+                // 영양소 목록
+                VStack(spacing: 8) {
+                    macroItem(
+                        name: "탄수화물",
+                        amount: dailyLog.totalCarbs,
+                        ratio: dailyLog.carbsRatio,
+                        color: .blue
+                    )
+
+                    macroItem(
+                        name: "단백질",
+                        amount: dailyLog.totalProtein,
+                        ratio: dailyLog.proteinRatio,
+                        color: .orange
+                    )
+
+                    macroItem(
+                        name: "지방",
+                        amount: dailyLog.totalFat,
+                        ratio: dailyLog.fatRatio,
+                        color: .purple
+                    )
+                }
+            }
+        }
+    }
+
+    /// 매크로 영양소 아이템
+    ///
+    /// 개별 매크로 영양소의 정보를 표시합니다.
+    ///
+    /// - Parameters:
+    ///   - name: 영양소 이름
+    ///   - amount: 섭취량 (g)
+    ///   - ratio: 비율 (%)
+    ///   - color: 색상
+    /// - Returns: 매크로 아이템 뷰
+    private func macroItem(name: String, amount: Decimal, ratio: Decimal?, color: Color) -> some View {
+        HStack(spacing: 8) {
+            // 색상 인디케이터
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+
+            // 영양소 이름
+            Text(name)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .frame(width: 50, alignment: .leading)
+
+            // 섭취량
+            Text("\(formattedDecimal(amount))g")
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
+                .frame(width: 45, alignment: .trailing)
+
+            // 비율 (있는 경우)
+            if let ratio = ratio {
+                Text("\(formattedDecimal(ratio))%")
+                    .font(.caption)
+                    .foregroundColor(color)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(color.opacity(0.15))
+                    .cornerRadius(4)
+                    .frame(width: 50, alignment: .center)
+            } else {
+                Text("-")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .frame(width: 50, alignment: .center)
+            }
+        }
+    }
+
+    // MARK: - Helpers
+
+    /// 칼로리 진행률에 따른 색상
+    ///
+    /// 섭취 비율에 따라 적절한 색상을 반환합니다.
+    /// - < 50%: 파란색 (부족)
+    /// - 50-90%: 초록색 (양호)
+    /// - 90-110%: 주황색 (적정)
+    /// - > 110%: 빨간색 (초과)
+    ///
+    /// - Returns: 진행률 색상
+    private var calorieColor: Color {
+        if calorieIntakePercentage < 50 {
+            return .blue
+        } else if calorieIntakePercentage < 90 {
+            return .green
+        } else if calorieIntakePercentage <= 110 {
+            return .orange
+        } else {
+            return .red
+        }
+    }
+
+    /// Decimal 값을 포맷팅
+    ///
+    /// Decimal 값을 소수점 첫째 자리까지 표시하는 문자열로 변환합니다.
+    ///
+    /// - Parameter value: 포맷팅할 Decimal 값
+    /// - Returns: 포맷팅된 문자열
+    private func formattedDecimal(_ value: Decimal) -> String {
+        let nsDecimal = value as NSDecimalNumber
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 1
+        return formatter.string(from: nsDecimal) ?? "0"
+    }
+}
+
+// MARK: - Preview
+
+#Preview {
+    VStack(spacing: 16) {
+        // 균형 잡힌 식단 예시
+        NutritionSummaryCard(
+            dailyLog: DailyLog(
+                id: UUID(),
+                userId: UUID(),
+                date: Date(),
+                totalCaloriesIn: 1500,
+                totalCarbs: 187.5,
+                totalProtein: 93.75,
+                totalFat: 41.67,
+                carbsRatio: 50,
+                proteinRatio: 25,
+                fatRatio: 25,
+                bmr: 1650,
+                tdee: 2310,
+                netCalories: -810,
+                totalCaloriesOut: 0,
+                exerciseMinutes: 0,
+                exerciseCount: 0,
+                steps: nil,
+                weight: nil,
+                bodyFatPct: nil,
+                sleepDuration: nil,
+                sleepStatus: nil,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
+            remainingCalories: 810,
+            calorieIntakePercentage: 65.0
+        )
+        .padding()
+
+        // 고탄수 식단 예시
+        NutritionSummaryCard(
+            dailyLog: DailyLog(
+                id: UUID(),
+                userId: UUID(),
+                date: Date(),
+                totalCaloriesIn: 2100,
+                totalCarbs: 367.5,
+                totalProtein: 78.75,
+                totalFat: 35,
+                carbsRatio: 70,
+                proteinRatio: 15,
+                fatRatio: 15,
+                bmr: 1650,
+                tdee: 2310,
+                netCalories: -210,
+                totalCaloriesOut: 0,
+                exerciseMinutes: 0,
+                exerciseCount: 0,
+                steps: nil,
+                weight: nil,
+                bodyFatPct: nil,
+                sleepDuration: nil,
+                sleepStatus: nil,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
+            remainingCalories: 210,
+            calorieIntakePercentage: 90.9
+        )
+        .padding()
+
+        // 빈 상태 예시
+        NutritionSummaryCard(
+            dailyLog: DailyLog(
+                id: UUID(),
+                userId: UUID(),
+                date: Date(),
+                totalCaloriesIn: 0,
+                totalCarbs: 0,
+                totalProtein: 0,
+                totalFat: 0,
+                carbsRatio: nil,
+                proteinRatio: nil,
+                fatRatio: nil,
+                bmr: 1650,
+                tdee: 2310,
+                netCalories: -2310,
+                totalCaloriesOut: 0,
+                exerciseMinutes: 0,
+                exerciseCount: 0,
+                steps: nil,
+                weight: nil,
+                bodyFatPct: nil,
+                sleepDuration: nil,
+                sleepStatus: nil,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
+            remainingCalories: 2310,
+            calorieIntakePercentage: 0.0
+        )
+        .padding()
+    }
+    .background(Color(.systemGroupedBackground))
+}

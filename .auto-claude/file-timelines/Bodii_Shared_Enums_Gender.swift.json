@@ -7,18 +7,18 @@
       "branch_point": {
         "commit_hash": "2abdae73fb6199bcbf4f21f6deeb7952225f81e6",
         "content": "",
-        "timestamp": "2026-01-12T08:37:37.044484"
+        "timestamp": "2026-01-14T13:34:17.674713"
       },
       "worktree_state": {
         "content": "//\n//  Gender.swift\n//  Bodii\n//\n//  Created by Auto-Claude on 2026-01-11.\n//\n\n// \ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8: Enum with RawValue\n// Swift enum\uc740 Int16 rawValue\ub97c \uac00\uc838 Core Data\uc758 \uc815\uc218 \uc800\uc7a5 \ud0c0\uc785\uacfc \ub9e4\ud551\n// \ud83d\udca1 Java \ube44\uad50: JPA\uc758 @Enumerated(EnumType.ORDINAL)\uacfc \uc720\uc0ac\n\nimport Foundation\n\n// MARK: - Gender\n\n/// \uc0ac\uc6a9\uc790 \uc131\ubcc4\n/// - Core Data\uc758 User \uc5d4\ud2f0\ud2f0\uc5d0\uc11c Int16\uc73c\ub85c \uc800\uc7a5\n/// - \uae30\ucd08\ub300\uc0ac\ub7c9(BMR) \uacc4\uc0b0 \uc2dc \uc0ac\uc6a9\nenum Gender: Int16, CaseIterable, Codable {\n\n    // MARK: - Cases\n\n    /// \ub0a8\uc131 (0)\n    case male = 0\n\n    /// \uc5ec\uc131 (1)\n    case female = 1\n\n    // MARK: - Display Name\n\n    /// \ud55c\uad6d\uc5b4 \ud45c\uc2dc \uc774\ub984\n    /// - \uc0ac\uc6a9\uc790 \uc778\ud130\ud398\uc774\uc2a4\uc5d0 \ud45c\uc2dc\ub418\ub294 \ud14d\uc2a4\ud2b8\n    var displayName: String {\n        switch self {\n        case .male:\n            return \"\ub0a8\uc131\"\n        case .female:\n            return \"\uc5ec\uc131\"\n        }\n    }\n}\n\n// MARK: - Identifiable\n\nextension Gender: Identifiable {\n    /// SwiftUI List\uc640 ForEach\uc5d0\uc11c \uc0ac\uc6a9\ud558\uae30 \uc704\ud55c ID\n    /// - rawValue\ub97c ID\ub85c \uc0ac\uc6a9\ud558\uc5ec \uac01 \ucf00\uc774\uc2a4\ub97c \uace0\uc720\ud558\uac8c \uc2dd\ubcc4\n    var id: Int16 {\n        rawValue\n    }\n}\n",
-        "last_modified": "2026-01-12T08:37:37.432511"
+        "last_modified": "2026-01-14T13:34:18.077496"
       },
       "task_intent": {
         "title": "Project Foundation & Core Data Model",
         "description": "Set up Xcode project with SwiftUI, MVVM architecture, Core Data persistence layer with 9 entities (User, BodyRecord, MetabolismSnapshot, Food, FoodRecord, ExerciseRecord, SleepRecord, DailyLog, Goal), and utility services for date handling and input validation.",
         "from_plan": true
       },
-      "commits_behind_main": 0,
+      "commits_behind_main": 3,
       "status": "active",
       "merged_at": null
     },
@@ -31,7 +31,7 @@
       },
       "worktree_state": {
         "content": "//\n//  Gender.swift\n//  Bodii\n//\n//  Created by Auto-Claude on 2024-01-12.\n//\n\nimport Foundation\n\n/// \uc131\ubcc4 \uc5f4\uac70\ud615\n///\n/// \uc0ac\uc6a9\uc790\uc758 \uc131\ubcc4\uc744 \ub098\ud0c0\ub0c5\ub2c8\ub2e4. Core Data \ud638\ud658\uc131\uc744 \uc704\ud574 Int16 rawValue\ub97c \uc0ac\uc6a9\ud569\ub2c8\ub2e4.\n///\n/// - Cases:\n///   - male: \ub0a8\uc131\n///   - female: \uc5ec\uc131\n///\n/// - Example:\n/// ```swift\n/// let gender = Gender.male\n/// print(gender.displayName) // \"\ub0a8\uc131\"\n/// ```\nenum Gender: Int16, CaseIterable, Codable {\n    case male = 0\n    case female = 1\n\n    /// \uc0ac\uc6a9\uc790\uc5d0\uac8c \ud45c\uc2dc\ud560 \uc131\ubcc4 \uc774\ub984\n    var displayName: String {\n        switch self {\n        case .male: return \"\ub0a8\uc131\"\n        case .female: return \"\uc5ec\uc131\"\n        }\n    }\n}\n\n// MARK: - Identifiable\n\nextension Gender: Identifiable {\n    var id: Int16 { rawValue }\n}\n",
-        "last_modified": "2026-01-12T19:28:09.043900"
+        "last_modified": "2026-01-14T22:57:13.077393"
       },
       "task_intent": {
         "title": "004-project-foundation-core-data-model",
@@ -44,5 +44,5 @@
     }
   },
   "created_at": "2026-01-11T20:22:15.912198",
-  "last_updated": "2026-01-12T19:14:55.074546"
+  "last_updated": "2026-01-14T13:34:17.922412"
 }

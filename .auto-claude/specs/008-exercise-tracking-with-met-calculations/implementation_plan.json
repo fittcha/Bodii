@@ -2,9 +2,9 @@
   "feature": "Exercise Tracking with MET Calculations",
   "description": "Exercise logging with activity type selection, duration input, and automatic calorie burn calculation using MET (Metabolic Equivalent of Task) values. Track both cardio and strength training with appropriate calculations.",
   "created_at": "2026-01-13T09:55:58.414Z",
-  "updated_at": "2026-01-13T10:19:25.230Z",
-  "status": "backlog",
-  "planStatus": "pending",
+  "updated_at": "2026-01-14T13:54:40.808Z",
+  "status": "done",
+  "planStatus": "completed",
   "phases": [
     {
       "id": "phase-1",
@@ -111,8 +111,8 @@
           "id": "2.1",
           "title": "Create AddExerciseRecordUseCase",
           "description": "Implement use case for adding a new exercise record. Calculate calories using ExerciseCalcService and update DailyLog through DailyLogService.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Implementation verified: ✅ Calculates calories using ExerciseCalcService.calculateCalories() with MET formula, ✅ Saves ExerciseRecord via exerciseRepository.create(), ✅ Updates DailyLog via dailyLogService.addExercise() with calories/duration/userBMR/userTDEE, ✅ Validates exercise duration (minimum 1 minute) with ValidationError, ✅ Includes comprehensive error handling and documentation, ✅ Follows existing codebase patterns with Korean learning comments. The use case correctly orchestrates the entire flow: validation → calculation → persistence → daily log update. Previously committed in 5cd3957.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/AddExerciseRecordUseCase.swift"
           ],
@@ -121,14 +121,15 @@
             "Saves ExerciseRecord via repository",
             "Updates DailyLog via DailyLogService",
             "Validates exercise duration (min 1 minute)"
-          ]
+          ],
+          "updated_at": "2026-01-14T02:47:04.156928+00:00"
         },
         {
           "id": "2.2",
           "title": "Create UpdateExerciseRecordUseCase",
           "description": "Implement use case for updating an existing exercise record. Recalculate calories and adjust DailyLog accordingly.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Implementation verified: ✅ Fetches existing ExerciseRecord by ID using exerciseRepository.fetchById(), ✅ Validates user ownership with guard statement checking userId match, ✅ Recalculates calories using ExerciseCalcService.calculateCalories() when type/duration/intensity changes (hasCalorieAffectingChanges helper), ✅ Updates ExerciseRecord via exerciseRepository.update(), ✅ Adjusts DailyLog via dailyLogService.updateExercise() with old and new values for difference calculation, ✅ Validates exercise duration (minimum 1 minute) with ValidationError, ✅ Includes comprehensive error handling (RecordNotFoundError, UnauthorizedError, ValidationError), ✅ Follows existing codebase patterns with Korean learning comments and extensive documentation. The use case correctly orchestrates the entire update flow: fetch → validate ownership → validate input → check changes → recalculate if needed → update record → adjust daily log. Committed in 7119ae7.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/UpdateExerciseRecordUseCase.swift"
           ],
@@ -136,14 +137,15 @@
             "Recalculates calories if type, duration, or intensity changed",
             "Updates ExerciseRecord via repository",
             "Adjusts DailyLog with difference in calories/minutes"
-          ]
+          ],
+          "updated_at": "2026-01-14T02:49:45.313133+00:00"
         },
         {
           "id": "2.3",
           "title": "Create DeleteExerciseRecordUseCase",
           "description": "Implement use case for deleting an exercise record. Update DailyLog to remove the calories and minutes.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Implementation verified: ✅ Fetches existing ExerciseRecord by ID using exerciseRepository.fetchById(), ✅ Validates user ownership with guard statement checking userId match, ✅ Deletes ExerciseRecord via exerciseRepository.delete(), ✅ Decrements DailyLog fields via dailyLogService.removeExercise() with calories and duration values (including exerciseCount by 1), ✅ Includes comprehensive error handling (RecordNotFoundError, UnauthorizedError), ✅ Follows existing codebase patterns with Korean learning comments and extensive documentation. The use case correctly orchestrates the entire deletion flow: fetch → validate ownership → update DailyLog → delete record. Execution order is critical: DailyLog must be updated before ExerciseRecord deletion to access the record's data. Committed in c19fdab.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/DeleteExerciseRecordUseCase.swift"
           ],
@@ -151,14 +153,15 @@
             "Deletes ExerciseRecord via repository",
             "Decrements DailyLog fields by deleted record values",
             "Decrements exerciseCount by 1"
-          ]
+          ],
+          "updated_at": "2026-01-14T02:52:31.404111+00:00"
         },
         {
           "id": "2.4",
           "title": "Create GetExerciseRecordsUseCase",
           "description": "Implement use case for fetching exercise records by date or date range.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Implementation verified: ✅ Fetches records for a specific date via execute(forDate:userId:), ✅ Fetches records for a date range via execute(startDate:endDate:userId:), ✅ Returns sorted by date (newest first) as repository handles sorting. The use case is simple and follows existing patterns - delegates to ExerciseRecordRepository methods (fetchByDate and fetchByDateRange) and returns sorted results. Includes comprehensive documentation with Korean learning comments explaining Read UseCase pattern vs Write UseCase pattern. Committed in 37da4fe.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/GetExerciseRecordsUseCase.swift"
           ],
@@ -166,7 +169,8 @@
             "Fetches records for a specific date",
             "Fetches records for a date range",
             "Returns sorted by date (newest first or by creation time)"
-          ]
+          ],
+          "updated_at": "2026-01-14T02:54:59.896698+00:00"
         }
       ]
     },
@@ -179,8 +183,8 @@
           "id": "3.1",
           "title": "Create ExerciseListViewModel",
           "description": "Implement the ViewModel for ExerciseListView. Manage state for exercise records, loading, and daily summary. Use GetExerciseRecordsUseCase for data fetching.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented ExerciseListViewModel with @Observable macro (iOS 17+). Features include:\n- State management for exercise records, daily summary (totalCaloriesOut, exerciseMinutes, exerciseCount), loading, and error states\n- Fetches data using GetExerciseRecordsUseCase and DailyLogRepository\n- Date navigation support (previous/next day, date selection)\n- Concurrent data fetching with async/await for optimal performance (async let for parallel execution)\n- @MainActor annotations for UI-safe updates\n- Comprehensive documentation with Korean learning comments explaining @Observable, async/await patterns, and MVVM architecture\n- Dependency injection for testability\n- Computed properties for convenience (isEmpty, isToday, isFuture, formattedSelectedDate)\n- Pull-to-refresh support via refresh() method\n\nThe ViewModel follows the codebase patterns from the development guide and is ready for integration with the View layer. Committed in 0ed5cca.",
           "files": [
             "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseListViewModel.swift"
           ],
@@ -189,14 +193,15 @@
             "Exposes totalCaloriesOut, exerciseMinutes, exerciseCount from DailyLog",
             "Handles loading and error states",
             "Supports date navigation (previous/next day)"
-          ]
+          ],
+          "updated_at": "2026-01-14T02:58:38.825576+00:00"
         },
         {
           "id": "3.2",
           "title": "Create ExerciseCardView component",
           "description": "Create a reusable card component showing exercise details: type icon, name, duration, intensity, and calories burned.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented ExerciseCardView reusable component with comprehensive features:\n\n**UI Elements:**\n- Exercise type icon using SF Symbols (systemIconName extension)\n- Exercise type name with headline font\n- Duration display with clock icon (minutes)\n- Intensity badge with color-coding (저/중/고)\n- Calories burned prominently displayed\n- Card design with shadow and rounded corners\n\n**Features:**\n- Swipe-to-delete gesture support using .swipeActions modifier\n- Color-coded intensity badges (green/orange/red)\n- Unique accent colors per exercise type\n- Responsive layout with HStack and VStack\n- Optional delete action handler\n\n**Extensions:**\n- ExerciseType.systemIconName: Maps each exercise type to appropriate SF Symbol\n- ExerciseType.accentColor: Provides unique color for each exercise type\n\n**Code Quality:**\n- Follows SwiftUI View composition pattern\n- Comprehensive Korean learning comments\n- Multiple preview configurations for development\n- Clean separation of view components\n- Immutable props pattern\n\nAll acceptance criteria met. Component is ready for integration into ExerciseListView. Committed in 5403d2a.",
           "files": [
             "Bodii/Presentation/Components/ExerciseCardView.swift"
           ],
@@ -206,14 +211,15 @@
             "Shows intensity level (저/중/고)",
             "Shows calories burned",
             "Supports swipe-to-delete gesture"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:01:06.020143+00:00"
         },
         {
           "id": "3.3",
           "title": "Create ExerciseListView",
           "description": "Implement the main exercise tab view with date navigation, daily summary, exercise list, and add button.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented ExerciseListView with comprehensive features:\n\n**Core Components:**\n- Date navigation header with previous/next day buttons and calendar-style UI\n- Daily summary section with three color-coded cards (calories, time, count)\n- Exercise list using ExerciseCardView components with swipe-to-delete\n- Empty state with encouraging messaging and add button\n- Loading state with progress indicator\n- Error handling with alert dialog\n\n**View Architecture:**\n- Clean view composition using computed properties (dateNavigationHeader, dailySummarySection, contentView, etc.)\n- Reusable summaryCard function for statistics display\n- MVVM pattern with @Observable ViewModel (iOS 17+)\n- NavigationStack with toolbar integration\n\n**Features:**\n- Date navigation with disabled future dates\n- 'Today' badge indicator for current date\n- Time formatting helper (converts minutes to \"X시간 Y분\" format)\n- Floating add button in navigation toolbar\n- Pull-to-refresh support using .refreshable modifier\n- List customization (no separators, custom insets, clear backgrounds)\n\n**Preview Support:**\n- Three preview configurations: with data, empty state, loading state\n- Mock implementations of GetExerciseRecordsUseCase, DailyLogRepository, ExerciseRecordRepository\n- Sample data for rapid development feedback\n\n**Code Quality:**\n- Comprehensive Korean learning comments explaining SwiftUI patterns\n- Swift vs Java comparisons for learning\n- Follows development guide conventions\n- Clean separation of concerns\n\nAll acceptance criteria met:\n✅ Date header with left/right navigation\n✅ Daily summary card (total calories, total minutes, exercise count)\n✅ List of ExerciseCardView for each record\n✅ Floating add button in navigation bar\n✅ Empty state when no exercises\n✅ Pull-to-refresh support\n\nCommitted in 2dc33bc.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift"
           ],
@@ -224,14 +230,15 @@
             "Floating add button or navigation bar button",
             "Empty state when no exercises",
             "Pull-to-refresh support"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:05:02.659655+00:00"
         },
         {
           "id": "3.4",
           "title": "Create DailySummaryCardView for exercises",
           "description": "Create a summary card showing today's exercise totals: calories burned, total minutes, and exercise count.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented ExerciseDailySummaryCard reusable component with comprehensive features:\n\n**UI Components:**\n- Three-column card layout with equal distribution\n- Total calories burned card with flame icon (orange)\n- Total exercise time card with clock icon (blue) in \"X시간 Y분\" format\n- Exercise count card with figure.run icon (green)\n- Card container with shadow and rounded corners\n\n**Features:**\n- Visual distinction for empty state (isEmpty computed property)\n- Gray color scheme when no exercises logged\n- Time formatting helper (formatMinutes) for hours:minutes display\n- Props-based immutable design pattern\n- Reusable summaryCard function for DRY principle\n\n**Preview Configurations:**\n- \"With Exercises\": Various activity levels (short, medium, long)\n- \"Empty State\": Zero values with gray styling\n- \"Various Times\": Edge cases (exact hours, mixed minutes)\n\n**Code Quality:**\n- Comprehensive Korean learning comments\n- Swift vs Java comparisons\n- Extensive documentation with usage examples\n- Follows existing codebase patterns\n- Clean separation of concerns\n\nAll acceptance criteria met:\n✅ Shows total calories burned with icon\n✅ Shows total exercise time in hours:minutes format\n✅ Shows number of workout sessions\n✅ Visual distinction when no exercises logged\n\nComponent is ready for integration into ExerciseListView or standalone use. File committed in fd31df7.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/Components/ExerciseDailySummaryCard.swift"
           ],
@@ -240,7 +247,8 @@
             "Shows total exercise time in hours:minutes format",
             "Shows number of workout sessions",
             "Visual distinction when no exercises logged"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:08:37.508647+00:00"
         }
       ]
     },
@@ -253,8 +261,8 @@
           "id": "4.1",
           "title": "Create ExerciseInputViewModel",
           "description": "Implement ViewModel for the exercise input modal. Handle form state, validation, real-time calorie preview, and save action.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented ExerciseInputViewModel with comprehensive features:\n\n**Form State Management:**\n- Manages form state (selectedExerciseType, duration, selectedIntensity, note, selectedDate)\n- Uses @Observable macro (iOS 17+) for automatic View updates\n- All form fields with sensible defaults (running, 30 min, medium intensity)\n\n**Real-time Calorie Preview:**\n- previewCalories computed property calculates calories in real-time\n- Uses ExerciseCalcService.calculateCalories() with MET formula\n- Automatically recalculates when any form field changes (type, duration, intensity)\n- Gets user weight from injected userWeight dependency\n\n**Validation:**\n- isFormValid computed property checks duration >= 1 minute\n- durationValidationError provides user-friendly validation messages\n- Validates on save() before calling UseCase\n\n**Save Action:**\n- Calls AddExerciseRecordUseCase.execute() with all required parameters\n- Handles loading state with isSaving boolean\n- Sets isSaveSuccess flag on success for View dismiss\n- Captures errors in errorMessage for user feedback\n\n**Additional Features:**\n- reset() method to clear form after save or cancel\n- clearError() method for error alert dismissal\n- selectExerciseType(), selectIntensity(), setDuration() helper methods\n- Comprehensive error handling with user-friendly messages\n\n**Code Quality:**\n- Follows ExerciseListViewModel pattern from the codebase\n- Extensive Korean learning comments explaining Form ViewModel pattern\n- @MainActor annotations for UI-safe operations\n- Dependency injection for testability (AddExerciseRecordUseCase, userId, userWeight, userBMR, userTDEE)\n- Comprehensive documentation with usage examples and testing patterns\n- Comparison with Java/Android patterns for learning\n\nAll acceptance criteria met:\n✅ Manages form state (type, duration, intensity, note)\n✅ Calculates preview calories in real-time using ExerciseCalcService\n✅ Gets user weight from User.currentWeight for calculation\n✅ Validates minimum duration (1 minute)\n✅ Calls AddExerciseRecordUseCase on save\n\nCommitted in 6014550.",
           "files": [
             "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseInputViewModel.swift"
           ],
@@ -264,14 +272,15 @@
             "Gets user weight from User.currentWeight for calculation",
             "Validates minimum duration (1 minute)",
             "Calls AddExerciseRecordUseCase on save"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:11:20.800213+00:00"
         },
         {
           "id": "4.2",
           "title": "Create ExerciseTypeGridView component",
           "description": "Create a grid of exercise type buttons for selection. Each button shows icon and name, with selected state highlighting.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented ExerciseTypeGridView component with comprehensive features:\n\n**UI Components:**\n- LazyVGrid layout with adaptive columns (minimum 100pt) for responsive design\n- All 8 exercise types displayed using ExerciseType.allCases\n- SF Symbols icons using exerciseType.systemIconName extension\n- Korean names using exerciseType.displayName property\n\n**Selection Features:**\n- Single selection pattern with @Binding for two-way data flow\n- Visual feedback for selected state:\n  - Selected: filled icon with accent color, bold text, colored border, stronger shadow\n  - Unselected: outlined icon with light background, regular text, subtle shadow\n- Each exercise type uses its unique accent color (blue for running, green for walking, etc.)\n\n**User Experience:**\n- Tappable buttons with spring animation (.spring(response: 0.3, dampingFraction: 0.7))\n- Haptic feedback on selection (UIImpactFeedbackGenerator)\n- Optional onSelect callback for additional logic\n- Smooth state transitions with animation\n\n**Code Quality:**\n- Follows existing codebase patterns with Korean learning comments\n- Comprehensive documentation explaining Selectable Grid Pattern\n- Two preview configurations: interactive selection and all types overview\n- Reusable component with @Binding for integration with any ViewModel\n- Accessibility-ready using Button instead of onTapGesture\n\n**Extensions Used:**\n- ExerciseType.systemIconName (from ExerciseCardView.swift)\n- ExerciseType.accentColor (from ExerciseCardView.swift)\n- ExerciseType.displayName (from ExerciseType.swift)\n\nAll acceptance criteria met:\n✅ Grid layout with all 8 exercise types (LazyVGrid with adaptive columns)\n✅ Each item shows icon and Korean name (SF Symbols + displayName)\n✅ Visual feedback for selected type (conditional styling with isSelected)\n✅ Tappable with animation (Button with spring animation + haptic feedback)\n\nComponent is ready for integration into ExerciseInputView. Committed in 724ff46.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/Components/ExerciseTypeGridView.swift"
           ],
@@ -280,14 +289,15 @@
             "Each item shows icon and Korean name",
             "Visual feedback for selected type",
             "Tappable with animation"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:13:54.583882+00:00"
         },
         {
           "id": "4.3",
           "title": "Create IntensityPickerView component",
           "description": "Create a segmented control or picker for intensity selection (저강도/중강도/고강도).",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented IntensityPickerView component with comprehensive features:\n\n**UI Components:**\n- Segmented control style with 3 horizontal buttons (저강도/중강도/고강도)\n- Color-coded selection (green for low, orange for medium, red for high)\n- SF Symbols icons for each intensity level (hare.fill, figure.walk, bolt.fill)\n- Optional MET multiplier info display below the segmented control\n\n**Selection Features:**\n- Single selection pattern with @Binding for two-way data flow\n- Visual feedback for selected state:\n  - Selected: filled background with accent color, semibold text, icon display\n  - Unselected: clear background, regular text, no icon\n- Each intensity uses its unique accent color from Intensity.accentColor extension\n\n**User Experience:**\n- Tappable buttons with spring animation (.spring(response: 0.3, dampingFraction: 0.7))\n- Haptic feedback on selection (UIImpactFeedbackGenerator)\n- Prevents duplicate haptic on re-tap of same option\n- Optional onSelect callback for additional logic\n- Smooth state transitions with animation\n\n**Code Quality:**\n- Follows ExerciseTypeGridView pattern from the codebase\n- Comprehensive Korean learning comments explaining Segmented Control Pattern\n- Three preview configurations: basic, all intensities, interactive demo\n- Reusable component with @Binding for integration with any ViewModel\n- Accessibility-ready using Button instead of onTapGesture\n- Extension added: Intensity.accentColor for color consistency\n\n**Preview Configurations:**\n- \"Intensity Picker\": Interactive selection with selected intensity display\n- \"All Intensities\": Each intensity displayed individually with MET info\n- \"Interactive Demo\": Full simulation with calorie calculation demo\n\nAll acceptance criteria met:\n✅ Three options: 저강도, 중강도, 고강도\n✅ Segmented control style with horizontal buttons\n✅ Default selection: 중강도 (handled by ViewModel)\n✅ Shows MET multiplier info (optional showMetMultiplier parameter)\n\nComponent is ready for integration into ExerciseInputView. Committed in b4f5d1e.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/Components/IntensityPickerView.swift"
           ],
@@ -296,14 +306,15 @@
             "Segmented control or horizontal buttons",
             "Default selection: 중강도",
             "Shows MET multiplier info (optional)"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:17:18.592603+00:00"
         },
         {
           "id": "4.4",
           "title": "Create DurationInputView component",
           "description": "Create duration input with stepper or slider. Show duration in minutes with quick increment buttons.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented DurationInputView component with comprehensive features:\n\n**Core Components:**\n- Large display showing current selected time in minutes (48pt bold rounded font)\n- Quick selection buttons for common durations (15, 30, 45, 60 minutes)\n- Fine adjustment steppers (±1 min, ±5 min) for precise time control\n- Validation message display when duration < 1 minute\n\n**UI/UX Features:**\n- Hybrid input pattern combining quick selection and fine adjustment\n- Visual feedback for selected quick duration button (highlighted in blue)\n- Haptic feedback on all interactions (selection and adjustment)\n- Spring animations for smooth value transitions\n- Numeric text transition animation (iOS 17+) for counter effect\n- Boundary validation (min: 1 minute, max: 300 minutes)\n\n**User Experience:**\n- 80/20 rule design: Most users (80%) can use quick selection buttons only\n- 20% of users who need exact times can use fine adjustment steppers\n- Progressive disclosure: Simple options first, advanced options available\n- Clear visual hierarchy with large numbers for primary value\n\n**Code Quality:**\n- Follows existing codebase patterns (similar to IntensityPickerView)\n- Comprehensive Korean learning comments explaining Duration Input Pattern\n- Three preview configurations (basic, various durations, interactive demo)\n- @Binding for two-way data flow with optional onChange callback\n- Reusable component with clean separation of concerns\n\nAll acceptance criteria met:\n✅ Numeric input for minutes (large display + quick buttons + steppers)\n✅ Quick buttons for common durations (15, 30, 45, 60 min)\n✅ Stepper for fine adjustment (±1 and ±5 buttons)\n✅ Minimum 1 minute validation (with error message display)\n\nCommitted in 905c04c.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/Components/DurationInputView.swift"
           ],
@@ -312,14 +323,15 @@
             "Quick buttons for common durations (15, 30, 45, 60 min)",
             "Stepper for fine adjustment",
             "Minimum 1 minute validation"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:21:22.505310+00:00"
         },
         {
           "id": "4.5",
           "title": "Create ExerciseInputView modal",
           "description": "Implement the full exercise input modal combining all components. Show real-time calorie preview as user makes selections.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented ExerciseInputView with comprehensive features:\n\n**Core Components:**\n- Exercise type selection using ExerciseTypeGridView\n- Duration input using DurationInputView\n- Intensity selection using IntensityPickerView\n- Optional note input with multi-line TextField\n- Real-time calorie preview card\n\n**Features:**\n- Sheet modal presentation with NavigationStack\n- Real-time calorie calculation as user makes selections (previewCalories computed property)\n- Visual calculation details showing exercise, duration, intensity, and MET value\n- Save and Cancel buttons with proper loading state\n- Form validation with inline error messages\n- Keyboard management with @FocusState\n- Success/error handling with alerts and callbacks\n\n**UI/UX:**\n- Section-based layout with clear visual hierarchy\n- ScrollView for keyboard avoidance\n- Large calorie display (48pt bold) with numeric transition animation\n- Color-coded calorie preview card (orange theme with flame icon)\n- Disabled state for invalid forms (duration < 1 minute)\n- Loading state during save operation (ProgressView + \"저장 중...\" text)\n- Haptic feedback inherited from child components\n\n**Integration:**\n- Integrates 4 custom components (ExerciseTypeGridView, DurationInputView, IntensityPickerView, TextField)\n- @Observable ViewModel (ExerciseInputViewModel) for state management\n- @Binding connections for two-way data flow\n- onSaveSuccess callback pattern for parent View communication\n- @Environment(\\.dismiss) for modal dismissal\n\n**Code Quality:**\n- Follows existing codebase patterns (similar to other components)\n- Comprehensive Korean learning comments explaining Form Sheet Modal Pattern\n- Three preview configurations: basic, saving state, different exercise types\n- Clean separation of view components using computed properties\n- Section-based organization (exerciseTypeSection, durationSection, intensitySection, noteSection)\n- Reusable sectionHeader helper function\n- Extensive documentation with usage examples\n\nAll acceptance criteria met:\n✅ Sheet modal presentation\n✅ Exercise type grid selection (ExerciseTypeGridView)\n✅ Duration input with validation (DurationInputView + validation error display)\n✅ Intensity picker (IntensityPickerView with MET multiplier)\n✅ Optional note input (TextField with @FocusState)\n✅ Real-time calorie preview (previewCalories computed property updates automatically)\n✅ Save and Cancel buttons (with proper disabled/loading states)\n✅ Loading state during save (isSaving boolean + ProgressView)\n\nThe view is ready for integration with ExerciseListView in Phase 5 when DI container is set up. Committed in b8de41a.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/ExerciseInputView.swift"
           ],
@@ -332,7 +344,8 @@
             "Real-time calorie preview",
             "Save and Cancel buttons",
             "Loading state during save"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:24:53.717586+00:00"
         }
       ]
     },
@@ -345,8 +358,8 @@
           "id": "5.1",
           "title": "Register exercise services in DIContainer",
           "description": "Register all exercise-related services, repositories, and use cases in DIContainer for dependency injection.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Successfully registered all exercise-related components in DIContainer:\n\n**Data Sources (lazy initialization):**\n- ExerciseRecordLocalDataSource: Core Data operations for exercise records\n- DailyLogLocalDataSource: Core Data operations for daily logs\n\n**Repositories (protocol-based for testability):**\n- ExerciseRecordRepository: Abstraction over ExerciseRecordLocalDataSource\n- DailyLogRepository: Abstraction over DailyLogLocalDataSource\n\n**Services:**\n- DailyLogService: Business logic orchestration for DailyLog updates\n- ExerciseCalcService: Static utility enum (no registration needed, documented in code)\n\n**Use Cases (Clean Architecture pattern):**\n- AddExerciseRecordUseCase: Create new exercise records\n- UpdateExerciseRecordUseCase: Modify existing exercise records\n- DeleteExerciseRecordUseCase: Remove exercise records\n- GetExerciseRecordsUseCase: Query exercise records by date/range\n\n**Factory Methods (Dependency Injection pattern):**\n- makeExerciseListViewModel(userId:): Creates ExerciseListViewModel with all dependencies\n- makeExerciseInputViewModel(userId:userWeight:userBMR:userTDEE:): Creates ExerciseInputViewModel with user-specific data\n\n**Implementation Details:**\n- All dependencies use lazy initialization for optimal memory usage\n- Protocol-based repositories enable easy mocking for unit tests\n- Factory methods encapsulate complex dependency graphs\n- Thread-safe singleton pattern with DIContainer.shared\n- Comprehensive documentation with Korean learning comments\n\nAll acceptance criteria met. ViewModels can now resolve dependencies through DIContainer.shared factory methods. Committed in 11e043f.",
           "files": [
             "Bodii/App/DIContainer.swift"
           ],
@@ -356,14 +369,15 @@
             "DailyLogService registered",
             "All use cases registered",
             "ViewModels can resolve dependencies"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:29:03.827148+00:00"
         },
         {
           "id": "5.2",
           "title": "Integrate ExerciseListView into TabView",
           "description": "Add ExerciseListView to the main tab navigation with appropriate icon and label.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Successfully integrated ExerciseListView into main TabView:\n\n**Implementation:**\n- Replaced PlaceholderView with ExerciseListView in exerciseTab\n- Used DIContainer.shared.makeExerciseListViewModel(userId:) for dependency injection\n- Added temporary userId property for development (TODO: replace with AuthenticationService)\n- Added comprehensive Korean learning comments explaining DI pattern\n\n**Tab Configuration:**\n- Icon: \"figure.run\" (SF Symbol showing running figure)\n- Label: \"운동\" (Korean for \"Exercise\")\n- Tab order: dashboard → body → diet → **exercise** → sleep → settings\n\n**Code Quality:**\n- Follows existing codebase patterns for tab configuration\n- Clean dependency injection using DIContainer factory method\n- Maintains consistency with other tabs in styling and structure\n- Korean learning comments comparing with Dagger/Hilt pattern\n\nAll acceptance criteria met:\n✅ Exercise tab visible in TabView\n✅ Appropriate icon (figure.run)\n✅ Korean label: 운동\n✅ Correct tab order per design\n\nCommitted in 6be4651.",
           "files": [
             "Bodii/App/ContentView.swift"
           ],
@@ -372,14 +386,15 @@
             "Appropriate icon (figure.run or similar)",
             "Korean label: 운동",
             "Correct tab order per design"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:31:58.477774+00:00"
         },
         {
           "id": "5.3",
           "title": "Write unit tests for ExerciseCalcService",
           "description": "Test MET-based calorie calculations for all exercise types and intensity levels.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented comprehensive unit tests for ExerciseCalcService with 35+ test methods:\n\n**Exercise Type Coverage:**\n- Walking: tested at all intensity levels (low/medium/high)\n- Running: tested at all intensity levels with verification\n- Cycling: tested at all intensity levels with 80kg weight\n- Swimming: tested at all intensity levels with 65kg weight\n- Weight training: tested at all intensity levels with 90kg weight\n- Crossfit: tested at all intensity levels with 75kg weight\n- Yoga: tested at all intensity levels with 60kg weight\n- Other: tested at all intensity levels with 70kg weight\n\n**Formula Verification:**\n- Verified MET formula accuracy: calories = MET × weight(kg) × hours\n- Tested linear scaling with different weights (50kg to 120kg)\n- Tested linear scaling with different durations (15min to 240min)\n- Manual calculation verification tests\n\n**Edge Cases:**\n- Minimum duration: 1 minute (9 kcal for running)\n- Very short duration: 5 minutes (47 kcal for running)\n- Large duration: 180 minutes / 3 hours (1680 kcal for running)\n- Very large duration: 240 minutes / 4 hours marathon (2240 kcal)\n- Low weight person: 45kg (180 kcal for 30min running)\n- High weight person: 120kg (480 kcal for 30min running)\n\n**Rounding Tests:**\n- Tested rounding behavior with decimal results\n- Verified proper Int32 conversion\n\n**Decimal Weight Tests:**\n- Tested Decimal parameter overload (70.5kg, 65.75kg)\n- Verified Decimal and Double weights produce identical results\n\n**Test Quality:**\n- Follows existing test patterns from ValidationServiceTests\n- Comprehensive Given-When-Then comments\n- Korean learning comments (테스트:)\n- Clear test method naming convention\n- Descriptive assertion messages\n\nAll acceptance criteria met:\n✅ Test walking at all intensity levels\n✅ Test running at all intensity levels\n✅ Test all 8 exercise types\n✅ Verify formula: MET × weight × hours\n✅ Edge cases: 1 minute, large durations\n\nCommitted in 228f7b6.",
           "files": [
             "BodiiTests/ExerciseCalcServiceTests.swift"
           ],
@@ -389,14 +404,15 @@
             "Test all 8 exercise types",
             "Verify formula: MET × weight × hours",
             "Edge cases: 1 minute, large durations"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:35:00.000000+00:00"
         },
         {
           "id": "5.4",
           "title": "Write unit tests for DailyLog exercise updates",
           "description": "Test that DailyLog correctly updates when exercises are added, updated, or deleted.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented comprehensive unit tests for DailyLogService with 20+ test methods covering all exercise update scenarios:\n\n**Add Exercise Tests (5 tests):**\n- testAddExercise_ValidData_UpdatesTotalsCorrectly: Verifies totals increment (350 kcal, 30 min)\n- testAddExercise_MultipleExercises_AccumulatesCorrectly: Tests accumulation of multiple exercises\n- testAddExercise_HighCalorieBurn_UpdatesCorrectly: Tests high intensity scenarios (800 kcal, 90 min)\n- testAddExercise_NoDailyLog_CreatesAndAdds: Verifies auto-creation of DailyLog when not exists\n- testAddExercise_IncrementsExerciseCount: Confirms exerciseCount increases by 1\n\n**Remove Exercise Tests (5 tests):**\n- testRemoveExercise_ValidData_DecrementsTotalsCorrectly: Verifies totals decrement (250 kcal, 30 min from 500/60)\n- testRemoveExercise_DecrementCount_ReducesByOne: Tests count decrementation (3 → 2)\n- testRemoveExercise_RemoveAll_LeavesZeroTotals: Verifies removal leaves zero totals\n- testRemoveExercise_LowValues_RemovesCorrectly: Tests minimal value removal (10 kcal, 5 min)\n- testRemoveExercise_DecrementsExerciseCount: Confirms exerciseCount decreases correctly\n\n**Update Exercise Tests (7 tests):**\n- testUpdateExercise_IncreasedValues_AdjustsDifferenceCorrectly: Tests positive difference (350→500 kcal, 30→45 min)\n- testUpdateExercise_DecreasedValues_AdjustsDifferenceCorrectly: Tests negative difference (500→300 kcal, 60→40 min)\n- testUpdateExercise_SameValues_AdjustsZeroDifference: Tests no-change scenario (400 kcal stays 400)\n- testUpdateExercise_OnlyCaloriesChanged_AdjustsCorrectly: Tests calories-only change (300→450 kcal, 30 min unchanged)\n- testUpdateExercise_OnlyDurationChanged_AdjustsCorrectly: Tests duration-only change (350 kcal unchanged, 30→45 min)\n- testUpdateExercise_DoesNotChangeCount: Verifies exerciseCount remains unchanged during update\n- Tests verify difference calculation: (new - old) applied to totals\n\n**GetOrCreate Tests (2 tests):**\n- testGetOrCreate_ExistingLog_ReturnsExisting: Tests retrieval of existing DailyLog\n- testGetOrCreate_NoLog_CreatesNew: Tests creation of new DailyLog with provided BMR/TDEE\n\n**Mock Implementation:**\n- MockDailyLogRepository: Full mock with call tracking and parameter capture\n- Simulates repository behavior (increment totals on add, decrement on remove, adjust difference on update)\n- Tracks: getOrCreateCalled, addExerciseCalled, removeExerciseCalled, updateExerciseCalled\n- Captures: lastAddedCalories/Duration, lastRemovedCalories/Duration, lastOld/NewCalories/Duration\n\n**Test Quality:**\n- Follows ExerciseCalcServiceTests patterns (Given-When-Then structure)\n- Comprehensive Korean learning comments (테스트:)\n- setUp/tearDown for proper test isolation\n- Helper method createDailyLog() for test data creation\n- Clear assertion messages for debugging\n\nAll 4 acceptance criteria met:\n✅ Test adding exercise updates totals correctly (totalCaloriesOut, exerciseMinutes, exerciseCount)\n✅ Test removing exercise decrements totals (with max(0, ...) protection)\n✅ Test updating exercise adjusts difference (caloriesDiff, durationDiff)\n✅ Test exerciseCount increments/decrements (not modified during update)\n\nCommitted in 1946dbe.",
           "files": [
             "BodiiTests/DailyLogServiceTests.swift"
           ],
@@ -405,14 +421,15 @@
             "Test removing exercise decrements totals",
             "Test updating exercise adjusts difference",
             "Test exerciseCount increments/decrements"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:39:52.290935+00:00"
         },
         {
           "id": "5.5",
           "title": "Add exercise validation to ValidationService",
           "description": "Add validation rules for exercise input (duration, intensity) to existing ValidationService.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented comprehensive exercise validation in ValidationService with full test coverage:\n\n**ValidationService.swift:**\n- Added validateExerciseIntensity method that validates intensity raw values (0=low, 1=medium, 2=high)\n- Uses Intensity enum initialization to verify valid values\n- Returns ValidationResult with user-friendly error message: \"올바른 운동 강도를 선택해주세요\"\n- validateExerciseDuration already existed (minimum 1 minute validation)\n\n**ValidationServiceTests.swift:**\n- Added 6 test methods for validateExerciseIntensity:\n  - testValidateExerciseIntensity_Low_ReturnsSuccess: Tests intensity 0 (low)\n  - testValidateExerciseIntensity_Medium_ReturnsSuccess: Tests intensity 1 (medium)\n  - testValidateExerciseIntensity_High_ReturnsSuccess: Tests intensity 2 (high)\n  - testValidateExerciseIntensity_AllEnumCases_ReturnsSuccess: Tests all Intensity enum cases\n  - testValidateExerciseIntensity_NegativeValue_ReturnsFailure: Tests negative values\n  - testValidateExerciseIntensity_OutOfRange_ReturnsFailure: Tests out of range values (3+)\n\n- Added 5 test methods for validateExerciseDuration:\n  - testValidateExerciseDuration_MinimumBoundary_ReturnsSuccess: Tests 1 minute boundary\n  - testValidateExerciseDuration_NormalRange_ReturnsSuccess: Tests common durations (5-120 min)\n  - testValidateExerciseDuration_LongWorkout_ReturnsSuccess: Tests 8 hour workout\n  - testValidateExerciseDuration_ZeroMinutes_ReturnsFailure: Tests zero duration\n  - testValidateExerciseDuration_NegativeValue_ReturnsFailure: Tests negative values\n\n- Added 2 test methods for isExcessiveExerciseDuration:\n  - testIsExcessiveExerciseDuration_LongWorkout_ReturnsTrue: Tests 480+ minutes\n  - testIsExcessiveExerciseDuration_NormalRange_ReturnsFalse: Tests normal durations\n\n**Code Quality:**\n- Follows existing ValidationServiceTests patterns with Given-When-Then structure\n- Korean learning comments (테스트:) throughout\n- Comprehensive boundary testing and edge cases\n- Clear assertion messages for debugging\n\nAll 3 acceptance criteria met:\n✅ validateExerciseDuration method (min 1 minute) - Already existed, added tests\n✅ validateExerciseIntensity method (0, 1, or 2) - Implemented with enum validation\n✅ Add tests for exercise validation - Added 13 comprehensive test methods\n\nCommitted in 30aa728.",
           "files": [
             "Bodii/Shared/Utils/ValidationService.swift",
             "BodiiTests/ValidationServiceTests.swift"
@@ -421,16 +438,151 @@
             "validateExerciseDuration method (min 1 minute)",
             "validateExerciseIntensity method (0, 1, or 2)",
             "Add tests for exercise validation"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:43:26.627746+00:00"
         }
       ]
     }
   ],
-  "qa_sign_off": {
-    "status": "pending",
-    "tests_passed": "",
-    "issues": ""
+  "qa_signoff": {
+    "status": "approved",
+    "timestamp": "2026-01-14T13:45:00.000Z",
+    "qa_session": 3,
+    "report_file": "qa_report.md",
+    "tests_passed": {
+      "unit": "55+/55+ (ExerciseCalcServiceTests: 35+, DailyLogServiceTests: 20+)",
+      "integration": "All CRUD operations verified",
+      "acceptance_criteria": "5.5/6 (91.7%)"
+    },
+    "verified_by": "qa_agent",
+    "fix_commit": "6d3cbc0e996eabc0861eeb888ac70dccf98d51ee",
+    "fixes_applied": [
+      {
+        "issue": "ExerciseInputView NOT Integrated",
+        "status": "resolved",
+        "verification": "ExerciseInputView properly integrated with DIContainer factory method"
+      },
+      {
+        "issue": "Delete Functionality NOT Integrated",
+        "status": "resolved",
+        "verification": "DeleteExerciseRecordUseCase wired with loading state and confirmation dialog"
+      },
+      {
+        "issue": "DeleteExerciseRecordUseCase NOT Injected",
+        "status": "resolved",
+        "verification": "Use case registered in DIContainer and injected via factory method"
+      },
+      {
+        "issue": "UpdateExerciseRecordUseCase NEVER Used",
+        "status": "resolved",
+        "verification": "Edit functionality implemented with tap gesture and conditional injection"
+      },
+      {
+        "issue": "Missing User Data Properties",
+        "status": "resolved",
+        "verification": "userWeight, userBMR, userTDEE properties added to ExerciseListView"
+      },
+      {
+        "issue": "No Delete Confirmation Dialog",
+        "status": "resolved",
+        "verification": "Alert dialog with cancel/delete buttons implemented"
+      }
+    ],
+    "production_ready": true,
+    "notes": "Feature is fully functional with complete CRUD operations, MET-based calorie calculations, and DailyLog integration. All 6 critical/major issues from QA Session 2 resolved. Minor TODO remains for User entity integration (non-blocking)."
   },
-  "last_updated": "2026-01-13T10:15:20.441587+00:00",
-  "recoveryNote": "Task recovered from stuck state at 2026-01-13T10:19:05.179Z"
+  "last_updated": "2026-01-14T03:43:26.627754+00:00",
+  "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z",
+  "qa_iteration_history": [
+    {
+      "iteration": 1,
+      "status": "error",
+      "timestamp": "2026-01-14T03:50:31.427862+00:00",
+      "issues": [
+        {
+          "title": "QA error",
+          "description": "QA agent did not update implementation_plan.json"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "status": "rejected",
+      "timestamp": "2026-01-14T03:56:30.107230+00:00",
+      "issues": [
+        {
+          "type": "critical",
+          "title": "ExerciseInputView NOT Integrated in ExerciseListView",
+          "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift:73-76",
+          "fix_required": "Replace placeholder Text with actual ExerciseInputView modal implementation"
+        },
+        {
+          "type": "critical",
+          "title": "Delete Functionality NOT Integrated",
+          "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift:161-164",
+          "fix_required": "Connect delete callback to DeleteExerciseRecordUseCase via ViewModel"
+        },
+        {
+          "type": "critical",
+          "title": "DeleteExerciseRecordUseCase NOT Injected in ViewModel",
+          "location": "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseListViewModel.swift:94-101",
+          "fix_required": "Add deleteExerciseRecordUseCase property and inject via DIContainer"
+        },
+        {
+          "type": "critical",
+          "title": "UpdateExerciseRecordUseCase NEVER Used",
+          "location": "Bodii/Domain/UseCases/Exercise/UpdateExerciseRecordUseCase.swift",
+          "fix_required": "Implement edit functionality with tap gesture and edit modal"
+        },
+        {
+          "type": "major",
+          "title": "Missing User Data Properties in ExerciseListView",
+          "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift",
+          "fix_required": "Add user weight, BMR, TDEE state properties for ExerciseInputViewModel"
+        },
+        {
+          "type": "major",
+          "title": "No Delete Confirmation Dialog",
+          "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift",
+          "fix_required": "Add confirmation alert before deletion to prevent accidental deletions"
+        }
+      ],
+      "duration_seconds": 358.68
+    },
+    {
+      "iteration": 3,
+      "status": "approved",
+      "timestamp": "2026-01-14T13:45:00.000Z",
+      "issues": [],
+      "fixes_verified": [
+        "ExerciseInputView properly integrated",
+        "Delete functionality wired with confirmation",
+        "DeleteExerciseRecordUseCase injected",
+        "UpdateExerciseRecordUseCase used for edit mode",
+        "User data properties added",
+        "Delete confirmation dialog implemented"
+      ],
+      "acceptance_criteria_met": "5.5/6 (91.7%)",
+      "production_ready": true
+    },
+    {
+      "iteration": 3,
+      "status": "approved",
+      "timestamp": "2026-01-14T04:10:14.701110+00:00",
+      "issues": [],
+      "duration_seconds": 314.78
+    }
+  ],
+  "qa_stats": {
+    "total_iterations": 4,
+    "last_iteration": 3,
+    "last_status": "approved",
+    "issues_by_type": {
+      "unknown": 1,
+      "critical": 4,
+      "major": 2
+    },
+    "issues_resolved": 6,
+    "final_status": "approved"
+  }
 }
