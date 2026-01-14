@@ -128,8 +128,8 @@
           "id": "2.2",
           "title": "Create UpdateExerciseRecordUseCase",
           "description": "Implement use case for updating an existing exercise record. Recalculate calories and adjust DailyLog accordingly.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Implementation verified: \u2705 Fetches existing ExerciseRecord by ID using exerciseRepository.fetchById(), \u2705 Validates user ownership with guard statement checking userId match, \u2705 Recalculates calories using ExerciseCalcService.calculateCalories() when type/duration/intensity changes (hasCalorieAffectingChanges helper), \u2705 Updates ExerciseRecord via exerciseRepository.update(), \u2705 Adjusts DailyLog via dailyLogService.updateExercise() with old and new values for difference calculation, \u2705 Validates exercise duration (minimum 1 minute) with ValidationError, \u2705 Includes comprehensive error handling (RecordNotFoundError, UnauthorizedError, ValidationError), \u2705 Follows existing codebase patterns with Korean learning comments and extensive documentation. The use case correctly orchestrates the entire update flow: fetch \u2192 validate ownership \u2192 validate input \u2192 check changes \u2192 recalculate if needed \u2192 update record \u2192 adjust daily log. Committed in 7119ae7.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/UpdateExerciseRecordUseCase.swift"
           ],
@@ -137,14 +137,15 @@
             "Recalculates calories if type, duration, or intensity changed",
             "Updates ExerciseRecord via repository",
             "Adjusts DailyLog with difference in calories/minutes"
-          ]
+          ],
+          "updated_at": "2026-01-14T02:49:45.313133+00:00"
         },
         {
           "id": "2.3",
           "title": "Create DeleteExerciseRecordUseCase",
           "description": "Implement use case for deleting an exercise record. Update DailyLog to remove the calories and minutes.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Implementation verified: \u2705 Fetches existing ExerciseRecord by ID using exerciseRepository.fetchById(), \u2705 Validates user ownership with guard statement checking userId match, \u2705 Deletes ExerciseRecord via exerciseRepository.delete(), \u2705 Decrements DailyLog fields via dailyLogService.removeExercise() with calories and duration values (including exerciseCount by 1), \u2705 Includes comprehensive error handling (RecordNotFoundError, UnauthorizedError), \u2705 Follows existing codebase patterns with Korean learning comments and extensive documentation. The use case correctly orchestrates the entire deletion flow: fetch \u2192 validate ownership \u2192 update DailyLog \u2192 delete record. Execution order is critical: DailyLog must be updated before ExerciseRecord deletion to access the record's data. Committed in c19fdab.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/DeleteExerciseRecordUseCase.swift"
           ],
@@ -152,14 +153,15 @@
             "Deletes ExerciseRecord via repository",
             "Decrements DailyLog fields by deleted record values",
             "Decrements exerciseCount by 1"
-          ]
+          ],
+          "updated_at": "2026-01-14T02:52:31.404111+00:00"
         },
         {
           "id": "2.4",
           "title": "Create GetExerciseRecordsUseCase",
           "description": "Implement use case for fetching exercise records by date or date range.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "Implementation verified: \u2705 Fetches records for a specific date via execute(forDate:userId:), \u2705 Fetches records for a date range via execute(startDate:endDate:userId:), \u2705 Returns sorted by date (newest first) as repository handles sorting. The use case is simple and follows existing patterns - delegates to ExerciseRecordRepository methods (fetchByDate and fetchByDateRange) and returns sorted results. Includes comprehensive documentation with Korean learning comments explaining Read UseCase pattern vs Write UseCase pattern. Committed in 37da4fe.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/GetExerciseRecordsUseCase.swift"
           ],
@@ -167,7 +169,8 @@
             "Fetches records for a specific date",
             "Fetches records for a date range",
             "Returns sorted by date (newest first or by creation time)"
-          ]
+          ],
+          "updated_at": "2026-01-14T02:54:59.896698+00:00"
         }
       ]
     },
@@ -180,8 +183,8 @@
           "id": "3.1",
           "title": "Create ExerciseListViewModel",
           "description": "Implement the ViewModel for ExerciseListView. Manage state for exercise records, loading, and daily summary. Use GetExerciseRecordsUseCase for data fetching.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Implemented ExerciseListViewModel with @Observable macro (iOS 17+). Features include:\n- State management for exercise records, daily summary (totalCaloriesOut, exerciseMinutes, exerciseCount), loading, and error states\n- Fetches data using GetExerciseRecordsUseCase and DailyLogRepository\n- Date navigation support (previous/next day, date selection)\n- Concurrent data fetching with async/await for optimal performance (async let for parallel execution)\n- @MainActor annotations for UI-safe updates\n- Comprehensive documentation with Korean learning comments explaining @Observable, async/await patterns, and MVVM architecture\n- Dependency injection for testability\n- Computed properties for convenience (isEmpty, isToday, isFuture, formattedSelectedDate)\n- Pull-to-refresh support via refresh() method\n\nThe ViewModel follows the codebase patterns from the development guide and is ready for integration with the View layer. Committed in 0ed5cca.",
           "files": [
             "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseListViewModel.swift"
           ],
@@ -190,14 +193,15 @@
             "Exposes totalCaloriesOut, exerciseMinutes, exerciseCount from DailyLog",
             "Handles loading and error states",
             "Supports date navigation (previous/next day)"
-          ]
+          ],
+          "updated_at": "2026-01-14T02:58:38.825576+00:00"
         },
         {
           "id": "3.2",
           "title": "Create ExerciseCardView component",
           "description": "Create a reusable card component showing exercise details: type icon, name, duration, intensity, and calories burned.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Implemented ExerciseCardView reusable component with comprehensive features:\n\n**UI Elements:**\n- Exercise type icon using SF Symbols (systemIconName extension)\n- Exercise type name with headline font\n- Duration display with clock icon (minutes)\n- Intensity badge with color-coding (\uc800/\uc911/\uace0)\n- Calories burned prominently displayed\n- Card design with shadow and rounded corners\n\n**Features:**\n- Swipe-to-delete gesture support using .swipeActions modifier\n- Color-coded intensity badges (green/orange/red)\n- Unique accent colors per exercise type\n- Responsive layout with HStack and VStack\n- Optional delete action handler\n\n**Extensions:**\n- ExerciseType.systemIconName: Maps each exercise type to appropriate SF Symbol\n- ExerciseType.accentColor: Provides unique color for each exercise type\n\n**Code Quality:**\n- Follows SwiftUI View composition pattern\n- Comprehensive Korean learning comments\n- Multiple preview configurations for development\n- Clean separation of view components\n- Immutable props pattern\n\nAll acceptance criteria met. Component is ready for integration into ExerciseListView. Committed in 5403d2a.",
           "files": [
             "Bodii/Presentation/Components/ExerciseCardView.swift"
           ],
@@ -207,14 +211,15 @@
             "Shows intensity level (\uc800/\uc911/\uace0)",
             "Shows calories burned",
             "Supports swipe-to-delete gesture"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:01:06.020143+00:00"
         },
         {
           "id": "3.3",
           "title": "Create ExerciseListView",
           "description": "Implement the main exercise tab view with date navigation, daily summary, exercise list, and add button.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Implemented ExerciseListView with comprehensive features:\n\n**Core Components:**\n- Date navigation header with previous/next day buttons and calendar-style UI\n- Daily summary section with three color-coded cards (calories, time, count)\n- Exercise list using ExerciseCardView components with swipe-to-delete\n- Empty state with encouraging messaging and add button\n- Loading state with progress indicator\n- Error handling with alert dialog\n\n**View Architecture:**\n- Clean view composition using computed properties (dateNavigationHeader, dailySummarySection, contentView, etc.)\n- Reusable summaryCard function for statistics display\n- MVVM pattern with @Observable ViewModel (iOS 17+)\n- NavigationStack with toolbar integration\n\n**Features:**\n- Date navigation with disabled future dates\n- 'Today' badge indicator for current date\n- Time formatting helper (converts minutes to \"X\uc2dc\uac04 Y\ubd84\" format)\n- Floating add button in navigation toolbar\n- Pull-to-refresh support using .refreshable modifier\n- List customization (no separators, custom insets, clear backgrounds)\n\n**Preview Support:**\n- Three preview configurations: with data, empty state, loading state\n- Mock implementations of GetExerciseRecordsUseCase, DailyLogRepository, ExerciseRecordRepository\n- Sample data for rapid development feedback\n\n**Code Quality:**\n- Comprehensive Korean learning comments explaining SwiftUI patterns\n- Swift vs Java comparisons for learning\n- Follows development guide conventions\n- Clean separation of concerns\n\nAll acceptance criteria met:\n\u2705 Date header with left/right navigation\n\u2705 Daily summary card (total calories, total minutes, exercise count)\n\u2705 List of ExerciseCardView for each record\n\u2705 Floating add button in navigation bar\n\u2705 Empty state when no exercises\n\u2705 Pull-to-refresh support\n\nCommitted in 2dc33bc.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift"
           ],
@@ -225,14 +230,15 @@
             "Floating add button or navigation bar button",
             "Empty state when no exercises",
             "Pull-to-refresh support"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:05:02.659655+00:00"
         },
         {
           "id": "3.4",
           "title": "Create DailySummaryCardView for exercises",
           "description": "Create a summary card showing today's exercise totals: calories burned, total minutes, and exercise count.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Implemented ExerciseDailySummaryCard reusable component with comprehensive features:\n\n**UI Components:**\n- Three-column card layout with equal distribution\n- Total calories burned card with flame icon (orange)\n- Total exercise time card with clock icon (blue) in \"X\uc2dc\uac04 Y\ubd84\" format\n- Exercise count card with figure.run icon (green)\n- Card container with shadow and rounded corners\n\n**Features:**\n- Visual distinction for empty state (isEmpty computed property)\n- Gray color scheme when no exercises logged\n- Time formatting helper (formatMinutes) for hours:minutes display\n- Props-based immutable design pattern\n- Reusable summaryCard function for DRY principle\n\n**Preview Configurations:**\n- \"With Exercises\": Various activity levels (short, medium, long)\n- \"Empty State\": Zero values with gray styling\n- \"Various Times\": Edge cases (exact hours, mixed minutes)\n\n**Code Quality:**\n- Comprehensive Korean learning comments\n- Swift vs Java comparisons\n- Extensive documentation with usage examples\n- Follows existing codebase patterns\n- Clean separation of concerns\n\nAll acceptance criteria met:\n\u2705 Shows total calories burned with icon\n\u2705 Shows total exercise time in hours:minutes format\n\u2705 Shows number of workout sessions\n\u2705 Visual distinction when no exercises logged\n\nComponent is ready for integration into ExerciseListView or standalone use. File committed in fd31df7.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/Components/ExerciseDailySummaryCard.swift"
           ],
@@ -241,7 +247,8 @@
             "Shows total exercise time in hours:minutes format",
             "Shows number of workout sessions",
             "Visual distinction when no exercises logged"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:08:37.508647+00:00"
         }
       ]
     },
@@ -432,6 +439,6 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-14T02:47:04.156934+00:00",
+  "last_updated": "2026-01-14T03:08:37.508657+00:00",
   "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z"
 }

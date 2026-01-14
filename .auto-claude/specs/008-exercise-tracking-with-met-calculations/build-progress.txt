@@ -7,7 +7,7 @@
 ✅ 1.4 - ExerciseRecordRepositoryImpl
 ✅ 1.5 - DailyLogService for exercise updates
 
-### Phase 2: Use Cases & Business Logic (IN PROGRESS)
+### Phase 2: Use Cases & Business Logic (COMPLETED)
 ✅ 2.1 - AddExerciseRecordUseCase (Verified and marked complete - 2026-01-14)
     - Validates exercise duration (minimum 1 minute)
     - Calculates calories using ExerciseCalcService with MET formula
@@ -31,13 +31,45 @@
     - Decrements totalCaloriesOut, exerciseMinutes, and exerciseCount in DailyLog
     - Comprehensive error handling (RecordNotFoundError, UnauthorizedError)
     - Implementation committed in c19fdab
-⏳ 2.4 - GetExerciseRecordsUseCase (PENDING)
 
-### Phase 3: UI - Exercise List View (PENDING)
-⏳ 3.1 - ExerciseListViewModel
-⏳ 3.2 - ExerciseCardView component
-⏳ 3.3 - ExerciseListView
-⏳ 3.4 - DailySummaryCardView for exercises
+✅ 2.4 - GetExerciseRecordsUseCase (Completed - 2026-01-14)
+    - Fetches records for a specific date
+    - Fetches records for a date range
+    - Returns sorted by date (newest first)
+    - Simple read UseCase pattern
+    - Implementation committed in 37da4fe
+
+### Phase 3: UI - Exercise List View (IN PROGRESS)
+✅ 3.1 - ExerciseListViewModel (Completed - 2026-01-14)
+    - Manages state for exercise records, daily summary, loading, and errors
+    - Fetches data using GetExerciseRecordsUseCase and DailyLogRepository
+    - Date navigation support (previous/next day, date selection)
+    - Concurrent data fetching with async/await for optimal performance
+    - @MainActor annotations for UI-safe updates
+    - Comprehensive documentation with Korean learning comments
+    - Implementation committed in 0ed5cca
+
+✅ 3.2 - ExerciseCardView component (Completed - 2026-01-14)
+    - Displays exercise type icon and name using SF Symbols
+    - Shows duration, intensity badge, and calories burned
+    - Color-coded intensity badges (green/orange/red)
+    - Unique accent colors per exercise type
+    - Swipe-to-delete gesture support
+    - Reusable component with clean design
+    - Implementation committed in 5403d2a
+
+✅ 3.3 - ExerciseListView (Completed - 2026-01-14)
+    - Date navigation header with previous/next day buttons
+    - Daily summary section with color-coded cards (calories, time, count)
+    - Exercise list using ExerciseCardView components
+    - Empty state with helpful messaging and add button
+    - Pull-to-refresh support using refreshable modifier
+    - Loading state with progress indicator
+    - Error handling with alert dialog
+    - Multiple preview configurations for development
+    - Implementation committed in 2dc33bc
+
+⏳ 3.4 - DailySummaryCardView for exercises (PENDING - NOTE: Summary integrated into ExerciseListView)
 
 ### Phase 4: UI - Exercise Input Modal (PENDING)
 ⏳ 4.1 - ExerciseInputViewModel
@@ -56,6 +88,25 @@
 ---
 
 ## Recent Activity
+- 2026-01-14: Completed subtask 3.3 (ExerciseListView)
+  - Implemented main exercise list view with comprehensive UI/UX features
+  - Date navigation header with previous/next day buttons (disabled for future dates)
+  - Daily summary section with three color-coded statistics cards
+  - Exercise list using ExerciseCardView components with swipe-to-delete
+  - Empty state with encouraging messaging and prominent add button
+  - Pull-to-refresh support using SwiftUI's refreshable modifier
+  - Loading and error states with appropriate UI feedback
+  - Multiple preview configurations for rapid development
+  - Clean view composition following SwiftUI best practices
+  - All acceptance criteria met with extensive documentation
+  - Committed in 2dc33bc
+
+- 2026-01-14: Completed subtask 2.4 (GetExerciseRecordsUseCase)
+  - Simple read UseCase for fetching exercise records
+  - Supports single date and date range queries
+  - Returns sorted results (newest first)
+  - Committed in 37da4fe
+
 - 2026-01-14: Completed subtask 2.3 (DeleteExerciseRecordUseCase)
   - Implemented use case for deleting exercise records
   - Validates user ownership before deletion
@@ -63,17 +114,3 @@
   - Decrements totalCaloriesOut, exerciseMinutes, and exerciseCount in DailyLog
   - All acceptance criteria met with comprehensive error handling
   - Committed in c19fdab
-
-- 2026-01-14: Completed subtask 2.2 (UpdateExerciseRecordUseCase)
-  - Implemented use case for updating existing exercise records
-  - Validates user ownership and input constraints
-  - Smart recalculation: only recalculates calories when type/duration/intensity changes
-  - Updates DailyLog with difference calculation for accuracy
-  - All acceptance criteria met with comprehensive error handling
-  - Committed in 7119ae7
-
-- 2026-01-14: Verified subtask 2.1 (AddExerciseRecordUseCase) implementation
-  - All acceptance criteria met
-  - Code follows existing patterns
-  - Comprehensive documentation with Korean comments
-  - Status updated to completed
