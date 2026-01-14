@@ -213,8 +213,9 @@
             "Bodii/App/DIContainer.swift"
           ],
           "estimated_time": "10 min",
-          "status": "pending",
-          "notes": "Add makeSleepInputViewModel factory method"
+          "status": "completed",
+          "notes": "Successfully added makeSleepInputViewModel factory method to DIContainer following existing patterns. The factory method accepts userId, defaultHours (default: 7), and defaultMinutes (default: 0) parameters, and returns a new SleepInputViewModel instance with recordSleepUseCase injected. Includes comprehensive Korean documentation with learning points and Java comparisons.",
+          "updated_at": "2026-01-14T12:26:13.455423+00:00"
         }
       ]
     },
@@ -231,8 +232,9 @@
             "Bodii/Presentation/Features/Sleep/SleepHistoryViewModel.swift"
           ],
           "estimated_time": "30 min",
-          "status": "pending",
-          "notes": "Load history, support delete, trigger edit sheet"
+          "status": "completed",
+          "notes": "Successfully implemented SleepHistoryViewModel following established patterns. Key features: history data loading and management via FetchSleepHistoryUseCase, record deletion with confirmation dialog via SleepRepository, record editing trigger using sheet presentation, query mode switching (all/recent N days/date range) with automatic reload using Combine, empty state and loading state handling, statistics display (average duration, most common status). Includes @Published properties for reactive UI updates, comprehensive error handling, Korean documentation with learning points, and preview support. Ready for integration with SleepHistoryView (task 4.3).",
+          "updated_at": "2026-01-14T12:29:01.172837+00:00"
         },
         {
           "id": "4.2",
@@ -242,8 +244,9 @@
             "Bodii/Presentation/Components/Rows/SleepRecordRow.swift"
           ],
           "estimated_time": "20 min",
-          "status": "pending",
-          "notes": "Display date, duration (formatted), status badge with color"
+          "status": "completed",
+          "notes": "Successfully created SleepRecordRow component following project patterns. Key features: three style options (default, compact, detailed), displays date/duration/status badge, integrates with SleepStatusBadge, includes comprehensive previews and documentation, date format customization, sample data helper methods. Component is ready for use in SleepHistoryView (task 4.3). Created 518 lines including extensive documentation and preview support.",
+          "updated_at": "2026-01-14T12:31:53.815039+00:00"
         },
         {
           "id": "4.3",
@@ -253,8 +256,9 @@
             "Bodii/Presentation/Features/Sleep/SleepHistoryView.swift"
           ],
           "estimated_time": "35 min",
-          "status": "pending",
-          "notes": "List with swipe to delete, tap to edit, floating add button"
+          "status": "completed",
+          "notes": "Successfully implemented SleepHistoryView following established patterns. Key features: list view with SleepRecordRow components, statistics summary section (average duration, most common status, record count), query mode selection (all/recent 7/30/90 days), tap to edit records, swipe actions for edit/delete, floating add button (optional), delete confirmation dialog, pull-to-refresh, empty/loading states, error alerts, success toast messages. Integration with SleepHistoryViewModel and DIContainer dependency injection for creating ViewModels. Comprehensive Korean documentation (709 lines). Ready for use in SleepTabView (task 5.1).",
+          "updated_at": "2026-01-14T12:35:18.339176+00:00"
         },
         {
           "id": "4.4",
@@ -264,8 +268,9 @@
             "Bodii/Presentation/Features/Sleep/SleepTrendsViewModel.swift"
           ],
           "estimated_time": "30 min",
-          "status": "pending",
-          "notes": "Load chart data, calculate averages, period filtering (1w, 1m, 3m)"
+          "status": "completed",
+          "notes": "Successfully implemented SleepTrendsViewModel following BodyTrendsViewModel pattern. Key features: period selection (week/month/quarter) with Combine auto-reload, chart data management via FetchSleepStatsUseCase, loading/error state handling, computed properties for UI display (isEmpty, dataPointCount, dataPoints, periodDisplayString, averageDurationString, averageDurationMinutes, mostCommonStatusString, goodSleepPercentageString, consistencyScoreString, statusStats, trendInfo, trendString), date range navigation (navigateToPreviousPeriod, navigateToNextPeriod, resetToCurrentPeriod), custom date range support (useCustomDateRange, customStartDate, customEndDate), helper methods (formatDate, formatDuration, formatDurationChange), comprehensive Korean documentation with 615 lines. Dependencies: FetchSleepStatsUseCase for statistics calculation, SleepRepositoryProtocol for direct queries. Ready for integration with SleepTrendsView (task 4.6) and SleepBarChart (task 4.5).",
+          "updated_at": "2026-01-14T12:38:51.427530+00:00"
         },
         {
           "id": "4.5",
@@ -468,5 +473,5 @@
     "issues": "",
     "tests_passed": ""
   },
-  "last_updated": "2026-01-14T12:24:31.700293+00:00"
+  "last_updated": "2026-01-14T12:38:51.427538+00:00"
 }

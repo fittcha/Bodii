@@ -28,3 +28,57 @@
 - Phase 5: Integrate sleep prompt into app launch (BodiiApp.swift)
 
 **Commit:** 6752c58
+
+## 2026-01-14 - Subtask 4.3 Completed ✅
+
+### Task: View showing list of sleep records with edit/delete actions
+
+**Status:** ✅ Completed
+
+**Implementation Details:**
+- Created `SleepHistoryView.swift` following BodyTrendsView pattern
+- Comprehensive list view with full CRUD functionality
+- Key Features:
+  * List view with SleepRecordRow components for display
+  * Statistics summary section showing:
+    - Average sleep duration
+    - Most common sleep status
+    - Total record count
+  * Query mode selection menu (all records, recent 7/30/90 days)
+  * Tap to edit records (opens SleepInputSheet)
+  * Swipe actions:
+    - Left swipe: Edit button (blue)
+    - Right swipe: Delete button (destructive red)
+  * Floating add button (optional, configurable)
+  * Delete confirmation dialog with warning message
+  * Pull-to-refresh functionality
+  * Empty state with guidance and action button
+  * Loading state with progress indicator
+  * Error alerts for failures
+  * Success toast messages (auto-dismiss after 2 seconds)
+- Integration with SleepHistoryViewModel for state management
+- DIContainer dependency injection for creating ViewModels (add/edit)
+- NavigationStack with .insetGrouped list style
+- Comprehensive Korean documentation (709 lines)
+- Ready for use in SleepTabView (task 5.1)
+
+**Files Created:**
+- Bodii/Presentation/Features/Sleep/SleepHistoryView.swift
+
+**UI/UX Highlights:**
+- Clean section-based layout with statistics at top
+- Intuitive swipe gestures for quick actions
+- Confirmation dialog prevents accidental deletions
+- Toast notifications provide immediate feedback
+- Empty state guides users to first action
+- Floating button positioned in bottom-right corner
+- Query mode filtering for better data management
+
+**Next Steps:**
+- Task 4.4: Create SleepTrendsViewModel
+- Task 4.5: Create SleepBarChart component
+- Task 4.6: Create SleepTrendsView
+- Task 4.7: Add ViewModels to DIContainer
+
+**Commit:** c07f5de
+
