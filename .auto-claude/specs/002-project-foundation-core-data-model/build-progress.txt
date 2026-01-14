@@ -20,7 +20,8 @@
 
 #### Phase 2: Utility Services (IN PROGRESS)
 - ✅ 2.1: DateUtils (02:00 sleep boundary logic) - **COMPLETED**
-- ✅ 2.2: ValidationService (input validation with range checks) - **COMPLETED THIS SESSION**
+- ✅ 2.2: ValidationService (input validation with range checks) - **COMPLETED**
+- ✅ 2.3: Date+Extensions (convenience extensions for Date type) - **COMPLETED THIS SESSION**
 
 ---
 
@@ -88,6 +89,61 @@
 
 ---
 
+### 🎯 Subtask 2.3: Date+Extensions - COMPLETED
+
+**File:** `Bodii/Shared/Extensions/Date+Extensions.swift`
+
+**Implementation Details:**
+- ✅ `startOfDay` computed property - Returns 00:00:00 of this date
+  - Delegates to DateUtils.startOfDay(for:)
+  - More natural Swift API: `date.startOfDay` vs `DateUtils.startOfDay(for: date)`
+
+- ✅ `endOfDay` computed property - Returns 23:59:59 of this date
+  - Delegates to DateUtils.endOfDay(for:)
+  - Convenient instance property access
+
+- ✅ `age(from:referenceDate:)` static method - Calculate age from birth date
+  - Static method for calculating age
+  - Optional referenceDate parameter (defaults to current date)
+  - Delegates to DateUtils.age(from:referenceDate:)
+
+- ✅ `isSameDay(as:)` instance method - Compare if two dates are same day
+  - Instance method for date comparison
+  - More readable: `date1.isSameDay(as: date2)` vs `DateUtils.isSameDay(date1, date2)`
+
+- ✅ `isToday` computed property - Check if this date is today
+  - Convenient boolean property
+  - Delegates to DateUtils.isToday(_:)
+
+- ✅ `daysBetween(and:)` instance method - Calculate days between dates
+  - Instance method for day difference calculation
+  - Returns Int representing days between self and other date
+
+- ✅ `formatted(style:)` method - Format date with Korean locale
+  - FormatStyle enum with cases: full, short, withWeekday, time, dateTime
+  - Type-safe formatting options
+  - Korean locale formatting
+  - Examples:
+    - `.full`: "2024년 01월 15일"
+    - `.short`: "1월 15일"
+    - `.withWeekday`: "1월 15일 (월)"
+    - `.time`: "14:30"
+    - `.dateTime`: "1월 15일 14:30"
+
+**Design Pattern:**
+- Extension provides convenient instance methods/properties
+- All logic delegates to DateUtils for single source of truth
+- FormatStyle enum provides type-safe formatting options
+- Follows Swift naming conventions and idioms
+
+**Verification:**
+- All acceptance criteria met
+- Implementation follows existing code patterns
+- Comprehensive Korean documentation with examples
+- Already committed in commit 96c7cc6
+
+---
+
 ### 🎯 Subtask 2.1: DateUtils - COMPLETED
 
 **File:** `Bodii/Shared/Utils/DateUtils.swift`
@@ -139,7 +195,6 @@
 ### 📋 Next Steps
 
 **Phase 2: Utility Services** (Continue)
-- ⏭️ 2.3: Date+Extensions (convenience extensions)
 - ⏭️ 2.4: Decimal+Extensions (Core Data conversions)
 - ⏭️ 2.5: Formatters Utility (centralized formatters)
 
@@ -166,4 +221,4 @@
 ---
 
 Last Updated: 2026-01-14
-Next Subtask: 2.3 - Date+Extensions
+Next Subtask: 2.4 - Decimal+Extensions
