@@ -19,7 +19,72 @@
 - ✅ 1.10: Constants File (validation ranges, defaults, BMR/TDEE constants)
 
 #### Phase 2: Utility Services (IN PROGRESS)
-- ✅ 2.1: DateUtils (02:00 sleep boundary logic) - **COMPLETED THIS SESSION**
+- ✅ 2.1: DateUtils (02:00 sleep boundary logic) - **COMPLETED**
+- ✅ 2.2: ValidationService (input validation with range checks) - **COMPLETED THIS SESSION**
+
+---
+
+### 🎯 Subtask 2.2: ValidationService - COMPLETED
+
+**File:** `Bodii/Shared/Utils/ValidationService.swift`
+
+**Implementation Details:**
+- ✅ `ValidationResult` struct with `isValid` and `errorMessage` properties
+  - Static factory methods: `.success` and `.failure(_:)`
+  - Clean Result-like pattern for validation results
+
+- ✅ `validateHeight(_:)` - Validates height (100-250cm)
+  - Range check with Korean error messages
+  - Uses Constants.Validation.Height
+
+- ✅ `validateWeight(_:)` - Validates weight (20-300kg)
+  - Range check with Korean error messages
+  - Uses Constants.Validation.Weight
+
+- ✅ `validateBodyFatPercent(_:)` - Validates body fat percentage (3-60%)
+  - Range check with Korean error messages
+  - Uses Constants.Validation.BodyFatPercent
+
+- ✅ `validateMuscleMass(_:)` - Validates muscle mass (10-60kg)
+  - Range check with Korean error messages
+  - Uses Constants.Validation.MuscleMass
+
+- ✅ `validateAge(_:)` - Validates birth year (1900 to current year)
+  - Dynamic max year using current year
+  - Korean error messages
+  - Uses Constants.Validation.BirthYear
+
+- ✅ `validateName(_:)` - Validates name (1-20 characters, non-empty)
+  - Trims whitespace before validation
+  - Checks for empty strings
+  - Length validation with Korean error messages
+  - Uses Constants.Validation.Name
+
+- ✅ `validateExerciseDuration(_:)` - Validates exercise duration (1-480 minutes)
+  - Range check (up to 8 hours)
+  - Korean error messages
+  - Uses Constants.Validation.ExerciseDuration
+
+- ✅ `validateFoodQuantity(_:unit:)` - Validates food quantity with unit awareness
+  - Serving unit: 0.1-100 servings
+  - Gram unit: 1-10,000 grams
+  - Switch-based unit handling
+  - Different error messages for each unit
+  - Uses Constants.Validation.ServingQuantity and GramQuantity
+
+- ✅ `validateBodyComposition(weight:bodyFatPercent:muscleMass:)` - Composite validation
+  - Calculates lean body mass = weight × (1 - bodyFatPercent/100)
+  - Validates muscle mass ≤ lean body mass
+  - Educational error messages with calculated values
+  - BONUS: Beyond original requirements
+
+**Verification:**
+- All acceptance criteria met
+- Implementation follows existing code patterns (enum namespace, Korean docs)
+- Uses Constants for all validation ranges
+- Comprehensive documentation with examples
+- User-friendly Korean error messages
+- Already implemented in commit ba7669a
 
 ---
 
@@ -74,7 +139,6 @@
 ### 📋 Next Steps
 
 **Phase 2: Utility Services** (Continue)
-- ⏭️ 2.2: ValidationService (input validation with range checks)
 - ⏭️ 2.3: Date+Extensions (convenience extensions)
 - ⏭️ 2.4: Decimal+Extensions (Core Data conversions)
 - ⏭️ 2.5: Formatters Utility (centralized formatters)
@@ -102,4 +166,4 @@
 ---
 
 Last Updated: 2026-01-14
-Commit: 74a6517 - Mark DateUtils subtask as completed
+Next Subtask: 2.3 - Date+Extensions
