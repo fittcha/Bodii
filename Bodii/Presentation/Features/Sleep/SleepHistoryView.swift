@@ -277,6 +277,11 @@ struct SleepHistoryView: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
         }
+        // 📚 학습 포인트: Accessibility for Statistic Row
+        // 통계 정보를 하나의 요소로 그룹화하여 VoiceOver가 읽어줌
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title): \(value)")
+        .accessibilityAddTraits(.isStaticText)
     }
 
     /// 레코드 리스트 섹션
@@ -382,6 +387,10 @@ struct SleepHistoryView: View {
                 .font(.body)
                 .foregroundStyle(.blue)
         }
+        // 📚 학습 포인트: Accessibility for Menu
+        // VoiceOver가 메뉴의 기능을 명확히 전달
+        .accessibilityLabel("조회 기간 필터")
+        .accessibilityHint("두 번 탭하여 표시할 기록의 기간을 선택합니다. 현재 \(queryModeDescription)")
     }
 
     /// 플로팅 추가 버튼
@@ -410,6 +419,10 @@ struct SleepHistoryView: View {
         }
         .padding(.trailing, 20)
         .padding(.bottom, 20)
+        // 📚 학습 포인트: Accessibility for Floating Button
+        // VoiceOver가 버튼의 기능을 명확히 전달
+        .accessibilityLabel("수면 기록 추가")
+        .accessibilityHint("두 번 탭하여 새로운 수면 기록을 추가합니다")
     }
 
     /// 빈 상태 뷰
@@ -421,6 +434,7 @@ struct SleepHistoryView: View {
             Image(systemName: "moon.zzz")
                 .font(.system(size: 80))
                 .foregroundStyle(.gray.opacity(0.3))
+                .accessibilityHidden(true)
 
             // 메시지
             VStack(spacing: 12) {
@@ -454,10 +468,15 @@ struct SleepHistoryView: View {
                     )
                 }
                 .padding(.top, 8)
+                .accessibilityLabel("수면 기록 추가하기")
+                .accessibilityHint("두 번 탭하여 첫 번째 수면 기록을 추가합니다")
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 40)
+        // 📚 학습 포인트: Accessibility for Empty State
+        // 빈 상태 전체에 대한 설명 추가
+        .accessibilityElement(children: .contain)
     }
 
     /// 로딩 뷰
@@ -472,6 +491,11 @@ struct SleepHistoryView: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        // 📚 학습 포인트: Accessibility for Loading State
+        // VoiceOver가 로딩 상태를 명확히 전달
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("수면 기록을 불러오는 중입니다")
+        .accessibilityAddTraits(.updatesFrequently)
     }
 
     /// 성공 토스트

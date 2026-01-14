@@ -115,6 +115,8 @@ struct SleepInputSheet: View {
                         Button("닫기") {
                             dismiss()
                         }
+                        .accessibilityLabel("닫기")
+                        .accessibilityHint("두 번 탭하여 수면 입력 화면을 닫습니다")
                     }
                 }
             }
@@ -156,6 +158,7 @@ struct SleepInputSheet: View {
             Image(systemName: "moon.stars.fill")
                 .font(.system(size: 50))
                 .foregroundStyle(.blue)
+                .accessibilityHidden(true)
 
             // 제목
             Text("어젯밤 수면 시간")
@@ -186,6 +189,8 @@ struct SleepInputSheet: View {
                         .fill(Color.orange.opacity(0.1))
                 )
                 .padding(.top, 4)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("경고: 오늘은 꼭 입력해주세요")
             }
         }
     }
@@ -236,6 +241,11 @@ struct SleepInputSheet: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 16)
         }
+        // 📚 학습 포인트: Accessibility for Status Preview
+        // 상태 미리보기 전체를 하나의 요소로 그룹화
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("예상 수면 상태: \(viewModel.expectedStatus.displayName), \(viewModel.statusDescription())")
+        .accessibilityAddTraits(.updatesFrequently)
     }
 
     /// 요약 카드
@@ -266,6 +276,11 @@ struct SleepInputSheet: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(viewModel.expectedStatus.color.opacity(0.1))
         )
+        // 📚 학습 포인트: Accessibility for Summary Card
+        // 요약 정보를 하나의 요소로 그룹화
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("총 수면 시간: \(viewModel.formattedDuration). \(viewModel.recommendedRange())")
+        .accessibilityAddTraits(.summaryElement)
     }
 
     /// 버튼 섹션
@@ -319,6 +334,11 @@ struct SleepInputSheet: View {
             .foregroundStyle(.white)
         }
         .disabled(!viewModel.canSave)
+        // 📚 학습 포인트: Accessibility for Save Button
+        // VoiceOver가 버튼의 기능과 상태를 명확히 전달
+        .accessibilityLabel(viewModel.isSaving ? "저장 중" : "수면 기록 저장")
+        .accessibilityHint(viewModel.isSaving ? "" : "두 번 탭하여 \(viewModel.formattedDuration)의 수면 기록을 저장합니다")
+        .accessibilityAddTraits(viewModel.canSave ? [] : .isNotEnabled)
     }
 
     /// 건너뛰기 버튼
@@ -344,6 +364,10 @@ struct SleepInputSheet: View {
             .padding(.vertical, 14)
             .foregroundStyle(.secondary)
         }
+        // 📚 학습 포인트: Accessibility for Skip Button
+        // VoiceOver가 버튼의 기능을 명확히 전달
+        .accessibilityLabel("나중에 입력하기")
+        .accessibilityHint("두 번 탭하여 수면 기록을 건너뛰고 나중에 입력합니다")
     }
 }
 

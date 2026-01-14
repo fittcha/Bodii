@@ -178,6 +178,10 @@ struct DurationPicker: View {
             }
             .pickerStyle(.wheel)
             .frame(maxWidth: .infinity)
+            // 📚 학습 포인트: Accessibility Label for Picker
+            // VoiceOver가 피커의 목적을 명확히 읽어줄 수 있도록 레이블 추가
+            .accessibilityLabel("수면 시간 선택")
+            .accessibilityValue("\(hours)시간")
 
             // 분 피커
             Picker("분", selection: $minutes) {
@@ -190,8 +194,17 @@ struct DurationPicker: View {
             }
             .pickerStyle(.wheel)
             .frame(maxWidth: .infinity)
+            // 📚 학습 포인트: Accessibility Label for Picker
+            // VoiceOver가 피커의 목적을 명확히 읽어줄 수 있도록 레이블 추가
+            .accessibilityLabel("수면 분 선택")
+            .accessibilityValue("\(minutes)분")
         }
         .frame(height: 120)
+        // 📚 학습 포인트: Accessibility for Picker Container
+        // 전체 피커 컨테이너에 대한 설명 추가
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("수면 시간 입력")
+        .accessibilityHint("위아래로 스와이프하여 시간과 분을 선택하세요")
     }
 }
 

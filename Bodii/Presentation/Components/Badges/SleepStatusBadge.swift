@@ -106,6 +106,10 @@ struct SleepStatusBadge: View {
         .padding(.vertical, style.padding * 0.6)
         .background(badgeBackground)
         .cornerRadius(style == .large ? 10 : 8)
+        // 📚 학습 포인트: Accessibility Label
+        // VoiceOver가 수면 상태를 읽어줄 수 있도록 레이블 추가
+        .accessibilityLabel("수면 상태: \(status.displayName)")
+        .accessibilityAddTraits(.isStaticText)
     }
 
     // MARK: - Subviews

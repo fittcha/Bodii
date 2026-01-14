@@ -263,3 +263,93 @@
 
 **Commit:** 91c661e
 
+## 2026-01-14 - Subtask 6.5 Completed ✅
+
+### Task: Unit tests for skip count and prompt logic
+
+**Status:** ✅ Completed
+
+**Implementation Details:**
+- Created `SleepPromptManagerTests.swift` with comprehensive test coverage
+- 28 test cases covering all aspects of SleepPromptManager functionality
+- Key Test Categories:
+  * Skip Count Persistence Tests (5 tests)
+    - Increment/decrement/reset functionality
+    - Multi-increment counting accuracy
+    - Date-based independent storage
+  * Force Entry Mode Tests (4 tests)
+    - Before 3 skips: normal mode
+    - After 3 skips: force entry mode activated
+    - Remaining skips calculation
+    - Edge cases with >3 skips
+  * Prompt Logic Tests (7 tests)
+    - Time condition checking (02:00 boundary)
+    - Record existence verification
+    - Auto-reset when record exists
+    - Manual dismiss functionality
+  * Data Cleanup Tests (3 tests)
+    - 7-day retention policy
+    - Boundary value testing (exactly 7 days)
+    - Selective cleanup (preserves non-sleep keys)
+  * Repository Error Handling (1 test)
+    - Safe error handling with conservative approach
+  * Edge Case Tests (3 tests)
+    - Repeated increment/reset cycles
+    - Many increments without reset
+    - UserDefaults key format validation
+  * Integration Tests (1 test)
+    - Full workflow from skip to record
+- Mock Implementation:
+  * MockSleepRepository for dependency isolation
+  * Test-specific UserDefaults for test independence
+  * Helper method for key generation matching production code
+- Testing Patterns:
+  * @MainActor for SwiftUI compatibility
+  * Given-When-Then structure for clarity
+  * setUp/tearDown for test isolation
+  * Test UserDefaults cleanup in tearDown
+- Documentation:
+  * Comprehensive Korean learning points
+  * Java comparison for Android developers
+  * Test strategy documentation
+  * Coverage analysis notes
+  * Time-dependency warnings for DateUtils
+
+**Files Created:**
+- BodiiTests/Presentation/SleepPromptManagerTests.swift (765 lines, 29.6 KB)
+
+**Test Coverage Summary:**
+- ✅ Skip count persistence (UserDefaults)
+- ✅ Date-based independent counting
+- ✅ Force entry mode activation (3 skips)
+- ✅ Remaining skips calculation
+- ✅ Prompt display logic (time + record)
+- ✅ Auto-reset when record exists
+- ✅ Manual dismiss functionality
+- ✅ Old data cleanup (7-day retention)
+- ✅ Repository error handling
+- ✅ Edge cases and boundary values
+- ✅ Full workflow integration
+
+**Testing Techniques:**
+- Mock Repository for dependency injection
+- Test-specific UserDefaults suite for isolation
+- ISO 8601 date key format validation
+- Conservative error handling verification
+- Repeated operation testing
+- Boundary value analysis
+
+**Key Learning Points:**
+- UserDefaults testing with test suites
+- @MainActor testing for ObservableObject
+- Date-based key management testing
+- Mock-based repository testing
+- Given-When-Then test structure
+- Test cleanup and isolation
+
+**Next Steps:**
+- Task 6.6: Add accessibility labels to UI components
+- Task 6.7: Final review and documentation
+
+**Commit:** 9f8b5a8
+

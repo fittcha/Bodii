@@ -119,6 +119,12 @@ struct SleepRecordRow: View {
             sleepStatusBadge
         }
         .padding(.vertical, style == .compact ? 4 : 8)
+        // 📚 학습 포인트: Accessibility Label for Row
+        // VoiceOver가 전체 Row 정보를 한 번에 읽어줄 수 있도록 통합 레이블
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(formatDate(record.date)), 수면 시간 \(formatDuration(record.duration)), 상태 \(record.status.displayName)")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("두 번 탭하여 수면 기록을 편집합니다")
     }
 
     // MARK: - Subviews
