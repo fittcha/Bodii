@@ -55,6 +55,14 @@ final class DIContainer {
         return BodyLocalDataSource(persistenceController: .shared)
     }()
 
+    /// Sleep tracking 로컬 데이터 소스
+    /// 📚 학습 포인트: Lazy Initialization
+    /// 첫 접근 시 한 번만 생성되어 재사용됨
+    /// 💡 Java 비교: @Lazy + @Autowired와 유사
+    lazy var sleepLocalDataSource: SleepLocalDataSource = {
+        return SleepLocalDataSource(persistenceController: .shared)
+    }()
+
     // TODO: Phase 2에서 추가 예정
     // - NetworkManager
     // - HealthKitManager
@@ -71,11 +79,18 @@ final class DIContainer {
         return BodyRepository(localDataSource: bodyLocalDataSource)
     }()
 
+    /// Sleep tracking 리포지토리
+    /// 📚 학습 포인트: Dependency Injection Chain
+    /// sleepLocalDataSource를 주입받아 생성
+    /// 💡 Java 비교: @Autowired Repository와 유사
+    lazy var sleepRepository: SleepRepositoryProtocol = {
+        return SleepRepository(localDataSource: sleepLocalDataSource)
+    }()
+
     // TODO: Phase 3에서 추가 예정
     // - UserRepository
     // - FoodRepository
     // - ExerciseRepository
-    // - SleepRepository
     // - GoalRepository
 
     // MARK: - Use Cases
