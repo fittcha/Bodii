@@ -261,8 +261,8 @@
           "id": "4.1",
           "title": "Create ExerciseInputViewModel",
           "description": "Implement ViewModel for the exercise input modal. Handle form state, validation, real-time calorie preview, and save action.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Implemented ExerciseInputViewModel with comprehensive features:\n\n**Form State Management:**\n- Manages form state (selectedExerciseType, duration, selectedIntensity, note, selectedDate)\n- Uses @Observable macro (iOS 17+) for automatic View updates\n- All form fields with sensible defaults (running, 30 min, medium intensity)\n\n**Real-time Calorie Preview:**\n- previewCalories computed property calculates calories in real-time\n- Uses ExerciseCalcService.calculateCalories() with MET formula\n- Automatically recalculates when any form field changes (type, duration, intensity)\n- Gets user weight from injected userWeight dependency\n\n**Validation:**\n- isFormValid computed property checks duration >= 1 minute\n- durationValidationError provides user-friendly validation messages\n- Validates on save() before calling UseCase\n\n**Save Action:**\n- Calls AddExerciseRecordUseCase.execute() with all required parameters\n- Handles loading state with isSaving boolean\n- Sets isSaveSuccess flag on success for View dismiss\n- Captures errors in errorMessage for user feedback\n\n**Additional Features:**\n- reset() method to clear form after save or cancel\n- clearError() method for error alert dismissal\n- selectExerciseType(), selectIntensity(), setDuration() helper methods\n- Comprehensive error handling with user-friendly messages\n\n**Code Quality:**\n- Follows ExerciseListViewModel pattern from the codebase\n- Extensive Korean learning comments explaining Form ViewModel pattern\n- @MainActor annotations for UI-safe operations\n- Dependency injection for testability (AddExerciseRecordUseCase, userId, userWeight, userBMR, userTDEE)\n- Comprehensive documentation with usage examples and testing patterns\n- Comparison with Java/Android patterns for learning\n\nAll acceptance criteria met:\n\u2705 Manages form state (type, duration, intensity, note)\n\u2705 Calculates preview calories in real-time using ExerciseCalcService\n\u2705 Gets user weight from User.currentWeight for calculation\n\u2705 Validates minimum duration (1 minute)\n\u2705 Calls AddExerciseRecordUseCase on save\n\nCommitted in 6014550.",
           "files": [
             "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseInputViewModel.swift"
           ],
@@ -272,7 +272,8 @@
             "Gets user weight from User.currentWeight for calculation",
             "Validates minimum duration (1 minute)",
             "Calls AddExerciseRecordUseCase on save"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:11:20.800213+00:00"
         },
         {
           "id": "4.2",
@@ -439,6 +440,6 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-14T03:08:37.508657+00:00",
+  "last_updated": "2026-01-14T03:11:20.800218+00:00",
   "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z"
 }

@@ -1,7 +1,7 @@
 {
   "spec_id": "008-exercise-tracking-with-met-calculations",
   "created_at": "2026-01-14T02:45:42.060715+00:00",
-  "updated_at": "2026-01-14T03:11:00.241949+00:00",
+  "updated_at": "2026-01-14T03:13:32.379052+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -4416,6 +4416,309 @@
           "tool_input": "git commit -m \"auto-claude: 4.1 - Implement Vie...",
           "subtask_id": "4.1",
           "session": 9
+        },
+        {
+          "timestamp": "2026-01-14T03:11:01.777449+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "4.1",
+          "session": 9,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:11:07.243066+00:00",
+          "type": "text",
+          "content": "Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "4.1",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-14T03:11:20.795796+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "4.1",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-14T03:11:20.813437+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "4.1",
+          "session": 9,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:11:31.139466+00:00",
+          "type": "text",
+          "content": "Perfect! I've successfully implemented the **ExerciseInputViewModel** for subtask 4.1. Here's a summary of what was completed:\n\n## ✅ Implementation Summary\n\n### **Core Features Implemented:**\n\n1. **Form State Management**\n   - Manages all form fields: `selectedExerciseType`, `duration`, `selectedIntensity`, `note`, `selectedDate`\n   - Uses `@Observable` macro (iOS 17+) for automatic View updates\n   - Sensible defaults: running, 30 minutes, medium intensity\n\n2. **Real-time Calorie Preview**\n   - `previewCalories` computed property calculates calories as user types\n   - Uses `ExerciseCalcService.calculateCalories()` with MET formula\n   - Automatically recalculates when any form field changes\n   - Gets user weight from constructor injection\n\n3. **Validation**\n   - `isFormValid` checks duration >= 1 minute\n   - `durationValidationError` provides user-friendly validation messages\n   - Validates before calling UseCase on save\n\n4. **Save Action**\n   - Calls `AddExerciseRecordUseCase.execute()` with all required parameters\n   - Handles loading state with `isSaving` boolean\n   - Sets `isSaveSuccess` flag for View dismissal\n   - Captures errors in `errorMessage` for user feedback\n\n5. **Helper Methods**\n   - `reset()` - Clear form after save or cancel\n   - `clearError()` - Dismiss error alerts\n   - `selectExerciseType()`, `selectIntensity()`, `setDuration()` - Form field setters\n\n### **Code Quality:**\n- ✅ Follows `ExerciseListViewModel` pattern from the codebase\n- ✅ Extensive Korean learning comments explaining Form ViewModel pattern\n- ✅ `@MainActor` annotations for UI-safe operations\n- ✅ Dependency injection for testability\n- ✅ Comprehensive documentation with usage examples\n\n### **Acceptance Criteria Met:**\n- ✅ Manages form state (type, duration, intensity, note)\n- ✅ Calculates preview calories in real-time using ExerciseCalcService\n- ✅ Gets user weight from User.currentWeight for calculation\n- ✅ Validates minimum duration (1 minute)\n- ✅ Calls AddExerciseRecordUseCase on save\n\n**Committed:** `6014550` - \"auto-claude: 4.1 - Implement ViewModel for the exercise input modal\"\n\nThe ViewModel is now ready to be integrated with the UI components in the next subtasks!",
+          "phase": "coding",
+          "subtask_id": "4.1",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-14T03:11:44.407467+00:00",
+          "type": "text",
+          "content": "I'll help you implement subtask 4.2 - creating a grid of exercise type buttons for selection. Let me start by reading the relevant files to understand the context and patterns.",
+          "phase": "coding",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:45.046281+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...exercise-tracking-with-met-calculations/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...exercise-tracking-with-met-calculations/spec.md",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:45.503250+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...-with-met-calculations/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...-with-met-calculations/implementation_plan.json",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:45.980001+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...acking-with-met-calculations/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...acking-with-met-calculations/build-progress.txt",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:46.002468+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "4.2",
+          "session": 10,
+          "detail": "     1→# Exercise Tracking with MET Calculations\n     2→\n     3→# Exercise Tracking with MET Calculations\n     4→\n     5→Exercise logging with activity type selection, duration input, and automatic calorie burn calculation using MET (Metabolic Equivalent of Task) values. Track both cardio and strength training with appropriate calculations.\n     6→\n     7→## Rationale\n     8→\n     9→Completes the calorie in/out equation by tracking expenditure. Integrated with body composition and diet data to show net daily balance - something fragmented apps require multiple tools to achieve. Addresses user goal of 'maintaining consistent daily records of health metrics'.\n    10→\n    11→## User Stories\n    12→\n    13→- As a fitness enthusiast, I want to log my workouts so that I can track my activity level\n    14→- As a user, I want automatic calorie burn calculations so that I know my daily expenditure\n    15→\n    16→## Acceptance Criteria\n    17→\n    18→- [ ]  Users can select from common exercise types (running, cycling, swimming, weights, etc.)\n    19→- [ ]  Duration input in minutes with automatic calorie calculation\n    20→- [ ]  MET values used for accurate calorie burn based on body weight\n    21→- [ ]  Exercise records linked to daily log for aggregation\n    22→- [ ]  Daily exercise summary shows total activity calories\n    23→- [ ]  Custom exercise entry available for unlisted activities\n    24→\n    25→## Rationale\n    26→User-created feature for Exercise Tracking with MET Calculations\n    27→\n    28→## User Stories\n    29→N/A\n    30→\n    31→## Acceptance Criteria\n    32→N/A\n    33→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:11:52.117939+00:00",
+          "type": "text",
+          "content": "Now let me read the pattern files and understand the ExerciseType entity to implement the grid view correctly.",
+          "phase": "coding",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:52.656864+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Entities/ExerciseType.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Entities/ExerciseType.swift",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:53.237893+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Presentation/Components/ExerciseCardView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Presentation/Components/ExerciseCardView.swift",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:53.797427+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...xercise/ViewModels/ExerciseInputViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...xercise/ViewModels/ExerciseInputViewModel.swift",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:54.303377+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*DevelopmentGuide*.md",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*DevelopmentGuide*.md",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:54.325554+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Error: <tool_use_error>File does not exist.</tool_use_error>",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "4.2",
+          "session": 10,
+          "detail": "<tool_use_error>File does not exist.</tool_use_error>",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:11:59.600353+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: enum ExerciseType",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: enum ExerciseType",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:11:59.939105+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/ExerciseType.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/ExerciseType.swift",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:12:00.307086+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "4.2",
+          "session": 10,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:12:03.875140+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/ExerciseType.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/ExerciseType.swift",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:12:03.892332+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "4.2",
+          "session": 10,
+          "detail": "     1→//\n     2→//  ExerciseType.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// 운동 종류 열거형\n    11→///\n    12→/// 운동 기록 시 운동의 종류를 나타냅니다.\n    13→/// Core Data 호환성을 위해 Int16 rawValue를 사용합니다.\n    14→///\n    15→/// - Cases:\n    16→///   - walking: 걷기\n    17→///   - running: 러닝\n    18→///   - cycling: 자전거\n    19→///   - swimming: 수영\n    20→///   - weight: 웨이트\n    21→///   - crossfit: 크로스핏\n    22→///   - yoga: 요가\n    23→///   - other: 기타\n    24→///\n    25→/// - Example:\n    26→/// ```swift\n    27→/// let exercise = ExerciseType.running\n    28→/// print(exercise.displayName) // \"러닝\"\n    29→/// print(exercise.baseMET) // 8.0\n    30→/// print(exercise.metValue(for: 2)) // 9.6 (고강도)\n    31→/// ```\n    32→enum ExerciseType: Int16, CaseIterable, Codable {\n    33→    case walking = 0\n    34→    case running = 1\n    35→    case cycling = 2\n    36→    case swimming = 3\n    37→    case weight = 4\n    38→    case crossfit = 5\n    39→    case yoga = 6\n    40→    case other = 7\n    41→\n    42→    /// 사용자에게 표시할 운동 종류 이름\n    43→    var displayName: String {\n    44→        switch self {\n    45→        case .walking: return \"걷기\"\n    46→        case .running: return \"러닝\"\n    47→        case .cycling: return \"자전거\"\n    48→        case .swimming: return \"수영\"\n    49→        case .weight: return \"웨이트\"\n    50→        case .crossfit: return \"크로스핏\"\n    51→        case .yoga: return \"요가\"\n    52→        case .other: return \"기타\"\n    53→        }\n    54→    }\n    55→\n    56→    /// 기본 MET 값 (중강도 기준)\n    57→    ///\n    58→    /// MET (Metabolic Equivalent of Task): 안정 시 산소 소비량 대비 활동 시 산소 소비량의 비율\n    59→    /// 1 MET = 약 1 kcal/kg/hour\n    60→    ///\n    61→    /// - Returns: 중강도 기준 MET 값\n    62→    var baseMET: Double {\n    63→        switch self {\n    64→        case .walking: return 3.5\n    65→        case .running: return 8.0\n    66→        case .cycling: return 6.0\n    67→        case .swimming: return 7.0\n    68→        case .weight: return 6.0\n    69→        case .crossfit: return 8.0\n    70→        case .yoga: return 3.0\n    71→        case .other: return 5.0\n    72→        }\n    73→    }\n    74→\n    75→    /// 강도별 MET 값 조회\n    76→    ///\n    77→    /// 강도 보정 계수:\n    78→    /// - 저강도: 기본 MET × 0.8\n    79→    /// - 중강도: 기본 MET × 1.0\n    80→    /// - 고강도: 기본 MET × 1.2\n    81→    ///\n    82→    /// - Parameter intensity: 운동 강도 (0: 저강도, 1: 중강도, 2: 고강도)\n    83→    /// - Returns: 강도에 따른 MET 값\n    84→    func metValue(for intensity: Int16) -> Double {\n    85→        let multiplier: Double\n    86→        switch intensity {\n    87→        case 0: multiplier = 0.8  // 저강도\n    88→        case 2: multiplier = 1.2  // 고강도\n    89→        default: multiplier = 1.0  // 중강도\n    90→        }\n    91→        return baseMET * multiplier\n    92→    }\n    93→}\n    94→\n    95→// MARK: - Identifiable\n    96→\n    97→extension ExerciseType: Identifiable {\n    98→    var id: Int16 { rawValue }\n    99→}\n   100→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:12:08.406290+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: LazyVGrid",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: LazyVGrid",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:12:08.742349+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*GridView*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*GridView*.swift",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:12:09.101667+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "4.2",
+          "session": 10,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:12:16.966645+00:00",
+          "type": "text",
+          "content": "Now I have all the context I need. Let me create the ExerciseTypeGridView component following the established patterns.",
+          "phase": "coding",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:13:20.249256+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...ise/Views/Components/ExerciseTypeGridView.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...ise/Views/Components/ExerciseTypeGridView.swift",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:13:20.591991+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "4.2",
+          "session": 10,
+          "detail": "File created successfully at: ./Bodii/Presentation/Features/Exercise/Views/Components/ExerciseTypeGridView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:13:27.317809+00:00",
+          "type": "text",
+          "content": "Perfect! I've created the ExerciseTypeGridView component. Now let me verify the implementation meets all acceptance criteria and then commit the changes.\n\nLet me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:13:28.963845+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...-with-met-calculations/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...-with-met-calculations/implementation_plan.json",
+          "subtask_id": "4.2",
+          "session": 10
+        },
+        {
+          "timestamp": "2026-01-14T03:13:28.981815+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "4.2",
+          "session": 10,
+          "detail": "   275→          ],\n   276→          \"updated_at\": \"2026-01-14T03:11:20.800213+00:00\"\n   277→        },\n   278→        {\n   279→          \"id\": \"4.2\",\n   280→          \"title\": \"Create ExerciseTypeGridView component\",\n   281→          \"description\": \"Create a grid of exercise type buttons for selection. Each button shows icon and name, with selected state highlighting.\",\n   282→          \"status\": \"pending\",\n   283→          \"notes\": \"\",\n   284→          \"files\": [\n   285→            \"Bodii/Presentation/Features/Exercise/Views/Components/ExerciseTypeGridView.swift\"\n   286→          ],\n   287→          \"acceptance_criteria\": [\n   288→            \"Grid layout with all 8 exercise types\",\n   289→            \"Each item shows icon and Korean name\",\n   290→            \"Visual feedback for selected type\",\n   291→            \"Tappable with animation\"\n   292→          ]\n   293→        },\n   294→        {\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:13:32.379016+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add .",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add .",
+          "subtask_id": "4.2",
+          "session": 10
         }
       ]
     },
