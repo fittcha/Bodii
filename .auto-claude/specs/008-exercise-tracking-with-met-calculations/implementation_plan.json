@@ -2,7 +2,7 @@
   "feature": "Exercise Tracking with MET Calculations",
   "description": "Exercise logging with activity type selection, duration input, and automatic calorie burn calculation using MET (Metabolic Equivalent of Task) values. Track both cardio and strength training with appropriate calculations.",
   "created_at": "2026-01-13T09:55:58.414Z",
-  "updated_at": "2026-01-13T10:19:05.212Z",
+  "updated_at": "2026-01-14T00:38:20.741Z",
   "status": "in_progress",
   "planStatus": "in_progress",
   "phases": [
@@ -112,7 +112,7 @@
           "title": "Create AddExerciseRecordUseCase",
           "description": "Implement use case for adding a new exercise record. Calculate calories using ExerciseCalcService and update DailyLog through DailyLogService.",
           "status": "completed",
-          "notes": "Created AddExerciseRecordUseCase with complete business logic flow. The use case validates exercise duration (minimum 1 minute), calculates calories using ExerciseCalcService.calculateCalories() with MET formula, creates and saves ExerciseRecord via ExerciseRecordRepository.create(), and updates DailyLog via DailyLogService.addExercise() (increments totalCaloriesOut, exerciseMinutes, exerciseCount). Accepts user parameters (weight, BMR, TDEE) to avoid tight coupling to UserRepository. Includes comprehensive documentation with usage examples and Clean Architecture pattern explanations. All acceptance criteria met.",
+          "notes": "Subtask was already implemented and committed in commit 5cd3957. Implementation verified: ✅ Calculates calories using ExerciseCalcService.calculateCalories(), ✅ Saves ExerciseRecord via exerciseRepository.create(), ✅ Updates DailyLog via dailyLogService.addExercise(), ✅ Validates exercise duration (minimum 1 minute), ✅ Includes comprehensive error handling and documentation, ✅ Follows existing codebase patterns with Korean learning comments. The use case correctly orchestrates the entire flow: validation → calculation → persistence → daily log update.",
           "files": [
             "Bodii/Domain/UseCases/Exercise/AddExerciseRecordUseCase.swift"
           ],
@@ -122,7 +122,7 @@
             "Updates DailyLog via DailyLogService",
             "Validates exercise duration (min 1 minute)"
           ],
-          "updated_at": "2026-01-13T10:25:00.000Z"
+          "updated_at": "2026-01-14T00:00:00.000Z"
         },
         {
           "id": "2.2",
@@ -433,5 +433,5 @@
     "issues": ""
   },
   "last_updated": "2026-01-13T10:15:20.441587+00:00",
-  "recoveryNote": "Task recovered from stuck state at 2026-01-13T10:19:05.179Z"
+  "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z"
 }
