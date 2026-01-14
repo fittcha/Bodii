@@ -13,6 +13,17 @@ import XCTest
 @testable import Bodii
 
 /// SleepPromptManager에 대한 단위 테스트
+///
+/// 📚 학습 포인트: Prompt Timing vs Sleep Boundary
+/// - promptHour (6 AM): 사용자에게 프롬프트를 보여주는 시간
+/// - boundaryHour (2 AM): 수면 날짜를 계산하는 경계 시간
+/// - These are separate concerns and use different constants
+///
+/// 테스트 시 주의사항:
+/// - checkShouldShow()는 DateUtils.shouldShowSleepPopup()을 사용
+/// - shouldShowSleepPopup()는 promptHour (6 AM)을 사용
+/// - 06:00 이전에는 프롬프트가 표시되지 않아야 함
+///
 /// 📚 학습 포인트: Manager Testing
 /// - 프롬프트 표시 로직 검증
 /// - 건너뛰기 횟수 영속성 테스트
@@ -247,16 +258,16 @@ final class SleepPromptManagerTests: XCTestCase {
 
     // MARK: - Prompt Logic Tests
 
-    /// 프롬프트 표시 - 시간 조건 미충족 (02:00 이전)
+    /// 프롬프트 표시 - 시간 조건 미충족 (06:00 이전)
     /// 📚 학습 포인트: Time-based Logic Testing
-    /// 02:00 이전에는 프롬프트가 표시되지 않는지 확인
+    /// 06:00 이전에는 프롬프트가 표시되지 않는지 확인
     /// Note: 이 테스트는 실제 시간에 의존하므로 DateUtils.shouldShowSleepPopup이 false를 반환하는 경우를 시뮬레이션
-    func testCheckShouldShow_Before2AM_DoesNotShowPrompt() async {
+    func testCheckShouldShow_Before6AM_DoesNotShowPrompt() async {
         // Given: 시간 조건 확인은 DateUtils에 의존
         // Note: 이 테스트는 DateUtils.shouldShowSleepPopup() == true인 시간에 실행되면 실패할 수 있음
         // 실제 프로덕션 코드에서는 DateUtils를 주입받아 Mock으로 대체하는 것이 이상적
 
-        // When: 프롬프트 확인 (시간이 02:00 이후라면)
+        // When: 프롬프트 확인 (시간이 06:00 이후라면)
         await sut.checkShouldShow()
 
         // Then: DateUtils.shouldShowSleepPopup()의 반환값에 따라 결과가 달라짐
@@ -291,7 +302,7 @@ final class SleepPromptManagerTests: XCTestCase {
         // Given: 건너뛰기 1회 (강제 입력 모드 아님)
         sut.incrementSkipCount()
 
-        // When: 프롬프트 확인 (02:00 이후 시간대에서 실행 가정)
+        // When: 프롬프트 확인 (06:00 이후 시간대에서 실행 가정)
         await sut.checkShouldShow()
 
         // Then: 프롬프트 표시되어야 함 (시간 조건이 충족된다면)
@@ -715,7 +726,7 @@ class MockSleepRepository: SleepRepositoryProtocol {
 ///    - 남은 건너뛰기 횟수 계산
 ///
 /// 3. 프롬프트 로직 테스트
-///    - 시간 조건 확인 (02:00 경계)
+///    - 시간 조건 확인 (06:00 프롬프트 경계, 02:00 수면 경계는 독립적)
 ///    - 기록 존재 여부 확인
 ///    - 건너뛰기 횟수에 따른 동작
 ///    - 자동 초기화 로직
@@ -752,8 +763,13 @@ class MockSleepRepository: SleepRepositoryProtocol {
 ///
 /// 시간 의존성 주의사항:
 /// - DateUtils.shouldShowSleepPopup()은 실제 시간에 의존
-/// - 02:00 이전에 테스트 실행 시 일부 테스트 실패 가능
+/// - 06:00 이전에 테스트 실행 시 일부 테스트 실패 가능
 /// - 실무에서는 DateUtils를 Protocol로 만들어 Mock 주입 권장
+///
+/// 프롬프트 vs 수면 경계:
+/// - promptHour (6 AM): 프롬프트 표시 시간 (사용자 UX)
+/// - boundaryHour (2 AM): 수면 날짜 계산 경계 (비즈니스 로직)
+/// - 이 두 값은 독립적이며 서로 다른 목적을 가짐
 ///
 /// 💡 실무 팁:
 /// - Manager 테스트는 비즈니스 로직에 집중

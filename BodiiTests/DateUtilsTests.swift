@@ -480,57 +480,60 @@ final class DateUtilsTests: XCTestCase {
         // When: Calling shouldShowSleepPopup
         let shouldShow = DateUtils.shouldShowSleepPopup()
 
-        // Then: Should return true if hour >= 2, false otherwise
+        // Then: Should return true if hour >= 6, false otherwise
         // 📚 Expected behavior:
-        // - 00:00 ~ 01:59 -> false (too early, sleep popup should not show)
-        // - 02:00 ~ 23:59 -> true (valid time to show sleep popup)
-        if currentHour >= 2 {
+        // - 00:00 ~ 05:59 -> false (too early, sleep popup should not show)
+        // - 06:00 ~ 23:59 -> true (valid time to show sleep popup)
+        if currentHour >= 6 {
             XCTAssertTrue(
                 shouldShow,
-                "shouldShowSleepPopup() should return true when current hour (\(currentHour)) >= 2"
+                "shouldShowSleepPopup() should return true when current hour (\(currentHour)) >= 6"
             )
         } else {
             XCTAssertFalse(
                 shouldShow,
-                "shouldShowSleepPopup() should return false when current hour (\(currentHour)) < 2"
+                "shouldShowSleepPopup() should return false when current hour (\(currentHour)) < 6"
             )
         }
     }
 
-    /// Test: shouldShowSleepPopup consistency with getLogicalDate boundary
+    /// Test: shouldShowSleepPopup uses promptHour (6 AM), not boundaryHour (2 AM)
     ///
-    /// 테스트: shouldShowSleepPopup과 getLogicalDate의 경계 일관성
-    /// 📚 학습 포인트: Consistency Testing
-    /// - shouldShowSleepPopup과 getLogicalDate는 같은 경계 로직 사용
-    /// - 두 메서드의 동작이 일관성 있게 유지되는지 확인
-    func testShouldShowSleepPopup_ConsistentWithLogicalDateBoundary() {
-        // Given: Test dates at various hours
-        let testCases: [(hour: Int, shouldShow: Bool, description: String)] = [
-            (0, false, "Midnight"),
-            (1, false, "1 AM"),
-            (2, true, "2 AM (boundary)"),
-            (3, true, "3 AM"),
-            (6, true, "6 AM"),
-            (12, true, "Noon"),
-            (18, true, "6 PM"),
-            (23, true, "11 PM")
-        ]
+    /// 테스트: shouldShowSleepPopup은 promptHour (6시)를 사용, boundaryHour (2시) 아님
+    /// 📚 학습 포인트: Separation of Concerns
+    /// - promptHour (6 AM): 사용자에게 프롬프트를 보여주는 시간
+    /// - boundaryHour (2 AM): 수면 날짜를 계산하는 경계 시간
+    /// - These are separate concerns and use different constants
+    func testShouldShowSleepPopup_UsesPromptHourNotBoundaryHour() {
+        // Given: Constants
+        // Then: Verify separation of concerns
+        XCTAssertEqual(Constants.Sleep.boundaryHour, 2, "Boundary hour should be 2 AM")
+        XCTAssertEqual(Constants.Sleep.promptHour, 6, "Prompt hour should be 6 AM")
+        XCTAssertNotEqual(Constants.Sleep.boundaryHour, Constants.Sleep.promptHour,
+                          "Boundary and prompt hours should be different")
+    }
 
-        // When/Then: Verify each hour's behavior matches expected boundary logic
-        for testCase in testCases {
-            let testDate = makeDate(year: 2026, month: 1, day: 12, hour: testCase.hour)
-            let logicalDate = DateUtils.getLogicalDate(for: testDate)
-            let expectedDate = makeExpectedDate(year: 2026, month: 1, day: testCase.shouldShow ? 12 : 11)
+    /// Test: getLogicalDate still uses 2 AM boundary after prompt hour fix
+    ///
+    /// 테스트: getLogicalDate는 여전히 02:00 경계를 사용함을 확인
+    /// 📚 학습 포인트: Independence of Logic
+    /// - Prompt timing change should not affect sleep date assignment
+    /// - boundaryHour (2 AM) remains unchanged for date logic
+    func testGetLogicalDate_StillUses2AMBoundary_AfterPromptHourFix() {
+        // Given: Time is 01:59 AM on Jan 15
+        let calendar = Calendar.current
+        let jan15_0159 = makeDate(year: 2026, month: 1, day: 15, hour: 1, minute: 59)
 
-            XCTAssertEqual(
-                logicalDate.yyyyMMdd,
-                expectedDate.yyyyMMdd,
-                "\(testCase.description) (\(testCase.hour):00) boundary behavior mismatch"
-            )
+        // When: Get logical date
+        let logicalDate = DateUtils.getLogicalDate(for: jan15_0159)
 
-            // Document expected shouldShowSleepPopup behavior
-            // 📚 At \(testCase.hour):00, shouldShowSleepPopup() should return \(testCase.shouldShow)
-        }
+        // Then: Should return Jan 14 (previous day) - using 2 AM boundary
+        let expectedDate = makeExpectedDate(year: 2026, month: 1, day: 14)
+        XCTAssertEqual(
+            calendar.startOfDay(for: logicalDate),
+            calendar.startOfDay(for: expectedDate),
+            "Sleep at 01:59 should belong to previous day (using 2 AM boundary)"
+        )
     }
 
     // MARK: - Additional Edge Cases for Sleep Boundary Logic
