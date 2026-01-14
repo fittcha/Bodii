@@ -161,7 +161,11 @@ struct ContentView: View {
     }
 
     private var sleepTab: some View {
-        PlaceholderView(title: "수면", systemImage: "moon.zzz.fill")
+        // 📚 학습 포인트: Sleep Container View
+        // SleepTabView는 자체적으로 NavigationStack을 포함하고 있음
+        // DIContainer를 통해 ViewModel 생성 및 의존성 주입
+        // 💡 Java 비교: Android의 Fragment Container와 유사
+        SleepTabView(container: DIContainer.shared)
             .tabItem {
                 Label("수면", systemImage: "moon.zzz.fill")
             }
