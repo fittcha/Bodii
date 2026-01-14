@@ -138,12 +138,52 @@
     - Rounding and Decimal weight parameter tests
     - All acceptance criteria met
     - Committed in 228f7b6
-⏳ 5.4 - Write unit tests for DailyLog exercise updates
+✅ 5.4 - Write unit tests for DailyLog exercise updates (Completed - 2026-01-14)
+    - Implemented comprehensive unit tests with 20+ test methods for DailyLogService
+    - Add exercise tests: Verifies totals increment correctly, accumulation, high calorie burn, auto-creation of DailyLog, exerciseCount increment
+    - Remove exercise tests: Verifies totals decrement correctly, count decrementation, removal of all exercises, low value removal
+    - Update exercise tests: Tests positive/negative/zero difference, calories-only change, duration-only change, count remains unchanged
+    - GetOrCreate tests: Tests retrieval of existing log and creation of new log
+    - Mock repository implementation with call tracking and parameter capture
+    - Follows existing test patterns from ExerciseCalcServiceTests with Given-When-Then structure
+    - Korean learning comments and comprehensive documentation
+    - All 4 acceptance criteria met: ✅ Add updates totals, ✅ Remove decrements totals, ✅ Update adjusts difference, ✅ Count increments/decrements
+    - Committed in 1946dbe
 ⏳ 5.5 - Add exercise validation to ValidationService
 
 ---
 
 ## Recent Activity
+- 2026-01-14: Completed subtask 5.4 (Write unit tests for DailyLog exercise updates)
+  - Created BodiiTests/DailyLogServiceTests.swift with comprehensive test coverage
+  - 20+ test methods covering all DailyLogService exercise update scenarios
+  - Add exercise tests (5 tests):
+    - testAddExercise_ValidData_UpdatesTotalsCorrectly: Verifies totals increment (350 kcal, 30 min)
+    - testAddExercise_MultipleExercises_AccumulatesCorrectly: Tests accumulation of multiple exercises
+    - testAddExercise_HighCalorieBurn_UpdatesCorrectly: Tests high intensity scenarios (800 kcal, 90 min)
+    - testAddExercise_NoDailyLog_CreatesAndAdds: Verifies auto-creation of DailyLog
+    - testAddExercise_IncrementsExerciseCount: Confirms exerciseCount increases
+  - Remove exercise tests (5 tests):
+    - testRemoveExercise_ValidData_DecrementsTotalsCorrectly: Verifies totals decrement (250 kcal, 30 min from 500/60)
+    - testRemoveExercise_DecrementCount_ReducesByOne: Tests count decrementation (3 → 2)
+    - testRemoveExercise_RemoveAll_LeavesZeroTotals: Verifies removal leaves zero
+    - testRemoveExercise_LowValues_RemovesCorrectly: Tests minimal values (10 kcal, 5 min)
+    - testRemoveExercise_DecrementsExerciseCount: Confirms count decreases
+  - Update exercise tests (7 tests):
+    - testUpdateExercise_IncreasedValues_AdjustsDifferenceCorrectly: Tests positive difference (350→500 kcal)
+    - testUpdateExercise_DecreasedValues_AdjustsDifferenceCorrectly: Tests negative difference (500→300 kcal)
+    - testUpdateExercise_SameValues_AdjustsZeroDifference: Tests no-change scenario
+    - testUpdateExercise_OnlyCaloriesChanged_AdjustsCorrectly: Tests calories-only change
+    - testUpdateExercise_OnlyDurationChanged_AdjustsCorrectly: Tests duration-only change
+    - testUpdateExercise_DoesNotChangeCount: Verifies count unchanged during update
+  - GetOrCreate tests (2 tests):
+    - testGetOrCreate_ExistingLog_ReturnsExisting: Tests retrieval
+    - testGetOrCreate_NoLog_CreatesNew: Tests creation with BMR/TDEE
+  - Mock repository: Full implementation with call tracking and parameter capture
+  - Test quality: Follows ExerciseCalcServiceTests patterns with Given-When-Then structure, Korean comments
+  - All 4 acceptance criteria met: ✅ Add updates totals, ✅ Remove decrements totals, ✅ Update adjusts difference, ✅ Count increments/decrements
+  - Committed in 1946dbe
+
 - 2026-01-14: Completed subtask 5.3 (Write unit tests for ExerciseCalcService)
   - Created BodiiTests/ExerciseCalcServiceTests.swift with comprehensive test coverage
   - 35+ test methods covering all scenarios for MET-based calorie calculations

@@ -545,4 +545,220 @@ final class ValidationServiceTests: XCTestCase {
             XCTAssertFalse(isRapid, "\(change)kg change should not be flagged as rapid")
         }
     }
+
+    // MARK: - Exercise Duration Validation Tests
+
+    /// Test: Valid exercise duration at minimum boundary (1 minute)
+    ///
+    /// 테스트: 최소 경계의 유효한 운동 시간 (1분)
+    func testValidateExerciseDuration_MinimumBoundary_ReturnsSuccess() {
+        // Given: Minimum valid duration (1 minute)
+        let duration = 1
+
+        // When: Validating exercise duration
+        let result = ValidationService.validateExerciseDuration(duration)
+
+        // Then: Should return success
+        XCTAssertTrue(result.isValid, "1 minute should be valid (minimum boundary)")
+        XCTAssertNil(result.errorMessage, "Should not have error message")
+    }
+
+    /// Test: Valid exercise duration in normal range
+    ///
+    /// 테스트: 정상 범위의 유효한 운동 시간
+    func testValidateExerciseDuration_NormalRange_ReturnsSuccess() {
+        // Given: Normal duration values
+        let durations = [5, 15, 30, 45, 60, 90, 120]
+
+        // When/Then: All should be valid
+        for duration in durations {
+            let result = ValidationService.validateExerciseDuration(duration)
+            XCTAssertTrue(result.isValid, "\(duration) minutes should be valid")
+            XCTAssertNil(result.errorMessage, "Should not have error message for \(duration) minutes")
+        }
+    }
+
+    /// Test: Valid exercise duration at long workout (480 minutes - 8 hours)
+    ///
+    /// 테스트: 긴 운동 시간의 유효한 운동 시간 (480분 - 8시간)
+    func testValidateExerciseDuration_LongWorkout_ReturnsSuccess() {
+        // Given: Long workout duration (8 hours)
+        let duration = 480
+
+        // When: Validating exercise duration
+        let result = ValidationService.validateExerciseDuration(duration)
+
+        // Then: Should return success (warning check is separate)
+        XCTAssertTrue(result.isValid, "480 minutes should be valid (warning check is separate)")
+        XCTAssertNil(result.errorMessage, "Should not have error message")
+    }
+
+    /// Test: Invalid exercise duration (0 minutes)
+    ///
+    /// 테스트: 무효한 운동 시간 (0분)
+    func testValidateExerciseDuration_ZeroMinutes_ReturnsFailure() {
+        // Given: Zero duration
+        let duration = 0
+
+        // When: Validating exercise duration
+        let result = ValidationService.validateExerciseDuration(duration)
+
+        // Then: Should return failure
+        XCTAssertFalse(result.isValid, "0 minutes should be invalid")
+        XCTAssertEqual(
+            result.errorMessage,
+            "최소 1분 이상 입력해주세요",
+            "Should return correct error message"
+        )
+    }
+
+    /// Test: Invalid exercise duration (negative value)
+    ///
+    /// 테스트: 무효한 운동 시간 (음수 값)
+    func testValidateExerciseDuration_NegativeValue_ReturnsFailure() {
+        // Given: Negative duration values
+        let durations = [-1, -10, -60]
+
+        // When/Then: All should be invalid
+        for duration in durations {
+            let result = ValidationService.validateExerciseDuration(duration)
+            XCTAssertFalse(result.isValid, "\(duration) minutes should be invalid")
+            XCTAssertEqual(
+                result.errorMessage,
+                "최소 1분 이상 입력해주세요",
+                "Should return correct error message for \(duration) minutes"
+            )
+        }
+    }
+
+    /// Test: Excessive exercise duration detection (480+ minutes)
+    ///
+    /// 테스트: 과도한 운동 시간 감지 (480분 이상)
+    func testIsExcessiveExerciseDuration_LongWorkout_ReturnsTrue() {
+        // Given: Exercise durations of 8 hours or more
+        let durations = [480, 500, 600, 720]
+
+        // When/Then: All should be flagged as excessive
+        for duration in durations {
+            let isExcessive = ValidationService.isExcessiveExerciseDuration(duration)
+            XCTAssertTrue(isExcessive, "\(duration) minutes should be flagged as excessive")
+        }
+    }
+
+    /// Test: Normal exercise duration not flagged as excessive
+    ///
+    /// 테스트: 정상 운동 시간은 과도하게 플래그되지 않음
+    func testIsExcessiveExerciseDuration_NormalRange_ReturnsFalse() {
+        // Given: Normal exercise durations (less than 8 hours)
+        let durations = [30, 60, 90, 120, 240, 479]
+
+        // When/Then: None should be flagged as excessive
+        for duration in durations {
+            let isExcessive = ValidationService.isExcessiveExerciseDuration(duration)
+            XCTAssertFalse(isExcessive, "\(duration) minutes should not be flagged as excessive")
+        }
+    }
+
+    // MARK: - Exercise Intensity Validation Tests
+
+    /// Test: Valid intensity - low (0)
+    ///
+    /// 테스트: 유효한 강도 - 저강도 (0)
+    func testValidateExerciseIntensity_Low_ReturnsSuccess() {
+        // Given: Low intensity (rawValue = 0)
+        let intensity: Int16 = 0
+
+        // When: Validating exercise intensity
+        let result = ValidationService.validateExerciseIntensity(intensity)
+
+        // Then: Should return success
+        XCTAssertTrue(result.isValid, "Intensity 0 (low) should be valid")
+        XCTAssertNil(result.errorMessage, "Should not have error message")
+    }
+
+    /// Test: Valid intensity - medium (1)
+    ///
+    /// 테스트: 유효한 강도 - 중강도 (1)
+    func testValidateExerciseIntensity_Medium_ReturnsSuccess() {
+        // Given: Medium intensity (rawValue = 1)
+        let intensity: Int16 = 1
+
+        // When: Validating exercise intensity
+        let result = ValidationService.validateExerciseIntensity(intensity)
+
+        // Then: Should return success
+        XCTAssertTrue(result.isValid, "Intensity 1 (medium) should be valid")
+        XCTAssertNil(result.errorMessage, "Should not have error message")
+    }
+
+    /// Test: Valid intensity - high (2)
+    ///
+    /// 테스트: 유효한 강도 - 고강도 (2)
+    func testValidateExerciseIntensity_High_ReturnsSuccess() {
+        // Given: High intensity (rawValue = 2)
+        let intensity: Int16 = 2
+
+        // When: Validating exercise intensity
+        let result = ValidationService.validateExerciseIntensity(intensity)
+
+        // Then: Should return success
+        XCTAssertTrue(result.isValid, "Intensity 2 (high) should be valid")
+        XCTAssertNil(result.errorMessage, "Should not have error message")
+    }
+
+    /// Test: Valid intensities using Intensity enum
+    ///
+    /// 테스트: Intensity 열거형을 사용한 유효한 강도
+    func testValidateExerciseIntensity_AllEnumCases_ReturnsSuccess() {
+        // Given: All valid Intensity enum cases
+        let intensities: [Intensity] = [.low, .medium, .high]
+
+        // When/Then: All should be valid
+        for intensity in intensities {
+            let result = ValidationService.validateExerciseIntensity(intensity.rawValue)
+            XCTAssertTrue(
+                result.isValid,
+                "Intensity \(intensity.displayName) (rawValue: \(intensity.rawValue)) should be valid"
+            )
+            XCTAssertNil(result.errorMessage, "Should not have error message")
+        }
+    }
+
+    /// Test: Invalid intensity - negative value
+    ///
+    /// 테스트: 무효한 강도 - 음수 값
+    func testValidateExerciseIntensity_NegativeValue_ReturnsFailure() {
+        // Given: Negative intensity value
+        let intensity: Int16 = -1
+
+        // When: Validating exercise intensity
+        let result = ValidationService.validateExerciseIntensity(intensity)
+
+        // Then: Should return failure
+        XCTAssertFalse(result.isValid, "Intensity -1 should be invalid")
+        XCTAssertEqual(
+            result.errorMessage,
+            "올바른 운동 강도를 선택해주세요",
+            "Should return correct error message"
+        )
+    }
+
+    /// Test: Invalid intensity - out of range (3+)
+    ///
+    /// 테스트: 무효한 강도 - 범위 초과 (3 이상)
+    func testValidateExerciseIntensity_OutOfRange_ReturnsFailure() {
+        // Given: Intensity values out of range
+        let intensities: [Int16] = [3, 4, 5, 10, 100]
+
+        // When/Then: All should be invalid
+        for intensity in intensities {
+            let result = ValidationService.validateExerciseIntensity(intensity)
+            XCTAssertFalse(result.isValid, "Intensity \(intensity) should be invalid")
+            XCTAssertEqual(
+                result.errorMessage,
+                "올바른 운동 강도를 선택해주세요",
+                "Should return correct error message for intensity \(intensity)"
+            )
+        }
+    }
 }
