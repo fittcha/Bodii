@@ -11,7 +11,7 @@
       "phase_id": 1,
       "title": "Enum Definitions & Type Safety",
       "description": "Create all required enums for Core Data entities to provide type-safe access to coded values",
-      "status": "completed",
+      "status": "pending",
       "subtasks": [
         {
           "subtask_id": "1.1",
@@ -24,7 +24,7 @@
             "Korean localized display names"
           ],
           "status": "completed",
-          "notes": "Gender enum implemented with Int16 rawValue, male (0) and female (1) cases, Korean localized display names. Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in c6d4eda."
+          "notes": "Gender enum fully implemented with male/female cases (0, 1), Int16 rawValue, Korean display names (남성, 여성), CaseIterable, Codable, and Identifiable conformance. Already committed in previous session."
         },
         {
           "subtask_id": "1.2",
@@ -37,8 +37,8 @@
             "multiplier property returning correct TDEE coefficient",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "ActivityLevel enum implemented with Int16 rawValue, 5 cases (sedentary=1, light=2, moderate=3, active=4, veryActive=5) with TDEE multipliers (1.2, 1.375, 1.55, 1.725, 1.9), Korean localized display names. Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in 8b89806."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.3",
@@ -50,8 +50,8 @@
             "Cases: breakfast (0), lunch (1), dinner (2), snack (3)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "MealType enum implemented with Int16 rawValue, 4 cases (breakfast=0, lunch=1, dinner=2, snack=3), Korean localized display names (아침, 점심, 저녁, 간식). Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in 9c1d070."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.4",
@@ -64,8 +64,8 @@
             "MET values for each exercise type by intensity level",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "ExerciseType enum fully implemented with Int16 rawValue, 8 cases (walking=0, running=1, cycling=2, swimming=3, weight=4, crossfit=5, yoga=6, other=7), MET values for each exercise type by intensity level (low/medium/high), and Korean localized display names. Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in e07251d."
+          "status": "pending",
+          "notes": "MET values per ERD: walking 3.5/4.0/5.0, running 7.0/8.0/10.0, etc."
         },
         {
           "subtask_id": "1.5",
@@ -77,8 +77,8 @@
             "Cases: low (0), medium (1), high (2)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "Intensity enum implemented with Int16 rawValue, 3 cases (low=0, medium=1, high=2), Korean localized display names (낮음, 보통, 높음). Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in 446edf5."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.6",
@@ -90,8 +90,8 @@
             "Cases: kfdaAPI (0), usdaAPI (1), userCreated (2)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "FoodSource enum implemented with Int16 rawValue, 3 cases (kfdaAPI=0, usdaAPI=1, userCreated=2), Korean localized display names (식품의약품안전처, 미국 농무부, 사용자 생성). Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in 14c5c79."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.7",
@@ -103,8 +103,8 @@
             "Cases: lose (0), maintain (1), gain (2)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "GoalType enum implemented with Int16 rawValue, 3 cases (lose=0, maintain=1, gain=2), Korean localized display names (감량, 유지, 증량). Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in 3fab35a."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.8",
@@ -118,8 +118,8 @@
             "Duration thresholds: bad<330, soso 330-389, good 390-449, excellent 450-540, oversleep>540",
             "Korean localized display names and emoji indicators"
           ],
-          "status": "completed",
-          "notes": "SleepStatus enum implemented with Int16 rawValue, 5 cases (bad=0, soso=1, good=2, excellent=3, oversleep=4), static from(durationMinutes:) method for status determination from sleep duration, duration thresholds (bad<330, soso 330-389, good 390-449, excellent 450-540, oversleep>540), Korean display names with emoji indicators (나쁨🔴, 보통🟡, 좋음🟢, 매우 좋음🔵, 과수면🟠). Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in c0c11da."
+          "status": "pending",
+          "notes": "Per ERD: bad🔴, soso🟡, good🟢, excellent🔵, oversleep🟠"
         },
         {
           "subtask_id": "1.9",
@@ -131,8 +131,8 @@
             "Cases: serving (0), gram (1)",
             "Korean localized display names"
           ],
-          "status": "completed",
-          "notes": "QuantityUnit enum implemented with Int16 rawValue, 2 cases (serving=0, gram=1), Korean localized display names (인분, 그램). Follows project patterns with Identifiable extension, CaseIterable, and Codable conformance. Committed in c4e96c6."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "1.10",
@@ -145,8 +145,8 @@
             "Default activity level, serving size defaults",
             "Calculation constants for BMR/TDEE"
           ],
-          "status": "completed",
-          "notes": "Constants file fully implemented with nested enum structure for organization. Includes all validation ranges (height 100-250cm, weight 20-300kg, body fat 3-60%, muscle mass 10-60kg, birth year 1900-current, name 1-20 chars, exercise duration 1-480 min, food quantity 0.1-100 servings or 1-10,000g), sleep boundary hour (2), default values (activity level=3/moderate, serving size=100g, goal type=1/maintain), and calculation constants (BMR coefficients for male/female using Mifflin-St Jeor equation, TDEE activity multipliers, calorie adjustment 7,700 kcal/kg, macro ratios 4/4/9 kcal/g for carbs/protein/fat). Uses enum as namespace to prevent instantiation. Korean documentation comments following project patterns. Committed in 386bd3c."
+          "status": "pending",
+          "notes": ""
         }
       ]
     },
@@ -168,8 +168,8 @@
             "Date formatting utilities for Korean locale",
             "Comprehensive documentation with examples"
           ],
-          "status": "completed",
-          "notes": "DateUtils fully implemented with 02:00 sleep boundary logic. Includes getLogicalDate(for:) returning previous day if hour < 2 (01:59→prev day, 02:00→current day), isNewDayForSleep(at:) checking if time is past 02:00 boundary, startOfDay(for:) and endOfDay(for:) helpers, Korean locale date formatting utilities (formatFullDate, formatShortDate, formatDateWithWeekday, formatTime, formatDateTime), date comparison methods (isSameDay, isToday, daysBetween), age calculation from birthDate, and comprehensive Korean documentation with examples. Committed in c39c4cd."
+          "status": "pending",
+          "notes": "CRITICAL: 02:00 boundary means 01:59→prev day, 02:00→current day"
         },
         {
           "subtask_id": "2.2",
@@ -188,8 +188,8 @@
             "ValidationResult type with isValid, errorMessage properties",
             "Korean error messages"
           ],
-          "status": "completed",
-          "notes": "ValidationService fully implemented with all validation methods. Includes validateHeight (100-250cm), validateWeight (20-300kg), validateBodyFatPercent (3-60%), validateMuscleMass (10-60kg), validateAge (birth year 1900-current), validateName (1-20 chars non-empty), validateExerciseDuration (1-480 min), validateFoodQuantity (0.1-100 servings or 1-10000g). ValidationResult struct with isValid and errorMessage properties. All error messages in user-friendly Korean. Uses Constants for all validation ranges. Includes bonus validateBodyComposition method for body composition consistency checking. Follows project patterns with Korean documentation. Committed in ba7669a."
+          "status": "pending",
+          "notes": "All error messages should be user-friendly in Korean"
         },
         {
           "subtask_id": "2.3",
@@ -205,8 +205,8 @@
             "daysBetween(and:) method",
             "formatted(style:) for Korean date formatting"
           ],
-          "status": "completed",
-          "notes": "Date+Extensions fully implemented with all acceptance criteria met: startOfDay/endOfDay computed properties, age(from:referenceDate:) static method, isSameDay(as:)/isToday comparison methods, daysBetween(and:) method, and formatted(style:) with FormatStyle enum (full, short, withWeekday, time, dateTime) for Korean locale formatting. All methods delegate to DateUtils for consistency. Includes comprehensive Korean documentation with examples. Follows project patterns with learning points and Java/Kotlin comparisons. Committed in 96c7cc6."
+          "status": "pending",
+          "notes": ""
         },
         {
           "subtask_id": "2.4",
@@ -568,6 +568,6 @@
     "tests_passed": ""
   },
   "created_at": "2026-01-11T10:45:25.899Z",
-  "updated_at": "2026-01-11T23:37:36.313Z",
+  "updated_at": "2026-01-14T04:34:16.736Z",
   "recoveryNote": "Task recovered from stuck state at 2026-01-11T23:32:49.649Z"
 }
