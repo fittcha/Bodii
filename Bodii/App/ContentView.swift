@@ -106,13 +106,20 @@ struct ContentView: View {
         // 현재는 임시로 직접 생성하여 사용
         let bodyRepository = BodyRepository()
         let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
+        let sleepRepository = DIContainer.shared.sleepRepository
 
         return DashboardView(
             metabolismViewModel: metabolismViewModel,
+            sleepRepository: sleepRepository,
             onNavigateToBody: {
                 // 📚 학습 포인트: Tab Navigation
                 // 대사율 카드 탭 시 체성분 탭으로 이동
                 selectedTab = .body
+            },
+            onNavigateToSleep: {
+                // 📚 학습 포인트: Tab Navigation
+                // 수면 카드 탭 시 수면 탭으로 이동
+                selectedTab = .sleep
             }
         )
         .tabItem {
