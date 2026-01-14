@@ -211,6 +211,33 @@ extension DIContainer {
         return MetabolismViewModel(bodyRepository: bodyRepository)
     }
 
+    // MARK: - Sleep ViewModels
+
+    /// SleepInputViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 수면 입력을 위한 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// - 기본 수면 시간 설정 가능
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - defaultHours: 기본 수면 시간 (시간, 기본값: 7)
+    ///   - defaultMinutes: 기본 수면 시간 (분, 기본값: 0)
+    /// - Returns: 새로운 SleepInputViewModel 인스턴스
+    func makeSleepInputViewModel(
+        userId: UUID,
+        defaultHours: Int = 7,
+        defaultMinutes: Int = 0
+    ) -> SleepInputViewModel {
+        return SleepInputViewModel(
+            recordSleepUseCase: recordSleepUseCase,
+            userId: userId,
+            defaultHours: defaultHours,
+            defaultMinutes: defaultMinutes
+        )
+    }
+
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel
     // func makeDashboardViewModel() -> DashboardViewModel

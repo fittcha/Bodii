@@ -1,0 +1,30 @@
+
+## 2026-01-14 - Subtask 3.5 Completed ✅
+
+### Task: Manager class to handle morning sleep prompt logic and skip count persistence
+
+**Status:** ✅ Completed
+
+**Implementation Details:**
+- Created `SleepPromptManager.swift` following ObservableObject pattern
+- Implements morning prompt logic with 02:00 boundary check
+- Date-based skip count persistence using UserDefaults
+- ISO 8601 date format for UserDefaults keys (sleep_skip_count_YYYY-MM-DD)
+- Max 3 skips before forced entry mode
+- Published properties: shouldShowPrompt, isForceEntry
+- Key methods:
+  - checkShouldShow(): Validates time (02:00+) and checks for existing records
+  - incrementSkipCount(): Increments daily skip count
+  - resetSkipCount(): Resets count when record is saved
+  - cleanupOldSkipCounts(): Removes data older than 7 days
+- Dependency injection for SleepRepository and UserDefaults
+- Comprehensive Korean documentation (440 lines)
+
+**Files Created:**
+- Bodii/Presentation/Features/Sleep/SleepPromptManager.swift
+
+**Next Steps:**
+- Task 3.6: Add SleepViewModel factory to DIContainer
+- Phase 5: Integrate sleep prompt into app launch (BodiiApp.swift)
+
+**Commit:** 6752c58
