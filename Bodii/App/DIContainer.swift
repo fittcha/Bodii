@@ -127,6 +127,30 @@ final class DIContainer {
         return FetchBodyTrendsUseCase(bodyRepository: bodyRepository)
     }()
 
+    /// Sleep 기록 Use Case
+    /// 📚 학습 포인트: Domain Use Case with Auto Status Calculation
+    /// 수면 시간을 입력받아 상태를 자동 계산하고 저장
+    /// 💡 Java 비교: @Service with business logic
+    lazy var recordSleepUseCase: RecordSleepUseCase = {
+        return RecordSleepUseCase(sleepRepository: sleepRepository)
+    }()
+
+    /// Sleep 히스토리 조회 Use Case
+    /// 📚 학습 포인트: Query Use Case
+    /// 리스트 표시를 위한 수면 기록 조회 및 통계 계산
+    /// 💡 Java 비교: @Service with read-only operations
+    lazy var fetchSleepHistoryUseCase: FetchSleepHistoryUseCase = {
+        return FetchSleepHistoryUseCase(sleepRepository: sleepRepository)
+    }()
+
+    /// Sleep 통계 조회 Use Case
+    /// 📚 학습 포인트: Statistics Use Case
+    /// 차트 및 대시보드 표시를 위한 수면 통계 계산
+    /// 💡 Java 비교: @Service with analytics logic
+    lazy var fetchSleepStatsUseCase: FetchSleepStatsUseCase = {
+        return FetchSleepStatsUseCase(sleepRepository: sleepRepository)
+    }()
+
     // TODO: Phase 4에서 추가 예정
     // - SearchFoodUseCase
     // - LogExerciseUseCase
