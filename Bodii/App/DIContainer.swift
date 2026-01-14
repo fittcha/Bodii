@@ -168,6 +168,7 @@ extension DIContainer {
     func makeExerciseListViewModel(userId: UUID) -> ExerciseListViewModel {
         ExerciseListViewModel(
             getExerciseRecordsUseCase: getExerciseRecordsUseCase,
+            deleteExerciseRecordUseCase: deleteExerciseRecordUseCase,
             dailyLogRepository: dailyLogRepository,
             userId: userId
         )
@@ -184,30 +185,43 @@ extension DIContainer {
     ///   - userWeight: 사용자 체중 (kg) - 칼로리 계산에 필요
     ///   - userBMR: 사용자 기초대사량 (kcal)
     ///   - userTDEE: 사용자 활동대사량 (kcal)
+    ///   - editingExercise: 편집할 운동 기록 (편집 모드일 때만 제공)
     /// - Returns: 의존성이 주입된 ExerciseInputViewModel
     ///
     /// - Example:
     /// ```swift
+    /// // 추가 모드
     /// let viewModel = DIContainer.shared.makeExerciseInputViewModel(
     ///     userId: user.id,
     ///     userWeight: user.currentWeight ?? 70.0,
     ///     userBMR: user.currentBMR ?? 1650,
     ///     userTDEE: user.currentTDEE ?? 2310
     /// )
-    /// ExerciseInputView(viewModel: viewModel)
+    ///
+    /// // 편집 모드
+    /// let viewModel = DIContainer.shared.makeExerciseInputViewModel(
+    ///     userId: user.id,
+    ///     userWeight: 70.0,
+    ///     userBMR: 1650,
+    ///     userTDEE: 2310,
+    ///     editingExercise: exercise
+    /// )
     /// ```
     func makeExerciseInputViewModel(
         userId: UUID,
         userWeight: Decimal,
         userBMR: Int32,
-        userTDEE: Int32
+        userTDEE: Int32,
+        editingExercise: ExerciseRecord? = nil
     ) -> ExerciseInputViewModel {
         ExerciseInputViewModel(
             addExerciseRecordUseCase: addExerciseRecordUseCase,
+            updateExerciseRecordUseCase: editingExercise != nil ? updateExerciseRecordUseCase : nil,
             userId: userId,
             userWeight: userWeight,
             userBMR: userBMR,
-            userTDEE: userTDEE
+            userTDEE: userTDEE,
+            editingExercise: editingExercise
         )
     }
 

@@ -45,6 +45,25 @@ struct ExerciseListView: View {
     /// 운동 추가 시트 표시 상태
     @State private var isShowingAddSheet = false
 
+    /// 운동 편집 시트 표시 상태
+    @State private var isShowingEditSheet = false
+
+    /// 편집할 운동 기록
+    @State private var selectedExercise: ExerciseRecord?
+
+    /// 삭제할 운동 기록 (확인 다이얼로그용)
+    @State private var exerciseToDelete: ExerciseRecord?
+
+    // 📚 학습 포인트: User Data State
+    // ExerciseInputViewModel 생성 시 필요한 사용자 데이터
+    // TODO: 추후 User entity나 AuthenticationService에서 가져오도록 개선
+    /// 사용자 체중 (kg) - 칼로리 계산에 사용
+    @State private var userWeight: Decimal = 70.0
+    /// 사용자 기초대사량 (kcal)
+    @State private var userBMR: Int32 = 1650
+    /// 사용자 활동대사량 (kcal)
+    @State private var userTDEE: Int32 = 2310
+
     // MARK: - Body
 
     var body: some View {
@@ -71,8 +90,66 @@ struct ExerciseListView: View {
                 viewModel.onAppear()
             }
             .sheet(isPresented: $isShowingAddSheet) {
-                // TODO: ExerciseInputView 구현 후 추가
-                Text("운동 추가 화면 (Phase 4)")
+                // 📚 학습 포인트: Modal Sheet with DI (Add Mode)
+                // DIContainer를 통해 ExerciseInputViewModel 생성
+                // onSaveSuccess 콜백으로 저장 성공 시 시트 닫기 및 데이터 새로고침
+                ExerciseInputView(
+                    viewModel: DIContainer.shared.makeExerciseInputViewModel(
+                        userId: viewModel.userId,
+                        userWeight: userWeight,
+                        userBMR: userBMR,
+                        userTDEE: userTDEE
+                    ),
+                    onSaveSuccess: {
+                        isShowingAddSheet = false
+                        Task {
+                            await viewModel.refresh()
+                        }
+                    }
+                )
+            }
+            .sheet(isPresented: $isShowingEditSheet) {
+                // 📚 학습 포인트: Modal Sheet with DI (Edit Mode)
+                // editingExercise 파라미터를 전달하여 편집 모드로 진입
+                // 💡 Java 비교: Intent에 Parcelable 객체를 담아 전달하는 패턴과 유사
+                if let exercise = selectedExercise {
+                    ExerciseInputView(
+                        viewModel: DIContainer.shared.makeExerciseInputViewModel(
+                            userId: viewModel.userId,
+                            userWeight: userWeight,
+                            userBMR: userBMR,
+                            userTDEE: userTDEE,
+                            editingExercise: exercise
+                        ),
+                        onSaveSuccess: {
+                            isShowingEditSheet = false
+                            selectedExercise = nil
+                            Task {
+                                await viewModel.refresh()
+                            }
+                        }
+                    )
+                }
+            }
+            // 📚 학습 포인트: Delete Confirmation Alert
+            // 삭제 전 확인 다이얼로그로 사용자 실수 방지
+            // 💡 Java 비교: AlertDialog with positive/negative buttons와 유사
+            .alert("운동 기록 삭제", isPresented: .constant(exerciseToDelete != nil)) {
+                Button("취소", role: .cancel) {
+                    exerciseToDelete = nil
+                }
+                Button("삭제", role: .destructive) {
+                    if let exercise = exerciseToDelete {
+                        Task {
+                            await viewModel.deleteExercise(id: exercise.id)
+                            exerciseToDelete = nil
+                        }
+                    }
+                }
+            } message: {
+                if let exercise = exerciseToDelete {
+                    Text("\(exercise.exerciseType.displayName) 기록을 삭제하시겠습니까?")
+                }
             }
             .alert("오류", isPresented: .constant(viewModel.hasError)) {
                 Button("확인") {
@@ -159,13 +236,32 @@ struct ExerciseListView: View {
                         ExerciseCardView(
                             exercise: exercise,
                             onDelete: {
-                                // TODO: DeleteExerciseRecordUseCase 연동 (Phase 5)
-                                print("Delete exercise: \(exercise.id)")
+                                // 📚 학습 포인트: Confirmation Before Delete
+                                // 실수로 삭제하는 것을 방지하기 위한 확인 다이얼로그
+                                // 💡 Java 비교: AlertDialog.Builder().show()와 유사
+                                exerciseToDelete = exercise
                             }
                         )
                         .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
+                        // 📚 학습 포인트: Loading State During Delete
+                        // 삭제 중인 카드는 반투명 처리 + 로딩 인디케이터 표시
+                        // 💡 Java 비교: ViewHolder에 ProgressBar 표시와 유사
+                        .opacity(viewModel.isDeletingId == exercise.id ? 0.5 : 1.0)
+                        .overlay {
+                            if viewModel.isDeletingId == exercise.id {
+                                ProgressView()
+                                    .scaleEffect(1.5)
+                            }
+                        }
+                        // 📚 학습 포인트: Tap Gesture for Edit
+                        // 운동 카드를 탭하면 편집 모드로 진입
+                        // 💡 Java 비교: RecyclerView Item Click Listener와 유사
+                        .onTapGesture {
+                            selectedExercise = exercise
+                            isShowingEditSheet = true
+                        }
                     }
                 } header: {
                     if !viewModel.exerciseRecords.isEmpty {
@@ -373,6 +469,7 @@ struct ExerciseListView: View {
     // Mock ViewModel
     let mockViewModel = ExerciseListViewModel(
         getExerciseRecordsUseCase: MockGetExerciseRecordsUseCase(),
+        deleteExerciseRecordUseCase: MockDeleteExerciseRecordUseCase(),
         dailyLogRepository: MockDailyLogRepository(),
         userId: UUID()
     )
@@ -443,6 +540,7 @@ struct ExerciseListView: View {
 #Preview("Empty State") {
     let mockViewModel = ExerciseListViewModel(
         getExerciseRecordsUseCase: MockGetExerciseRecordsUseCase(),
+        deleteExerciseRecordUseCase: MockDeleteExerciseRecordUseCase(),
         dailyLogRepository: MockDailyLogRepository(),
         userId: UUID()
     )
@@ -457,6 +555,7 @@ struct ExerciseListView: View {
 #Preview("Loading State") {
     let mockViewModel = ExerciseListViewModel(
         getExerciseRecordsUseCase: MockGetExerciseRecordsUseCase(),
+        deleteExerciseRecordUseCase: MockDeleteExerciseRecordUseCase(),
         dailyLogRepository: MockDailyLogRepository(),
         userId: UUID()
     )
@@ -478,6 +577,17 @@ private class MockGetExerciseRecordsUseCase: GetExerciseRecordsUseCase {
     init() {
         // Mock에서는 실제 repository 불필요
         super.init(exerciseRecordRepository: MockExerciseRecordRepository())
+    }
+}
+
+/// DeleteExerciseRecordUseCase Mock
+private class MockDeleteExerciseRecordUseCase: DeleteExerciseRecordUseCase {
+    init() {
+        // Mock에서는 실제 repository 불필요
+        super.init(
+            exerciseRecordRepository: MockExerciseRecordRepository(),
+            dailyLogService: MockDailyLogService()
+        )
     }
 }
 
@@ -531,6 +641,14 @@ private class MockExerciseRecordRepository: ExerciseRecordRepository {
     func count(userId: UUID) async throws -> Int { return 0 }
     func totalDuration(userId: UUID) async throws -> Int32 { return 0 }
     func totalCaloriesBurned(userId: UUID) async throws -> Int32 { return 0 }
+}
+
+/// DailyLogService Mock
+private class MockDailyLogService: DailyLogService {
+    init() {
+        // Mock에서는 실제 repository 불필요
+        super.init(dailyLogRepository: MockDailyLogRepository())
+    }
 }
 
 // MARK: - Learning Notes

@@ -115,7 +115,9 @@ struct ExerciseInputView: View {
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("운동 추가")
+            // 📚 학습 포인트: Conditional Title
+            // 편집 모드일 때는 "운동 수정", 추가 모드일 때는 "운동 추가" 표시
+            .navigationTitle(viewModel.isEditMode ? "운동 수정" : "운동 추가")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

@@ -428,8 +428,8 @@
           "id": "5.5",
           "title": "Add exercise validation to ValidationService",
           "description": "Add validation rules for exercise input (duration, intensity) to existing ValidationService.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Implemented comprehensive exercise validation in ValidationService with full test coverage:\n\n**ValidationService.swift:**\n- Added validateExerciseIntensity method that validates intensity raw values (0=low, 1=medium, 2=high)\n- Uses Intensity enum initialization to verify valid values\n- Returns ValidationResult with user-friendly error message: \"\uc62c\ubc14\ub978 \uc6b4\ub3d9 \uac15\ub3c4\ub97c \uc120\ud0dd\ud574\uc8fc\uc138\uc694\"\n- validateExerciseDuration already existed (minimum 1 minute validation)\n\n**ValidationServiceTests.swift:**\n- Added 6 test methods for validateExerciseIntensity:\n  - testValidateExerciseIntensity_Low_ReturnsSuccess: Tests intensity 0 (low)\n  - testValidateExerciseIntensity_Medium_ReturnsSuccess: Tests intensity 1 (medium)\n  - testValidateExerciseIntensity_High_ReturnsSuccess: Tests intensity 2 (high)\n  - testValidateExerciseIntensity_AllEnumCases_ReturnsSuccess: Tests all Intensity enum cases\n  - testValidateExerciseIntensity_NegativeValue_ReturnsFailure: Tests negative values\n  - testValidateExerciseIntensity_OutOfRange_ReturnsFailure: Tests out of range values (3+)\n\n- Added 5 test methods for validateExerciseDuration:\n  - testValidateExerciseDuration_MinimumBoundary_ReturnsSuccess: Tests 1 minute boundary\n  - testValidateExerciseDuration_NormalRange_ReturnsSuccess: Tests common durations (5-120 min)\n  - testValidateExerciseDuration_LongWorkout_ReturnsSuccess: Tests 8 hour workout\n  - testValidateExerciseDuration_ZeroMinutes_ReturnsFailure: Tests zero duration\n  - testValidateExerciseDuration_NegativeValue_ReturnsFailure: Tests negative values\n\n- Added 2 test methods for isExcessiveExerciseDuration:\n  - testIsExcessiveExerciseDuration_LongWorkout_ReturnsTrue: Tests 480+ minutes\n  - testIsExcessiveExerciseDuration_NormalRange_ReturnsFalse: Tests normal durations\n\n**Code Quality:**\n- Follows existing ValidationServiceTests patterns with Given-When-Then structure\n- Korean learning comments (\ud14c\uc2a4\ud2b8:) throughout\n- Comprehensive boundary testing and edge cases\n- Clear assertion messages for debugging\n\nAll 3 acceptance criteria met:\n\u2705 validateExerciseDuration method (min 1 minute) - Already existed, added tests\n\u2705 validateExerciseIntensity method (0, 1, or 2) - Implemented with enum validation\n\u2705 Add tests for exercise validation - Added 13 comprehensive test methods\n\nCommitted in 30aa728.",
           "files": [
             "Bodii/Shared/Utils/ValidationService.swift",
             "BodiiTests/ValidationServiceTests.swift"
@@ -438,16 +438,124 @@
             "validateExerciseDuration method (min 1 minute)",
             "validateExerciseIntensity method (0, 1, or 2)",
             "Add tests for exercise validation"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:43:26.627746+00:00"
         }
       ]
     }
   ],
-  "qa_sign_off": {
-    "status": "pending",
-    "tests_passed": "",
-    "issues": ""
+  "qa_signoff": {
+    "status": "rejected",
+    "timestamp": "2026-01-14T13:15:00.000Z",
+    "qa_session": 2,
+    "issues_found": [
+      {
+        "type": "critical",
+        "title": "ExerciseInputView NOT Integrated in ExerciseListView",
+        "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift:73-76",
+        "fix_required": "Replace placeholder Text with actual ExerciseInputView modal implementation"
+      },
+      {
+        "type": "critical",
+        "title": "Delete Functionality NOT Integrated",
+        "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift:161-164",
+        "fix_required": "Connect delete callback to DeleteExerciseRecordUseCase via ViewModel"
+      },
+      {
+        "type": "critical",
+        "title": "DeleteExerciseRecordUseCase NOT Injected in ViewModel",
+        "location": "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseListViewModel.swift:94-101",
+        "fix_required": "Add deleteExerciseRecordUseCase property and inject via DIContainer"
+      },
+      {
+        "type": "critical",
+        "title": "UpdateExerciseRecordUseCase NEVER Used",
+        "location": "Bodii/Domain/UseCases/Exercise/UpdateExerciseRecordUseCase.swift",
+        "fix_required": "Implement edit functionality with tap gesture and edit modal"
+      },
+      {
+        "type": "major",
+        "title": "Missing User Data Properties in ExerciseListView",
+        "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift",
+        "fix_required": "Add user weight, BMR, TDEE state properties for ExerciseInputViewModel"
+      },
+      {
+        "type": "major",
+        "title": "No Delete Confirmation Dialog",
+        "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift",
+        "fix_required": "Add confirmation alert before deletion to prevent accidental deletions"
+      }
+    ],
+    "fix_request_file": "QA_FIX_REQUEST.md",
+    "qa_report_file": "qa_report.md"
   },
-  "last_updated": "2026-01-14T03:39:52.290941+00:00",
-  "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z"
+  "last_updated": "2026-01-14T03:43:26.627754+00:00",
+  "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z",
+  "qa_iteration_history": [
+    {
+      "iteration": 1,
+      "status": "error",
+      "timestamp": "2026-01-14T03:50:31.427862+00:00",
+      "issues": [
+        {
+          "title": "QA error",
+          "description": "QA agent did not update implementation_plan.json"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "status": "rejected",
+      "timestamp": "2026-01-14T03:56:30.107230+00:00",
+      "issues": [
+        {
+          "type": "critical",
+          "title": "ExerciseInputView NOT Integrated in ExerciseListView",
+          "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift:73-76",
+          "fix_required": "Replace placeholder Text with actual ExerciseInputView modal implementation"
+        },
+        {
+          "type": "critical",
+          "title": "Delete Functionality NOT Integrated",
+          "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift:161-164",
+          "fix_required": "Connect delete callback to DeleteExerciseRecordUseCase via ViewModel"
+        },
+        {
+          "type": "critical",
+          "title": "DeleteExerciseRecordUseCase NOT Injected in ViewModel",
+          "location": "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseListViewModel.swift:94-101",
+          "fix_required": "Add deleteExerciseRecordUseCase property and inject via DIContainer"
+        },
+        {
+          "type": "critical",
+          "title": "UpdateExerciseRecordUseCase NEVER Used",
+          "location": "Bodii/Domain/UseCases/Exercise/UpdateExerciseRecordUseCase.swift",
+          "fix_required": "Implement edit functionality with tap gesture and edit modal"
+        },
+        {
+          "type": "major",
+          "title": "Missing User Data Properties in ExerciseListView",
+          "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift",
+          "fix_required": "Add user weight, BMR, TDEE state properties for ExerciseInputViewModel"
+        },
+        {
+          "type": "major",
+          "title": "No Delete Confirmation Dialog",
+          "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift",
+          "fix_required": "Add confirmation alert before deletion to prevent accidental deletions"
+        }
+      ],
+      "duration_seconds": 358.68
+    }
+  ],
+  "qa_stats": {
+    "total_iterations": 2,
+    "last_iteration": 2,
+    "last_status": "rejected",
+    "issues_by_type": {
+      "unknown": 1,
+      "critical": 4,
+      "major": 2
+    }
+  }
 }

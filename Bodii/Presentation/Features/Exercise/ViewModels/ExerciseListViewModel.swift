@@ -60,6 +60,9 @@ final class ExerciseListViewModel {
     /// 로딩 상태
     var isLoading: Bool = false
 
+    /// 삭제 중인 운동 기록 ID (로딩 표시용)
+    var isDeletingId: UUID?
+
     /// 에러 메시지
     var errorMessage: String?
 
@@ -94,11 +97,21 @@ final class ExerciseListViewModel {
     /// 운동 기록 조회 유스케이스
     private let getExerciseRecordsUseCase: GetExerciseRecordsUseCase
 
+    /// 운동 기록 삭제 유스케이스
+    private let deleteExerciseRecordUseCase: DeleteExerciseRecordUseCase
+
     /// 일일 집계 저장소
     private let dailyLogRepository: DailyLogRepository
 
-    /// 사용자 ID
-    private let userId: UUID
+    /// 사용자 ID (private, but exposed via getter)
+    private let _userId: UUID
+
+    /// 사용자 ID를 공개적으로 노출
+    ///
+    /// ExerciseInputViewModel 생성 시 필요하므로 public getter 제공
+    var userId: UUID {
+        _userId
+    }
 
     // MARK: - Initialization
 
@@ -106,18 +119,21 @@ final class ExerciseListViewModel {
     ///
     /// - Parameters:
     ///   - getExerciseRecordsUseCase: 운동 기록 조회 유스케이스
+    ///   - deleteExerciseRecordUseCase: 운동 기록 삭제 유스케이스
     ///   - dailyLogRepository: 일일 집계 저장소
     ///   - userId: 사용자 ID
     ///   - selectedDate: 초기 선택 날짜 (기본값: 오늘)
     init(
         getExerciseRecordsUseCase: GetExerciseRecordsUseCase,
+        deleteExerciseRecordUseCase: DeleteExerciseRecordUseCase,
         dailyLogRepository: DailyLogRepository,
         userId: UUID,
         selectedDate: Date = Date()
     ) {
         self.getExerciseRecordsUseCase = getExerciseRecordsUseCase
+        self.deleteExerciseRecordUseCase = deleteExerciseRecordUseCase
         self.dailyLogRepository = dailyLogRepository
-        self.userId = userId
+        self._userId = userId
         self.selectedDate = selectedDate
     }
 
@@ -163,12 +179,12 @@ final class ExerciseListViewModel {
             // 운동 기록과 일일 집계를 동시에 조회
             async let recordsTask = getExerciseRecordsUseCase.execute(
                 forDate: selectedDate,
-                userId: userId
+                userId: _userId
             )
 
             async let dailyLogTask = dailyLogRepository.fetch(
                 for: selectedDate,
-                userId: userId
+                userId: _userId
             )
 
             // 두 작업이 모두 완료될 때까지 대기
@@ -287,6 +303,49 @@ final class ExerciseListViewModel {
     /// 에러가 있는지 여부
     var hasError: Bool {
         errorMessage != nil
+    }
+
+    /// 운동 기록을 삭제합니다.
+    ///
+    /// - Parameter id: 삭제할 운동 기록 ID
+    ///
+    /// ## 실행 순서
+    /// 1. DeleteExerciseRecordUseCase 호출
+    /// 2. DailyLog 자동 업데이트 (UseCase에서 처리)
+    /// 3. 데이터 새로고침
+    ///
+    /// - Note: 에러 발생 시 errorMessage에 메시지 저장
+    ///
+    /// - Example:
+    /// ```swift
+    /// Button("삭제") {
+    ///     Task {
+    ///         await viewModel.deleteExercise(id: exercise.id)
+    ///     }
+    /// }
+    /// ```
+    @MainActor
+    func deleteExercise(id: UUID) async {
+        // 📚 학습 포인트: Loading State for Individual Item
+        // 삭제 중인 항목을 표시하여 사용자 피드백 제공
+        // 💡 Java 비교: RecyclerView의 특정 아이템에 ProgressBar 표시와 유사
+        isDeletingId = id
+        defer { isDeletingId = nil }
+
+        do {
+            // DeleteExerciseRecordUseCase 호출
+            // UseCase 내부에서 DailyLog 업데이트까지 처리됨
+            try await deleteExerciseRecordUseCase.execute(
+                recordId: id,
+                userId: _userId
+            )
+
+            // 데이터 새로고침하여 UI 업데이트
+            await loadData()
+
+        } catch {
+            errorMessage = "운동 기록 삭제 실패: \(error.localizedDescription)"
+        }
     }
 }
 

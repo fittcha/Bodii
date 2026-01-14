@@ -114,6 +114,11 @@ final class ExerciseInputViewModel {
         errorMessage != nil
     }
 
+    /// 편집 모드인지 여부
+    var isEditMode: Bool {
+        editingExercise != nil
+    }
+
     // MARK: - Private Dependencies
 
     // 📚 학습 포인트: Dependency Injection
@@ -121,6 +126,12 @@ final class ExerciseInputViewModel {
 
     /// 운동 기록 추가 유스케이스
     private let addExerciseRecordUseCase: AddExerciseRecordUseCase
+
+    /// 운동 기록 수정 유스케이스 (편집 모드일 때만 사용)
+    private let updateExerciseRecordUseCase: UpdateExerciseRecordUseCase?
+
+    /// 편집 중인 운동 기록 (편집 모드일 때만 존재)
+    private let editingExercise: ExerciseRecord?
 
     /// 사용자 ID
     private let userId: UUID
@@ -140,25 +151,42 @@ final class ExerciseInputViewModel {
     ///
     /// - Parameters:
     ///   - addExerciseRecordUseCase: 운동 기록 추가 유스케이스
+    ///   - updateExerciseRecordUseCase: 운동 기록 수정 유스케이스 (편집 모드일 때만 필요)
     ///   - userId: 사용자 ID
     ///   - userWeight: 사용자 체중 (kg)
     ///   - userBMR: 사용자 BMR
     ///   - userTDEE: 사용자 TDEE
-    ///   - selectedDate: 초기 선택 날짜 (기본값: 오늘)
+    ///   - editingExercise: 편집할 운동 기록 (편집 모드일 때만 제공)
+    ///   - selectedDate: 초기 선택 날짜 (기본값: 오늘, 편집 모드에서는 무시됨)
     init(
         addExerciseRecordUseCase: AddExerciseRecordUseCase,
+        updateExerciseRecordUseCase: UpdateExerciseRecordUseCase? = nil,
         userId: UUID,
         userWeight: Decimal,
         userBMR: Decimal,
         userTDEE: Decimal,
+        editingExercise: ExerciseRecord? = nil,
         selectedDate: Date = Date()
     ) {
         self.addExerciseRecordUseCase = addExerciseRecordUseCase
+        self.updateExerciseRecordUseCase = updateExerciseRecordUseCase
+        self.editingExercise = editingExercise
         self.userId = userId
         self.userWeight = userWeight
         self.userBMR = userBMR
         self.userTDEE = userTDEE
         self.selectedDate = selectedDate
+
+        // 📚 학습 포인트: Pre-fill Form in Edit Mode
+        // 편집 모드일 때는 기존 운동 기록 데이터로 폼 초기화
+        // 💡 Java 비교: Intent extras로 전달받은 데이터로 UI 초기화와 유사
+        if let exercise = editingExercise {
+            self.selectedExerciseType = exercise.exerciseType
+            self.duration = exercise.duration
+            self.selectedIntensity = exercise.intensity
+            self.note = exercise.note ?? ""
+            self.selectedDate = exercise.date
+        }
     }
 
     // MARK: - Public Methods
@@ -201,22 +229,40 @@ final class ExerciseInputViewModel {
         defer { isSaving = false }
 
         do {
-            // 3. AddExerciseRecordUseCase 호출
-            // 📚 학습 포인트: UseCase Pattern
-            // ViewModel은 비즈니스 로직을 직접 수행하지 않고 UseCase에 위임
-            // 💡 Java 비교: Android의 Use Case Pattern과 동일
+            // 3. UseCase 호출 (편집 모드 or 추가 모드)
+            // 📚 학습 포인트: Conditional Logic for Add/Update
+            // editingExercise 유무로 추가/수정 모드 구분
+            // 💡 Java 비교: id != null ? update() : create() 패턴과 유사
 
-            _ = try await addExerciseRecordUseCase.execute(
-                userId: userId,
-                date: selectedDate,
-                exerciseType: selectedExerciseType,
-                duration: duration,
-                intensity: selectedIntensity,
-                note: note.isEmpty ? nil : note,
-                userWeight: userWeight,
-                userBMR: userBMR,
-                userTDEE: userTDEE
-            )
+            if let editingExercise = editingExercise,
+               let updateUseCase = updateExerciseRecordUseCase {
+                // 편집 모드: UpdateExerciseRecordUseCase 호출
+                _ = try await updateUseCase.execute(
+                    recordId: editingExercise.id,
+                    userId: userId,
+                    date: selectedDate,
+                    exerciseType: selectedExerciseType,
+                    duration: duration,
+                    intensity: selectedIntensity,
+                    note: note.isEmpty ? nil : note,
+                    userWeight: userWeight,
+                    userBMR: userBMR,
+                    userTDEE: userTDEE
+                )
+            } else {
+                // 추가 모드: AddExerciseRecordUseCase 호출
+                _ = try await addExerciseRecordUseCase.execute(
+                    userId: userId,
+                    date: selectedDate,
+                    exerciseType: selectedExerciseType,
+                    duration: duration,
+                    intensity: selectedIntensity,
+                    note: note.isEmpty ? nil : note,
+                    userWeight: userWeight,
+                    userBMR: userBMR,
+                    userTDEE: userTDEE
+                )
+            }
 
             // 4. 성공
             isSaveSuccess = true
