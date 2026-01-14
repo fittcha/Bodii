@@ -47,6 +47,18 @@ final class DIContainer {
 
     // MARK: - Data Sources
 
+    /// 운동 기록 로컬 데이터 소스
+    /// 📚 학습 포인트: lazy var
+    /// 처음 접근할 때만 초기화되며, 이후에는 캐시된 인스턴스 반환
+    lazy var exerciseRecordLocalDataSource: ExerciseRecordLocalDataSource = {
+        ExerciseRecordLocalDataSource(context: PersistenceController.shared.viewContext)
+    }()
+
+    /// 일일 기록 로컬 데이터 소스
+    lazy var dailyLogLocalDataSource: DailyLogLocalDataSource = {
+        DailyLogLocalDataSource(context: PersistenceController.shared.viewContext)
+    }()
+
     // TODO: Phase 2에서 추가 예정
     // - NetworkManager
     // - HealthKitManager
@@ -55,29 +67,77 @@ final class DIContainer {
 
     // MARK: - Repositories
 
+    /// 운동 기록 저장소
+    /// 📚 학습 포인트: Protocol을 타입으로 사용
+    /// 테스트 시 Mock으로 교체 가능하도록 프로토콜 타입 사용
+    /// 💡 Java 비교: Interface 타입으로 필드 선언하는 것과 동일
+    lazy var exerciseRecordRepository: ExerciseRecordRepository = {
+        ExerciseRecordRepositoryImpl(localDataSource: exerciseRecordLocalDataSource)
+    }()
+
+    /// 일일 기록 저장소
+    lazy var dailyLogRepository: DailyLogRepository = {
+        DailyLogRepositoryImpl(localDataSource: dailyLogLocalDataSource)
+    }()
+
     // TODO: Phase 3에서 추가 예정
     // - UserRepository
     // - BodyRepository
     // - FoodRepository
-    // - ExerciseRepository
     // - SleepRepository
     // - GoalRepository
 
+    // MARK: - Services
+
+    /// 일일 기록 관리 서비스
+    /// 📚 학습 포인트: Service Layer
+    /// Repository를 조합하여 복잡한 비즈니스 로직 처리
+    lazy var dailyLogService: DailyLogService = {
+        DailyLogService(repository: dailyLogRepository)
+    }()
+
+    // 📚 학습 포인트: ExerciseCalcService는 enum이므로 등록 불필요
+    // static 메서드만 있어서 인스턴스화할 필요 없음
+    // 💡 Java 비교: Utility 클래스의 static 메서드와 유사
+
     // MARK: - Use Cases
+
+    /// 운동 기록 추가 유스케이스
+    /// 📚 학습 포인트: Use Case Pattern
+    /// 단일 책임 원칙 - 하나의 Use Case는 하나의 비즈니스 액션만 담당
+    lazy var addExerciseRecordUseCase: AddExerciseRecordUseCase = {
+        AddExerciseRecordUseCase(
+            exerciseRepository: exerciseRecordRepository,
+            dailyLogService: dailyLogService
+        )
+    }()
+
+    /// 운동 기록 수정 유스케이스
+    lazy var updateExerciseRecordUseCase: UpdateExerciseRecordUseCase = {
+        UpdateExerciseRecordUseCase(
+            exerciseRepository: exerciseRecordRepository,
+            dailyLogService: dailyLogService
+        )
+    }()
+
+    /// 운동 기록 삭제 유스케이스
+    lazy var deleteExerciseRecordUseCase: DeleteExerciseRecordUseCase = {
+        DeleteExerciseRecordUseCase(
+            exerciseRepository: exerciseRecordRepository,
+            dailyLogService: dailyLogService
+        )
+    }()
+
+    /// 운동 기록 조회 유스케이스
+    lazy var getExerciseRecordsUseCase: GetExerciseRecordsUseCase = {
+        GetExerciseRecordsUseCase(exerciseRepository: exerciseRecordRepository)
+    }()
 
     // TODO: Phase 4에서 추가 예정
     // - CalculateBMRUseCase
     // - CalculateTDEEUseCase
     // - RecordBodyUseCase
     // - SearchFoodUseCase
-    // - etc.
-
-    // MARK: - View Models
-
-    // TODO: Phase 5에서 추가 예정
-    // - OnboardingViewModel
-    // - DashboardViewModel
-    // - BodyViewModel
     // - etc.
 }
 
@@ -88,6 +148,68 @@ extension DIContainer {
     // 📚 학습 포인트: Factory Pattern
     // 의존성 생성 로직을 캡슐화
     // 테스트 시 Mock 객체로 교체 가능
+
+    // MARK: - Exercise ViewModels
+
+    /// 운동 목록 ViewModel 생성
+    ///
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// ViewModel 생성 시 필요한 모든 의존성을 주입
+    /// 테스트 시 이 메서드만 오버라이드하면 Mock ViewModel 제공 가능
+    ///
+    /// - Parameter userId: 사용자 ID
+    /// - Returns: 의존성이 주입된 ExerciseListViewModel
+    ///
+    /// - Example:
+    /// ```swift
+    /// let viewModel = DIContainer.shared.makeExerciseListViewModel(userId: user.id)
+    /// ExerciseListView(viewModel: viewModel)
+    /// ```
+    func makeExerciseListViewModel(userId: UUID) -> ExerciseListViewModel {
+        ExerciseListViewModel(
+            getExerciseRecordsUseCase: getExerciseRecordsUseCase,
+            dailyLogRepository: dailyLogRepository,
+            userId: userId
+        )
+    }
+
+    /// 운동 입력 ViewModel 생성
+    ///
+    /// 📚 학습 포인트: 외부 파라미터가 많은 Factory Method
+    /// ViewModel이 사용자별 데이터(체중, BMR, TDEE)를 필요로 할 때
+    /// Factory Method로 깔끔하게 주입
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - userWeight: 사용자 체중 (kg) - 칼로리 계산에 필요
+    ///   - userBMR: 사용자 기초대사량 (kcal)
+    ///   - userTDEE: 사용자 활동대사량 (kcal)
+    /// - Returns: 의존성이 주입된 ExerciseInputViewModel
+    ///
+    /// - Example:
+    /// ```swift
+    /// let viewModel = DIContainer.shared.makeExerciseInputViewModel(
+    ///     userId: user.id,
+    ///     userWeight: user.currentWeight ?? 70.0,
+    ///     userBMR: user.currentBMR ?? 1650,
+    ///     userTDEE: user.currentTDEE ?? 2310
+    /// )
+    /// ExerciseInputView(viewModel: viewModel)
+    /// ```
+    func makeExerciseInputViewModel(
+        userId: UUID,
+        userWeight: Decimal,
+        userBMR: Int32,
+        userTDEE: Int32
+    ) -> ExerciseInputViewModel {
+        ExerciseInputViewModel(
+            addExerciseRecordUseCase: addExerciseRecordUseCase,
+            userId: userId,
+            userWeight: userWeight,
+            userBMR: userBMR,
+            userTDEE: userTDEE
+        )
+    }
 
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel

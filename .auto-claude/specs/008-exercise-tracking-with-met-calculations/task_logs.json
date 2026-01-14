@@ -1,7 +1,7 @@
 {
   "spec_id": "008-exercise-tracking-with-met-calculations",
   "created_at": "2026-01-14T02:45:42.060715+00:00",
-  "updated_at": "2026-01-14T03:25:17.384030+00:00",
+  "updated_at": "2026-01-14T03:28:41.122172+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -6025,6 +6025,702 @@
           "tool_input": "git add -A && git commit -m \"auto-claude: Updat...",
           "subtask_id": "4.5",
           "session": 13
+        },
+        {
+          "timestamp": "2026-01-14T03:25:18.709546+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "4.5",
+          "session": 13,
+          "detail": "[auto-claude/008-exercise-tracking-with-met-calculations 19fa299] auto-claude: Update build-progress.txt for subtask 4.5 completion\n 3 files changed, 181 insertions(+), 6 deletions(-)",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:25:32.595139+00:00",
+          "type": "text",
+          "content": "Perfect! I have successfully completed subtask 4.5. Here's a summary of what was implemented:\n\n## ✅ Subtask 4.5 Completed: ExerciseInputView Modal\n\n### What Was Built\n\n**Full Exercise Input Modal** that combines all the components from subtasks 4.1-4.4:\n\n1. **Exercise Type Selection** - Using ExerciseTypeGridView for all 8 exercise types\n2. **Duration Input** - Using DurationInputView with quick selection and fine adjustment\n3. **Intensity Selection** - Using IntensityPickerView for low/medium/high intensity\n4. **Note Input** - Optional multi-line TextField with @FocusState\n5. **Real-time Calorie Preview** - Large display showing calculated calories as user makes selections\n\n### Key Features\n\n✅ **Sheet Modal Presentation** - NavigationStack with toolbar (Cancel button)\n✅ **Real-time Calculation** - previewCalories updates automatically when any input changes\n✅ **Visual Feedback** - Calorie preview card with calculation details (exercise, duration, intensity, MET)\n✅ **Form Validation** - Inline error messages, disabled save button for invalid forms\n✅ **Loading State** - ProgressView + \"저장 중...\" text during save operation\n✅ **Keyboard Management** - @FocusState to control keyboard for note TextField\n✅ **Success/Error Handling** - Alerts for errors, callback for success\n\n### Architecture\n\n- **Section-based Layout** - Clean organization with sectionHeader helper function\n- **@Observable ViewModel** - ExerciseInputViewModel manages all form state\n- **@Binding Integration** - Two-way data flow with all child components\n- **Environment Dismiss** - Proper modal dismissal pattern\n- **Callback Pattern** - onSaveSuccess for parent View communication\n\n### Code Quality\n\n- Comprehensive Korean learning comments explaining Form Sheet Modal Pattern\n- Three preview configurations for development\n- Follows existing codebase patterns\n- Clean separation of concerns with computed properties\n\n### Files Created\n\n- `Bodii/Presentation/Features/Exercise/Views/ExerciseInputView.swift` - 833 lines\n\n### Commits\n\n- **b8de41a** - Main implementation\n- **19fa299** - Build progress update\n\n**Phase 4 is now complete!** All UI components for exercise input are implemented. Next phase (Phase 5) will handle DI container registration, tab integration, and testing.",
+          "phase": "coding",
+          "subtask_id": "4.5",
+          "session": 13
+        },
+        {
+          "timestamp": "2026-01-14T03:25:45.336545+00:00",
+          "type": "text",
+          "content": "I'll help you implement subtask 5.1 to register all exercise-related services, repositories, and use cases in the DIContainer. Let me start by understanding the codebase structure and existing patterns.",
+          "phase": "coding",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:25:45.871120+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...exercise-tracking-with-met-calculations/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...exercise-tracking-with-met-calculations/spec.md",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:25:46.549569+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...-with-met-calculations/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...-with-met-calculations/implementation_plan.json",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:25:46.853285+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/DIContainer.ts",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/DIContainer.ts",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:25:46.873765+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "5.1",
+          "session": 14,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:25:53.396924+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/DIContainer.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/DIContainer.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:25:53.732381+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/DI*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/DI*.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:25:54.075685+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "5.1",
+          "session": 14,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:25:59.779984+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/App/DIContainer.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/App/DIContainer.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:00.198867+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/ExerciseCalcService.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/ExerciseCalcService.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:00.722732+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/ExerciseRecordRepository*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/ExerciseRecordRepository*.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:01.136417+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/DailyLogService.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/DailyLogService.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:01.549910+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/Exercise/**UseCase.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/Exercise/**UseCase.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:01.574134+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "5.1",
+          "session": 14,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:26:06.585385+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/DailyLogRepository*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/DailyLogRepository*.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:07.026721+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/ExerciseRecordLocalDataSource.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/ExerciseRecordLocalDataSource.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:07.316831+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/DailyLogLocalDataSource.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/DailyLogLocalDataSource.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:07.675140+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "5.1",
+          "session": 14,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:26:12.527075+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Services/ExerciseCalcService.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Services/ExerciseCalcService.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:12.843471+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...Repositories/ExerciseRecordRepositoryImpl.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...Repositories/ExerciseRecordRepositoryImpl.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:13.157255+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Data/Repositories/DailyLogRepositoryImpl.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Data/Repositories/DailyLogRepositoryImpl.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:13.176862+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "     1→//\n     2→//  ExerciseCalcService.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// 운동 칼로리 계산 서비스\n    11→///\n    12→/// MET (Metabolic Equivalent of Task) 기반으로 운동 시 소모되는 칼로리를 계산합니다.\n    13→///\n    14→/// ## MET 계산 공식\n    15→/// ```\n    16→/// 소모 칼로리 = MET × 체중(kg) × 시간(hour)\n    17→/// ```\n    18→///\n    19→/// ## MET 값 결정\n    20→/// ```\n    21→/// MET = 운동 종류의 기본 MET × 강도 보정 계수\n    22→/// ```\n    23→///\n    24→/// ## 강도 보정 계수\n    25→/// - 저강도: 기본 MET × 0.8\n    26→/// - 중강도: 기본 MET × 1.0\n    27→/// - 고강도: 기본 MET × 1.2\n    28→///\n    29→/// - Example:\n    30→/// ```swift\n    31→/// // 크로스핏 45분, 고강도, 체중 75kg\n    32→/// let calories = ExerciseCalcService.calculateCalories(\n    33→///     exerciseType: .crossfit,\n    34→///     duration: 45,\n    35→///     intensity: .high,\n    36→///     weight: 75.0\n    37→/// )\n    38→/// // 결과: 540 kcal\n    39→/// // 계산: 8.0 × 1.2 = 9.6 MET\n    40→/// //       9.6 × 75 × 0.75 = 540\n    41→/// ```\n    42→enum ExerciseCalcService {\n    43→\n    44→    // MARK: - Public Methods\n    45→\n    46→    /// 운동으로 소모된 칼로리를 계산합니다.\n    47→    ///\n    48→    /// MET 공식을 사용하여 칼로리를 계산합니다:\n    49→    /// ```\n    50→    /// 칼로리 = MET × 체중(kg) × 시간(hours)\n    51→    /// ```\n    52→    ///\n    53→    /// MET 값은 운동 종류의 기본 MET에 강도 보정 계수를 곱하여 결정됩니다.\n    54→    ///\n    55→    /// - Parameters:\n    56→    ///   - exerciseType: 운동 종류 (걷기, 러닝, 자전거 등)\n    57→    ///   - duration: 운동 시간 (분)\n    58→    ///   - intensity: 운동 강도 (저강도, 중강도, 고강도)\n    59→    ///   - weight: 사용자 체중 (kg)\n    60→    ///\n    61→    /// - Returns: 소모된 칼로리 (kcal), Int32로 반올림된 값\n    62→    ///\n    63→    /// - Example:\n    64→    /// ```swift\n    65→    /// // 러닝 30분, 중강도, 체중 70kg\n    66→    /// let calories = ExerciseCalcService.calculateCalories(\n    67→    ///     exerciseType: .running,\n    68→    ///     duration: 30,\n    69→    ///     intensity: .medium,\n    70→    ///     weight: 70.0\n    71→    /// )\n    72→    /// // 결과: 280 kcal\n    73→    /// // 계산: 8.0 × 1.0 = 8.0 MET\n    74→    /// //       8.0 × 70 × 0.5 = 280\n    75→    /// ```\n    76→    static func calculateCalories(\n    77→        exerciseType: ExerciseType,\n    78→        duration: Int32,\n    79→        intensity: Intensity,\n    80→        weight: Double\n    81→    ) -> Int32 {\n    82→        // 1. 기본 MET 값 가져오기\n    83→        let baseMET = exerciseType.baseMET\n    84→\n    85→        // 2. 강도 보정 계수 적용\n    86→        let adjustedMET = baseMET * intensity.metMultiplier\n    87→\n    88→        // 3. 시간을 분에서 시간으로 변환\n    89→        let hours = Double(duration) / 60.0\n    90→\n    91→        // 4. MET 공식 적용: 칼로리 = MET × 체중(kg) × 시간(hour)\n    92→        let calories = adjustedMET * weight * hours\n    93→\n    94→        // 5. Int32로 반올림하여 반환\n    95→        return Int32(calories.rounded())\n    96→    }\n    97→\n    98→    /// 운동으로 소모된 칼로리를 계산합니다. (Decimal 타입 체중)\n    99→    ///\n   100→    /// Decimal 타입의 체중을 받아서 칼로리를 계산하는 편의 메서드입니다.\n   101→    /// User 엔티티의 currentWeight가 Decimal 타입이므로 직접 전달할 수 있습니다.\n   102→    ///\n   103→    /// - Parameters:\n   104→    ///   - exerciseType: 운동 종류 (걷기, 러닝, 자전거 등)\n   105→    ///   - duration: 운동 시간 (분)\n   106→    ///   - intensity: 운동 강도 (저강도, 중강도, 고강도)\n   107→    ///   - weight: 사용자 체중 (kg), Decimal 타입\n   108→    ///\n   109→    /// - Returns: 소모된 칼로리 (kcal), Int32로 반올림된 값\n   110→    ///\n   111→    /// - Example:\n   112→    /// ```swift\n   113→    /// let user = User(...)\n   114→    /// let calories = ExerciseCalcService.calculateCalories(\n   115→    ///     exerciseType: .walking,\n   116→    ///     duration: 60,\n   117→    ///     intensity: .low,\n   118→    ///     weight: user.currentWeight ?? 70.0\n   119→    /// )\n   120→    /// ```\n   121→    static func calculateCalories(\n   122→        exerciseType: ExerciseType,\n   123→        duration: Int32,\n   124→        intensity: Intensity,\n   125→        weight: Decimal\n   126→    ) -> Int32 {\n   127→        // Decimal을 Double로 변환하여 기본 메서드 호출\n   128→        let weightDouble = NSDecimalNumber(decimal: weight).doubleValue\n   129→        return calculateCalories(\n   130→            exerciseType: exerciseType,\n   131→            duration: duration,\n   132→            intensity: intensity,\n   133→            weight: weightDouble\n   134→        )\n   135→    }\n   136→}\n   137→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:26:17.161368+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...seCases/Exercise/AddExerciseRecordUseCase.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...seCases/Exercise/AddExerciseRecordUseCase.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:17.681889+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Services/DailyLogService.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Services/DailyLogService.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:17.698568+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "     1→//\n     2→//  AddExerciseRecordUseCase.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// 운동 기록 추가 유스케이스\n    11→///\n    12→/// 새로운 운동 기록을 생성하고, 칼로리를 계산하여 DailyLog를 업데이트합니다.\n    13→///\n    14→/// ## 책임\n    15→/// - 운동 입력값 검증 (duration 최소 1분)\n    16→/// - 사용자 체중 확인 (MET 계산에 필요)\n    17→/// - MET 기반 칼로리 계산\n    18→/// - ExerciseRecord 생성 및 저장\n    19→/// - DailyLog 업데이트\n    20→///\n    21→/// ## 의존성\n    22→/// - ExerciseRecordRepository: 운동 기록 저장\n    23→/// - DailyLogService: DailyLog 업데이트\n    24→///\n    25→/// ## 사용 시나리오\n    26→/// ```swift\n    27→/// let useCase = AddExerciseRecordUseCase(\n    28→///     exerciseRepository: exerciseRepository,\n    29→///     dailyLogService: dailyLogService\n    30→/// )\n    31→///\n    32→/// let record = try await useCase.execute(\n    33→///     userId: userId,\n    34→///     date: Date(),\n    35→///     exerciseType: .running,\n    36→///     duration: 30,\n    37→///     intensity: .high,\n    38→///     note: \"아침 조깅\",\n    39→///     userWeight: user.currentWeight ?? 70.0,\n    40→///     userBMR: user.currentBMR ?? 1650,\n    41→///     userTDEE: user.currentTDEE ?? 2310\n    42→/// )\n    43→/// ```\n    44→///\n    45→/// ## 에러 케이스\n    46→/// - duration < 1분: ValidationError\n    47→/// - userWeight가 nil: InsufficientDataError\n    48→final class AddExerciseRecordUseCase {\n    49→\n    50→    // MARK: - Properties\n    51→\n    52→    /// 운동 기록 저장소\n    53→    private let exerciseRepository: ExerciseRecordRepository\n    54→\n    55→    /// DailyLog 관리 서비스\n    56→    private let dailyLogService: DailyLogService\n    57→\n    58→    // MARK: - Initialization\n    59→\n    60→    /// AddExerciseRecordUseCase 초기화\n    61→    ///\n    62→    /// - Parameters:\n    63→    ///   - exerciseRepository: 운동 기록 저장소\n    64→    ///   - dailyLogService: DailyLog 관리 서비스\n    65→    init(\n    66→        exerciseRepository: ExerciseRecordRepository,\n    67→        dailyLogService: DailyLogService\n    68→    ) {\n    69→        self.exerciseRepository = exerciseRepository\n    70→        self.dailyLogService = dailyLogService\n    71→    }\n    72→\n    73→    // MARK: - Public Methods\n    74→\n    75→    /// 새로운 운동 기록을 추가합니다.\n    76→    ///\n    77→    /// ## 실행 순서\n    78→    /// 1. 입력값 검증 (duration ≥ 1분)\n    79→    /// 2. MET 기반 칼로리 계산\n    80→    /// 3. ExerciseRecord 엔티티 생성\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:26:21.610956+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...Exercise/ViewModels/ExerciseListViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...Exercise/ViewModels/ExerciseListViewModel.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:22.130709+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...xercise/ViewModels/ExerciseInputViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...xercise/ViewModels/ExerciseInputViewModel.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:22.151673+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "     1→//\n     2→//  ExerciseListViewModel.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: SwiftUI ViewModel with @Observable\n     9→// iOS 17+의 @Observable 매크로를 사용한 현대적인 MVVM 패턴\n    10→// 💡 Java 비교: Android의 ViewModel + LiveData와 유사하지만 더 간단\n    11→\n    12→import Foundation\n    13→import Observation\n    14→\n    15→/// 운동 목록 뷰 모델\n    16→///\n    17→/// 특정 날짜의 운동 기록 목록과 일일 집계를 관리합니다.\n    18→///\n    19→/// ## 책임\n    20→/// - 선택된 날짜의 운동 기록 조회\n    21→/// - 일일 운동 집계 정보 표시 (총 칼로리, 총 시간, 운동 횟수)\n    22→/// - 날짜 네비게이션 (이전/다음 날)\n    23→/// - 로딩 및 에러 상태 관리\n    24→///\n    25→/// ## 의존성\n    26→/// - GetExerciseRecordsUseCase: 운동 기록 조회\n    27→/// - DailyLogRepository: 일일 집계 조회\n    28→///\n    29→/// ## 사용 예시\n    30→/// ```swift\n    31→/// let viewModel = ExerciseListViewModel(\n    32→///     getExerciseRecordsUseCase: getExerciseRecordsUseCase,\n    33→///     dailyLogRepository: dailyLogRepository,\n    34→///     userId: user.id\n    35→/// )\n    36→///\n    37→/// // View에서 사용\n    38→/// List(viewModel.exerciseRecords) { record in\n    39→///     ExerciseCardView(record: record)\n    40→/// }\n    41→/// ```\n    42→@Observable\n    43→final class ExerciseListViewModel {\n    44→\n    45→    // MARK: - Properties\n    46→\n    47→    // 📚 학습 포인트: @Observable과 프로퍼티\n    48→    // @Observable 매크로는 자동으로 모든 프로퍼티를 관찰 가능하게 만듦\n    49→    // 💡 Java 비교: @Published (이전 SwiftUI) 또는 MutableLiveData와 유사\n    50→\n    51→    /// 현재 선택된 날짜\n    52→    var selectedDate: Date\n    53→\n    54→    /// 운동 기록 목록\n    55→    var exerciseRecords: [ExerciseRecord] = []\n    56→\n    57→    /// 일일 집계 정보\n    58→    var dailyLog: DailyLog?\n    59→\n    60→    /// 로딩 상태\n    61→    var isLoading: Bool = false\n    62→\n    63→    /// 에러 메시지\n    64→    var errorMessage: String?\n    65→\n    66→    // 📚 학습 포인트: Computed Property\n    67→    // 저장 공간 없이 계산되는 프로퍼티\n    68→    // 의존하는 프로퍼티가 변경되면 자동으로 재계산됨\n    69→\n    70→    /// 일일 총 소모 칼로리\n    71→    var totalCaloriesOut: Int32 {\n    72→        dailyLog?.totalCaloriesOut ?? 0\n    73→    }\n    74→\n    75→    /// 일일 총 운동 시간 (분)\n    76→    var exerciseMinutes: Int32 {\n    77→        dailyLog?.exerciseMinutes ?? 0\n    78→    }\n    79→\n    80→    /// 일일 운동 횟수\n    81→    var exerciseCount: Int16 {\n    82→        dailyLog?.exerciseCount ?? 0\n    83→    }\n    84→\n    85→    /// 운동 기록이 비어있는지 여부\n    86→    var isEmpty: Bool {\n    87→        exerciseRecords.isEmpty\n    88→    }\n    89→\n    90→    // 📚 학습 포인트: Private Dependencies\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:26:26.763053+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/PersistenceController.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/PersistenceController.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:27.884368+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: class.*ViewModel",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: class.*ViewModel",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:28.234930+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "/Users/chacha/lab/Bodii/.worktrees/008-exercise-tracking-with-met-calculations/Bodii/Infrastructure/Persistence/PersistenceController.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:26:31.242948+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ructure/Persistence/PersistenceController.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ructure/Persistence/PersistenceController.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:26:31.260664+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "     1→//\n     2→//  PersistenceController.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-11.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Core Data Stack 관리\n     9→// Core Data의 핵심 컴포넌트인 NSPersistentContainer를 관리하는 컨트롤러\n    10→// 💡 Java 비교: JPA의 EntityManager/EntityManagerFactory와 유사한 역할\n    11→\n    12→import CoreData\n    13→\n    14→// MARK: - PersistenceController\n    15→\n    16→/// Core Data 스택을 관리하는 컨트롤러\n    17→/// - 앱 전체에서 공유되는 싱글턴 인스턴스 제공\n    18→/// - SwiftUI Preview용 인메모리 인스턴스 제공\n    19→/// - 자동 경량 마이그레이션 지원\n    20→final class PersistenceController {\n    21→\n    22→    // MARK: - Shared Instance\n    23→\n    24→    // 📚 학습 포인트: Singleton Pattern in Swift\n    25→    // static let으로 선언하면 lazy하게 초기화되고 thread-safe\n    26→    // 💡 Java 비교: synchronized singleton과 달리 언어 레벨에서 thread-safe 보장\n    27→    static let shared = PersistenceController()\n    28→\n    29→    // MARK: - Preview Instance\n    30→\n    31→    // 📚 학습 포인트: SwiftUI Preview용 인스턴스\n    32→    // 실제 디스크에 저장하지 않고 메모리에서만 동작\n    33→    // Preview에서 실제 데이터를 사용하면 테스트가 느려지고 side effect 발생\n    34→    @MainActor\n    35→    static let preview: PersistenceController = {\n    36→        let controller = PersistenceController(inMemory: true)\n    37→\n    38→        // 📚 학습 포인트: Preview용 샘플 데이터 생성\n    39→        // 실제 앱에서는 이 블록에서 샘플 데이터를 생성할 수 있음\n    40→        // 현재는 빈 상태로 유지 (엔티티 구현 후 추가 예정)\n    41→        let viewContext = controller.container.viewContext\n    42→\n    43→        // TODO: 샘플 데이터 생성 코드 추가\n    44→        // 예: User, DailyLog 등의 샘플 데이터\n    45→\n    46→        do {\n    47→            try viewContext.save()\n    48→        } catch {\n    49→            // 📚 학습 포인트: fatalError 사용\n    50→            // Preview/개발 환경에서만 사용 - 프로덕션에서는 적절한 에러 처리 필요\n    51→            let nsError = error as NSError\n    52→            fatalError(\"Failed to save preview context: \\(nsError), \\(nsError.userInfo)\")\n    53→        }\n    54→\n    55→        return controller\n    56→    }()\n    57→\n    58→    // MARK: - Properties\n    59→\n    60→    // 📚 학습 포인트: NSPersistentContainer\n    61→    // Core Data 스택의 핵심 - 모델, 컨텍스트, 저장소를 모두 관리\n    62→    // iOS 10+에서 도입되어 Core Data 설정을 크게 간소화\n    63→    let container: NSPersistentContainer\n    64→\n    65→    // 📚 학습 포인트: NSManagedObjectContext\n    66→    // viewContext는 main queue에서 동작하며 UI 업데이트에 사용\n    67→    // 💡 Java 비교: JPA의 EntityManager와 유사 - 엔티티의 생명주기 관리\n    68→    var viewContext: NSManagedObjectContext {\n    69→        container.viewContext\n    70→    }\n    71→\n    72→    // MARK: - Initialization\n    73→\n    74→    // 📚 학습 포인트: Convenience Init with Default Parameters\n    75→    // inMemory: true로 하면 SQLite 파일 대신 메모리에 저장\n    76→    // 테스트나 Preview에서 유용\n    77→    init(inMemory: Bool = false) {\n    78→        // 📚 학습 포인트: Bundle에서 Core Data 모델 로드\n    79→        // NSPersistentContainer는 자동으로 .xcdatamodeld 파일을 찾음\n    80→        // 파일명이 \"Bodii\"이면 Bodii.xcdatamodeld를 찾음\n    81→        container = NSPersistentContainer(name: \"Bodii\")\n    82→\n    83→        // 📚 학습 포인트: Lightweight Migration 설정\n    84→        // 스키마 변경 시 자동으로 마이그레이션 수행\n    85→        // ⚠️ 주의: 복잡한 변경은 수동 마이그레이션 필요\n    86→        let description = container.persistentStoreDescriptions.first\n    87→        description?.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)\n    88→        description?.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)\n    89→\n    90→        // 📚 학습 포인트: 인메모리 저장소 설정\n    91→        // 테스트/Preview용 - 앱 종료 시 데이터 소멸\n    92→        if inMemory {\n    93→            description?.url = URL(fileURLWithPath: \"/dev/null\")\n    94→        }\n    95→\n    96→        // 📚 학습 포인트: 비동기 저장소 로드\n    97→        // loadPersistentStores는 비동기로 동작하지만 completion handler에서 에러 처리\n    98→        container.loadPersistentStores { [weak self] storeDescription, error in\n    99→            if let error = error as NSError? {\n   100→                // 📚 학습 포인트: Core Data 로드 실패 처리\n   101→                // ⚠️ 주의: 프로덕션에서는 fatalError 대신 적절한 복구 로직 필요\n   102→                // 예: 손상된 저장소 삭제 후 재생성, 사용자에게 알림 등\n   103→                fatalError(\"Failed to load Core Data store: \\(error), \\(error.userInfo)\")\n   104→            }\n   105→\n   106→            // 📚 학습 포인트: Merge Policy 설정\n   107→            // 여러 컨텍스트에서 동시에 변경 시 충돌 해결 정책\n   108→            // mergeByPropertyObjectTrump: 메모리의 값이 저장소 값을 덮어씀\n   109→            self?.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy\n   110→\n   111→            // 📚 학습 포인트: 자동 병합 설정\n   112→            // 백그라운드 컨텍스트의 변경사항을 viewContext에 자동 반영\n   113→            self?.container.viewContext.automaticallyMergesChangesFromParent = true\n   114→\n   115→            #if DEBUG\n   116→            // 📚 학습 포인트: Core Data 모델 검증\n   117→            // 앱 시작 시 모든 엔티티가 정상적으로 로드되었는지 확인\n   118→            self?.verifyModelLoaded()\n   119→            #endif\n   120→        }\n   121→    }\n   122→\n   123→    // MARK: - Public Methods\n   124→\n   125→    // 📚 학습 포인트: Context 저장\n   126→    // Core Data는 변경사항을 메모리에 저장하다가 save() 호출 시 디스크에 기록\n   127→    // ⚠️ 주의: save() 호출을 잊으면 앱 종료 시 데이터 손실\n   128→    func save() {\n   129→        let context = container.viewContext\n   130→        guard context.hasChanges else { return }\n   131→\n   132→        do {\n   133→            try context.save()\n   134→        } catch {\n   135→            // 📚 학습 포인트: 에러 처리\n   136→            // 프로덕션에서는 사용자에게 알리거나 로깅 필요\n   137→            let nsError = error as NSError\n   138→            assertionFailure(\"Failed to save context: \\(nsError), \\(nsError.userInfo)\")\n   139→        }\n   140→    }\n   141→\n   142→    // 📚 학습 포인트: Background Context 생성\n   143→    // 대용량 데이터 처리 시 메인 스레드 블로킹 방지\n   144→    // 💡 Java 비교: 별도 스레드에서 EntityManager 사용하는 것과 유사\n   145→    func newBackgroundContext() -> NSManagedObjectContext {\n   146→        let context = container.newBackgroundContext()\n   147→        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy\n   148→        return context\n   149→    }\n   150→\n   151→    // 📚 학습 포인트: Background Context에서 작업 수행\n   152→    // 클로저 내에서 백그라운드 작업 수행 후 자동으로 저장\n   153→    func performBackgroundTask(_ block: @escaping (NSManagedObjectContext) -> Void) {\n   154→        container.performBackgroundTask { context in\n   155→            context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy\n   156→            block(context)\n   157→        }\n   158→    }\n   159→}\n   160→\n   161→// MARK: - Debug Helpers\n   162→\n   163→#if DEBUG\n   164→extension PersistenceController {\n   165→    // 📚 학습 포인트: 테스트용 헬퍼\n   166→    // 인메모리 컨트롤러를 빠르게 생성하여 단위 테스트에 활용\n   167→    static func makeForTesting() -> PersistenceController {\n   168→        PersistenceController(inMemory: true)\n   169→    }\n   170→\n   171→    // 📚 학습 포인트: 저장소 위치 디버깅\n   172→    // Core Data 파일이 어디에 저장되는지 확인용\n   173→    func printStoreLocation() {\n   174→        guard let url = container.persistentStoreDescriptions.first?.url else {\n   175→            print(\"No store URL found\")\n   176→            return\n   177→        }\n   178→        print(\"Core Data store location: \\(url)\")\n   179→    }\n   180→\n   181→    // 📚 학습 포인트: Core Data 모델 검증\n   182→    // 앱 시작 시 모든 엔티티가 정상적으로 로드되었는지 확인\n   183→    // 💡 이 메서드는 DEBUG 빌드에서만 실행됨\n   184→    func verifyModelLoaded() {\n   185→        // 📚 학습 포인트: NSManagedObjectModel\n   186→        // Core Data 모델의 메타데이터에 접근하여 엔티티 목록 확인\n   187→        guard let model = container.managedObjectModel as NSManagedObjectModel? else {\n   188→            print(\"⚠️ [Core Data] Failed to access managed object model\")\n   189→            return\n   190→        }\n   191→\n   192→        // 앱에서 필요한 9개 엔티티 목록\n   193→        let expectedEntities: Set<String> = [\n   194→            \"User\",\n   195→            \"BodyRecord\",\n   196→            \"MetabolismSnapshot\",\n   197→            \"Food\",\n   198→            \"FoodRecord\",\n   199→            \"ExerciseRecord\",\n   200→            \"SleepRecord\",\n   201→            \"DailyLog\",\n   202→            \"Goal\"\n   203→        ]\n   204→\n   205→        // 모델에서 로드된 엔티티 이름 추출\n   206→        let loadedEntities = Set(model.entities.compactMap { $0.name })\n   207→\n   208→        // 검증: 모든 필수 엔티티가 로드되었는지 확인\n   209→        let missingEntities = expectedEntities.subtracting(loadedEntities)\n   210→        let extraEntities = loadedEntities.subtracting(expectedEntities)\n   211→\n   212→        if missingEntities.isEmpty {\n   213→            print(\"✅ [Core Data] Model loaded successfully with all 9 entities:\")\n   214→            for entity in expectedEntities.sorted() {\n   215→                print(\"   - \\(entity)\")\n   216→            }\n   217→        } else {\n   218→            print(\"❌ [Core Data] Missing entities: \\(missingEntities.sorted().joined(separator: \", \"))\")\n   219→        }\n   220→\n   221→        if !extraEntities.isEmpty {\n   222→            print(\"ℹ️ [Core Data] Additional entities found: \\(extraEntities.sorted().joined(separator: \", \"))\")\n   223→        }\n   224→\n   225→        // 각 엔티티의 속성 수 출력 (모델 구조 확인용)\n   226→        print(\"📊 [Core Data] Entity details:\")\n   227→        for entityName in expectedEntities.sorted() {\n   228→            if let entity = model.entitiesByName[entityName] {\n   229→                let attributeCount = entity.attributesByName.count\n   230→                let relationshipCount = entity.relationshipsByName.count\n   231→                print(\"   - \\(entityName): \\(attributeCount) attributes, \\(relationshipCount) relationships\")\n   232→            }\n   233→        }\n   234→    }\n   235→}\n   236→#endif\n   237→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:26:42.129076+00:00",
+          "type": "text",
+          "content": "Now I'll implement the DIContainer registration for all exercise-related components. Let me update the DIContainer.swift file:",
+          "phase": "coding",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:00.124560+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ./Bodii/App/DIContainer.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "./Bodii/App/DIContainer.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:00.145599+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "The file ./Bodii/App/DIContainer.swift has been updated successfully.",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:27:16.820944+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ./Bodii/App/DIContainer.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "./Bodii/App/DIContainer.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:16.908639+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "The file ./Bodii/App/DIContainer.swift has been updated successfully.",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:27:21.536814+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...Exercise/ViewModels/ExerciseListViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...Exercise/ViewModels/ExerciseListViewModel.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:21.553188+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "     1→//\n     2→//  ExerciseListViewModel.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: SwiftUI ViewModel with @Observable\n     9→// iOS 17+의 @Observable 매크로를 사용한 현대적인 MVVM 패턴\n    10→// 💡 Java 비교: Android의 ViewModel + LiveData와 유사하지만 더 간단\n    11→\n    12→import Foundation\n    13→import Observation\n    14→\n    15→/// 운동 목록 뷰 모델\n    16→///\n    17→/// 특정 날짜의 운동 기록 목록과 일일 집계를 관리합니다.\n    18→///\n    19→/// ## 책임\n    20→/// - 선택된 날짜의 운동 기록 조회\n    21→/// - 일일 운동 집계 정보 표시 (총 칼로리, 총 시간, 운동 횟수)\n    22→/// - 날짜 네비게이션 (이전/다음 날)\n    23→/// - 로딩 및 에러 상태 관리\n    24→///\n    25→/// ## 의존성\n    26→/// - GetExerciseRecordsUseCase: 운동 기록 조회\n    27→/// - DailyLogRepository: 일일 집계 조회\n    28→///\n    29→/// ## 사용 예시\n    30→/// ```swift\n    31→/// let viewModel = ExerciseListViewModel(\n    32→///     getExerciseRecordsUseCase: getExerciseRecordsUseCase,\n    33→///     dailyLogRepository: dailyLogRepository,\n    34→///     userId: user.id\n    35→/// )\n    36→///\n    37→/// // View에서 사용\n    38→/// List(viewModel.exerciseRecords) { record in\n    39→///     ExerciseCardView(record: record)\n    40→/// }\n    41→/// ```\n    42→@Observable\n    43→final class ExerciseListViewModel {\n    44→\n    45→    // MARK: - Properties\n    46→\n    47→    // 📚 학습 포인트: @Observable과 프로퍼티\n    48→    // @Observable 매크로는 자동으로 모든 프로퍼티를 관찰 가능하게 만듦\n    49→    // 💡 Java 비교: @Published (이전 SwiftUI) 또는 MutableLiveData와 유사\n    50→\n    51→    /// 현재 선택된 날짜\n    52→    var selectedDate: Date\n    53→\n    54→    /// 운동 기록 목록\n    55→    var exerciseRecords: [ExerciseRecord] = []\n    56→\n    57→    /// 일일 집계 정보\n    58→    var dailyLog: DailyLog?\n    59→\n    60→    /// 로딩 상태\n    61→    var isLoading: Bool = false\n    62→\n    63→    /// 에러 메시지\n    64→    var errorMessage: String?\n    65→\n    66→    // 📚 학습 포인트: Computed Property\n    67→    // 저장 공간 없이 계산되는 프로퍼티\n    68→    // 의존하는 프로퍼티가 변경되면 자동으로 재계산됨\n    69→\n    70→    /// 일일 총 소모 칼로리\n    71→    var totalCaloriesOut: Int32 {\n    72→        dailyLog?.totalCaloriesOut ?? 0\n    73→    }\n    74→\n    75→    /// 일일 총 운동 시간 (분)\n    76→    var exerciseMinutes: Int32 {\n    77→        dailyLog?.exerciseMinutes ?? 0\n    78→    }\n    79→\n    80→    /// 일일 운동 횟수\n    81→    var exerciseCount: Int16 {\n    82→        dailyLog?.exerciseCount ?? 0\n    83→    }\n    84→\n    85→    /// 운동 기록이 비어있는지 여부\n    86→    var isEmpty: Bool {\n    87→        exerciseRecords.isEmpty\n    88→    }\n    89→\n    90→    // 📚 학습 포인트: Private Dependencies\n    91→    // ViewModel은 UseCase에 의존하지만, View는 이를 알 필요 없음\n    92→    // 의존성 주입을 통해 테스트 가능성 향상\n    93→\n    94→    /// 운동 기록 조회 유스케이스\n    95→    private let getExerciseRecordsUseCase: GetExerciseRecordsUseCase\n    96→\n    97→    /// 일일 집계 저장소\n    98→    private let dailyLogRepository: DailyLogRepository\n    99→\n   100→    /// 사용자 ID\n   101→    private let userId: UUID\n   102→\n   103→    // MARK: - Initialization\n   104→\n   105→    /// ExerciseListViewModel 초기화\n   106→    ///\n   107→    /// - Parameters:\n   108→    ///   - getExerciseRecordsUseCase: 운동 기록 조회 유스케이스\n   109→    ///   - dailyLogRepository: 일일 집계 저장소\n   110→    ///   - userId: 사용자 ID\n   111→    ///   - selectedDate: 초기 선택 날짜 (기본값: 오늘)\n   112→    init(\n   113→        getExerciseRecordsUseCase: GetExerciseRecordsUseCase,\n   114→        dailyLogRepository: DailyLogRepository,\n   115→        userId: UUID,\n   116→        selectedDate: Date = Date()\n   117→    ) {\n   118→        self.getExerciseRecordsUseCase = getExerciseRecordsUseCase\n   119→        self.dailyLogRepository = dailyLogRepository\n   120→        self.userId = userId\n   121→        self.selectedDate = selectedDate\n   122→    }\n   123→\n   124→    // MARK: - Public Methods\n   125→\n   126→    /// 뷰가 나타날 때 호출\n   127→    ///\n   128→    /// 선택된 날짜의 운동 기록과 일일 집계를 로드합니다.\n   129→    ///\n   130→    /// - Example:\n   131→    /// ```swift\n   132→    /// .onAppear {\n   133→    ///     viewModel.onAppear()\n   134→    /// }\n   135→    /// ```\n   136→    @MainActor\n   137→    func onAppear() {\n   138→        Task {\n   139→            await loadData()\n   140→        }\n   141→    }\n   142→\n   143→    /// 선택된 날짜의 데이터를 로드합니다.\n   144→    ///\n   145→    /// ## 실행 순서\n   146→    /// 1. 로딩 상태 시작\n   147→    /// 2. 운동 기록 조회\n   148→    /// 3. 일일 집계 조회\n   149→    /// 4. 로딩 상태 종료\n   150→    ///\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:27:25.877477+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: deleteExerciseRecordUseCase",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: deleteExerciseRecordUseCase",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:26.216122+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "No matches found",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:27:30.396360+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: delete",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: delete",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:30.735866+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "No matches found",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:27:34.517132+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...Exercise/ViewModels/ExerciseListViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...Exercise/ViewModels/ExerciseListViewModel.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:34.533915+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "     1→//\n     2→//  ExerciseListViewModel.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: SwiftUI ViewModel with @Observable\n     9→// iOS 17+의 @Observable 매크로를 사용한 현대적인 MVVM 패턴\n    10→// 💡 Java 비교: Android의 ViewModel + LiveData와 유사하지만 더 간단\n    11→\n    12→import Foundation\n    13→import Observation\n    14→\n    15→/// 운동 목록 뷰 모델\n    16→///\n    17→/// 특정 날짜의 운동 기록 목록과 일일 집계를 관리합니다.\n    18→///\n    19→/// ## 책임\n    20→/// - 선택된 날짜의 운동 기록 조회\n    21→/// - 일일 운동 집계 정보 표시 (총 칼로리, 총 시간, 운동 횟수)\n    22→/// - 날짜 네비게이션 (이전/다음 날)\n    23→/// - 로딩 및 에러 상태 관리\n    24→///\n    25→/// ## 의존성\n    26→/// - GetExerciseRecordsUseCase: 운동 기록 조회\n    27→/// - DailyLogRepository: 일일 집계 조회\n    28→///\n    29→/// ## 사용 예시\n    30→/// ```swift\n    31→/// let viewModel = ExerciseListViewModel(\n    32→///     getExerciseRecordsUseCase: getExerciseRecordsUseCase,\n    33→///     dailyLogRepository: dailyLogRepository,\n    34→///     userId: user.id\n    35→/// )\n    36→///\n    37→/// // View에서 사용\n    38→/// List(viewModel.exerciseRecords) { record in\n    39→///     ExerciseCardView(record: record)\n    40→/// }\n    41→/// ```\n    42→@Observable\n    43→final class ExerciseListViewModel {\n    44→\n    45→    // MARK: - Properties\n    46→\n    47→    // 📚 학습 포인트: @Observable과 프로퍼티\n    48→    // @Observable 매크로는 자동으로 모든 프로퍼티를 관찰 가능하게 만듦\n    49→    // 💡 Java 비교: @Published (이전 SwiftUI) 또는 MutableLiveData와 유사\n    50→\n    51→    /// 현재 선택된 날짜\n    52→    var selectedDate: Date\n    53→\n    54→    /// 운동 기록 목록\n    55→    var exerciseRecords: [ExerciseRecord] = []\n    56→\n    57→    /// 일일 집계 정보\n    58→    var dailyLog: DailyLog?\n    59→\n    60→    /// 로딩 상태\n    61→    var isLoading: Bool = false\n    62→\n    63→    /// 에러 메시지\n    64→    var errorMessage: String?\n    65→\n    66→    // 📚 학습 포인트: Computed Property\n    67→    // 저장 공간 없이 계산되는 프로퍼티\n    68→    // 의존하는 프로퍼티가 변경되면 자동으로 재계산됨\n    69→\n    70→    /// 일일 총 소모 칼로리\n    71→    var totalCaloriesOut: Int32 {\n    72→        dailyLog?.totalCaloriesOut ?? 0\n    73→    }\n    74→\n    75→    /// 일일 총 운동 시간 (분)\n    76→    var exerciseMinutes: Int32 {\n    77→        dailyLog?.exerciseMinutes ?? 0\n    78→    }\n    79→\n    80→    /// 일일 운동 횟수\n    81→    var exerciseCount: Int16 {\n    82→        dailyLog?.exerciseCount ?? 0\n    83→    }\n    84→\n    85→    /// 운동 기록이 비어있는지 여부\n    86→    var isEmpty: Bool {\n    87→        exerciseRecords.isEmpty\n    88→    }\n    89→\n    90→    // 📚 학습 포인트: Private Dependencies\n    91→    // ViewModel은 UseCase에 의존하지만, View는 이를 알 필요 없음\n    92→    // 의존성 주입을 통해 테스트 가능성 향상\n    93→\n    94→    /// 운동 기록 조회 유스케이스\n    95→    private let getExerciseRecordsUseCase: GetExerciseRecordsUseCase\n    96→\n    97→    /// 일일 집계 저장소\n    98→    private let dailyLogRepository: DailyLogRepository\n    99→\n   100→    /// 사용자 ID\n   101→    private let userId: UUID\n   102→\n   103→    // MARK: - Initialization\n   104→\n   105→    /// ExerciseListViewModel 초기화\n   106→    ///\n   107→    /// - Parameters:\n   108→    ///   - getExerciseRecordsUseCase: 운동 기록 조회 유스케이스\n   109→    ///   - dailyLogRepository: 일일 집계 저장소\n   110→    ///   - userId: 사용자 ID\n   111→    ///   - selectedDate: 초기 선택 날짜 (기본값: 오늘)\n   112→    init(\n   113→        getExerciseRecordsUseCase: GetExerciseRecordsUseCase,\n   114→        dailyLogRepository: DailyLogRepository,\n   115→        userId: UUID,\n   116→        selectedDate: Date = Date()\n   117→    ) {\n   118→        self.getExerciseRecordsUseCase = getExerciseRecordsUseCase\n   119→        self.dailyLogRepository = dailyLogRepository\n   120→        self.userId = userId\n   121→        self.selectedDate = selectedDate\n   122→    }\n   123→\n   124→    // MARK: - Public Methods\n   125→\n   126→    /// 뷰가 나타날 때 호출\n   127→    ///\n   128→    /// 선택된 날짜의 운동 기록과 일일 집계를 로드합니다.\n   129→    ///\n   130→    /// - Example:\n   131→    /// ```swift\n   132→    /// .onAppear {\n   133→    ///     viewModel.onAppear()\n   134→    /// }\n   135→    /// ```\n   136→    @MainActor\n   137→    func onAppear() {\n   138→        Task {\n   139→            await loadData()\n   140→        }\n   141→    }\n   142→\n   143→    /// 선택된 날짜의 데이터를 로드합니다.\n   144→    ///\n   145→    /// ## 실행 순서\n   146→    /// 1. 로딩 상태 시작\n   147→    /// 2. 운동 기록 조회\n   148→    /// 3. 일일 집계 조회\n   149→    /// 4. 로딩 상태 종료\n   150→    ///\n   151→    /// - Note: 에러 발생 시 errorMessage에 메시지 저장\n   152→    @MainActor\n   153→    func loadData() async {\n   154→        isLoading = true\n   155→        errorMessage = nil\n   156→        defer { isLoading = false }\n   157→\n   158→        do {\n   159→            // 📚 학습 포인트: async/await 동시 실행\n   160→            // async let으로 두 작업을 병렬로 실행하여 성능 향상\n   161→            // 💡 Java 비교: CompletableFuture.allOf()와 유사\n   162→\n   163→            // 운동 기록과 일일 집계를 동시에 조회\n   164→            async let recordsTask = getExerciseRecordsUseCase.execute(\n   165→                forDate: selectedDate,\n   166→                userId: userId\n   167→            )\n   168→\n   169→            async let dailyLogTask = dailyLogRepository.fetch(\n   170→                for: selectedDate,\n   171→                userId: userId\n   172→            )\n   173→\n   174→            // 두 작업이 모두 완료될 때까지 대기\n   175→            let (records, log) = try await (recordsTask, dailyLogTask)\n   176→\n   177→            exerciseRecords = records\n   178→            dailyLog = log\n   179→\n   180→        } catch {\n   181→            // 📚 학습 포인트: Error Handling\n   182→            // Swift의 Error 프로토콜을 사용한 에러 처리\n   183→            // localizedDescription으로 사용자 친화적 메시지 제공\n   184→            errorMessage = \"운동 기록 조회 실패: \\(error.localizedDescription)\"\n   185→        }\n   186→    }\n   187→\n   188→    /// 이전 날짜로 이동합니다.\n   189→    ///\n   190→    /// 하루 전 날짜로 이동하고 데이터를 다시 로드합니다.\n   191→    ///\n   192→    /// - Example:\n   193→    /// ```swift\n   194→    /// Button(\"이전\", action: viewModel.goToPreviousDay)\n   195→    /// ```\n   196→    @MainActor\n   197→    func goToPreviousDay() {\n   198→        // 📚 학습 포인트: Calendar API\n   199→        // Swift의 Foundation 프레임워크에서 제공하는 날짜 계산\n   200→        // 💡 Java 비교: java.time.LocalDate.minusDays(1)과 유사\n   201→\n   202→        guard let previousDay = Calendar.current.date(\n   203→            byAdding: .day,\n   204→            value: -1,\n   205→            to: selectedDate\n   206→        ) else { return }\n   207→\n   208→        selectedDate = previousDay\n   209→\n   210→        Task {\n   211→            await loadData()\n   212→        }\n   213→    }\n   214→\n   215→    /// 다음 날짜로 이동합니다.\n   216→    ///\n   217→    /// 하루 후 날짜로 이동하고 데이터를 다시 로드합니다.\n   218→    ///\n   219→    /// - Example:\n   220→    /// ```swift\n   221→    /// Button(\"다음\", action: viewModel.goToNextDay)\n   222→    /// ```\n   223→    @MainActor\n   224→    func goToNextDay() {\n   225→        guard let nextDay = Calendar.current.date(\n   226→            byAdding: .day,\n   227→            value: 1,\n   228→            to: selectedDate\n   229→        ) else { return }\n   230→\n   231→        selectedDate = nextDay\n   232→\n   233→        Task {\n   234→            await loadData()\n   235→        }\n   236→    }\n   237→\n   238→    /// 특정 날짜로 이동합니다.\n   239→    ///\n   240→    /// - Parameter date: 이동할 날짜\n   241→    ///\n   242→    /// - Example:\n   243→    /// ```swift\n   244→    /// DatePicker(\"날짜 선택\", selection: Binding(\n   245→    ///     get: { viewModel.selectedDate },\n   246→    ///     set: { viewModel.selectDate($0) }\n   247→    /// ))\n   248→    /// ```\n   249→    @MainActor\n   250→    func selectDate(_ date: Date) {\n   251→        selectedDate = date\n   252→\n   253→        Task {\n   254→            await loadData()\n   255→        }\n   256→    }\n   257→\n   258→    /// 새로고침을 수행합니다.\n   259→    ///\n   260→    /// 현재 날짜의 데이터를 다시 로드합니다.\n   261→    ///\n   262→    /// - Example:\n   263→    /// ```swift\n   264→    /// .refreshable {\n   265→    ///     await viewModel.refresh()\n   266→    /// }\n   267→    /// ```\n   268→    @MainActor\n   269→    func refresh() async {\n   270→        await loadData()\n   271→    }\n   272→\n   273→    /// 에러 메시지를 지웁니다.\n   274→    ///\n   275→    /// 에러 알림을 닫을 때 호출합니다.\n   276→    ///\n   277→    /// - Example:\n   278→    /// ```swift\n   279→    /// .alert(\"오류\", isPresented: $viewModel.hasError) {\n   280→    ///     Button(\"확인\") { viewModel.clearError() }\n   281→    /// }\n   282→    /// ```\n   283→    func clearError() {\n   284→        errorMessage = nil\n   285→    }\n   286→\n   287→    /// 에러가 있는지 여부\n   288→    var hasError: Bool {\n   289→        errorMessage != nil\n   290→    }\n   291→}\n   292→\n   293→// MARK: - Date Formatting Helper\n   294→\n   295→extension ExerciseListViewModel {\n   296→\n   297→    /// 선택된 날짜를 표시용 문자열로 변환\n   298→    ///\n   299→    /// - Returns: \"2026년 1월 14일 (화)\" 형식의 문자열\n   300→    var formattedSelectedDate: String {\n   301→        // 📚 학습 포인트: DateFormatter\n   302→        // 날짜를 사용자 친화적인 문자열로 변환\n   303→        // 로케일(locale)에 따라 자동으로 형식 조정\n   304→\n   305→        let formatter = DateFormatter()\n   306→        formatter.locale = Locale(identifier: \"ko_KR\")\n   307→        formatter.dateFormat = \"yyyy년 M월 d일 (E)\"\n   308→        return formatter.string(from: selectedDate)\n   309→    }\n   310→\n   311→    /// 오늘 날짜인지 여부\n   312→    ///\n   313→    /// - Returns: 선택된 날짜가 오늘이면 true\n   314→    var isToday: Bool {\n   315→        Calendar.current.isDateInToday(selectedDate)\n   316→    }\n   317→\n   318→    /// 미래 날짜인지 여부\n   319→    ///\n   320→    /// - Returns: 선택된 날짜가 미래이면 true\n   321→    var isFuture: Bool {\n   322→        selectedDate > Date()\n   323→    }\n   324→}\n   325→\n   326→// MARK: - Learning Notes\n   327→\n   328→/// ## @Observable 매크로 (iOS 17+)\n   329→///\n   330→/// @Observable은 iOS 17에서 도입된 새로운 관찰 메커니즘입니다.\n   331→/// 이전의 ObservableObject + @Published를 대체하며 더 간단하고 효율적입니다.\n   332→///\n   333→/// ### 주요 차이점\n   334→///\n   335→/// **이전 방식 (ObservableObject)**:\n   336→/// ```swift\n   337→/// class ViewModel: ObservableObject {\n   338→///     @Published var records: [ExerciseRecord] = []\n   339→///     @Published var isLoading = false\n   340→/// }\n   341→/// ```\n   342→///\n   343→/// **새로운 방식 (@Observable)**:\n   344→/// ```swift\n   345→/// @Observable\n   346→/// class ViewModel {\n   347→///     var records: [ExerciseRecord] = []\n   348→///     var isLo\n\n... [truncated - full output was 12935 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:27:46.366967+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ./Bodii/App/DIContainer.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "./Bodii/App/DIContainer.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:46.398269+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "The file ./Bodii/App/DIContainer.swift has been updated successfully.",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:27:51.398807+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/App/DIContainer.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/App/DIContainer.swift",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:51.436820+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "     1→//\n     2→//  DIContainer.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-11.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Dependency Injection Container\n     9→// 앱 전체에서 사용되는 의존성들을 중앙에서 관리하는 컨테이너\n    10→// 💡 Java 비교: Dagger/Hilt의 Component와 유사한 역할\n    11→\n    12→import Foundation\n    13→\n    14→// MARK: - DI Container\n    15→\n    16→/// 의존성 주입 컨테이너\n    17→/// 📚 학습 포인트: Singleton Pattern\n    18→/// 앱 전역에서 단일 인스턴스를 통해 의존성에 접근\n    19→/// 💡 Java 비교: static getInstance() 패턴과 유사하지만 더 간결\n    20→final class DIContainer {\n    21→\n    22→    // MARK: - Singleton\n    23→\n    24→    /// 공유 인스턴스\n    25→    /// 📚 학습 포인트: static let\n    26→    /// Swift에서 싱글톤은 static let으로 간단히 구현\n    27→    /// Thread-safe하게 한 번만 초기화됨 (Swift 런타임 보장)\n    28→    static let shared = DIContainer()\n    29→\n    30→    // MARK: - Initialization\n    31→\n    32→    /// private init으로 외부 인스턴스화 방지\n    33→    /// 📚 학습 포인트: Access Control\n    34→    /// private init은 외부에서 new를 막아 싱글톤 보장\n    35→    /// 💡 Java 비교: private constructor와 동일\n    36→    private init() {}\n    37→\n    38→    // MARK: - Infrastructure\n    39→\n    40→    // 📚 학습 포인트: lazy var\n    41→    // 처음 접근할 때만 초기화되는 프로퍼티\n    42→    // 무거운 객체의 지연 초기화에 유용\n    43→    // 💡 Java 비교: Lazy initialization pattern\n    44→\n    45→    /// Persistence Controller (Core Data)\n    46→    /// ⚠️ 주의: PersistenceController는 별도로 shared 인스턴스 관리\n    47→\n    48→    // MARK: - Data Sources\n    49→\n    50→    /// 운동 기록 로컬 데이터 소스\n    51→    /// 📚 학습 포인트: lazy var\n    52→    /// 처음 접근할 때만 초기화되며, 이후에는 캐시된 인스턴스 반환\n    53→    lazy var exerciseRecordLocalDataSource: ExerciseRecordLocalDataSource = {\n    54→        ExerciseRecordLocalDataSource(context: PersistenceController.shared.viewContext)\n    55→    }()\n    56→\n    57→    /// 일일 기록 로컬 데이터 소스\n    58→    lazy var dailyLogLocalDataSource: DailyLogLocalDataSource = {\n    59→        DailyLogLocalDataSource(context: PersistenceController.shared.viewContext)\n    60→    }()\n    61→\n    62→    // TODO: Phase 2에서 추가 예정\n    63→    // - NetworkManager\n    64→    // - HealthKitManager\n    65→    // - FoodAPIDataSource\n    66→    // - GeminiAPIDataSource\n    67→\n    68→    // MARK: - Repositories\n    69→\n    70→    /// 운동 기록 저장소\n    71→    /// 📚 학습 포인트: Protocol을 타입으로 사용\n    72→    /// 테스트 시 Mock으로 교체 가능하도록 프로토콜 타입 사용\n    73→    /// 💡 Java 비교: Interface 타입으로 필드 선언하는 것과 동일\n    74→    lazy var exerciseRecordRepository: ExerciseRecordRepository = {\n    75→        ExerciseRecordRepositoryImpl(localDataSource: exerciseRecordLocalDataSource)\n    76→    }()\n    77→\n    78→    /// 일일 기록 저장소\n    79→    lazy var dailyLogRepository: DailyLogRepository = {\n    80→        DailyLogRepositoryImpl(localDataSource: dailyLogLocalDataSource)\n    81→    }()\n    82→\n    83→    // TODO: Phase 3에서 추가 예정\n    84→    // - UserRepository\n    85→    // - BodyRepository\n    86→    // - FoodRepository\n    87→    // - SleepRepository\n    88→    // - GoalRepository\n    89→\n    90→    // MARK: - Services\n    91→\n    92→    /// 일일 기록 관리 서비스\n    93→    /// 📚 학습 포인트: Service Layer\n    94→    /// Repository를 조합하여 복잡한 비즈니스 로직 처리\n    95→    lazy var dailyLogService: DailyLogService = {\n    96→        DailyLogService(repository: dailyLogRepository)\n    97→    }()\n    98→\n    99→    // 📚 학습 포인트: ExerciseCalcService는 enum이므로 등록 불필요\n   100→    // static 메서드만 있어서 인스턴스화할 필요 없음\n   101→    // 💡 Java 비교: Utility 클래스의 static 메서드와 유사\n   102→\n   103→    // MARK: - Use Cases\n   104→\n   105→    /// 운동 기록 추가 유스케이스\n   106→    /// 📚 학습 포인트: Use Case Pattern\n   107→    /// 단일 책임 원칙 - 하나의 Use Case는 하나의 비즈니스 액션만 담당\n   108→    lazy var addExerciseRecordUseCase: AddExerciseRecordUseCase = {\n   109→        AddExerciseRecordUseCase(\n   110→            exerciseRepository: exerciseRecordRepository,\n   111→            dailyLogService: dailyLogService\n   112→        )\n   113→    }()\n   114→\n   115→    /// 운동 기록 수정 유스케이스\n   116→    lazy var updateExerciseRecordUseCase: UpdateExerciseRecordUseCase = {\n   117→        UpdateExerciseRecordUseCase(\n   118→            exerciseRepository: exerciseRecordRepository,\n   119→            dailyLogService: dailyLogService\n   120→        )\n   121→    }()\n   122→\n   123→    /// 운동 기록 삭제 유스케이스\n   124→    lazy var deleteExerciseRecordUseCase: DeleteExerciseRecordUseCase = {\n   125→        DeleteExerciseRecordUseCase(\n   126→            exerciseRepository: exerciseRecordRepository,\n   127→            dailyLogService: dailyLogService\n   128→        )\n   129→    }()\n   130→\n   131→    /// 운동 기록 조회 유스케이스\n   132→    lazy var getExerciseRecordsUseCase: GetExerciseRecordsUseCase = {\n   133→        GetExerciseRecordsUseCase(exerciseRepository: exerciseRecordRepository)\n   134→    }()\n   135→\n   136→    // TODO: Phase 4에서 추가 예정\n   137→    // - CalculateBMRUseCase\n   138→    // - CalculateTDEEUseCase\n   139→    // - RecordBodyUseCase\n   140→    // - SearchFoodUseCase\n   141→    // - etc.\n   142→}\n   143→\n   144→// MARK: - Factory Methods\n   145→\n   146→extension DIContainer {\n   147→\n   148→    // 📚 학습 포인트: Factory Pattern\n   149→    // 의존성 생성 로직을 캡슐화\n   150→    // 테스트 시 Mock 객체로 교체 가능\n   151→\n   152→    // MARK: - Exercise ViewModels\n   153→\n   154→    /// 운동 목록 ViewModel 생성\n   155→    ///\n   156→    /// 📚 학습 포인트: Factory Method Pattern\n   157→    /// ViewModel 생성 시 필요한 모든 의존성을 주입\n   158→    /// 테스트 시 이 메서드만 오버라이드하면 Mock ViewModel 제공 가능\n   159→    ///\n   160→    /// - Parameter userId: 사용자 ID\n   161→    /// - Returns: 의존성이 주입된 ExerciseListViewModel\n   162→    ///\n   163→    /// - Example:\n   164→    /// ```swift\n   165→    /// let viewModel = DIContainer.shared.makeExerciseListViewModel(userId: user.id)\n   166→    /// ExerciseListView(viewModel: viewModel)\n   167→    /// ```\n   168→    func makeExerciseListViewModel(userId: UUID) -> ExerciseListViewModel {\n   169→        ExerciseListViewModel(\n   170→            getExerciseRecordsUseCase: getExerciseRecordsUseCase,\n   171→            dailyLogRepository: dailyLogRepository,\n   172→            userId: userId\n   173→        )\n   174→    }\n   175→\n   176→    /// 운동 입력 ViewModel 생성\n   177→    ///\n   178→    /// 📚 학습 포인트: 외부 파라미터가 많은 Factory Method\n   179→    /// ViewModel이 사용자별 데이터(체중, BMR, TDEE)를 필요로 할 때\n   180→    /// Factory Method로 깔끔하게 주입\n   181→    ///\n   182→    /// - Parameters:\n   183→    ///   - userId: 사용자 ID\n   184→    ///   - userWeight: 사용자 체중 (kg) - 칼로리 계산에 필요\n   185→    ///   - userBMR: 사용자 기초대사량 (kcal)\n   186→    ///   - userTDEE: 사용자 활동대사량 (kcal)\n   187→    /// - Returns: 의존성이 주입된 ExerciseInputViewModel\n   188→    ///\n   189→    /// - Example:\n   190→    /// ```swift\n   191→    /// let viewModel = DIContainer.shared.makeExerciseInputViewModel(\n   192→    ///     userId: user.id,\n   193→    ///     userWeight: user.currentWeight ?? 70.0,\n   194→    ///     userBMR: user.currentBMR ?? 1650,\n   195→    ///     userTDEE: user.currentTDEE ?? 2310\n   196→    /// )\n   197→    /// ExerciseInputView(viewModel: viewModel)\n   198→    /// ```\n   199→    func makeExerciseInputViewModel(\n   200→        userId: UUID,\n   201→        userWeight: Decimal,\n   202→        userBMR: Int32,\n   203→        userTDEE: Int32\n   204→    ) -> ExerciseInputViewModel {\n   205→        ExerciseInputViewModel(\n   206→            addExerciseRecordUseCase: addExerciseRecordUseCase,\n   207→            userId: userId,\n   208→            userWeight: userWeight,\n   209→            userBMR: userBMR,\n   210→            userTDEE: userTDEE\n   211→        )\n   212→    }\n   213→\n   214→    // TODO: 각 Feature 구현 시 Factory 메서드 추가\n   215→    // func makeOnboardingViewModel() -> OnboardingViewModel\n   216→    // func makeDashboardViewModel() -> DashboardViewModel\n   217→    // func makeBodyViewModel() -> BodyViewModel\n   218→}\n   219→\n   220→// MARK: - Testing Support\n   221→\n   222→#if DEBUG\n   223→extension DIContainer {\n   224→\n   225→    /// 테스트용 컨테이너 생성\n   226→    /// 📚 학습 포인트: #if DEBUG\n   227→    /// 디버그 빌드에서만 포함되는 코드\n   228→    /// 프로덕션 빌드 크기와 보안에 영향 없음\n   229→    /// 💡 Java 비교: BuildConfig.DEBUG 체크와 유사\n   230→    static func makeForTesting() -> DIContainer {\n   231→        return DIContainer()\n   232→    }\n   233→}\n   234→#endif\n   235→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:27:56.059043+00:00",
+          "type": "text",
+          "content": "Now let me verify the implementation by checking that all files compile properly:",
+          "phase": "coding",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:58.703075+00:00",
+          "type": "tool_start",
+          "content": "[Bash] xcodebuild -scheme Bodii -sdk iphonesimulator -...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "xcodebuild -scheme Bodii -sdk iphonesimulator -...",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:27:58.759971+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:28:06.454100+00:00",
+          "type": "text",
+          "content": "Let me verify the implementation by checking the files exist and reviewing the acceptance criteria:",
+          "phase": "coding",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:28:08.518857+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Data/DataSources/Local/ExerciseR...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Data/DataSources/Local/ExerciseR...",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:28:08.632853+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "-rw-r--r--@ 1 chacha  staff  21236 Jan 13 19:13 ./Bodii/Data/DataSources/Local/DailyLogLocalDataSource.swift\n-rw-r--r--@ 1 chacha  staff  18849 Jan 13 19:07 ./Bodii/Data/DataSources/Local/ExerciseRecordLocalDataSource.swift\n-rw-r--r--@ 1 chacha  staff   7918 Jan 13 19:14 ./Bodii/Data/Repositories/DailyLogRepositoryImpl.swift\n-rw-r--r--@ 1 chacha  staff   8932 Jan 13 19:09 ./Bodii/Data/Repositories/ExerciseRecordRepositoryImpl.swift\n-rw-r--r--@ 1 chacha  staff   9907 Jan 13 19:14 ./Bodii/Domain/Services/DailyLogService.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:28:12.184059+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Domain/UseCases/Exercise/*.swift...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Domain/UseCases/Exercise/*.swift...",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:28:13.066111+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "-rw-r--r--@ 1 chacha  staff   8774 Jan 13 19:18 ./Bodii/Domain/UseCases/Exercise/AddExerciseRecordUseCase.swift\n-rw-r--r--@ 1 chacha  staff   8058 Jan 14 11:51 ./Bodii/Domain/UseCases/Exercise/DeleteExerciseRecordUseCase.swift\n-rw-r--r--@ 1 chacha  staff  10223 Jan 14 11:54 ./Bodii/Domain/UseCases/Exercise/GetExerciseRecordsUseCase.swift\n-rw-r--r--@ 1 chacha  staff  12154 Jan 14 11:49 ./Bodii/Domain/UseCases/Exercise/UpdateExerciseRecordUseCase.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:28:17.582375+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Presentation/Features/Exercise/V...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Presentation/Features/Exercise/V...",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:28:18.707285+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "-rw-r--r--@ 1 chacha  staff  16207 Jan 14 12:10 ./Bodii/Presentation/Features/Exercise/ViewModels/ExerciseInputViewModel.swift\n-rw-r--r--@ 1 chacha  staff  11833 Jan 14 11:57 ./Bodii/Presentation/Features/Exercise/ViewModels/ExerciseListViewModel.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:28:26.972015+00:00",
+          "type": "text",
+          "content": "Excellent! All the files exist. Now let me verify the DIContainer implementation is complete by checking the acceptance criteria:",
+          "phase": "coding",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:28:28.301270+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: lazy var.*ExerciseRecordRepository|lazy var.*DailyLogService|lazy var.*ExerciseRecordUse...",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: lazy var.*ExerciseRecordRepository|lazy var.*DailyLogService|lazy var.*ExerciseRecordUse...",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:28:28.687038+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "74:    lazy var exerciseRecordRepository: ExerciseRecordRepository = {\n95:    lazy var dailyLogService: DailyLogService = {\n108:    lazy var addExerciseRecordUseCase: AddExerciseRecordUseCase = {\n116:    lazy var updateExerciseRecordUseCase: UpdateExerciseRecordUseCase = {\n124:    lazy var deleteExerciseRecordUseCase: DeleteExerciseRecordUseCase = {",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:28:32.670321+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: func make.*ViewModel",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: func make.*ViewModel",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:28:33.018735+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "5.1",
+          "session": 14,
+          "detail": "168:    func makeExerciseListViewModel(userId: UUID) -> ExerciseListViewModel {\n199:    func makeExerciseInputViewModel(\n215:    // func makeOnboardingViewModel() -> OnboardingViewModel\n216:    // func makeDashboardViewModel() -> DashboardViewModel\n217:    // func makeBodyViewModel() -> BodyViewModel",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T03:28:40.252918+00:00",
+          "type": "text",
+          "content": "Perfect! Let me verify all acceptance criteria are met:\n\n**Acceptance Criteria Check:**\n- ✅ **ExerciseCalcService registered**: It's an enum with static methods, so no instance registration needed (documented in code at line 99-101)\n- ✅ **ExerciseRecordRepository registered**: Line 74-76\n- ✅ **DailyLogService registered**: Line 95-97  \n- ✅ **All use cases registered**: \n  - AddExerciseRecordUseCase (line 108)\n  - UpdateExerciseRecordUseCase (line 116)\n  - DeleteExerciseRecordUseCase (line 124)\n  - GetExerciseRecordsUseCase (line 132)\n- ✅ **ViewModels can resolve dependencies**: Factory methods at lines 168-174 and 199-212\n\nNow let me commit the changes:",
+          "phase": "coding",
+          "subtask_id": "5.1",
+          "session": 14
+        },
+        {
+          "timestamp": "2026-01-14T03:28:41.122138+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git add -A && git diff --cached --stat",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git add -A && git diff --cached --stat",
+          "subtask_id": "5.1",
+          "session": 14
         }
       ]
     },
