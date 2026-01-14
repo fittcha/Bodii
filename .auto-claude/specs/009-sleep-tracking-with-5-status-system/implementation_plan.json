@@ -336,8 +336,9 @@
             "Bodii/App/ContentView.swift"
           ],
           "estimated_time": "30 min",
-          "status": "pending",
-          "notes": "Check shouldShowSleepPopup on app become active. Present SleepInputSheet as overlay."
+          "status": "completed",
+          "notes": "Successfully integrated sleep prompt check into app launch flow. Added makeSleepPromptManager factory method to DIContainer. Integrated SleepPromptManager into ContentView with @StateObject. Configured .sheet() modifier to display SleepInputSheet when shouldShowPrompt is true. Added .onAppear() to check prompt on app launch and .onChange(of: scenePhase) to check when app becomes active. Supports skip functionality with incrementSkipCount callback and force entry mode after 3 skips. Uses UserProfile.sample.id temporarily (TODO in Phase 7 for real user data). Sleep prompt automatically appears after 02:00 when no sleep record exists for today, on app launch or when returning from background.",
+          "updated_at": "2026-01-14T12:54:09.758486+00:00"
         },
         {
           "id": "5.3",
@@ -347,8 +348,9 @@
             "Bodii/Presentation/Features/Dashboard/DashboardView.swift"
           ],
           "estimated_time": "25 min",
-          "status": "pending",
-          "notes": "Add sleep card showing today's duration and status. Link to SleepTabView."
+          "status": "completed",
+          "notes": "Successfully added sleep status display to the main dashboard. Created SleepDisplayCard component following MetabolismDisplayCard pattern. Key features: displays today's sleep duration and status badge, loading state support, empty state with guidance message, tap to navigate to sleep tab, 02:00 boundary logic via repository, pull-to-refresh integration. Updated DashboardView to inject sleepRepository, load today's sleep on appear, and display sleep card. Updated ContentView to pass sleepRepository and onNavigateToSleep callback. The sleep card now appears on the dashboard between the metabolism card and placeholder cards, with full navigation to the sleep tab when tapped.",
+          "updated_at": "2026-01-14T12:57:44.729375+00:00"
         },
         {
           "id": "5.4",
@@ -358,8 +360,9 @@
             "Bodii/App/ContentView.swift"
           ],
           "estimated_time": "15 min",
-          "status": "pending",
-          "notes": "Add tab item or navigation link to SleepTabView"
+          "status": "completed",
+          "notes": "Successfully integrated Sleep tab into main app navigation. Replaced PlaceholderView with SleepTabView in ContentView. The Sleep tab now provides full sleep tracking functionality with segmented control for switching between History and Trends views. Implementation follows existing patterns from bodyTab and integrates seamlessly with DIContainer for ViewModel creation and dependency injection. Users can now access sleep tracking from the main tab bar.",
+          "updated_at": "2026-01-14T12:59:53.258009+00:00"
         }
       ]
     },
@@ -477,5 +480,5 @@
     "issues": "",
     "tests_passed": ""
   },
-  "last_updated": "2026-01-14T12:51:23.138000+00:00"
+  "last_updated": "2026-01-14T12:59:53.258017+00:00"
 }

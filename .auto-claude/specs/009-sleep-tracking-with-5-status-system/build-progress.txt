@@ -192,3 +192,74 @@
 
 **Commit:** f720bcf
 
+## 2026-01-14 - Subtask 5.3 Completed ✅
+
+### Task: Display today's sleep status on the main dashboard
+
+**Status:** ✅ Completed
+
+**Implementation Details:**
+- Created `SleepDisplayCard.swift` following MetabolismDisplayCard pattern
+- Reusable card component for displaying sleep data on dashboard
+- Key Features:
+  * Displays sleep duration in hours:minutes format
+  * Shows sleep status badge with color-coded quality indicator
+  * Three states: loading, empty (no data), data present
+  * Tap gesture to navigate to sleep tab
+  * Date display for record context
+  * Adaptive colors for light/dark mode
+  * Comprehensive Korean documentation (600+ lines)
+- Updated `DashboardView.swift` to integrate sleep card:
+  * Added sleepRepository property via dependency injection
+  * Added todaysSleep and isSleepLoading state variables
+  * Added onNavigateToSleep callback for tab navigation
+  * Updated init() to accept sleep repository and navigation callback
+  * Created sleepCard computed property with section header
+  * Implemented loadTodaysSleep() async method
+  * Uses repository.fetch(for:) with automatic 02:00 boundary logic
+  * Silent error handling (nil on failure, shows empty state)
+  * Integrated sleep data loading in .task modifier on appear
+  * Updated refreshData() to refresh sleep data on pull-to-refresh
+  * Removed sleep card from placeholder cards (now implemented)
+- Updated `ContentView.swift` to pass dependencies:
+  * Get sleepRepository from DIContainer.shared
+  * Pass sleepRepository to DashboardView
+  * Add onNavigateToSleep callback that sets selectedTab = .sleep
+  * Enables tapping sleep card to view full sleep history
+
+**Files Created:**
+- Bodii/Presentation/Components/Cards/SleepDisplayCard.swift
+
+**Files Modified:**
+- Bodii/Presentation/Features/Dashboard/DashboardView.swift
+- Bodii/App/ContentView.swift
+
+**UI/UX Highlights:**
+- Clean, consistent card design matching metabolism card style
+- Section header with title "수면 기록" and subtitle "수면 시간 및 품질"
+- Sleep duration with bed icon and large bold text
+- Sleep status badge with quality indicator
+- Date display with calendar icon
+- Empty state guides users to record sleep
+- Loading state with progress indicator
+- Tap anywhere on card to navigate to sleep tab
+- Pull-to-refresh support
+- Seamless integration with existing dashboard layout
+
+**Architecture Benefits:**
+- Repository pattern for data access abstraction
+- Dependency injection for testability
+- 02:00 boundary logic handled automatically by repository
+- Silent error handling appropriate for dashboard context
+- Separation of concerns: View, Repository, Navigation
+- Reusable SleepDisplayCard component for future use
+
+**Next Steps:**
+- Task 5.4: Add Sleep tab to main navigation (replace placeholder)
+- Phase 6: Testing & Polish
+  - Write unit tests for components
+  - Add accessibility labels
+  - Final review and documentation
+
+**Commit:** 91c661e
+

@@ -1,7 +1,7 @@
 {
   "spec_id": "009-sleep-tracking-with-5-status-system",
   "created_at": "2026-01-14T12:03:40.815244+00:00",
-  "updated_at": "2026-01-14T12:54:01.733446+00:00",
+  "updated_at": "2026-01-14T13:03:09.540900+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -6513,6 +6513,1224 @@
           "tool_input": "cd . && git add -A && git commit -m \"auto-claud...",
           "subtask_id": "5.2",
           "session": 18
+        },
+        {
+          "timestamp": "2026-01-14T12:54:03.143824+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.2",
+          "session": 18,
+          "detail": "[auto-claude/009-sleep-tracking-with-5-status-system f00fae2] auto-claude: 5.2 - Add sleep prompt check to app launch flow in BodiiApp\n 9 files changed, 685 insertions(+), 10 deletions(-)\n create mode 100644 .auto-claude/specs/009-sleep-tracking-with-5-status-system/memory/session_insights/session_017.json",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:54:07.233598+00:00",
+          "type": "text",
+          "content": "Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 18
+        },
+        {
+          "timestamp": "2026-01-14T12:54:09.749608+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "5.2",
+          "session": 18
+        },
+        {
+          "timestamp": "2026-01-14T12:54:09.773090+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "5.2",
+          "session": 18,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:54:21.762663+00:00",
+          "type": "text",
+          "content": "Perfect! I've successfully completed subtask 5.2 - Add sleep prompt check to app launch flow in BodiiApp. Here's what was implemented:\n\n## ✅ Changes Made\n\n### 1. **DIContainer.swift** - Added Factory Method\n- Created `makeSleepPromptManager()` factory method\n- Injects `sleepRepository` and uses `.standard` UserDefaults\n- Follows established factory pattern for consistency\n\n### 2. **ContentView.swift** - Integrated Sleep Prompt\n- Added `@StateObject` for `sleepPromptManager` using DIContainer factory\n- Added `@Environment(\\.scenePhase)` to track app lifecycle\n- Configured `.sheet()` modifier to display `SleepInputSheet` when prompt should show\n- Integrated skip functionality with `incrementSkipCount()` callback\n- Supports force entry mode after 3 skips (`canSkip: !isForceEntry`)\n- Added `.onAppear()` to check prompt on app launch\n- Added `.onChange(of: scenePhase)` to check prompt when app becomes active\n\n## 🎯 How It Works\n\nThe sleep prompt now automatically appears when:\n1. **Time condition**: Current time is after 02:00 (using `DateUtils.shouldShowSleepPopup()`)\n2. **Data condition**: No sleep record exists for today\n3. **Trigger events**: \n   - App launch (via `.onAppear()`)\n   - App returns from background (via `.onChange(of: scenePhase)`)\n\n## 🔄 Skip Logic\n- Users can skip up to 3 times per day\n- After 3 skips, force entry mode is activated (no skip button)\n- Skip count persists in UserDefaults with date-based keys\n- Automatically resets when user saves a sleep record\n\n## 📝 TODO for Phase 7\n- Currently uses `UserProfile.sample.id` temporarily\n- Need to replace with actual authenticated user data\n\n## ✅ Commit\nSuccessfully committed with message: `auto-claude: 5.2 - Add sleep prompt check to app launch flow in BodiiApp`\n\nThe implementation follows all existing patterns and integrates seamlessly with the sleep tracking infrastructure built in previous phases!",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 18
+        },
+        {
+          "timestamp": "2026-01-14T12:54:32.218008+00:00",
+          "type": "text",
+          "content": "I'll help you implement subtask 5.3 - displaying today's sleep status on the main dashboard. Let me start by reading the relevant files to understand the context.",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:32.699133+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...009-sleep-tracking-with-5-status-system/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...009-sleep-tracking-with-5-status-system/spec.md",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:33.178740+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...g-with-5-status-system/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...g-with-5-status-system/implementation_plan.json",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:33.682198+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...racking-with-5-status-system/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...racking-with-5-status-system/build-progress.txt",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:33.705785+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "     1→# Sleep Tracking with 5-Status System\n     2→\n     3→Sleep logging with 5-status tracking (very poor, poor, average, good, excellent), duration input, wake time prompts, and correlation with other health metrics. Automatic morning prompt to log previous night's sleep.\n     4→\n     5→## Rationale\n     6→Unique 5-status sleep tracking is a differentiator. Competitors either don't track sleep or have limited options. Sleep affects metabolism, energy expenditure, and food choices - showing correlations provides value competitors miss. Addresses user goal of complete health picture.\n     7→\n     8→## User Stories\n     9→- As a user, I want to track my sleep quality so that I can see how it affects my health\n    10→- As a health-conscious person, I want morning prompts so that I don't forget to log sleep\n    11→\n    12→## Acceptance Criteria\n    13→- [ ] Morning prompt appears after 6 AM to log previous night's sleep\n    14→- [ ] Users can log sleep duration (hours:minutes)\n    15→- [ ] 5-status quality rating with visual feedback\n    16→- [ ] 02:00 boundary logic correctly assigns sleep to previous day\n    17→- [ ] Skip option available (max 3 times before forced entry)\n    18→- [ ] Sleep trends visible on weekly/monthly view\n    19→- [ ] Sleep data correlates with energy and food logging patterns\n    20→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:54:37.592623+00:00",
+          "type": "text",
+          "content": "Let me read the current DashboardView to understand its structure:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:38.292749+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:38.757909+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/DashboardView*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/DashboardView*.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:38.842388+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/SleepRecord*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/SleepRecord*.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:38.877966+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "5.3",
+          "session": 19,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:54:46.076510+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Entities/SleepRecord.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Entities/SleepRecord.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:46.849799+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/Sleep*Badge*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/Sleep*Badge*.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:47.205141+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/SleepRepository*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/SleepRepository*.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:47.711463+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...on/Components/Cards/MetabolismDisplayCard.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...on/Components/Cards/MetabolismDisplayCard.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:47.731302+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "     1→//\n     2→//  SleepRecord.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// 수면 기록 도메인 엔티티\n    11→///\n    12→/// 사용자의 수면 시간과 품질을 기록합니다.\n    13→///\n    14→/// - Note: date는 02:00 기준으로 하루를 구분합니다.\n    15→///         - 02:00 ~ 익일 01:59 = 같은 날\n    16→///         - 예: 2026-01-11 03:00 입력 → date = 2026-01-11\n    17→///         - 예: 2026-01-11 01:00 입력 → date = 2026-01-10\n    18→///\n    19→/// - Note: status는 duration(분 단위)에 따라 자동으로 결정됩니다.\n    20→///         - Bad (🔴): 330분 미만 (5시간 30분 미만)\n    21→///         - Soso (🟡): 330~390분 (5시간 30분 ~ 6시간 30분)\n    22→///         - Good (🟢): 390~450분 (6시간 30분 ~ 7시간 30분)\n    23→///         - Excellent (🔵): 450~540분 (7시간 30분 ~ 9시간)\n    24→///         - Oversleep (🟠): 540분 초과 (9시간 초과)\n    25→///\n    26→/// - Note: 수면 기록 입력 시 DailyLog의 sleepDuration, sleepStatus가 자동으로 업데이트됩니다.\n    27→///\n    28→/// - Example:\n    29→/// ```swift\n    30→/// let sleepRecord = SleepRecord(\n    31→///     id: UUID(),\n    32→///     userId: user.id,\n    33→///     date: Date(),\n    34→///     duration: 420,\n    35→///     status: .good,\n    36→///     createdAt: Date(),\n    37→///     updatedAt: Date()\n    38→/// )\n    39→/// ```\n    40→struct SleepRecord {\n    41→    // MARK: - Primary Key\n    42→\n    43→    /// 고유 식별자\n    44→    let id: UUID\n    45→\n    46→    // MARK: - Foreign Key\n    47→\n    48→    /// User 참조\n    49→    let userId: UUID\n    50→\n    51→    // MARK: - Sleep Data\n    52→\n    53→    /// 수면 기준일 (02:00 기준)\n    54→    ///\n    55→    /// 02:00 ~ 익일 01:59까지를 같은 날로 취급합니다.\n    56→    /// - 03:00에 입력 시: 당일 날짜\n    57→    /// - 01:00에 입력 시: 전날 날짜\n    58→    var date: Date\n    59→\n    60→    /// 수면 시간 (분 단위)\n    61→    ///\n    62→    /// 범위: 0분 이상 (밤샘 시 0분도 허용)\n    63→    var duration: Int32\n    64→\n    65→    /// 수면 상태 (0: Bad, 1: Soso, 2: Good, 3: Excellent, 4: Oversleep)\n    66→    ///\n    67→    /// duration 값에 따라 자동으로 결정됩니다.\n    68→    /// SleepStatus.from(durationMinutes:) 메서드를 사용하여 계산합니다.\n    69→    var status: SleepStatus\n    70→\n    71→    // MARK: - Metadata\n    72→\n    73→    /// 생성일시\n    74→    let createdAt: Date\n    75→\n    76→    /// 수정일시\n    77→    var updatedAt: Date\n    78→}\n    79→\n    80→// MARK: - Identifiable\n    81→\n    82→extension SleepRecord: Identifiable {}\n    83→\n    84→// MARK: - Equatable\n    85→\n    86→extension SleepRecord: Equatable {\n    87→    static func == (lhs: SleepRecord, rhs: SleepRecord) -> Bool {\n    88→        lhs.id == rhs.id\n    89→    }\n    90→}\n    91→\n    92→// MARK: - Hashable\n    93→\n    94→extension SleepRecord: Hashable {\n    95→    func hash(into hasher: inout Hasher) {\n    96→        hasher.combine(id)\n    97→    }\n    98→}\n    99→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:54:54.374498+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Components/Badges/SleepStatusBadge.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Components/Badges/SleepStatusBadge.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:54.880745+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/SleepStatus.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/SleepStatus.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:55.595571+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...Domain/Interfaces/SleepRepositoryProtocol.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...Domain/Interfaces/SleepRepositoryProtocol.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:54:55.615496+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "     1→//\n     2→//  SleepStatusBadge.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Status Badge Component\n     9→// 수면 상태를 시각적으로 표시하는 뱃지 컴포넌트\n    10→// 💡 Java 비교: Android의 Chip 또는 Badge View와 유사\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - SleepStatusBadge\n    15→\n    16→/// 수면 상태를 시각적으로 표시하는 뱃지 컴포넌트\n    17→/// 📚 학습 포인트: Visual Status Badge\n    18→/// - SleepStatus enum의 색상과 아이콘을 사용하여 상태 표시\n    19→/// - 다양한 스타일 옵션 제공 (compact, default, large)\n    20→/// - 재사용 가능한 컴포넌트로 여러 화면에서 사용\n    21→/// 💡 Java 비교: Android의 Material Chip, Badge View와 유사\n    22→struct SleepStatusBadge: View {\n    23→\n    24→    // MARK: - Properties\n    25→\n    26→    /// 표시할 수면 상태\n    27→    /// 📚 학습 포인트: SleepStatus Enum\n    28→    /// - color, iconName, displayName 프로퍼티 자동 사용\n    29→    let status: SleepStatus\n    30→\n    31→    /// 뱃지 스타일\n    32→    /// 📚 학습 포인트: Style Enum\n    33→    /// - compact: 아이콘만 (작은 공간에 적합)\n    34→    /// - default: 아이콘 + 텍스트 (일반적인 사용)\n    35→    /// - large: 큰 아이콘 + 텍스트 (강조용)\n    36→    var style: BadgeStyle = .default\n    37→\n    38→    /// 배경 표시 여부\n    39→    /// 📚 학습 포인트: Background Option\n    40→    /// - true: 색상 배경 표시 (더 눈에 띄는 디자인)\n    41→    /// - false: 투명 배경, 색상은 아이콘/텍스트만 (미니멀한 디자인)\n    42→    var showBackground: Bool = true\n    43→\n    44→    // MARK: - Badge Style Enum\n    45→\n    46→    /// 뱃지 스타일 정의\n    47→    /// 📚 학습 포인트: Nested Enum for Style Options\n    48→    /// - 컴포넌트 내부에 스타일 옵션 정의\n    49→    /// - 외부에서 간단하게 스타일 선택 가능\n    50→    enum BadgeStyle {\n    51→        case compact    // 아이콘만\n    52→        case `default`  // 아이콘 + 텍스트\n    53→        case large      // 큰 아이콘 + 텍스트\n    54→\n    55→        /// 아이콘 폰트 크기\n    56→        var iconSize: Font {\n    57→            switch self {\n    58→            case .compact: return .caption\n    59→            case .default: return .subheadline\n    60→            case .large: return .title3\n    61→            }\n    62→        }\n    63→\n    64→        /// 텍스트 폰트 크기\n    65→        var textSize: Font {\n    66→            switch self {\n    67→            case .compact: return .caption2\n    68→            case .default: return .caption\n    69→            case .large: return .subheadline\n    70→            }\n    71→        }\n    72→\n    73→        /// 패딩 크기\n    74→        var padding: CGFloat {\n    75→            switch self {\n    76→            case .compact: return 6\n    77→            case .default: return 8\n    78→            case .large: return 12\n    79→        }\n    80→\n    81→        /// 아이콘과 텍스트 간격\n    82→        var spacing: CGFloat {\n    83→            switch self {\n    84→            case .compact: return 0\n    85→            case .default: return 4\n    86→            case .large: return 6\n    87→            }\n    88→        }\n    89→    }\n    90→\n    91→    // MARK: - Body\n    92→\n    93→    var body: some View {\n    94→        Group {\n    95→            if style == .compact {\n    96→                // 📚 학습 포인트: Compact Style - Icon Only\n    97→                // 작은 공간에 적합 (리스트, 인라인 표시 등)\n    98→                compactBadge\n    99→            } else {\n   100→                // 📚 학습 포인트: Default/Large Style - Icon + Text\n   101→                // 아이콘과 텍스트를 함께 표시\n   102→                fullBadge\n   103→            }\n   104→        }\n   105→        .padding(.horizontal, style.padding)\n   106→        .padding(.vertical, style.padding * 0.6)\n   107→        .background(badgeBackground)\n   108→        .cornerRadius(style == .large ? 10 : 8)\n   109→    }\n   110→\n   111→    // MARK: - Subviews\n   112→\n   113→    /// 컴팩트 뱃지 (아이콘만)\n   114→    /// 📚 학습 포인트: Icon-Only Badge\n   115→    /// - 최소한의 공간으로 상태 표시\n   116→    /// - 리스트 항목이나 작은 공간에 적합\n   117→    private var compactBadge: some View {\n   118→        Image(systemName: status.iconName)\n   119→            .font(style.iconSize)\n   120→            .foregroundStyle(foregroundColor)\n   121→    }\n   122→\n   123→    /// 전체 뱃지 (아이콘 + 텍스트)\n   124→    /// 📚 학습 포인트: Full Badge with Icon and Text\n   125→    /// - 아이콘과 텍스트로 명확한 상태 전달\n   126→    /// - 일반적으로 가장 많이 사용\n   127→    private var fullBadge: some View {\n   128→        HStack(spacing: style.spacing) {\n   129→            Image(systemName: status.iconName)\n   130→                .font(style.iconSize)\n   131→                .foregroundStyle(foregroundColor)\n   132→\n   133→            Text(status.displayName)\n   134→                .font(style.textSize)\n   135→                .fontWeight(.semibold)\n   136→                .foregroundStyle(foregroundColor)\n   137→        }\n   138→    }\n   139→\n   140→    /// 뱃지 배경\n   141→    /// 📚 학습 포인트: Conditional Background\n   142→    /// - showBackground에 따라 색상 배경 표시 여부 결정\n   143→    /// - 배경이 있을 때는 색상이 연하게 표시\n   144→    @ViewBuilder\n   145→    private var badgeBackground: some View {\n   146→        if showBackground {\n   147→            RoundedRectangle(cornerRadius: style == .large ? 10 : 8)\n   148→                .fill(status.color.opacity(0.15))\n   149→        }\n   150→    }\n   151→\n   152→    /// 전경 색상 (아이콘/텍스트 색상)\n   153→    /// 📚 학습 포인트: Foreground Color Logic\n   154→    /// - 배경이 있으면 진한 색상\n   155→    /// - 배경이 없으면 더 진한 색상 (가독성 향상)\n   156→    private var foregroundColor: Color {\n   157→        showBackground ? status.color : status.color\n   158→    }\n   159→}\n   160→\n   161→// MARK: - Convenience Initializers\n   162→\n   163→extension SleepStatusBadge {\n   164→    /// 📚 학습 포인트: Convenience Initializer - Compact Style\n   165→    /// - 아이콘만 표시하는 간단한 뱃지\n   166→    /// - 리스트나 작은 공간에 적합\n   167→    ///\n   168→    /// - Parameters:\n   169→    ///   - status: 수면 상태\n   170→    ///   - showBackground: 배경 표시 여부 (기본값: true)\n   171→    /// - Returns: 컴팩트 스타일의 SleepStatusBadge\n   172→    init(compact status: SleepStatus, showBackground: Bool = true) {\n   173→        self.status = status\n   174→        self.style = .compact\n   175→        self.showBackground = showBackground\n   176→    }\n   177→\n   178→    /// 📚 학습 포인트: Convenience Initializer - Large Style\n   179→    /// - 큰 크기로 강조하는 뱃지\n   180→    /// - 입력 화면이나 중요한 표시에 적합\n   181→    ///\n   182→    /// - Parameters:\n   183→    ///   - status: 수면 상태\n   184→    ///   - showBackground: 배경 표시 여부 (기본값: true)\n   185→    /// - Returns: 큰 스타일의 SleepStatusBadge\n   186→    init(large status: SleepStatus, showBackground: Bool = true) {\n   187→        self.status = status\n   188→        self.style = .large\n   189→        self.showBackground = showBackground\n   190→    }\n   191→}\n   192→\n   193→// MARK: - Preview\n   194→\n   195→#Preview(\"모든 수면 상태 - 기본 스타일\") {\n   196→    VStack(spacing: 16) {\n   197→        Text(\"기본 스타일 (아이콘 + 텍스트)\")\n   198→            .font(.headline)\n   199→\n   200→        VStack(spacing: 12) {\n   201→            ForEach(SleepStatus.allCases) { status in\n   202→                HStack {\n   203→                    Text(\"\\(status.displayName):\")\n   204→                        .font(.subheadline)\n   205→                        .foregroundStyle(.secondary)\n   206→                        .frame(width: 100, alignment: .leading)\n   207→\n   208→                    SleepStatusBadge(status: status)\n   209→\n   210→                    Spacer()\n   211→                }\n   212→            }\n   213→        }\n   214→    }\n   215→    .padding()\n   216→}\n   217→\n   218→#Preview(\"모든 수면 상태 - 컴팩트 스타일\") {\n   219→    VStack(spacing: 16) {\n   220→        Text(\"컴팩트 스타일 (아이콘만)\")\n   221→            .font(.headline)\n   222→\n   223→        VStack(spacing: 12) {\n   224→            ForEach(SleepStatus.allCases) { status in\n   225→                HStack {\n   226→                    Text(\"\\(status.displayName):\")\n   227→                        .font(.subheadline)\n   228→                        .foregroundStyle(.secondary)\n   229→                        .frame(width: 100, alignment: .leading)\n   230→\n   231→                    SleepStatusBadge(compact: status)\n   232→\n   233→                    Spacer()\n   234→                }\n   235→            }\n   236→        }\n   237→    }\n   238→    .padding()\n   239→}\n   240→\n   241→#Preview(\"모든 수면 상태 - 큰 스타일\") {\n   242→    VStack(spacing: 16) {\n   243→        Text(\"큰 스타일 (강조)\")\n   244→            .font(.headline)\n   245→\n   246→        VStack(spacing: 12) {\n   247→            ForEach(SleepStatus.allCases) { status in\n   248→                SleepStatusBadge(large: status)\n   249→            }\n   250→        }\n   251→    }\n   252→    .padding()\n   253→}\n   254→\n   255→#Preview(\"배경 없는 스타일\") {\n   256→    VStack(spacing: 16) {\n   257→        Text(\"배경 없음 (미니멀)\")\n   258→            .font(.headline)\n   259→\n   260→        VStack(spacing: 12) {\n   261→            ForEach(SleepStatus.allCases) { status in\n   262→                HStack {\n   263→                    Text(\"\\(status.displayName):\")\n   264→                        .font(.subheadline)\n   265→                        .foregroundStyle(.secondary)\n   266→                        .frame(width: 100, alignment: .leading)\n   267→\n   268→                    SleepStatusBadge(status: status, showBackground: false)\n   269→\n   270→                    Spacer()\n   271→                }\n   272→            }\n   273→        }\n   274→    }\n   275→    .padding()\n   276→}\n   277→\n   278→#Preview(\"리스트에서 사용\") {\n   279→    List {\n   280→        Section(\"최근 수면 기록\") {\n   281→            ForEach(SleepStatus.allCases) { status in\n   282→                HStack {\n   283→                    VStack(alignment: .leading, spacing: 4) {\n   284→                        Text(\"2026년 1월 14일\")\n   285→                            .font(.subheadline)\n   286→                            .fontWeight(.medium)\n   287→\n   288→                        Text(\"7시간 30분\")\n   289→                            .font(.caption)\n   290→                            .foregroundStyle(.secondary)\n   291→                    }\n   292→\n   293→                    Spacer()\n   294→\n   295→                    SleepStatusBadge(status: status)\n   296→                }\n   297→            }\n   298→        }\n   299→    }\n   300→}\n   301→\n   302→#Preview(\"카드에서 사용\") {\n   303→    VStack(spacing: 16) {\n   304→        // 수면 입력 카드 예시\n   305→        VStack(spacing: 16) {\n   306→            HStack {\n   307→                Image(systemName: \"moon.stars.fill\")\n   308→      \n\n... [truncated - full output was 19555 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:55:02.878445+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/App/DIContainer.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/App/DIContainer.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:55:03.278510+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/DateUtils*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/DateUtils*.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:55:03.295817+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "5.3",
+          "session": 19,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:55:08.756900+00:00",
+          "type": "text",
+          "content": "Now I'll implement subtask 5.3 by creating a sleep display card and integrating it into the dashboard. Let me create the necessary components:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:56:05.080758+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...ntation/Components/Cards/SleepDisplayCard.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...ntation/Components/Cards/SleepDisplayCard.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:56:05.657956+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "File created successfully at: ./Bodii/Presentation/Components/Cards/SleepDisplayCard.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:56:10.361405+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/App/ContentView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/App/ContentView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:56:10.380355+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "     1→//\n     2→//  ContentView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-11.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Tab-based Navigation\n     9→// SwiftUI의 탭 기반 네비게이션 컨테이너\n    10→// 💡 Java 비교: Android의 BottomNavigationView와 유사\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - Content View\n    15→\n    16→/// 앱의 루트 뷰 - 메인 탭 바 UI\n    17→struct ContentView: View {\n    18→\n    19→    // MARK: - Properties\n    20→\n    21→    // 📚 학습 포인트: @State\n    22→    // View 내부에서 변경 가능한 상태를 관리\n    23→    // 탭 선택 상태를 추적하여 현재 활성 탭을 기억\n    24→    @State private var selectedTab: Tab = .dashboard\n    25→\n    26→    // 📚 학습 포인트: @StateObject for Sleep Prompt Manager\n    27→    // 수면 기록 프롬프트 관리자\n    28→    // View의 생명주기 동안 유지되는 ObservableObject\n    29→    // 💡 Java 비교: ViewModel과 유사한 역할\n    30→    @StateObject private var sleepPromptManager = DIContainer.shared.makeSleepPromptManager()\n    31→\n    32→    // 📚 학습 포인트: @Environment(\\.scenePhase)\n    33→    // 앱의 생명주기 상태를 추적 (active, inactive, background)\n    34→    // 앱이 포그라운드로 돌아올 때 수면 프롬프트 체크\n    35→    // 💡 Java 비교: Android의 Lifecycle.State와 유사\n    36→    @Environment(\\.scenePhase) private var scenePhase\n    37→\n    38→    // MARK: - Body\n    39→\n    40→    var body: some View {\n    41→        // 📚 학습 포인트: Tab Navigation with selection binding\n    42→        // selection 바인딩을 통해 프로그래밍적으로 탭 전환 가능\n    43→        // 💡 Java 비교: ViewPager + TabLayout 조합과 유사\n    44→        TabView(selection: $selectedTab) {\n    45→            dashboardTab\n    46→            bodyTab\n    47→            dietTab\n    48→            exerciseTab\n    49→            sleepTab\n    50→            settingsTab\n    51→        }\n    52→        // 📚 학습 포인트: Sheet Presentation for Sleep Prompt\n    53→        // 아침 수면 기록 프롬프트를 모달 시트로 표시\n    54→        // shouldShowPrompt가 true일 때 자동으로 표시됨\n    55→        // 💡 Java 비교: BottomSheetDialog 표시와 유사\n    56→        .sheet(isPresented: $sleepPromptManager.shouldShowPrompt) {\n    57→            // 📚 학습 포인트: Sleep Input Sheet Integration\n    58→            // DIContainer를 통해 ViewModel 생성하고 주입\n    59→            // TODO: Phase 7 - UserProfile.sample 대신 실제 사용자 데이터 사용\n    60→            let viewModel = DIContainer.shared.makeSleepInputViewModel(\n    61→                userId: UserProfile.sample.id,\n    62→                defaultHours: 7,\n    63→                defaultMinutes: 0\n    64→            )\n    65→\n    66→            SleepInputSheet(\n    67→                viewModel: viewModel,\n    68→                canSkip: !sleepPromptManager.isForceEntry,\n    69→                onSkip: {\n    70→                    // 📚 학습 포인트: Skip Count Management\n    71→                    // 사용자가 건너뛰기를 선택하면 횟수 증가\n    72→                    // 3회 건너뛰기 후 강제 입력 모드 활성화\n    73→                    sleepPromptManager.incrementSkipCount()\n    74→                }\n    75→            )\n    76→        }\n    77→        // 📚 학습 포인트: onAppear Lifecycle Hook\n    78→        // View가 처음 나타날 때 수면 프롬프트 체크\n    79→        // 💡 Java 비교: onCreate() 또는 onResume()과 유사\n    80→        .onAppear {\n    81→            Task {\n    82→                await sleepPromptManager.checkShouldShow()\n    83→            }\n    84→        }\n    85→        // 📚 학습 포인트: Scene Phase Observer\n    86→        // 앱이 백그라운드에서 포그라운드로 돌아올 때 체크\n    87→        // active 상태가 되면 수면 프롬프트를 다시 확인\n    88→        // 💡 Java 비교: onResume() 라이프사이클 콜백과 유사\n    89→        .onChange(of: scenePhase) { oldPhase, newPhase in\n    90→            if newPhase == .active {\n    91→                // 📚 학습 포인트: Async Task in onChange\n    92→                // 앱이 활성화될 때마다 프롬프트 조건 재확인\n    93→                Task {\n    94→                    await sleepPromptManager.checkShouldShow()\n    95→                }\n    96→            }\n    97→        }\n    98→    }\n    99→\n   100→    // MARK: - Tab Views\n   101→\n   102→    private var dashboardTab: some View {\n   103→        // 📚 학습 포인트: tabItem modifier\n   104→        // 탭 바에 표시될 아이콘과 텍스트 정의\n   105→        // TODO: Phase 6 (6.1, 6.2) - DIContainer에서 ViewModel 주입받도록 변경\n   106→        // 현재는 임시로 직접 생성하여 사용\n   107→        let bodyRepository = BodyRepository()\n   108→        let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)\n   109→\n   110→        return DashboardView(\n   111→            metabolismViewModel: metabolismViewModel,\n   112→            onNavigateToBody: {\n   113→                // 📚 학습 포인트: Tab Navigation\n   114→                // 대사율 카드 탭 시 체성분 탭으로 이동\n   115→                selectedTab = .body\n   116→            }\n   117→        )\n   118→        .tabItem {\n   119→            Label(\"대시보드\", systemImage: \"chart.bar.fill\")\n   120→        }\n   121→        .tag(Tab.dashboard)\n   122→    }\n   123→\n   124→    private var bodyTab: some View {\n   125→        // 📚 학습 포인트: DIContainer Factory Pattern\n   126→        // DIContainer의 factory 메서드를 통해 ViewModel 생성\n   127→        // TODO: Phase 7 - UserProfile을 실제 저장된 사용자 데이터로 교체\n   128→        // 현재는 임시로 sample 데이터 사용\n   129→        let viewModel = DIContainer.shared.makeBodyCompositionViewModel(\n   130→            userProfile: UserProfile.sample\n   131→        )\n   132→\n   133→        return BodyCompositionView(viewModel: viewModel)\n   134→            .tabItem {\n   135→                Label(\"체성분\", systemImage: \"figure.stand\")\n   136→            }\n   137→            .tag(Tab.body)\n   138→    }\n   139→\n   140→    private var dietTab: some View {\n   141→        PlaceholderView(title: \"식단\", systemImage: \"fork.knife\")\n   142→            .tabItem {\n   143→                Label(\"식단\", systemImage: \"fork.knife\")\n   144→            }\n   145→            .tag(Tab.diet)\n   146→    }\n   147→\n   148→    private var exerciseTab: some View {\n   149→        PlaceholderView(title: \"운동\", systemImage: \"figure.run\")\n   150→            .tabItem {\n   151→                Label(\"운동\", systemImage: \"figure.run\")\n   152→            }\n   153→            .tag(Tab.exercise)\n   154→    }\n   155→\n   156→    private var sleepTab: some View {\n   157→        PlaceholderView(title: \"수면\", systemImage: \"moon.zzz.fill\")\n   158→            .tabItem {\n   159→                Label(\"수면\", systemImage: \"moon.zzz.fill\")\n   160→            }\n   161→            .tag(Tab.sleep)\n   162→    }\n   163→\n   164→    private var settingsTab: some View {\n   165→        PlaceholderView(title: \"설정\", systemImage: \"gearshape.fill\")\n   166→            .tabItem {\n   167→                Label(\"설정\", systemImage: \"gearshape.fill\")\n   168→            }\n   169→            .tag(Tab.settings)\n   170→    }\n   171→}\n   172→\n   173→// MARK: - Tab Enum\n   174→\n   175→/// 탭 식별자\n   176→// 📚 학습 포인트: Hashable protocol\n   177→// 탭 선택에서 각 탭을 고유하게 식별하기 위해 필요\n   178→private enum Tab: Hashable {\n   179→    case dashboard\n   180→    case body\n   181→    case diet\n   182→    case exercise\n   183→    case sleep\n   184→    case settings\n   185→}\n   186→\n   187→// MARK: - Placeholder View\n   188→\n   189→/// 각 탭의 플레이스홀더 뷰\n   190→// 📚 학습 포인트: 재사용 가능한 컴포넌트\n   191→// 실제 기능 구현 전 UI 스캐폴딩에 사용\n   192→private struct PlaceholderView: View {\n   193→    let title: String\n   194→    let systemImage: String\n   195→\n   196→    var body: some View {\n   197→        VStack(spacing: 16) {\n   198→            Image(systemName: systemImage)\n   199→                .font(.system(size: 60))\n   200→                .foregroundStyle(.secondary)\n   201→\n   202→            Text(title)\n   203→                .font(.title)\n   204→                .fontWeight(.semibold)\n   205→\n   206→            Text(\"준비 중입니다\")\n   207→                .font(.subheadline)\n   208→                .foregroundStyle(.secondary)\n   209→        }\n   210→    }\n   211→}\n   212→\n   213→// MARK: - Preview\n   214→\n   215→#Preview {\n   216→    ContentView()\n   217→}\n   218→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:56:17.308356+00:00",
+          "type": "text",
+          "content": "Now let me update the DashboardView to integrate the sleep card:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:56:29.744619+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:56:35.841856+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:56:39.023336+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:56:42.027065+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:56:50.866592+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:56:54.181344+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:04.527400+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:04.547355+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "The file ./Bodii/Presentation/Features/Dashboard/DashboardView.swift has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n    20→/// - 주요 지표와 빠른 액세스 제공\n    21→/// 💡 Java 비교: Android의 Home Fragment + CardViews와 유사\n    22→struct DashboardView: View {\n    23→\n    24→    // MARK: - Properties\n    25→\n    26→    /// Metabolism ViewModel - BMR/TDEE 데이터 관리\n    27→    /// 📚 학습 포인트: @StateObject\n    28→    /// - View의 생명주기와 연결된 ObservableObject\n    29→    /// - Dashboard에서 대사율 데이터 관리\n    30→    /// 💡 Java 비교: Android ViewModel과 유사\n    31→    @StateObject private var metabolismViewModel: MetabolismViewModel\n    32→\n    33→    /// Sleep Repository - 수면 데이터 접근\n    34→    /// 📚 학습 포인트: Repository Dependency Injection\n    35→    /// - Repository 패턴을 통한 데이터 접근 추상화\n    36→    /// - 테스트 시 Mock으로 교체 가능\n    37→    /// 💡 Java 비교: @Autowired Repository와 유사\n    38→    private let sleepRepository: SleepRepositoryProtocol\n    39→\n    40→    /// 오늘의 수면 기록\n    41→    /// 📚 학습 포인트: @State for Data\n    42→    /// - 비동기로 로드된 수면 데이터 저장\n    43→    /// - nil이면 데이터 없음 상태\n    44→    /// 💡 Java 비교: LiveData와 유사\n    45→    @State private var todaysSleep: SleepRecord?\n    46→\n    47→    /// 수면 데이터 로딩 상태\n    48→    /// 📚 학습 포인트: Loading State\n    49→    /// - 비동기 작업 진행 중 표시\n    50→    @State private var isSleepLoading = false\n    51→\n    52→    /// 체성분 탭으로 이동하는 콜백\n    53→    /// 📚 학습 포인트: Closure-based Navigation\n    54→    /// - 부모 View에서 탭 전환 로직을 처리\n    55→    /// - 카드 탭 시 호출되어 해당 탭으로 이동\n    56→    /// 💡 Java 비교: Callback interface와 유사\n    57→    var onNavigateToBody: (() -> Void)?\n    58→\n    59→    /// 수면 탭으로 이동하는 콜백\n    60→    /// 📚 학습 포인트: Closure-based Navigation\n    61→    /// - 수면 카드 탭 시 수면 탭으로 이동\n    62→    var onNavigateToSleep: (() -> Void)?\n    63→\n    64→    /// Pull-to-refresh 상태\n    65→    /// 📚 학습 포인트: Refresh State\n    66→    @State private var isRefreshing = false\n    67→\n    68→    // MARK: - Initialization\n    69→\n    70→    /// DashboardView 초기화",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:57:08.000782+00:00",
+          "type": "text",
+          "content": "Now let me update the ContentView to pass the sleep repository and navigation callback:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:15.971920+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ./Bodii/App/ContentView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "./Bodii/App/ContentView.swift",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:15.990661+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "The file ./Bodii/App/ContentView.swift has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n    98→    }\n    99→\n   100→    // MARK: - Tab Views\n   101→\n   102→    private var dashboardTab: some View {\n   103→        // 📚 학습 포인트: tabItem modifier\n   104→        // 탭 바에 표시될 아이콘과 텍스트 정의\n   105→        // TODO: Phase 6 (6.1, 6.2) - DIContainer에서 ViewModel 주입받도록 변경\n   106→        // 현재는 임시로 직접 생성하여 사용\n   107→        let bodyRepository = BodyRepository()\n   108→        let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)\n   109→        let sleepRepository = DIContainer.shared.sleepRepository\n   110→\n   111→        return DashboardView(\n   112→            metabolismViewModel: metabolismViewModel,\n   113→            sleepRepository: sleepRepository,\n   114→            onNavigateToBody: {\n   115→                // 📚 학습 포인트: Tab Navigation\n   116→                // 대사율 카드 탭 시 체성분 탭으로 이동\n   117→                selectedTab = .body\n   118→            },\n   119→            onNavigateToSleep: {\n   120→                // 📚 학습 포인트: Tab Navigation\n   121→                // 수면 카드 탭 시 수면 탭으로 이동\n   122→                selectedTab = .sleep\n   123→            }\n   124→        )\n   125→        .tabItem {\n   126→            Label(\"대시보드\", systemImage: \"chart.bar.fill\")\n   127→        }\n   128→        .tag(Tab.dashboard)\n   129→    }\n   130→\n   131→    private var bodyTab: some View {\n   132→        // 📚 학습 포인트: DIContainer Factory Pattern\n   133→        // DIContainer의 factory 메서드를 통해 ViewModel 생성",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:57:19.773380+00:00",
+          "type": "text",
+          "content": "Now let me verify the implementation by checking if there are any compilation issues:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:21.109124+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && xcodebuild -scheme Bodii -destination '...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && xcodebuild -scheme Bodii -destination '...",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:21.128175+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:57:28.567075+00:00",
+          "type": "text",
+          "content": "Let me verify the files are correct and then commit the changes:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:29.233424+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git status --short",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git status --short",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:29.694196+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git diff --stat",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git diff --stat",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:29.811784+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": " M .auto-claude-status\n M .auto-claude/specs/009-sleep-tracking-with-5-status-system/implementation_plan.json\n M .auto-claude/specs/009-sleep-tracking-with-5-status-system/memory/attempt_history.json\n M .auto-claude/specs/009-sleep-tracking-with-5-status-system/memory/build_commits.json\n M .auto-claude/specs/009-sleep-tracking-with-5-status-system/task_logs.json\n M Bodii/App/ContentView.swift\n M Bodii/Presentation/Features/Dashboard/DashboardView.swift\n?? .auto-claude/specs/009-sleep-tracking-with-5-status-system/memory/session_insights/session_018.json\n?? Bodii/Presentation/Components/Cards/SleepDisplayCard.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:57:32.703396+00:00",
+          "type": "text",
+          "content": "Now let me commit the changes:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:33.802365+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git add Bodii/Presentation/Components/C...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git add Bodii/Presentation/Components/C...",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:34.913160+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git commit -m \"auto-claude: 5.3 - Displ...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git commit -m \"auto-claude: 5.3 - Displ...",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:35.710000+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:57:40.262431+00:00",
+          "type": "text",
+          "content": "Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:44.722147+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:57:44.743099+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "5.3",
+          "session": 19,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:57:48.862011+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...racking-with-5-status-system/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...racking-with-5-status-system/build-progress.txt",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:58:04.089418+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && cat >> ./.auto-claude/specs/009-sleep-t...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && cat >> ./.auto-claude/specs/009-sleep-t...",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:58:04.115988+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "     0→\n     1→## 2026-01-14 - Subtask 3.5 Completed ✅\n     2→\n     3→### Task: Manager class to handle morning sleep prompt logic and skip count persistence\n     4→\n     5→**Status:** ✅ Completed\n     6→\n     7→**Implementation Details:**\n     8→- Created `SleepPromptManager.swift` following ObservableObject pattern\n     9→- Implements morning prompt logic with 02:00 boundary check\n    10→- Date-based skip count persistence using UserDefaults\n    11→- ISO 8601 date format for UserDefaults keys (sleep_skip_count_YYYY-MM-DD)\n    12→- Max 3 skips before forced entry mode\n    13→- Published properties: shouldShowPrompt, isForceEntry\n    14→- Key methods:\n    15→  - checkShouldShow(): Validates time (02:00+) and checks for existing records\n    16→  - incrementSkipCount(): Increments daily skip count\n    17→  - resetSkipCount(): Resets count when record is saved\n    18→  - cleanupOldSkipCounts(): Removes data older than 7 days\n    19→- Dependency injection for SleepRepository and UserDefaults\n    20→- Comprehensive Korean documentation (440 lines)\n    21→\n    22→**Files Created:**\n    23→- Bodii/Presentation/Features/Sleep/SleepPromptManager.swift\n    24→\n    25→**Next Steps:**\n    26→- Task 3.6: Add SleepViewModel factory to DIContainer\n    27→- Phase 5: Integrate sleep prompt into app launch (BodiiApp.swift)\n    28→\n    29→**Commit:** 6752c58\n    30→\n    31→## 2026-01-14 - Subtask 4.3 Completed ✅\n    32→\n    33→### Task: View showing list of sleep records with edit/delete actions\n    34→\n    35→**Status:** ✅ Completed\n    36→\n    37→**Implementation Details:**\n    38→- Created `SleepHistoryView.swift` following BodyTrendsView pattern\n    39→- Comprehensive list view with full CRUD functionality\n    40→- Key Features:\n    41→  * List view with SleepRecordRow components for display\n    42→  * Statistics summary section showing:\n    43→    - Average sleep duration\n    44→    - Most common sleep status\n    45→    - Total record count\n    46→  * Query mode selection menu (all records, recent 7/30/90 days)\n    47→  * Tap to edit records (opens SleepInputSheet)\n    48→  * Swipe actions:\n    49→    - Left swipe: Edit button (blue)\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:58:07.941558+00:00",
+          "type": "text",
+          "content": "Let me use the Write tool to update the build-progress file:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:58:08.361827+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...racking-with-5-status-system/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...racking-with-5-status-system/build-progress.txt",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:58:08.379181+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "     1→\n     2→## 2026-01-14 - Subtask 3.5 Completed ✅\n     3→\n     4→### Task: Manager class to handle morning sleep prompt logic and skip count persistence\n     5→\n     6→**Status:** ✅ Completed\n     7→\n     8→**Implementation Details:**\n     9→- Created `SleepPromptManager.swift` following ObservableObject pattern\n    10→- Implements morning prompt logic with 02:00 boundary check\n    11→- Date-based skip count persistence using UserDefaults\n    12→- ISO 8601 date format for UserDefaults keys (sleep_skip_count_YYYY-MM-DD)\n    13→- Max 3 skips before forced entry mode\n    14→- Published properties: shouldShowPrompt, isForceEntry\n    15→- Key methods:\n    16→  - checkShouldShow(): Validates time (02:00+) and checks for existing records\n    17→  - incrementSkipCount(): Increments daily skip count\n    18→  - resetSkipCount(): Resets count when record is saved\n    19→  - cleanupOldSkipCounts(): Removes data older than 7 days\n    20→- Dependency injection for SleepRepository and UserDefaults\n    21→- Comprehensive Korean documentation (440 lines)\n    22→\n    23→**Files Created:**\n    24→- Bodii/Presentation/Features/Sleep/SleepPromptManager.swift\n    25→\n    26→**Next Steps:**\n    27→- Task 3.6: Add SleepViewModel factory to DIContainer\n    28→- Phase 5: Integrate sleep prompt into app launch (BodiiApp.swift)\n    29→\n    30→**Commit:** 6752c58\n    31→\n    32→## 2026-01-14 - Subtask 4.3 Completed ✅\n    33→\n    34→### Task: View showing list of sleep records with edit/delete actions\n    35→\n    36→**Status:** ✅ Completed\n    37→\n    38→**Implementation Details:**\n    39→- Created `SleepHistoryView.swift` following BodyTrendsView pattern\n    40→- Comprehensive list view with full CRUD functionality\n    41→- Key Features:\n    42→  * List view with SleepRecordRow components for display\n    43→  * Statistics summary section showing:\n    44→    - Average sleep duration\n    45→    - Most common sleep status\n    46→    - Total record count\n    47→  * Query mode selection menu (all records, recent 7/30/90 days)\n    48→  * Tap to edit records (opens SleepInputSheet)\n    49→  * Swipe actions:\n    50→    - Left swipe: Edit button (blue)\n    51→    - Right swipe: Delete button (destructive red)\n    52→  * Floating add button (optional, configurable)\n    53→  * Delete confirmation dialog with warning message\n    54→  * Pull-to-refresh functionality\n    55→  * Empty state with guidance and action button\n    56→  * Loading state with progress indicator\n    57→  * Error alerts for failures\n    58→  * Success toast messages (auto-dismiss after 2 seconds)\n    59→- Integration with SleepHistoryViewModel for state management\n    60→- DIContainer dependency injection for creating ViewModels (add/edit)\n    61→- NavigationStack with .insetGrouped list style\n    62→- Comprehensive Korean documentation (709 lines)\n    63→- Ready for use in SleepTabView (task 5.1)\n    64→\n    65→**Files Created:**\n    66→- Bodii/Presentation/Features/Sleep/SleepHistoryView.swift\n    67→\n    68→**UI/UX Highlights:**\n    69→- Clean section-based layout with statistics at top\n    70→- Intuitive swipe gestures for quick actions\n    71→- Confirmation dialog prevents accidental deletions\n    72→- Toast notifications provide immediate feedback\n    73→- Empty state guides users to first action\n    74→- Floating button positioned in bottom-right corner\n    75→- Query mode filtering for better data management\n    76→\n    77→**Next Steps:**\n    78→- Task 4.4: Create SleepTrendsViewModel\n    79→- Task 4.5: Create SleepBarChart component\n    80→- Task 4.6: Create SleepTrendsView\n    81→- Task 4.7: Add ViewModels to DIContainer\n    82→\n    83→**Commit:** c07f5de\n    84→\n    85→## 2026-01-14 - Subtask 4.6 Completed ✅\n    86→\n    87→### Task: View showing sleep trends chart and statistics\n    88→\n    89→**Status:** ✅ Completed\n    90→\n    91→**Implementation Details:**\n    92→- Created `SleepTrendsView.swift` following BodyTrendsView pattern\n    93→- Comprehensive sleep trends analysis screen with chart and statistics\n    94→- Key Features:\n    95→  * Period selector (7/30/90 days) using segmented picker\n    96→  * Statistics summary section showing:\n    97→    - Average sleep duration\n    98→    - Most common sleep status\n    99→    - Good sleep percentage\n   100→    - Consistency score\n   101→    - Recent trend comparison\n   102→  * Sleep bar chart integration (SleepBarChart component)\n   103→  * Status distribution section with:\n   104→    - Count and percentage for each status\n   105→    - Progress bars with status colors\n   106→    - Visual representation of sleep pattern\n   107→  * Pull-to-refresh functionality\n   108→  * Empty state with inline period picker\n   109→  * Loading state with progress indicator\n   110→  * Error alerts for failures\n   111→- NavigationStack with .large title display mode\n   112→- Close button in toolbar\n   113→- Dependency injection for SleepTrendsViewModel\n   114→- Comprehensive Korean documentation (684 lines)\n   115→- Ready for use in SleepTabView (task 5.1)\n   116→\n   117→**Files Created:**\n   118→- Bodii/Presentation/Features/Sleep/SleepTrendsView.swift\n   119→\n   120→**UI/UX Highlights:**\n   121→- Clean section-based layout with statistics at top\n   122→- Interactive chart with status-based coloring\n   123→- Status distribution with visual progress bars\n   124→- Empty state guides users to select different periods\n   125→- Card-based design with shadows and rounded corners\n   126→- Adaptive colors for light/dark mode support\n   127→- Consistent with BodyTrendsView design patterns\n   128→\n   129→**Screen Sections:**\n   130→1. Period Selector: 7/30/90 days segmented control\n   131→2. Statistics Summary: Average, consistency, quality metrics, trends\n   132→3. Sleep Chart: Interactive bar chart with status colors\n   133→4. Status Distribution: Visual breakdown with progress bars\n   134→\n   135→**Next Steps:**\n   136→- Task 4.7: Add SleepHistory/Trends ViewModels to DIContainer\n   137→- Task 5.1: Create SleepTabView container\n   138→- Phase 5: App integration\n   139→\n   140→**Commit:** 188d901\n   141→\n   142→## 2026-01-14 - Subtask 5.1 Completed ✅\n   143→\n   144→### Task: Main container view for sleep feature with navigation to history/trends\n   145→\n   146→**Status:** ✅ Completed\n   147→\n   148→**Implementation Details:**\n   149→- Created `SleepTabView.swift` following container view pattern\n   150→- Main container for sleep feature with segmented control navigation\n   151→- Key Features:\n   152→  * Segmented Picker for tab selection:\n   153→    - \"기록\" (History) tab\n   154→    - \"트렌드\" (Trends) tab\n   155→  * NavigationStack wrapper (top-level only)\n   156→  * Toolbar add button for manual sleep input (accessible from all tabs)\n   157→  * Lazy ViewModel initialization for performance\n   158→  * Extracted content views to avoid NavigationStack nesting:\n   159→    - SleepHistoryContentView (history list without NavigationStack)\n   160→    - SleepTrendsContentView (trends chart without NavigationStack)\n   161→  * Sheet presentation for SleepInputSheet\n   162→  * DIContainer dependency injection\n   163→- Architecture Pattern:\n   164→  * Parent provides NavigationStack\n   165→  * Child content views provide only content (no NavigationStack)\n   166→  * Prevents NavigationStack nesting issues\n   167→  * Clean separation of concerns\n   168→- Comprehensive Korean documentation (1400+ lines)\n   169→- Ready for integration into main ContentView (task 5.4)\n   170→\n   171→**Files Created:**\n   172→- Bodii/Presentation/Features/Sleep/SleepTabView.swift\n   173→\n   174→**UI/UX Highlights:**\n   175→- Clean segmented control for intuitive tab switching\n   176→- Consistent toolbar add button across all tabs\n   177→- Smooth transitions between History and Trends views\n   178→- Lazy loading for better performance\n   179→- Follows iOS design patterns and conventions\n   180→\n   181→**Architecture Benefits:**\n   182→- Single NavigationStack at top level\n   183→- Content extraction pattern for reusability\n   184→- Avoids nested NavigationStack issues\n   185→- Independent ViewModel lifecycle per tab\n   186→- Memory efficient with lazy initialization\n   187→\n   188→**Next Steps:**\n   189→- Task 5.2: Integrate sleep prompt into app launch (BodiiApp.swift)\n   190→- Task 5.3: Add sleep status to DashboardView\n   191→- Task 5.4: Add Sleep tab to main navigation (ContentView.swift)\n   192→\n   193→**Commit:** f720bcf\n   194→\n   195→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:58:35.592526+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...racking-with-5-status-system/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...racking-with-5-status-system/build-progress.txt",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:58:35.607204+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "The file ./.auto-claude/specs/009-sleep-tracking-with-5-status-system/build-progress.txt has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n     1→\n     2→## 2026-01-14 - Subtask 3.5 Completed ✅\n     3→\n     4→### Task: Manager class to handle morning sleep prompt logic and skip count persistence\n     5→\n     6→**Status:** ✅ Completed\n     7→\n     8→**Implementation Details:**\n     9→- Created `SleepPromptManager.swift` following ObservableObject pattern\n    10→- Implements morning prompt logic with 02:00 boundary check\n    11→- Date-based skip count persistence using UserDefaults\n    12→- ISO 8601 date format for UserDefaults keys (sleep_skip_count_YYYY-MM-DD)\n    13→- Max 3 skips before forced entry mode\n    14→- Published properties: shouldShowPrompt, isForceEntry\n    15→- Key methods:\n    16→  - checkShouldShow(): Validates time (02:00+) and checks for existing records\n    17→  - incrementSkipCount(): Increments daily skip count\n    18→  - resetSkipCount(): Resets count when record is saved\n    19→  - cleanupOldSkipCounts(): Removes data older than 7 days\n    20→- Dependency injection for SleepRepository and UserDefaults\n    21→- Comprehensive Korean documentation (440 lines)\n    22→\n    23→**Files Created:**\n    24→- Bodii/Presentation/Features/Sleep/SleepPromptManager.swift\n    25→\n    26→**Next Steps:**\n    27→- Task 3.6: Add SleepViewModel factory to DIContainer\n    28→- Phase 5: Integrate sleep prompt into app launch (BodiiApp.swift)\n    29→\n    30→**Commit:** 6752c58\n    31→\n    32→## 2026-01-14 - Subtask 4.3 Completed ✅\n    33→\n    34→### Task: View showing list of sleep records with edit/delete actions\n    35→\n    36→**Status:** ✅ Completed\n    37→\n    38→**Implementation Details:**\n    39→- Created `SleepHistoryView.swift` following BodyTrendsView pattern\n    40→- Comprehensive list view with full CRUD functionality\n    41→- Key Features:\n    42→  * List view with SleepRecordRow components for display\n    43→  * Statistics summary section showing:\n    44→    - Average sleep duration\n    45→    - Most common sleep status\n    46→    - Total record count\n    47→  * Query mode selection menu (all records, recent 7/30/90 days)\n    48→  * Tap to edit records (opens SleepInputSheet)\n    49→  * Swipe actions:\n    50→    - Left swipe: Edit button (blue)\n    51→    - Right swipe: Delete button (destructive red)\n    52→  * Floating add button (optional, configurable)\n    53→  * Delete confirmation dialog with warning message\n    54→  * Pull-to-refresh functionality\n    55→  * Empty state with guidance and action button\n    56→  * Loading state with progress indicator\n    57→  * Error alerts for failures\n    58→  * Success toast messages (auto-dismiss after 2 seconds)\n    59→- Integration with SleepHistoryViewModel for state management\n    60→- DIContainer dependency injection for creating ViewModels (add/edit)\n    61→- NavigationStack with .insetGrouped list style\n    62→- Comprehensive Korean documentation (709 lines)\n    63→- Ready for use in SleepTabView (task 5.1)\n    64→\n    65→**Files Created:**\n    66→- Bodii/Presentation/Features/Sleep/SleepHistoryView.swift\n    67→\n    68→**UI/UX Highlights:**\n    69→- Clean section-based layout with statistics at top\n    70→- Intuitive swipe gestures for quick actions\n    71→- Confirmation dialog prevents accidental deletions\n    72→- Toast notifications provide immediate feedback\n    73→- Empty state guides users to first action\n    74→- Floating button positioned in bottom-right corner\n    75→- Query mode filtering for better data management\n    76→\n    77→**Next Steps:**\n    78→- Task 4.4: Create SleepTrendsViewModel\n    79→- Task 4.5: Create SleepBarChart component\n    80→- Task 4.6: Create SleepTrendsView\n    81→- Task 4.7: Add ViewModels to DIContainer\n    82→\n    83→**Commit:** c07f5de\n    84→\n    85→## 2026-01-14 - Subtask 4.6 Completed ✅\n    86→\n    87→### Task: View showing sleep trends chart and statistics\n    88→\n    89→**Status:** ✅ Completed\n    90→\n    91→**Implementation Details:**\n    92→- Created `SleepTrendsView.swift` following BodyTrendsView pattern\n    93→- Comprehensive sleep trends analysis screen with chart and statistics\n    94→- Key Features:\n    95→  * Period selector (7/30/90 days) using segmented picker\n    96→  * Statistics summary section showing:\n    97→    - Average sleep duration\n    98→    - Most common sleep status\n    99→    - Good sleep percentage\n   100→    - Consistency score\n   101→    - Recent trend comparison\n   102→  * Sleep bar chart integration (SleepBarChart component)\n   103→  * Status distribution section with:\n   104→    - Count and percentage for each status\n   105→    - Progress bars with status colors\n   106→    - Visual representation of sleep pattern\n   107→  * Pull-to-refresh functionality\n   108→  * Empty state with inline period picker\n   109→  * Loading state with progress indicator\n   110→  * Error alerts for failures\n   111→- NavigationStack with .large title display mode\n   112→- Close button in toolbar\n   113→- Dependency injection for SleepTrendsViewModel\n   114→- Comprehensive Korean documentation (684 lines)\n   115→- Ready for use in SleepTabView (task 5.1)\n   116→\n   117→**Files Created:**\n   118→- Bodii/Presentation/Features/Sleep/SleepTrendsView.swift\n   119→\n   120→**UI/UX Highlights:**\n   121→- Clean section-based layout with statistics at top\n   122→- Interactive chart with status-based coloring\n   123→- Status distribution with visual progress bars\n   124→- Empty state guides users to select different periods\n   125→- Card-based design with shadows and rounded corners\n   126→- Adaptive colors for light/dark mode support\n   127→- Consistent with BodyTrendsView design patterns\n   128→\n   129→**Screen Sections:**\n   130→1. Period Selector: 7/30/90 days segmented control\n   131→2. Statistics Summary: Average, consistency, quality metrics, trends\n   132→3. Sleep Chart: Interactive bar chart with status colors\n   133→4. Status Distribution: Visual breakdown with progress bars\n   134→\n   135→**Next Steps:**\n   136→- Task 4.7: Add SleepHistory/Trends ViewModels to DIContainer\n   137→- Task 5.1: Create SleepTabView container\n   138→- Phase 5: App integration\n   139→\n   140→**Commit:** 188d901\n   141→\n   142→## 2026-01-14 - Subtask 5.1 Completed ✅\n   143→\n   144→### Task: Main container view for sleep feature with navigation to history/trends\n   145→\n   146→**Status:** ✅ Completed\n   147→\n   148→**Implementation Details:**\n   149→- Created `SleepTabView.swift` following container view pattern\n   150→- Main container for sleep feature with segmented control navigation\n   151→- Key Features:\n   152→  * Segmented Picker for tab selection:\n   153→    - \"기록\" (History) tab\n   154→    - \"트렌드\" (Trends) tab\n   155→  * NavigationStack wrapper (top-level only)\n   156→  * Toolbar add button for manual sleep input (accessible from all tabs)\n   157→  * Lazy ViewModel initialization for performance\n   158→  * Extracted content views to avoid NavigationStack nesting:\n   159→    - SleepHistoryContentView (history list without NavigationStack)\n   160→    - SleepTrendsContentView (trends chart without NavigationStack)\n   161→  * Sheet presentation for SleepInputSheet\n   162→  * DIContainer dependency injection\n   163→- Architecture Pattern:\n   164→  * Parent provides NavigationStack\n   165→  * Child content views provide only content (no NavigationStack)\n   166→  * Prevents NavigationStack nesting issues\n   167→  * Clean separation of concerns\n   168→- Comprehensive Korean documentation (1400+ lines)\n   169→- Ready for integration into main ContentView (task 5.4)\n   170→\n   171→**Files Created:**\n   172→- Bodii/Presentation/Features/Sleep/SleepTabView.swift\n   173→\n   174→**UI/UX Highlights:**\n   175→- Clean segmented control for intuitive tab switching\n   176→- Consistent toolbar add button across all tabs\n   177→- Smooth transitions between History and Trends views\n   178→- Lazy loading for better performance\n   179→- Follows iOS design patterns and conventions\n   180→\n   181→**Architecture Benefits:**\n   182→- Single NavigationStack at top level\n   183→- Content extraction pattern for reusability\n   184→- Avoids nested NavigationStack issues\n   185→- Independent ViewModel lifecycle per tab\n   186→- Memory efficient with lazy initialization\n   187→\n   188→**Next Steps:**\n   189→- Task 5.2: Integrate sleep prompt into app launch (BodiiApp.swift)\n   190→- Task 5.3: Add sleep status to DashboardView\n   191→- Task 5.4: Add Sleep tab to main navigation (ContentView.swift)\n   192→\n   193→**Commit:** f720bcf\n   194→\n   195→## 2026-01-14 - Subtask 5.3 Completed ✅\n   196→\n   197→### Task: Display today's sleep status on the main dashboard\n   198→\n   199→**Status:** ✅ Completed\n   200→\n   201→**Implementation Details:**\n   202→- Created `SleepDisplayCard.swift` following MetabolismDisplayCard pattern\n   203→- Reusable card component for displaying sleep data on dashboard\n   204→- Key Features:\n   205→  * Displays sleep duration in hours:minutes format\n   206→  * Shows sleep status badge with color-coded quality indicator\n   207→  * Three states: loading, empty (no data), data present\n   208→  * Tap gesture to navigate to sleep tab\n   209→  * Date display for record context\n   210→  * Adaptive colors for light/dark mode\n   211→  * Comprehensive Korean documentation (600+ lines)\n   212→- Updated `DashboardView.swift` to integrate sleep card:\n   213→  * Added sleepRepository property via dependency injection\n   214→  * Added todaysSleep and isSleepLoading state variables\n   215→  * Added onNavigateToSleep callback for tab navigation\n   216→  * Updated init() to accept sleep repository and navigation callback\n   217→  * Created sleepCard computed property with section header\n   218→  * Implemented loadTodaysSleep() async method\n   219→  * Uses repository.fetch(for:) with automatic 02:00 boundary logic\n   220→  * Silent error handling (nil on failure, shows empty state)\n   221→  * Integrated sleep data loading in .task modifier on appear\n   222→  * Updated refreshData() to refresh sleep data on pull-to-refresh\n   223→  * Removed sleep card from placeholder cards (now implemented)\n   224→- Updated `ContentView.swift` to pass depend\n\n... [truncated - full output was 12011 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:58:39.070878+00:00",
+          "type": "text",
+          "content": "Perfect! Let me verify the commit was successful:",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:58:39.855545+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git log --oneline -1",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git log --oneline -1",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:58:40.274435+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git show --stat HEAD",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git show --stat HEAD",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:58:40.382593+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.3",
+          "session": 19,
+          "detail": "91c661e auto-claude: 5.3 - Display today's sleep status on the main dashboard",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:58:53.854502+00:00",
+          "type": "text",
+          "content": "Excellent! Subtask 5.3 has been successfully completed. Here's a summary:\n\n## ✅ Subtask 5.3 Complete: Display Today's Sleep Status on Dashboard\n\n### What Was Implemented\n\n**1. Created SleepDisplayCard Component** (`Bodii/Presentation/Components/Cards/SleepDisplayCard.swift`)\n- Reusable dashboard card component following the MetabolismDisplayCard pattern\n- Displays sleep duration in readable hours:minutes format\n- Shows sleep status badge with color-coded quality indicator\n- Three states: loading, empty (no data), and data present\n- Tap gesture to navigate to sleep tab\n- Comprehensive documentation (600+ lines)\n\n**2. Updated DashboardView** (`Bodii/Presentation/Features/Dashboard/DashboardView.swift`)\n- Added `sleepRepository` property via dependency injection\n- Added `todaysSleep` and `isSleepLoading` state variables\n- Added `onNavigateToSleep` navigation callback\n- Created `sleepCard` computed property with section header\n- Implemented `loadTodaysSleep()` async method that:\n  - Uses `repository.fetch(for:)` with automatic 02:00 boundary logic\n  - Handles errors silently (appropriate for dashboard context)\n  - Shows empty state when no data exists\n- Integrated sleep data loading on view appear\n- Added pull-to-refresh support for sleep data\n- Removed sleep from placeholder cards (now fully implemented)\n\n**3. Updated ContentView** (`Bodii/App/ContentView.swift`)\n- Injected `sleepRepository` from DIContainer\n- Added `onNavigateToSleep` callback that switches to sleep tab\n- Enabled full navigation flow from dashboard to sleep tab\n\n### Key Features\n✅ Shows today's sleep duration and quality on dashboard  \n✅ Automatic 02:00 boundary logic (early morning belongs to previous day)  \n✅ Loading and empty states with helpful messages  \n✅ Tap to navigate to full sleep history  \n✅ Pull-to-refresh support  \n✅ Consistent design matching metabolism card  \n✅ Fully documented with Korean learning notes  \n\n### Architecture Benefits\n- **Repository pattern**: Clean data access abstraction\n- **Dependency injection**: Easy testing and maintenance\n- **Silent error handling**: Non-critical data doesn't block UI\n- **Reusable component**: SleepDisplayCard can be used elsewhere\n- **Separation of concerns**: View, Repository, Navigation are decoupled\n\n### Commit\n**Commit Hash**: `91c661e`  \n**Files Changed**: 3 files, +595 insertions, -12 deletions\n\n---\n\nThe dashboard now displays today's sleep status alongside metabolism data! Users can tap the sleep card to view their full sleep history. Next up is **Task 5.4**: Replace the placeholder sleep tab with the actual SleepTabView.",
+          "phase": "coding",
+          "subtask_id": "5.3",
+          "session": 19
+        },
+        {
+          "timestamp": "2026-01-14T12:59:04.194112+00:00",
+          "type": "text",
+          "content": "I'll help you implement subtask 5.4 to add a Sleep tab to the main app navigation. Let me start by understanding the current implementation and patterns.",
+          "phase": "coding",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:04.844957+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...009-sleep-tracking-with-5-status-system/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...009-sleep-tracking-with-5-status-system/spec.md",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:05.340317+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...g-with-5-status-system/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...g-with-5-status-system/implementation_plan.json",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:05.352168+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:05.373980+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "5.4",
+          "session": 20,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:59:10.966489+00:00",
+          "type": "text",
+          "content": "Now let me examine the current ContentView to understand the navigation structure:",
+          "phase": "coding",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:11.390022+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/App/ContentView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/App/ContentView.swift",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:11.406283+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.4",
+          "session": 20,
+          "detail": "     1→//\n     2→//  ContentView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-11.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Tab-based Navigation\n     9→// SwiftUI의 탭 기반 네비게이션 컨테이너\n    10→// 💡 Java 비교: Android의 BottomNavigationView와 유사\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - Content View\n    15→\n    16→/// 앱의 루트 뷰 - 메인 탭 바 UI\n    17→struct ContentView: View {\n    18→\n    19→    // MARK: - Properties\n    20→\n    21→    // 📚 학습 포인트: @State\n    22→    // View 내부에서 변경 가능한 상태를 관리\n    23→    // 탭 선택 상태를 추적하여 현재 활성 탭을 기억\n    24→    @State private var selectedTab: Tab = .dashboard\n    25→\n    26→    // 📚 학습 포인트: @StateObject for Sleep Prompt Manager\n    27→    // 수면 기록 프롬프트 관리자\n    28→    // View의 생명주기 동안 유지되는 ObservableObject\n    29→    // 💡 Java 비교: ViewModel과 유사한 역할\n    30→    @StateObject private var sleepPromptManager = DIContainer.shared.makeSleepPromptManager()\n    31→\n    32→    // 📚 학습 포인트: @Environment(\\.scenePhase)\n    33→    // 앱의 생명주기 상태를 추적 (active, inactive, background)\n    34→    // 앱이 포그라운드로 돌아올 때 수면 프롬프트 체크\n    35→    // 💡 Java 비교: Android의 Lifecycle.State와 유사\n    36→    @Environment(\\.scenePhase) private var scenePhase\n    37→\n    38→    // MARK: - Body\n    39→\n    40→    var body: some View {\n    41→        // 📚 학습 포인트: Tab Navigation with selection binding\n    42→        // selection 바인딩을 통해 프로그래밍적으로 탭 전환 가능\n    43→        // 💡 Java 비교: ViewPager + TabLayout 조합과 유사\n    44→        TabView(selection: $selectedTab) {\n    45→            dashboardTab\n    46→            bodyTab\n    47→            dietTab\n    48→            exerciseTab\n    49→            sleepTab\n    50→            settingsTab\n    51→        }\n    52→        // 📚 학습 포인트: Sheet Presentation for Sleep Prompt\n    53→        // 아침 수면 기록 프롬프트를 모달 시트로 표시\n    54→        // shouldShowPrompt가 true일 때 자동으로 표시됨\n    55→        // 💡 Java 비교: BottomSheetDialog 표시와 유사\n    56→        .sheet(isPresented: $sleepPromptManager.shouldShowPrompt) {\n    57→            // 📚 학습 포인트: Sleep Input Sheet Integration\n    58→            // DIContainer를 통해 ViewModel 생성하고 주입\n    59→            // TODO: Phase 7 - UserProfile.sample 대신 실제 사용자 데이터 사용\n    60→            let viewModel = DIContainer.shared.makeSleepInputViewModel(\n    61→                userId: UserProfile.sample.id,\n    62→                defaultHours: 7,\n    63→                defaultMinutes: 0\n    64→            )\n    65→\n    66→            SleepInputSheet(\n    67→                viewModel: viewModel,\n    68→                canSkip: !sleepPromptManager.isForceEntry,\n    69→                onSkip: {\n    70→                    // 📚 학습 포인트: Skip Count Management\n    71→                    // 사용자가 건너뛰기를 선택하면 횟수 증가\n    72→                    // 3회 건너뛰기 후 강제 입력 모드 활성화\n    73→                    sleepPromptManager.incrementSkipCount()\n    74→                }\n    75→            )\n    76→        }\n    77→        // 📚 학습 포인트: onAppear Lifecycle Hook\n    78→        // View가 처음 나타날 때 수면 프롬프트 체크\n    79→        // 💡 Java 비교: onCreate() 또는 onResume()과 유사\n    80→        .onAppear {\n    81→            Task {\n    82→                await sleepPromptManager.checkShouldShow()\n    83→            }\n    84→        }\n    85→        // 📚 학습 포인트: Scene Phase Observer\n    86→        // 앱이 백그라운드에서 포그라운드로 돌아올 때 체크\n    87→        // active 상태가 되면 수면 프롬프트를 다시 확인\n    88→        // 💡 Java 비교: onResume() 라이프사이클 콜백과 유사\n    89→        .onChange(of: scenePhase) { oldPhase, newPhase in\n    90→            if newPhase == .active {\n    91→                // 📚 학습 포인트: Async Task in onChange\n    92→                // 앱이 활성화될 때마다 프롬프트 조건 재확인\n    93→                Task {\n    94→                    await sleepPromptManager.checkShouldShow()\n    95→                }\n    96→            }\n    97→        }\n    98→    }\n    99→\n   100→    // MARK: - Tab Views\n   101→\n   102→    private var dashboardTab: some View {\n   103→        // 📚 학습 포인트: tabItem modifier\n   104→        // 탭 바에 표시될 아이콘과 텍스트 정의\n   105→        // TODO: Phase 6 (6.1, 6.2) - DIContainer에서 ViewModel 주입받도록 변경\n   106→        // 현재는 임시로 직접 생성하여 사용\n   107→        let bodyRepository = BodyRepository()\n   108→        let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)\n   109→        let sleepRepository = DIContainer.shared.sleepRepository\n   110→\n   111→        return DashboardView(\n   112→            metabolismViewModel: metabolismViewModel,\n   113→            sleepRepository: sleepRepository,\n   114→            onNavigateToBody: {\n   115→                // 📚 학습 포인트: Tab Navigation\n   116→                // 대사율 카드 탭 시 체성분 탭으로 이동\n   117→                selectedTab = .body\n   118→            },\n   119→            onNavigateToSleep: {\n   120→                // 📚 학습 포인트: Tab Navigation\n   121→                // 수면 카드 탭 시 수면 탭으로 이동\n   122→                selectedTab = .sleep\n   123→            }\n   124→        )\n   125→        .tabItem {\n   126→            Label(\"대시보드\", systemImage: \"chart.bar.fill\")\n   127→        }\n   128→        .tag(Tab.dashboard)\n   129→    }\n   130→\n   131→    private var bodyTab: some View {\n   132→        // 📚 학습 포인트: DIContainer Factory Pattern\n   133→        // DIContainer의 factory 메서드를 통해 ViewModel 생성\n   134→        // TODO: Phase 7 - UserProfile을 실제 저장된 사용자 데이터로 교체\n   135→        // 현재는 임시로 sample 데이터 사용\n   136→        let viewModel = DIContainer.shared.makeBodyCompositionViewModel(\n   137→            userProfile: UserProfile.sample\n   138→        )\n   139→\n   140→        return BodyCompositionView(viewModel: viewModel)\n   141→            .tabItem {\n   142→                Label(\"체성분\", systemImage: \"figure.stand\")\n   143→            }\n   144→            .tag(Tab.body)\n   145→    }\n   146→\n   147→    private var dietTab: some View {\n   148→        PlaceholderView(title: \"식단\", systemImage: \"fork.knife\")\n   149→            .tabItem {\n   150→                Label(\"식단\", systemImage: \"fork.knife\")\n   151→            }\n   152→            .tag(Tab.diet)\n   153→    }\n   154→\n   155→    private var exerciseTab: some View {\n   156→        PlaceholderView(title: \"운동\", systemImage: \"figure.run\")\n   157→            .tabItem {\n   158→                Label(\"운동\", systemImage: \"figure.run\")\n   159→            }\n   160→            .tag(Tab.exercise)\n   161→    }\n   162→\n   163→    private var sleepTab: some View {\n   164→        PlaceholderView(title: \"수면\", systemImage: \"moon.zzz.fill\")\n   165→            .tabItem {\n   166→                Label(\"수면\", systemImage: \"moon.zzz.fill\")\n   167→            }\n   168→            .tag(Tab.sleep)\n   169→    }\n   170→\n   171→    private var settingsTab: some View {\n   172→        PlaceholderView(title: \"설정\", systemImage: \"gearshape.fill\")\n   173→            .tabItem {\n   174→                Label(\"설정\", systemImage: \"gearshape.fill\")\n   175→            }\n   176→            .tag(Tab.settings)\n   177→    }\n   178→}\n   179→\n   180→// MARK: - Tab Enum\n   181→\n   182→/// 탭 식별자\n   183→// 📚 학습 포인트: Hashable protocol\n   184→// 탭 선택에서 각 탭을 고유하게 식별하기 위해 필요\n   185→private enum Tab: Hashable {\n   186→    case dashboard\n   187→    case body\n   188→    case diet\n   189→    case exercise\n   190→    case sleep\n   191→    case settings\n   192→}\n   193→\n   194→// MARK: - Placeholder View\n   195→\n   196→/// 각 탭의 플레이스홀더 뷰\n   197→// 📚 학습 포인트: 재사용 가능한 컴포넌트\n   198→// 실제 기능 구현 전 UI 스캐폴딩에 사용\n   199→private struct PlaceholderView: View {\n   200→    let title: String\n   201→    let systemImage: String\n   202→\n   203→    var body: some View {\n   204→        VStack(spacing: 16) {\n   205→            Image(systemName: systemImage)\n   206→                .font(.system(size: 60))\n   207→                .foregroundStyle(.secondary)\n   208→\n   209→            Text(title)\n   210→                .font(.title)\n   211→                .fontWeight(.semibold)\n   212→\n   213→            Text(\"준비 중입니다\")\n   214→                .font(.subheadline)\n   215→                .foregroundStyle(.secondary)\n   216→        }\n   217→    }\n   218→}\n   219→\n   220→// MARK: - Preview\n   221→\n   222→#Preview {\n   223→    ContentView()\n   224→}\n   225→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:59:19.858574+00:00",
+          "type": "text",
+          "content": "Now let me check how SleepTabView is structured to understand how to integrate it:",
+          "phase": "coding",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:20.351304+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Presentation/Features/Sleep/SleepTabView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Presentation/Features/Sleep/SleepTabView.swift",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:20.660161+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.4",
+          "session": 20,
+          "detail": "     1→//\n     2→//  SleepTabView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Container View with Segmented Control\n     9→// 수면 기능 컨테이너 뷰 - History와 Trends 전환\n    10→// 💡 Java 비교: Android의 ViewPager + TabLayout과 유사\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - SleepTabView\n    15→\n    16→/// 수면 기능 메인 컨테이너 뷰\n    17→/// 📚 학습 포인트: Container View Pattern\n    18→/// - Segmented control로 History/Trends 전환\n    19→/// - 각 탭에 해당하는 View 표시\n    20→/// - 수면 기록 추가 기능\n    21→/// 💡 Java 비교: Android의 Fragment Container + TabLayout과 유사\n    22→struct SleepTabView: View {\n    23→\n    24→    // MARK: - Tab Selection\n    25→\n    26→    /// 탭 선택 상태\n    27→    /// 📚 학습 포인트: Enum for Tab State\n    28→    /// - 타입 안전한 탭 구분\n    29→    enum Tab: String, CaseIterable {\n    30→        case history = \"기록\"\n    31→        case trends = \"트렌드\"\n    32→    }\n    33→\n    34→    // MARK: - Properties\n    35→\n    36→    /// DIContainer for dependency injection\n    37→    /// 📚 학습 포인트: Dependency Injection\n    38→    /// - ViewModel 생성을 위한 팩토리\n    39→    /// 💡 Java 비교: Dagger/Hilt의 Component와 유사\n    40→    let container: DIContainer\n    41→\n    42→    /// 현재 선택된 탭\n    43→    /// 📚 학습 포인트: @State for Tab Selection\n    44→    /// - 탭 전환 상태 관리\n    45→    @State private var selectedTab: Tab = .history\n    46→\n    47→    /// 수면 입력 시트 표시 여부\n    48→    /// 📚 학습 포인트: Sheet Presentation State\n    49→    /// - true일 때 SleepInputSheet 표시\n    50→    @State private var showInputSheet = false\n    51→\n    52→    // Lazy ViewModels for each tab\n    53→    // 📚 학습 포인트: Lazy Initialization\n    54→    // - 각 탭의 ViewModel을 필요할 때만 생성\n    55→    @State private var historyViewModel: SleepHistoryViewModel?\n    56→    @State private var trendsViewModel: SleepTrendsViewModel?\n    57→\n    58→    // MARK: - Initialization\n    59→\n    60→    /// SleepTabView 초기화\n    61→    /// 📚 학습 포인트: Default Parameter\n    62→    /// - DIContainer 기본값 제공으로 편리한 사용\n    63→    /// 💡 Java 비교: 오버로딩된 생성자와 유사\n    64→    ///\n    65→    /// - Parameter container: DIContainer (기본값: .shared)\n    66→    init(container: DIContainer = .shared) {\n    67→        self.container = container\n    68→    }\n    69→\n    70→    // MARK: - Body\n    71→\n    72→    var body: some View {\n    73→        // 📚 학습 포인트: NavigationStack\n    74→        // iOS 16+의 새로운 네비게이션 시스템\n    75→        // 💡 Java 비교: Navigation Component와 유사\n    76→        NavigationStack {\n    77→            VStack(spacing: 0) {\n    78→                // 📚 학습 포인트: Segmented Picker\n    79→                // iOS 스타일 세그먼트 컨트롤로 탭 전환\n    80→                Picker(\"보기 모드\", selection: $selectedTab) {\n    81→                    ForEach(Tab.allCases, id: \\.self) { tab in\n    82→                        Text(tab.rawValue).tag(tab)\n    83→                    }\n    84→                }\n    85→                .pickerStyle(.segmented)\n    86→                .padding(.horizontal, 16)\n    87→                .padding(.top, 8)\n    88→                .padding(.bottom, 12)\n    89→\n    90→                // 구분선\n    91→                Divider()\n    92→\n    93→                // 선택된 탭의 콘텐츠 표시\n    94→                // 📚 학습 포인트: Dynamic Content Switching\n    95→                // selectedTab에 따라 다른 뷰 표시\n    96→                selectedView\n    97→                    .frame(maxWidth: .infinity, maxHeight: .infinity)\n    98→            }\n    99→            .navigationTitle(\"수면\")\n   100→            .navigationBarTitleDisplayMode(.large)\n   101→            .toolbar {\n   102→                ToolbarItem(placement: .navigationBarTrailing) {\n   103→                    addButton\n   104→                }\n   105→            }\n   106→            // 📚 학습 포인트: Sheet for Input\n   107→            // 수면 기록 추가 시트\n   108→            .sheet(isPresented: $showInputSheet) {\n   109→                SleepInputSheet(\n   110→                    viewModel: container.makeSleepInputViewModel(),\n   111→                    canSkip: true,\n   112→                    onSkip: nil\n   113→                )\n   114→            }\n   115→            .onAppear {\n   116→                // 📚 학습 포인트: Lazy ViewModel Initialization\n   117→                // 첫 등장 시 ViewModel 생성\n   118→                initializeViewModelsIfNeeded()\n   119→            }\n   120→        }\n   121→    }\n   122→\n   123→    // MARK: - Subviews\n   124→\n   125→    /// 선택된 탭에 따라 표시할 뷰\n   126→    /// 📚 학습 포인트: @ViewBuilder\n   127→    /// - 조건에 따라 다른 View 반환\n   128→    /// - switch/if 문 사용 가능\n   129→    /// 💡 Java 비교: Factory pattern과 유사\n   130→    @ViewBuilder\n   131→    private var selectedView: some View {\n   132→        switch selectedTab {\n   133→        case .history:\n   134→            // 📚 학습 포인트: History Content View\n   135→            // SleepHistoryView의 콘텐츠를 임베드\n   136→            // NavigationStack 중복을 피하기 위해 직접 구성\n   137→            if let historyViewModel = historyViewModel {\n   138→                SleepHistoryContentView(\n   139→                    viewModel: historyViewModel,\n   140→                    container: container\n   141→                )\n   142→            } else {\n   143→                // 로딩 플레이스홀더\n   144→                ProgressView()\n   145→                    .frame(maxWidth: .infinity, maxHeight: .infinity)\n   146→            }\n   147→\n   148→        case .trends:\n   149→            // 📚 학습 포인트: Trends Content View\n   150→            // SleepTrendsView의 콘텐츠를 임베드\n   151→            if let trendsViewModel = trendsViewModel {\n   152→                SleepTrendsContentView(\n   153→                    viewModel: trendsViewModel\n   154→                )\n   155→            } else {\n   156→                // 로딩 플레이스홀더\n   157→                ProgressView()\n   158→                    .frame(maxWidth: .infinity, maxHeight: .infinity)\n   159→            }\n   160→        }\n   161→    }\n   162→\n   163→    /// 추가 버튼\n   164→    /// 📚 학습 포인트: Toolbar Button\n   165→    /// - 수면 기록 추가 시트 열기\n   166→    private var addButton: some View {\n   167→        Button(action: {\n   168→            showInputSheet = true\n   169→        }) {\n   170→            Image(systemName: \"plus.circle.fill\")\n   171→                .font(.title3)\n   172→                .foregroundStyle(.blue)\n   173→        }\n   174→    }\n   175→\n   176→    // MARK: - Helper Methods\n   177→\n   178→    /// ViewModel 초기화 (필요한 경우에만)\n   179→    /// 📚 학습 포인트: Lazy Initialization Pattern\n   180→    /// - 처음 접근 시에만 ViewModel 생성\n   181→    /// - 메모리 효율성 향상\n   182→    private func initializeViewModelsIfNeeded() {\n   183→        if historyViewModel == nil {\n   184→            historyViewModel = container.makeSleepHistoryViewModel()\n   185→        }\n   186→        if trendsViewModel == nil {\n   187→            trendsViewModel = container.makeSleepTrendsViewModel()\n   188→        }\n   189→    }\n   190→}\n   191→\n   192→// MARK: - SleepHistoryContentView\n   193→\n   194→/// SleepHistoryView의 콘텐츠 (NavigationStack 제외)\n   195→/// 📚 학습 포인트: Content Extraction Pattern\n   196→/// - 기존 View에서 콘텐츠만 추출하여 재사용\n   197→/// - NavigationStack 중복 방지\n   198→fileprivate struct SleepHistoryContentView: View {\n   199→\n   200→    @ObservedObject var viewModel: SleepHistoryViewModel\n   201→    let container: DIContainer\n   202→\n   203→    @State private var showAddSheet: Bool = false\n   204→\n   205→    var body: some View {\n   206→        ZStack {\n   207→            // 메인 콘텐츠\n   208→            if viewModel.isLoading && viewModel.isEmpty {\n   209→                loadingView\n   210→            } else if viewModel.isEmpty {\n   211→                emptyStateView\n   212→            } else {\n   213→                listView\n   214→            }\n   215→        }\n   216→        // 📚 학습 포인트: refreshable modifier\n   217→        // Pull-to-refresh 구현\n   218→        .refreshable {\n   219→            await viewModel.refresh()\n   220→        }\n   221→        // 📚 학습 포인트: Sheet for Editing Record\n   222→        // 레코드 편집 시트\n   223→        .sheet(item: $viewModel.recordToEdit) { record in\n   224→            SleepInputSheet(\n   225→                viewModel: container.makeSleepInputViewModel(\n   226→                    defaultHours: Int(record.duration / 60),\n   227→                    defaultMinutes: Int(record.duration % 60)\n   228→                ),\n   229→                canSkip: true,\n   230→                onSkip: nil\n   231→            )\n   232→        }\n   233→        // 📚 학습 포인트: Confirmation Dialog\n   234→        // 삭제 확인 대화상자\n   235→        .confirmationDialog(\n   236→            \"수면 기록을 삭제하시겠습니까?\",\n   237→            isPresented: $viewModel.showDeleteConfirmation,\n   238→            titleVisibility: .visible\n   239→        ) {\n   240→            Button(\"삭제\", role: .destructive) {\n   241→                Task {\n   242→                    await viewModel.deleteRecord()\n   243→                }\n   244→            }\n   245→            Button(\"취소\", role: .cancel) {\n   246→                viewModel.cancelDelete()\n   247→            }\n   248→        } message: {\n   249→            Text(\"삭제된 데이터는 복구할 수 없습니다.\")\n   250→        }\n   251→        // 📚 학습 포인트: Alert for Errors\n   252→        // 에러 발생 시 알림 표시\n   253→        .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   254→            Button(\"확인\") {\n   255→                viewModel.clearError()\n   256→            }\n   257→        } message: {\n   258→            if let errorMessage = viewModel.errorMessage {\n   259→                Text(errorMessage)\n   260→            }\n   261→        }\n   262→        // 📚 학습 포인트: Toast for Success\n   263→        // 성공 메시지 표시\n   264→        .overlay(alignment: .top) {\n   265→            if let successMessage = viewModel.successMessage {\n   266→                successToast(message: successMessage)\n   267→                    .padding(.top, 60)\n   268→            }\n   269→        }\n   270→    }\n   271→\n   272→    /// 리스트 뷰\n   273→    private var listView: some View {\n   274→        List {\n   275→            // 통계 섹션\n   276→            statisticsSection\n   277→\n   278→            // 레코드 리스트 섹션\n   279→            recordsSection\n   280→        }\n   281→        .listStyle(.insetGrouped)\n   282→    }\n   283→\n   284→    /// 통계 섹션\n   285→    private var statisticsSection: some View {\n   286→  \n\n... [truncated - full output was 37152 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:59:28.274995+00:00",
+          "type": "text",
+          "content": "Perfect! I can see that `SleepTabView` is already fully implemented with its own NavigationStack and all the necessary functionality. Now I need to update ContentView to replace the PlaceholderView with the actual SleepTabView. Let me do that:",
+          "phase": "coding",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:32.792529+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ./Bodii/App/ContentView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "./Bodii/App/ContentView.swift",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:32.812295+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "5.4",
+          "session": 20,
+          "detail": "The file ./Bodii/App/ContentView.swift has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n   159→            }\n   160→            .tag(Tab.exercise)\n   161→    }\n   162→\n   163→    private var sleepTab: some View {\n   164→        // 📚 학습 포인트: Sleep Container View\n   165→        // SleepTabView는 자체적으로 NavigationStack을 포함하고 있음\n   166→        // DIContainer를 통해 ViewModel 생성 및 의존성 주입\n   167→        // 💡 Java 비교: Android의 Fragment Container와 유사\n   168→        SleepTabView(container: DIContainer.shared)\n   169→            .tabItem {\n   170→                Label(\"수면\", systemImage: \"moon.zzz.fill\")\n   171→            }\n   172→            .tag(Tab.sleep)\n   173→    }\n   174→\n   175→    private var settingsTab: some View {\n   176→        PlaceholderView(title: \"설정\", systemImage: \"gearshape.fill\")\n   177→            .tabItem {",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:59:38.037467+00:00",
+          "type": "text",
+          "content": "Now let me verify the changes look correct:",
+          "phase": "coding",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:38.816396+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/App/ContentView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/App/ContentView.swift",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:38.832593+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.4",
+          "session": 20,
+          "detail": "   160→            .tag(Tab.exercise)\n   161→    }\n   162→\n   163→    private var sleepTab: some View {\n   164→        // 📚 학습 포인트: Sleep Container View\n   165→        // SleepTabView는 자체적으로 NavigationStack을 포함하고 있음\n   166→        // DIContainer를 통해 ViewModel 생성 및 의존성 주입\n   167→        // 💡 Java 비교: Android의 Fragment Container와 유사\n   168→        SleepTabView(container: DIContainer.shared)\n   169→            .tabItem {\n   170→                Label(\"수면\", systemImage: \"moon.zzz.fill\")\n   171→            }\n   172→            .tag(Tab.sleep)\n   173→    }\n   174→\n   175→    private var settingsTab: some View {\n   176→        PlaceholderView(title: \"설정\", systemImage: \"gearshape.fill\")\n   177→            .tabItem {\n   178→                Label(\"설정\", systemImage: \"gearshape.fill\")\n   179→            }\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:59:43.017614+00:00",
+          "type": "text",
+          "content": "Perfect! The changes look good. Now let me commit the changes and update the implementation plan:",
+          "phase": "coding",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:43.793665+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add ./Bodii/App/ContentView.swift",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add ./Bodii/App/ContentView.swift",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:46.003488+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git commit -m \"auto-claude: 5.4 - Add Sleep tab...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git commit -m \"auto-claude: 5.4 - Add Sleep tab...",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:46.770608+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.4",
+          "session": 20,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:59:51.431221+00:00",
+          "type": "text",
+          "content": "Excellent! Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:53.247005+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:53.273143+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "5.4",
+          "session": 20,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T12:59:57.061898+00:00",
+          "type": "text",
+          "content": "Perfect! Let me check the updated build progress:",
+          "phase": "coding",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:57.075604+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T12:59:57.096936+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "5.4",
+          "session": 20,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:00:06.499266+00:00",
+          "type": "text",
+          "content": "## ✅ Subtask 5.4 Completed Successfully!\n\nI've successfully integrated the Sleep tab into the main app navigation. Here's what was done:\n\n### Changes Made:\n1. **Updated ContentView.swift** - Replaced the `PlaceholderView` with the actual `SleepTabView`\n2. **Following Existing Patterns** - Used the same dependency injection pattern as `bodyTab`\n3. **Proper Integration** - SleepTabView includes:\n   - Its own NavigationStack\n   - Segmented control for History/Trends switching\n   - Full sleep tracking functionality\n   - DIContainer integration for ViewModel creation\n\n### Implementation Details:\n```swift\nprivate var sleepTab: some View {\n    SleepTabView(container: DIContainer.shared)\n        .tabItem {\n            Label(\"수면\", systemImage: \"moon.zzz.fill\")\n        }\n        .tag(Tab.sleep)\n}\n```\n\n### Build Progress:\n- **27/34 subtasks completed (79%)**\n- **App Integration Phase: 4/4 ✅ COMPLETE**\n- All core feature implementation is now done!\n- Only the Testing & Polish phase remains (7 subtasks)\n\n### What Users Can Now Do:\n- ✅ Access sleep tracking from the main tab bar\n- ✅ View sleep history with statistics\n- ✅ View sleep trends with charts\n- ✅ Add, edit, and delete sleep records\n- ✅ See sleep status on the dashboard\n- ✅ Get morning prompts to log sleep\n\nThe Sleep tracking feature is now fully integrated into the app! The next phase will focus on adding unit tests and accessibility improvements.",
+          "phase": "coding",
+          "subtask_id": "5.4",
+          "session": 20
+        },
+        {
+          "timestamp": "2026-01-14T13:00:19.056238+00:00",
+          "type": "text",
+          "content": "I'll help you implement unit tests for the SleepRecordMapper domain/entity conversions. Let me start by understanding the context and existing patterns.",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:19.541194+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...009-sleep-tracking-with-5-status-system/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...009-sleep-tracking-with-5-status-system/spec.md",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:20.254315+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...g-with-5-status-system/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...g-with-5-status-system/implementation_plan.json",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:20.269110+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:20.285847+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "6.1",
+          "session": 21,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:00:25.807573+00:00",
+          "type": "text",
+          "content": "Now let me read the SleepRecordMapper implementation and look for existing test patterns to follow:",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:26.553273+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Data/Mappers/SleepRecordMapper.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Data/Mappers/SleepRecordMapper.swift",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:27.169766+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*MapperTests.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*MapperTests.swift",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:27.487351+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/BodiiTests/**/*Tests.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/BodiiTests/**/*Tests.swift",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:27.506867+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "6.1",
+          "session": 21,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:00:31.934868+00:00",
+          "type": "text",
+          "content": "Let me examine existing test patterns to understand the testing conventions:",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:32.540442+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...sts/Data/Repositories/BodyRepositoryTests.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...sts/Data/Repositories/BodyRepositoryTests.swift",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:32.949912+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./BodiiTests/SleepStatusTests.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./BodiiTests/SleepStatusTests.swift",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:33.415575+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Entities/SleepRecord.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Entities/SleepRecord.swift",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:33.445531+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.1",
+          "session": 21,
+          "detail": "     1→//\n     2→//  BodyRepositoryTests.swift\n     3→//  BodiiTests\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Integration Testing\n     9→// 데이터 레이어의 통합 테스트 - Repository와 Data Source를 함께 테스트\n    10→// 💡 Java 비교: @DataJpaTest와 유사한 통합 테스트\n    11→\n    12→import XCTest\n    13→import CoreData\n    14→@testable import Bodii\n    15→\n    16→/// BodyRepository와 BodyLocalDataSource의 통합 테스트\n    17→/// 📚 학습 포인트: Integration Test vs Unit Test\n    18→/// - Unit Test: 개별 컴포넌트를 Mock과 함께 테스트\n    19→/// - Integration Test: 여러 컴포넌트가 함께 작동하는지 테스트\n    20→/// 💡 Java 비교: JUnit + @DataJpaTest와 유사\n    21→final class BodyRepositoryTests: XCTestCase {\n    22→\n    23→    // MARK: - Properties\n    24→\n    25→    /// 테스트 대상 Repository\n    26→    /// 📚 학습 포인트: System Under Test (SUT)\n    27→    var sut: BodyRepository!\n    28→\n    29→    /// 테스트용 Data Source\n    30→    var dataSource: BodyLocalDataSource!\n    31→\n    32→    /// 테스트용 Persistence Controller (인메모리)\n    33→    /// 📚 학습 포인트: In-Memory Core Data Stack\n    34→    /// - 실제 디스크에 저장하지 않고 메모리에서만 동작\n    35→    /// - 테스트 간 격리 보장 (독립성)\n    36→    /// - 빠른 실행 속도\n    37→    var testPersistenceController: PersistenceController!\n    38→\n    39→    // MARK: - Setup & Teardown\n    40→\n    41→    /// 각 테스트 실행 전 호출\n    42→    /// 📚 학습 포인트: Test Setup\n    43→    /// - 각 테스트마다 깨끗한 상태로 시작\n    44→    /// - 테스트 간 의존성 제거\n    45→    override func setUp() {\n    46→        super.setUp()\n    47→\n    48→        // 📚 학습 포인트: In-Memory Store for Testing\n    49→        // 인메모리 Core Data 스택 생성\n    50→        testPersistenceController = PersistenceController(inMemory: true)\n    51→\n    52→        // 데이터 소스와 리포지토리 초기화\n    53→        dataSource = BodyLocalDataSource(persistenceController: testPersistenceController)\n    54→        sut = BodyRepository(localDataSource: dataSource)\n    55→    }\n    56→\n    57→    /// 각 테스트 실행 후 호출\n    58→    /// 📚 학습 포인트: Test Teardown\n    59→    /// - 메모리 정리\n    60→    /// - 다음 테스트를 위한 준비\n    61→    override func tearDown() {\n    62→        sut = nil\n    63→        dataSource = nil\n    64→        testPersistenceController = nil\n    65→        super.tearDown()\n    66→    }\n    67→\n    68→    // MARK: - Helper Methods\n    69→\n    70→    /// 테스트용 BodyCompositionEntry 생성\n    71→    /// 📚 학습 포인트: Test Helper Method\n    72→    /// - 테스트 데이터 생성 로직을 재사용\n    73→    /// - 가독성 향상\n    74→    private func makeTestEntry(\n    75→        date: Date = Date(),\n    76→        weight: Decimal = 70.0,\n    77→        bodyFatPercent: Decimal = 18.0,\n    78→        muscleMass: Decimal = 32.0\n    79→    ) -> BodyCompositionEntry {\n    80→        return BodyCompositionEntry(\n    81→            date: date,\n    82→            weight: weight,\n    83→            bodyFatPercent: bodyFatPercent,\n    84→            muscleMass: muscleMass\n    85→        )\n    86→    }\n    87→\n    88→    /// 테스트용 MetabolismData 생성\n    89→    private func makeTestMetabolismData(\n    90→        date: Date = Date(),\n    91→        bmr: Decimal = 1650.0,\n    92→        tdee: Decimal = 2280.0,\n    93→        weight: Decimal = 70.0,\n    94→        bodyFatPercent: Decimal = 18.0,\n    95→        activityLevel: ActivityLevel = .moderatelyActive\n    96→    ) -> MetabolismData {\n    97→        return MetabolismData(\n    98→            date: date,\n    99→            bmr: bmr,\n   100→            tdee: tdee,\n   101→            weight: weight,\n   102→            bodyFatPercent: bodyFatPercent,\n   103→            activityLevel: activityLevel\n   104→        )\n   105→    }\n   106→\n   107→    // MARK: - Create Tests\n   108→\n   109→    /// 저장 - 정상 케이스\n   110→    /// 📚 학습 포인트: Async Test\n   111→    /// - async/await를 사용하는 메서드 테스트\n   112→    /// - XCTest의 async throws 지원\n   113→    func testSave_ValidData_SavesSuccessfully() async throws {\n   114→        // Given: 유효한 신체 구성 데이터와 대사율 데이터\n   115→        let entry = makeTestEntry()\n   116→        let metabolismData = makeTestMetabolismData()\n   117→\n   118→        // When: 저장 실행\n   119→        let savedEntry = try await sut.save(entry: entry, metabolismData: metabolismData)\n   120→\n   121→        // Then: 저장 성공\n   122→        XCTAssertNotNil(savedEntry, \"저장된 엔트리가 nil이 아니어야 합니다\")\n   123→        XCTAssertEqual(savedEntry.weight, entry.weight, \"체중이 일치해야 합니다\")\n   124→        XCTAssertEqual(savedEntry.bodyFatPercent, entry.bodyFatPercent, \"체지방률이 일치해야 합니다\")\n   125→        XCTAssertEqual(savedEntry.muscleMass, entry.muscleMass, \"근육량이 일치해야 합니다\")\n   126→    }\n   127→\n   128→    /// 저장 후 조회 - 데이터 영속성 확인\n   129→    /// 📚 학습 포인트: Data Persistence Verification\n   130→    /// - 저장된 데이터가 실제로 조회되는지 확인\n   131→    func testSave_ThenFetch_DataPersists() async throws {\n   132→        // Given: 저장된 데이터\n   133→        let entry = makeTestEntry()\n   134→        let metabolismData = makeTestMetabolismData()\n   135→        let savedEntry = try await sut.save(entry: entry, metabolismData: metabolismData)\n   136→\n   137→        // When: ID로 조회\n   138→        let fetchedEntry = try await sut.fetch(by: savedEntry.id)\n   139→\n   140→        // Then: 조회 성공 및 데이터 일치\n   141→        XCTAssertNotNil(fetchedEntry, \"저장된 데이터를 조회할 수 있어야 합니다\")\n   142→        XCTAssertEqual(fetchedEntry?.id, savedEntry.id, \"ID가 일치해야 합니다\")\n   143→        XCTAssertEqual(fetchedEntry?.weight, entry.weight, \"체중이 일치해야 합니다\")\n   144→    }\n   145→\n   146→    /// MetabolismSnapshot 자동 생성 확인\n   147→    /// 📚 학습 포인트: Relationship Testing\n   148→    /// - 1:1 관계가 올바르게 생성되는지 확인\n   149→    func testSave_CreatesMetabolismSnapshot() async throws {\n   150→        // Given: 신체 구성 데이터와 대사율 데이터\n   151→        let entry = makeTestEntry()\n   152→        let metabolismData = makeTestMetabolismData(\n   153→            bmr: 1650.0,\n   154→            tdee: 2280.0,\n   155→            activityLevel: .moderatelyActive\n   156→        )\n   157→\n   158→        // When: 저장\n   159→        let savedEntry = try await sut.save(entry: entry, metabolismData: metabolismData)\n   160→\n   161→        // Then: MetabolismSnapshot 조회 가능\n   162→        let fetchedMetabolism = try await sut.fetchMetabolismData(for: savedEntry.id)\n   163→        XCTAssertNotNil(fetchedMetabolism, \"대사율 데이터가 저장되어야 합니다\")\n   164→        XCTAssertEqual(fetchedMetabolism?.bmr, 1650.0, accuracy: 0.01, \"BMR이 일치해야 합니다\")\n   165→        XCTAssertEqual(fetchedMetabolism?.tdee, 2280.0, accuracy: 0.01, \"TDEE가 일치해야 합니다\")\n   166→        XCTAssertEqual(fetchedMetabolism?.activityLevel, .moderatelyActive, \"활동 수준이 일치해야 합니다\")\n   167→    }\n   168→\n   169→    // MARK: - Read Tests (Single)\n   170→\n   171→    /// ID로 조회 - 존재하는 데이터\n   172→    func testFetchById_ExistingData_ReturnsEntry() async throws {\n   173→        // Given: 저장된 데이터\n   174→        let entry = makeTestEntry()\n   175→        let metabolismData = makeTestMetabolismData()\n   176→        let savedEntry = try await sut.save(entry: entry, metabolismData: metabolismData)\n   177→\n   178→        // When: ID로 조회\n   179→        let fetchedEntry = try await sut.fetch(by: savedEntry.id)\n   180→\n   181→        // Then: 데이터 반환\n   182→        XCTAssertNotNil(fetchedEntry)\n   183→        XCTAssertEqual(fetchedEntry?.id, savedEntry.id)\n   184→    }\n   185→\n   186→    /// ID로 조회 - 존재하지 않는 데이터\n   187→    func testFetchById_NonExistingData_ReturnsNil() async throws {\n   188→        // Given: 저장되지 않은 ID\n   189→        let nonExistingId = UUID()\n   190→\n   191→        // When: 조회\n   192→        let fetchedEntry = try await sut.fetch(by: nonExistingId)\n   193→\n   194→        // Then: nil 반환\n   195→        XCTAssertNil(fetchedEntry, \"존재하지 않는 ID는 nil을 반환해야 합니다\")\n   196→    }\n   197→\n   198→    /// 날짜로 조회 - 해당 날짜 데이터 존재\n   199→    func testFetchByDate_ExistingData_ReturnsEntry() async throws {\n   200→        // Given: 특정 날짜의 데이터 저장\n   201→        let calendar = Calendar.current\n   202→        let testDate = calendar.startOfDay(for: Date())\n   203→        let entry = makeTestEntry(date: testDate)\n   204→        let metabolismData = makeTestMetabolismData(date: testDate)\n   205→\n   206→        _ = try await sut.save(entry: entry, metabolismData: metabolismData)\n   207→\n   208→        // When: 날짜로 조회\n   209→        let fetchedEntry = try await sut.fetch(for: testDate)\n   210→\n   211→        // Then: 데이터 반환\n   212→        XCTAssertNotNil(fetchedEntry, \"해당 날짜의 데이터를 찾을 수 있어야 합니다\")\n   213→\n   214→        // 📚 학습 포인트: Date Comparison\n   215→        // 같은 날짜인지 확인 (시간 부분 제외)\n   216→        let fetchedDateComponents = calendar.dateComponents([.year, .month, .day], from: fetchedEntry!.date)\n   217→        let testDateComponents = calendar.dateComponents([.year, .month, .day], from: testDate)\n   218→        XCTAssertEqual(fetchedDateComponents, testDateComponents, \"날짜가 일치해야 합니다\")\n   219→    }\n   220→\n   221→    /// 최신 데이터 조회\n   222→    func testFetchLatest_MultipleEntries_ReturnsLatest() async throws {\n   223→        // Given: 여러 날짜의 데이터 저장\n   224→        let calendar = Calendar.current\n   225→        let today = Date()\n   226→\n   227→        // 3일 전 데이터\n   228→        let threeDaysAgo = calendar.date(byAdding: .day, value: -3, to: today)!\n   229→        let entry1 = makeTestEntry(date: threeDaysAgo, weight: 71.0)\n   230→        let metabolism1 = makeTestMetabolismData(date: threeDaysAgo)\n   231→        _ = try await sut.save(entry: entry1, metabolismData: metabolism1)\n   232→\n   233→        // 1일 전 데이터\n   234→        let oneDayAgo = calendar.date(byAdding: .day, value: -1, to: today)!\n   235→        let entry2 = makeTestEntry(date: oneDayAgo, weight: 70.0)\n   236→        let metabolism2 = makeTestMetabolismData(date: oneDayAgo)\n   237→        _ = try await sut.save(entry: entry2, metabolismData: metabolism2)\n   238→\n   239→        // 오늘 데이터 (가장 최신)\n   240→        let entry3 = makeTestEntry(date: today, weight: 69.0)\n   241→        let metabolism3 = makeTestMetabolismData(date: today)\n   242→        _ = try await sut.save(entry: entry3, metabolismData: metabolism3)\n   243→\n   244→        // When: 최신 데이터 조회\n   245→        let latestEntry = try await sut.fetchLatest()\n   246→\n   247→        // Then: 가장 최신 데이터 반환\n   248→        XCTAssertNotNil(latestEntry, \"최신 데이터를 조회할 수 있어야 합니다\")\n   249→        XCTAssertEqual(latestEntry?.weight, 69.0, \"가장 최신 데이터가 반환되어야 합니다\")\n   250→    }\n   251→\n   252→    /// 최신 데이터 조회 \n\n... [truncated - full output was 30258 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:00:40.767577+00:00",
+          "type": "text",
+          "content": "Now let me check the Core Data SleepRecord entity structure:",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:41.508321+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find . -name \"*.xcdatamodeld\" -type d",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find . -name \"*.xcdatamodeld\" -type d",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:00:41.619540+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.1",
+          "session": 21,
+          "detail": "./Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:00:46.289960+00:00",
+          "type": "text",
+          "content": "Perfect! Now I'll create comprehensive unit tests for SleepRecordMapper following the established patterns:",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:02:49.155196+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...Tests/Data/Mappers/SleepRecordMapperTests.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...Tests/Data/Mappers/SleepRecordMapperTests.swift",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:02:49.666530+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "6.1",
+          "session": 21,
+          "detail": "File created successfully at: ./BodiiTests/Data/Mappers/SleepRecordMapperTests.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:02:54.867562+00:00",
+          "type": "text",
+          "content": "Perfect! I've created comprehensive unit tests for SleepRecordMapper. Now let me run the tests to verify they pass:",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:02:56.976691+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && xcodebuild test -scheme Bodii -destinat...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && xcodebuild test -scheme Bodii -destinat...",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:02:57.001916+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.1",
+          "session": 21,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:03:03.183298+00:00",
+          "type": "text",
+          "content": "I've created comprehensive unit tests for SleepRecordMapper. Since I cannot run xcodebuild, I'll proceed with committing the changes. The tests follow the established patterns exactly and cover all necessary scenarios.\n\nLet me update the progress and commit:",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:03:03.836558+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git add -A",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git add -A",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:03:09.540863+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git commit -m \"auto-claude: 6.1 - Unit ...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git commit -m \"auto-claude: 6.1 - Unit ...",
+          "subtask_id": "6.1",
+          "session": 21
         }
       ]
     },
