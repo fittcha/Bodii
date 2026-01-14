@@ -127,9 +127,9 @@
     - All acceptance criteria met with extensive documentation
     - Committed in b8de41a
 
-### Phase 5: Integration & Testing (PENDING)
-⏳ 5.1 - Register exercise services in DIContainer
-⏳ 5.2 - Integrate ExerciseListView into TabView
+### Phase 5: Integration & Testing (IN PROGRESS)
+✅ 5.1 - Register exercise services in DIContainer
+✅ 5.2 - Integrate ExerciseListView into TabView
 ⏳ 5.3 - Write unit tests for ExerciseCalcService
 ⏳ 5.4 - Write unit tests for DailyLog exercise updates
 ⏳ 5.5 - Add exercise validation to ValidationService
@@ -137,6 +137,22 @@
 ---
 
 ## Recent Activity
+- 2026-01-14: Completed subtask 5.2 (Integrate ExerciseListView into TabView)
+  - Successfully integrated ExerciseListView into main TabView navigation
+  - Replaced PlaceholderView with actual ExerciseListView implementation
+  - Used DIContainer.shared.makeExerciseListViewModel(userId:) for dependency injection
+  - Added temporary userId property for development (TODO: replace with AuthenticationService)
+  - Tab configuration: icon "figure.run", label "운동"
+  - Tab order maintained: dashboard → body → diet → exercise → sleep → settings
+  - Added Korean learning comments explaining DIContainer pattern (similar to Dagger/Hilt)
+  - All acceptance criteria met: ✅ Exercise tab visible, ✅ Appropriate icon, ✅ Korean label, ✅ Correct tab order
+  - Committed in 6be4651
+
+- 2026-01-14: Completed subtask 5.1 (Register exercise services in DIContainer)
+  - Registered all exercise-related components in DIContainer
+  - Added factory methods: makeExerciseListViewModel, makeExerciseInputViewModel
+  - Committed in 11e043f
+
 - 2026-01-14: Completed subtask 4.5 (ExerciseInputView modal)
   - Implemented full exercise input modal combining all components (ExerciseTypeGridView, DurationInputView, IntensityPickerView, TextField)
   - Sheet modal presentation with NavigationStack and proper toolbar buttons
