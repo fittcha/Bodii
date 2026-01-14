@@ -272,6 +272,23 @@ extension DIContainer {
         )
     }
 
+    // MARK: - Managers
+
+    /// SleepPromptManager 생성
+    /// 📚 학습 포인트: Manager Factory Method
+    /// - 아침 수면 기록 프롬프트 관리자 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// - UserDefaults는 기본값(.standard) 사용
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Returns: 새로운 SleepPromptManager 인스턴스
+    func makeSleepPromptManager() -> SleepPromptManager {
+        return SleepPromptManager(
+            sleepRepository: sleepRepository,
+            userDefaults: .standard
+        )
+    }
+
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel
     // func makeDashboardViewModel() -> DashboardViewModel

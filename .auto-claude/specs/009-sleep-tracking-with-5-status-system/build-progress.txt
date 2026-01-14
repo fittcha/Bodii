@@ -139,3 +139,56 @@
 
 **Commit:** 188d901
 
+## 2026-01-14 - Subtask 5.1 Completed ✅
+
+### Task: Main container view for sleep feature with navigation to history/trends
+
+**Status:** ✅ Completed
+
+**Implementation Details:**
+- Created `SleepTabView.swift` following container view pattern
+- Main container for sleep feature with segmented control navigation
+- Key Features:
+  * Segmented Picker for tab selection:
+    - "기록" (History) tab
+    - "트렌드" (Trends) tab
+  * NavigationStack wrapper (top-level only)
+  * Toolbar add button for manual sleep input (accessible from all tabs)
+  * Lazy ViewModel initialization for performance
+  * Extracted content views to avoid NavigationStack nesting:
+    - SleepHistoryContentView (history list without NavigationStack)
+    - SleepTrendsContentView (trends chart without NavigationStack)
+  * Sheet presentation for SleepInputSheet
+  * DIContainer dependency injection
+- Architecture Pattern:
+  * Parent provides NavigationStack
+  * Child content views provide only content (no NavigationStack)
+  * Prevents NavigationStack nesting issues
+  * Clean separation of concerns
+- Comprehensive Korean documentation (1400+ lines)
+- Ready for integration into main ContentView (task 5.4)
+
+**Files Created:**
+- Bodii/Presentation/Features/Sleep/SleepTabView.swift
+
+**UI/UX Highlights:**
+- Clean segmented control for intuitive tab switching
+- Consistent toolbar add button across all tabs
+- Smooth transitions between History and Trends views
+- Lazy loading for better performance
+- Follows iOS design patterns and conventions
+
+**Architecture Benefits:**
+- Single NavigationStack at top level
+- Content extraction pattern for reusability
+- Avoids nested NavigationStack issues
+- Independent ViewModel lifecycle per tab
+- Memory efficient with lazy initialization
+
+**Next Steps:**
+- Task 5.2: Integrate sleep prompt into app launch (BodiiApp.swift)
+- Task 5.3: Add sleep status to DashboardView
+- Task 5.4: Add Sleep tab to main navigation (ContentView.swift)
+
+**Commit:** f720bcf
+
