@@ -23,7 +23,14 @@
     - Adjusts DailyLog with difference calculation (updateExercise method)
     - Comprehensive error handling (RecordNotFoundError, UnauthorizedError, ValidationError)
     - Implementation committed in 7119ae7
-⏳ 2.3 - DeleteExerciseRecordUseCase (PENDING)
+
+✅ 2.3 - DeleteExerciseRecordUseCase (Completed - 2026-01-14)
+    - Fetches existing ExerciseRecord by ID and validates ownership
+    - Updates DailyLog via dailyLogService.removeExercise() before deletion
+    - Deletes ExerciseRecord via exerciseRepository.delete()
+    - Decrements totalCaloriesOut, exerciseMinutes, and exerciseCount in DailyLog
+    - Comprehensive error handling (RecordNotFoundError, UnauthorizedError)
+    - Implementation committed in c19fdab
 ⏳ 2.4 - GetExerciseRecordsUseCase (PENDING)
 
 ### Phase 3: UI - Exercise List View (PENDING)
@@ -49,6 +56,14 @@
 ---
 
 ## Recent Activity
+- 2026-01-14: Completed subtask 2.3 (DeleteExerciseRecordUseCase)
+  - Implemented use case for deleting exercise records
+  - Validates user ownership before deletion
+  - Critical execution order: DailyLog update → ExerciseRecord deletion
+  - Decrements totalCaloriesOut, exerciseMinutes, and exerciseCount in DailyLog
+  - All acceptance criteria met with comprehensive error handling
+  - Committed in c19fdab
+
 - 2026-01-14: Completed subtask 2.2 (UpdateExerciseRecordUseCase)
   - Implemented use case for updating existing exercise records
   - Validates user ownership and input constraints
