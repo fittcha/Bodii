@@ -238,6 +238,40 @@ extension DIContainer {
         )
     }
 
+    /// SleepHistoryViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 수면 히스토리 리스트를 위한 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// - 기본 조회 모드 설정 가능 (최근 30일)
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Parameter defaultMode: 기본 조회 모드 (기본값: 최근 30일)
+    /// - Returns: 새로운 SleepHistoryViewModel 인스턴스
+    func makeSleepHistoryViewModel(
+        defaultMode: FetchSleepHistoryUseCase.QueryMode = .recent(days: 30)
+    ) -> SleepHistoryViewModel {
+        return SleepHistoryViewModel(
+            fetchSleepHistoryUseCase: fetchSleepHistoryUseCase,
+            sleepRepository: sleepRepository,
+            defaultMode: defaultMode
+        )
+    }
+
+    /// SleepTrendsViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 수면 트렌드 차트를 위한 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// - 차트 표시용 통계 데이터 제공
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Returns: 새로운 SleepTrendsViewModel 인스턴스
+    func makeSleepTrendsViewModel() -> SleepTrendsViewModel {
+        return SleepTrendsViewModel(
+            fetchSleepStatsUseCase: fetchSleepStatsUseCase,
+            sleepRepository: sleepRepository
+        )
+    }
+
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel
     // func makeDashboardViewModel() -> DashboardViewModel
