@@ -1,0 +1,458 @@
+{
+  "feature": "Sleep Tracking with 5-Status System",
+  "description": "Sleep logging with 5-status tracking (bad, soso, good, excellent, oversleep), duration input, wake time prompts, and correlation with other health metrics. Automatic morning prompt to log previous night's sleep.",
+  "created_at": "2026-01-14T05:03:38.678Z",
+  "updated_at": "2026-01-14T05:10:00.000Z",
+  "status": "in_progress",
+  "planStatus": "ready",
+  "phases": [
+    {
+      "phase_id": "phase-1",
+      "name": "Data Layer - Core Infrastructure",
+      "description": "Build the data layer foundation for sleep tracking including mapper, data source, and repository",
+      "subtasks": [
+        {
+          "id": "1.1",
+          "title": "Add color and icon to SleepStatus enum",
+          "description": "Enhance SleepStatus enum with SwiftUI Color and SF Symbol icon for visual feedback",
+          "files": [
+            "Bodii/Shared/Enums/SleepStatus.swift"
+          ],
+          "estimated_time": "15 min",
+          "status": "completed",
+          "notes": "Successfully added color and iconName properties to SleepStatus enum. Color mapping: bad=red, soso=yellow, good=green, excellent=blue, oversleep=orange. Icon mapping using SF Symbols: moon.fill, moon.stars, moon.stars.fill, sparkles, zzz",
+          "updated_at": "2026-01-14T05:09:44.778843+00:00"
+        },
+        {
+          "id": "1.2",
+          "title": "Create SleepRecordMapper",
+          "description": "Create mapper to convert between Core Data SleepRecord entity and domain SleepRecord model",
+          "files": [
+            "Bodii/Data/Mappers/SleepRecordMapper.swift"
+          ],
+          "estimated_time": "20 min",
+          "status": "pending",
+          "notes": "Follow existing BodyRecordMapper pattern for toDomain and toEntity methods"
+        },
+        {
+          "id": "1.3",
+          "title": "Create SleepLocalDataSource",
+          "description": "Create local data source for Core Data operations on SleepRecord",
+          "files": [
+            "Bodii/Data/DataSources/Local/SleepLocalDataSource.swift"
+          ],
+          "estimated_time": "45 min",
+          "status": "pending",
+          "notes": "Include CRUD operations with 02:00 boundary date logic. Include DailyLog update on save."
+        },
+        {
+          "id": "1.4",
+          "title": "Create SleepRepositoryProtocol",
+          "description": "Define repository interface for sleep data operations",
+          "files": [
+            "Bodii/Domain/Interfaces/SleepRepositoryProtocol.swift"
+          ],
+          "estimated_time": "15 min",
+          "status": "pending",
+          "notes": "Include methods for save, fetch by date, fetch by range, fetchLatest, delete"
+        },
+        {
+          "id": "1.5",
+          "title": "Create SleepRepository",
+          "description": "Implement SleepRepositoryProtocol with SleepLocalDataSource",
+          "files": [
+            "Bodii/Data/Repositories/SleepRepository.swift"
+          ],
+          "estimated_time": "30 min",
+          "status": "pending",
+          "notes": "Follow existing BodyRepository pattern for error handling and method delegation"
+        },
+        {
+          "id": "1.6",
+          "title": "Add SleepRepository to DIContainer",
+          "description": "Register SleepLocalDataSource and SleepRepository in DIContainer",
+          "files": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "estimated_time": "10 min",
+          "status": "pending",
+          "notes": "Add lazy properties for sleepLocalDataSource and sleepRepository"
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-2",
+      "name": "Domain Layer - Use Cases",
+      "description": "Create use cases for sleep recording business logic",
+      "subtasks": [
+        {
+          "id": "2.1",
+          "title": "Create RecordSleepUseCase",
+          "description": "Use case for recording sleep with automatic status calculation and DailyLog update",
+          "files": [
+            "Bodii/Domain/UseCases/RecordSleepUseCase.swift"
+          ],
+          "estimated_time": "30 min",
+          "status": "pending",
+          "notes": "Input: duration in minutes, date. Output: SleepRecord. Calculate status from duration."
+        },
+        {
+          "id": "2.2",
+          "title": "Create FetchSleepHistoryUseCase",
+          "description": "Use case for fetching sleep history with optional date range",
+          "files": [
+            "Bodii/Domain/UseCases/FetchSleepHistoryUseCase.swift"
+          ],
+          "estimated_time": "20 min",
+          "status": "pending",
+          "notes": "Support fetch all, fetch recent N days, fetch by date range"
+        },
+        {
+          "id": "2.3",
+          "title": "Create FetchSleepStatsUseCase",
+          "description": "Use case for calculating sleep statistics (average duration, status distribution)",
+          "files": [
+            "Bodii/Domain/UseCases/FetchSleepStatsUseCase.swift"
+          ],
+          "estimated_time": "25 min",
+          "status": "pending",
+          "notes": "Return average duration, status distribution, trend data for charts"
+        },
+        {
+          "id": "2.4",
+          "title": "Add sleep use cases to DIContainer",
+          "description": "Register sleep use cases in DIContainer",
+          "files": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "estimated_time": "10 min",
+          "status": "pending",
+          "notes": "Add lazy properties for recordSleepUseCase, fetchSleepHistoryUseCase, fetchSleepStatsUseCase"
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-3",
+      "name": "Presentation Layer - Sleep Input",
+      "description": "Build the UI components for sleep duration input and morning prompt",
+      "subtasks": [
+        {
+          "id": "3.1",
+          "title": "Create SleepInputViewModel",
+          "description": "ViewModel for sleep input with duration picker state and validation",
+          "files": [
+            "Bodii/Presentation/Features/Sleep/SleepInputViewModel.swift"
+          ],
+          "estimated_time": "35 min",
+          "status": "pending",
+          "notes": "Include hours/minutes state, validation, save logic, skip count management"
+        },
+        {
+          "id": "3.2",
+          "title": "Create DurationPicker component",
+          "description": "Reusable picker wheel component for hours and minutes (10-min intervals)",
+          "files": [
+            "Bodii/Presentation/Components/Pickers/DurationPicker.swift"
+          ],
+          "estimated_time": "25 min",
+          "status": "pending",
+          "notes": "SwiftUI Picker with 0-24 hours and 0/10/20/30/40/50 minutes options"
+        },
+        {
+          "id": "3.3",
+          "title": "Create SleepStatusBadge component",
+          "description": "Visual badge showing sleep status with color and icon",
+          "files": [
+            "Bodii/Presentation/Components/Badges/SleepStatusBadge.swift"
+          ],
+          "estimated_time": "20 min",
+          "status": "pending",
+          "notes": "Display status icon and text with appropriate color based on SleepStatus"
+        },
+        {
+          "id": "3.4",
+          "title": "Create SleepInputSheet view",
+          "description": "Bottom sheet or popup for entering sleep duration",
+          "files": [
+            "Bodii/Presentation/Features/Sleep/SleepInputSheet.swift"
+          ],
+          "estimated_time": "40 min",
+          "status": "pending",
+          "notes": "Include DurationPicker, status preview, save/skip buttons. Support forced entry after 3 skips."
+        },
+        {
+          "id": "3.5",
+          "title": "Create SleepPromptManager",
+          "description": "Manager class to handle morning sleep prompt logic and skip count persistence",
+          "files": [
+            "Bodii/Presentation/Features/Sleep/SleepPromptManager.swift"
+          ],
+          "estimated_time": "35 min",
+          "status": "pending",
+          "notes": "Use UserDefaults for skip count per day. Check if prompt should show (02:00 boundary, no existing record)."
+        },
+        {
+          "id": "3.6",
+          "title": "Add SleepViewModel factory to DIContainer",
+          "description": "Add factory method for creating SleepInputViewModel",
+          "files": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "estimated_time": "10 min",
+          "status": "pending",
+          "notes": "Add makeSleepInputViewModel factory method"
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-4",
+      "name": "Presentation Layer - Sleep History & Trends",
+      "description": "Build the UI for viewing sleep history and trends",
+      "subtasks": [
+        {
+          "id": "4.1",
+          "title": "Create SleepHistoryViewModel",
+          "description": "ViewModel for sleep history list with edit/delete capabilities",
+          "files": [
+            "Bodii/Presentation/Features/Sleep/SleepHistoryViewModel.swift"
+          ],
+          "estimated_time": "30 min",
+          "status": "pending",
+          "notes": "Load history, support delete, trigger edit sheet"
+        },
+        {
+          "id": "4.2",
+          "title": "Create SleepRecordRow component",
+          "description": "List row component for displaying a single sleep record",
+          "files": [
+            "Bodii/Presentation/Components/Rows/SleepRecordRow.swift"
+          ],
+          "estimated_time": "20 min",
+          "status": "pending",
+          "notes": "Display date, duration (formatted), status badge with color"
+        },
+        {
+          "id": "4.3",
+          "title": "Create SleepHistoryView",
+          "description": "View showing list of sleep records with edit/delete actions",
+          "files": [
+            "Bodii/Presentation/Features/Sleep/SleepHistoryView.swift"
+          ],
+          "estimated_time": "35 min",
+          "status": "pending",
+          "notes": "List with swipe to delete, tap to edit, floating add button"
+        },
+        {
+          "id": "4.4",
+          "title": "Create SleepTrendsViewModel",
+          "description": "ViewModel for sleep trends and statistics",
+          "files": [
+            "Bodii/Presentation/Features/Sleep/SleepTrendsViewModel.swift"
+          ],
+          "estimated_time": "30 min",
+          "status": "pending",
+          "notes": "Load chart data, calculate averages, period filtering (1w, 1m, 3m)"
+        },
+        {
+          "id": "4.5",
+          "title": "Create SleepBarChart component",
+          "description": "Bar chart showing daily sleep duration with status-based coloring",
+          "files": [
+            "Bodii/Presentation/Components/Charts/SleepBarChart.swift"
+          ],
+          "estimated_time": "40 min",
+          "status": "pending",
+          "notes": "Use Swift Charts. Bars colored by status. Show average line. Period selector."
+        },
+        {
+          "id": "4.6",
+          "title": "Create SleepTrendsView",
+          "description": "View showing sleep trends chart and statistics",
+          "files": [
+            "Bodii/Presentation/Features/Sleep/SleepTrendsView.swift"
+          ],
+          "estimated_time": "35 min",
+          "status": "pending",
+          "notes": "Include SleepBarChart, average stats, status distribution summary"
+        },
+        {
+          "id": "4.7",
+          "title": "Add SleepHistory/Trends ViewModels to DIContainer",
+          "description": "Add factory methods for history and trends view models",
+          "files": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "estimated_time": "10 min",
+          "status": "pending",
+          "notes": "Add makeSleepHistoryViewModel and makeSleepTrendsViewModel"
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-5",
+      "name": "App Integration",
+      "description": "Integrate sleep tracking into the main app flow",
+      "subtasks": [
+        {
+          "id": "5.1",
+          "title": "Create SleepTabView container",
+          "description": "Main container view for sleep feature with navigation to history/trends",
+          "files": [
+            "Bodii/Presentation/Features/Sleep/SleepTabView.swift"
+          ],
+          "estimated_time": "25 min",
+          "status": "pending",
+          "notes": "Tab or segmented control for History vs Trends views. Add button for manual input."
+        },
+        {
+          "id": "5.2",
+          "title": "Integrate sleep prompt into app launch",
+          "description": "Add sleep prompt check to app launch flow in BodiiApp",
+          "files": [
+            "Bodii/App/BodiiApp.swift",
+            "Bodii/App/ContentView.swift"
+          ],
+          "estimated_time": "30 min",
+          "status": "pending",
+          "notes": "Check shouldShowSleepPopup on app become active. Present SleepInputSheet as overlay."
+        },
+        {
+          "id": "5.3",
+          "title": "Add sleep status to DashboardView",
+          "description": "Display today's sleep status on the main dashboard",
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/DashboardView.swift"
+          ],
+          "estimated_time": "25 min",
+          "status": "pending",
+          "notes": "Add sleep card showing today's duration and status. Link to SleepTabView."
+        },
+        {
+          "id": "5.4",
+          "title": "Add Sleep tab to main navigation",
+          "description": "Add Sleep tab or menu item to main app navigation",
+          "files": [
+            "Bodii/App/ContentView.swift"
+          ],
+          "estimated_time": "15 min",
+          "status": "pending",
+          "notes": "Add tab item or navigation link to SleepTabView"
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-6",
+      "name": "Testing & Polish",
+      "description": "Add unit tests and polish the feature",
+      "subtasks": [
+        {
+          "id": "6.1",
+          "title": "Write SleepRecordMapper tests",
+          "description": "Unit tests for SleepRecordMapper domain/entity conversions",
+          "files": [
+            "BodiiTests/Data/Mappers/SleepRecordMapperTests.swift"
+          ],
+          "estimated_time": "20 min",
+          "status": "pending",
+          "notes": "Test toDomain and toEntity conversions with various data"
+        },
+        {
+          "id": "6.2",
+          "title": "Write SleepRepository tests",
+          "description": "Unit tests for SleepRepository CRUD operations",
+          "files": [
+            "BodiiTests/Data/Repositories/SleepRepositoryTests.swift"
+          ],
+          "estimated_time": "30 min",
+          "status": "pending",
+          "notes": "Test save, fetch, update, delete with mock data source"
+        },
+        {
+          "id": "6.3",
+          "title": "Write RecordSleepUseCase tests",
+          "description": "Unit tests for RecordSleepUseCase business logic",
+          "files": [
+            "BodiiTests/Domain/UseCases/RecordSleepUseCaseTests.swift"
+          ],
+          "estimated_time": "25 min",
+          "status": "pending",
+          "notes": "Test status calculation, date boundary logic, DailyLog update"
+        },
+        {
+          "id": "6.4",
+          "title": "Write DateUtils sleep boundary tests",
+          "description": "Additional tests for DateUtils sleep-related methods",
+          "files": [
+            "BodiiTests/DateUtilsTests.swift"
+          ],
+          "estimated_time": "20 min",
+          "status": "pending",
+          "notes": "Test getLogicalDate, getSleepDate, shouldShowSleepPopup edge cases"
+        },
+        {
+          "id": "6.5",
+          "title": "Write SleepPromptManager tests",
+          "description": "Unit tests for skip count and prompt logic",
+          "files": [
+            "BodiiTests/Presentation/SleepPromptManagerTests.swift"
+          ],
+          "estimated_time": "25 min",
+          "status": "pending",
+          "notes": "Test skip count persistence, max 3 skips, daily reset"
+        },
+        {
+          "id": "6.6",
+          "title": "Add accessibility labels",
+          "description": "Add VoiceOver accessibility labels to sleep UI components",
+          "files": [
+            "Bodii/Presentation/Features/Sleep/SleepInputSheet.swift",
+            "Bodii/Presentation/Features/Sleep/SleepHistoryView.swift",
+            "Bodii/Presentation/Components/Badges/SleepStatusBadge.swift"
+          ],
+          "estimated_time": "20 min",
+          "status": "pending",
+          "notes": "Ensure all interactive elements have proper accessibility labels"
+        },
+        {
+          "id": "6.7",
+          "title": "Final review and documentation",
+          "description": "Code review, documentation comments, and cleanup",
+          "files": [
+            "All sleep-related files"
+          ],
+          "estimated_time": "30 min",
+          "status": "pending",
+          "notes": "Ensure consistent code style, add missing documentation, remove debug code"
+        }
+      ]
+    }
+  ],
+  "dependencies": {
+    "external": [
+      "Swift Charts framework for SleepBarChart"
+    ],
+    "internal": [
+      "Core Data model already has SleepRecord entity",
+      "SleepStatus enum exists with 5 status levels",
+      "DateUtils has 02:00 boundary logic (getLogicalDate, getSleepDate, shouldShowSleepPopup)",
+      "SleepRecord domain entity exists",
+      "DailyLog has sleepDuration and sleepStatus fields"
+    ]
+  },
+  "acceptance_criteria": [
+    "Morning prompt appears after 6 AM (02:00 boundary) to log previous night's sleep",
+    "Users can log sleep duration (hours:minutes) using picker wheel",
+    "5-status quality rating with visual color feedback (red/yellow/green/blue/orange)",
+    "02:00 boundary logic correctly assigns sleep to previous day",
+    "Skip option available (max 3 times before forced entry)",
+    "Sleep trends visible on weekly/monthly view with bar chart",
+    "Sleep data syncs to DailyLog for correlation with other metrics"
+  ],
+  "estimated_total_time": "12-14 hours",
+  "qa_status": {
+    "status": "pending",
+    "issues": "",
+    "tests_passed": ""
+  },
+  "last_updated": "2026-01-14T05:09:44.778853+00:00"
+}
