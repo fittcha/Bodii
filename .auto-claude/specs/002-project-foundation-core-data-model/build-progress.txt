@@ -21,7 +21,8 @@
 #### Phase 2: Utility Services (IN PROGRESS)
 - ✅ 2.1: DateUtils (02:00 sleep boundary logic) - **COMPLETED**
 - ✅ 2.2: ValidationService (input validation with range checks) - **COMPLETED**
-- ✅ 2.3: Date+Extensions (convenience extensions for Date type) - **COMPLETED THIS SESSION**
+- ✅ 2.3: Date+Extensions (convenience extensions for Date type) - **COMPLETED**
+- ✅ 2.4: Decimal+Extensions (convenience extensions for Decimal type) - **COMPLETED THIS SESSION**
 
 ---
 
@@ -190,12 +191,57 @@
 - Shared DateFormatter for performance
 - Well-documented with examples
 
+### 🎯 Subtask 2.4: Decimal+Extensions - COMPLETED
+
+**File:** `Bodii/Shared/Extensions/Decimal+Extensions.swift`
+
+**Implementation Details:**
+- ✅ `doubleValue` computed property - Convert Decimal to Double
+  - Uses NSDecimalNumber for conversion
+  - Essential for calculations and chart libraries
+  - Example: `let weight: Decimal = 67.5; let weightDouble = weight.doubleValue`
+
+- ✅ `intValue` computed property - Convert Decimal to Int (truncates)
+  - Uses NSDecimalNumber for conversion
+  - Useful for calories and whole number displays
+  - Example: `let calories: Decimal = 2156.8; let caloriesInt = calories.intValue // 2156`
+
+- ✅ `init(double:)` initializer - Create Decimal from Double
+  - Converts Double to Decimal for Core Data storage
+  - Example: `bodyRecord.weight = Decimal(double: 67.5)`
+
+- ✅ `rounded(scale:)` method - Round to decimal places
+  - Uses NSDecimalRound with .plain rounding mode
+  - Default scale: 2 decimal places
+  - Example: `weight.rounded(scale: 1) // 67.5`
+
+- ✅ `formatted(decimalPlaces:)` method - Format for UI display
+  - Returns formatted string with specified decimal places
+  - No thousand separators (pure number)
+  - Example: `weight.formatted(decimalPlaces: 1) // "67.5"`
+
+**Design Pattern:**
+- Extension provides convenience conversions between Core Data Decimal and Swift numeric types
+- Educational comments comparing to Java BigDecimal
+- Comprehensive Korean documentation with usage scenarios
+- Follows same structure as Date+Extensions
+
+**Why Decimal in Core Data:**
+- Precise decimal calculations (no floating-point errors)
+- Critical for health/financial data: weight 67.5kg, body fat 18.3%
+- Decimal is a value type in Swift (unlike Java's BigDecimal reference type)
+
+**Verification:**
+- All acceptance criteria met
+- Implementation follows existing code patterns
+- Comprehensive Korean documentation with examples
+- Already committed in commit 7147a48
+
 ---
 
 ### 📋 Next Steps
 
 **Phase 2: Utility Services** (Continue)
-- ⏭️ 2.4: Decimal+Extensions (Core Data conversions)
 - ⏭️ 2.5: Formatters Utility (centralized formatters)
 
 **Phase 3: Domain Entities** (Pending)
