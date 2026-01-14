@@ -32,6 +32,17 @@ enum SleepStatus: Int16, CaseIterable, Codable {
     case excellent = 3
     case oversleep = 4
 
+    // MARK: - Constants
+
+    /// 수면 품질 기준 시간 (분 단위)
+    /// 📚 학습 포인트: Named Constants for Business Rules
+    /// - 매직 넘버를 상수로 추출하여 가독성과 유지보수성 향상
+    /// - 기준 변경 시 한 곳만 수정하면 됨
+    private static let BAD_THRESHOLD: Int32 = 330        // 5시간 30분
+    private static let SOSO_THRESHOLD: Int32 = 390       // 6시간 30분
+    private static let GOOD_THRESHOLD: Int32 = 450       // 7시간 30분
+    private static let EXCELLENT_THRESHOLD: Int32 = 540  // 9시간
+
     /// 사용자에게 표시할 수면 상태 이름
     var displayName: String {
         switch self {
@@ -87,20 +98,20 @@ enum SleepStatus: Int16, CaseIterable, Codable {
     /// - Returns: 수면 시간에 해당하는 수면 상태
     ///
     /// 수면 상태 기준:
-    /// - bad: 330분 미만 (5시간 30분 미만)
-    /// - soso: 330분 ~ 390분 미만 (5시간 30분 ~ 6시간 30분)
-    /// - good: 390분 ~ 450분 미만 (6시간 30분 ~ 7시간 30분)
-    /// - excellent: 450분 ~ 540분 이하 (7시간 30분 ~ 9시간)
-    /// - oversleep: 540분 초과 (9시간 초과)
+    /// - bad: BAD_THRESHOLD 미만 (5시간 30분 미만)
+    /// - soso: BAD_THRESHOLD ~ SOSO_THRESHOLD 미만 (5시간 30분 ~ 6시간 30분)
+    /// - good: SOSO_THRESHOLD ~ GOOD_THRESHOLD 미만 (6시간 30분 ~ 7시간 30분)
+    /// - excellent: GOOD_THRESHOLD ~ EXCELLENT_THRESHOLD 이하 (7시간 30분 ~ 9시간)
+    /// - oversleep: EXCELLENT_THRESHOLD 초과 (9시간 초과)
     static func from(durationMinutes: Int32) -> SleepStatus {
         switch durationMinutes {
-        case ..<330:
+        case ..<BAD_THRESHOLD:
             return .bad
-        case 330..<390:
+        case BAD_THRESHOLD..<SOSO_THRESHOLD:
             return .soso
-        case 390..<450:
+        case SOSO_THRESHOLD..<GOOD_THRESHOLD:
             return .good
-        case 450...540:
+        case GOOD_THRESHOLD...EXCELLENT_THRESHOLD:
             return .excellent
         default:
             return .oversleep

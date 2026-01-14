@@ -1,7 +1,7 @@
 {
   "spec_id": "009-sleep-tracking-with-5-status-system",
   "created_at": "2026-01-14T12:03:40.815244+00:00",
-  "updated_at": "2026-01-14T13:21:36.741678+00:00",
+  "updated_at": "2026-01-14T13:27:55.474409+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -9857,6 +9857,951 @@
           "tool_input": "cd . && git add -A && git status",
           "subtask_id": "6.6",
           "session": 26
+        },
+        {
+          "timestamp": "2026-01-14T13:21:38.200451+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.6",
+          "session": 26,
+          "detail": "On branch auto-claude/009-sleep-tracking-with-5-status-system\nChanges to be committed:\n  (use \"git restore --staged <file>...\" to unstage)\n\tmodified:   .auto-claude-status\n\tmodified:   .auto-claude/specs/009-sleep-tracking-with-5-status-system/build-progress.txt\n\tmodified:   .auto-claude/specs/009-sleep-tracking-with-5-status-system/implementation_plan.json\n\tmodified:   .auto-claude/specs/009-sleep-tracking-with-5-status-system/memory/attempt_history.json\n\tmodified:   .auto-claude/specs/009-sleep-tracking-with-5-status-system/memory/build_commits.json\n\tnew file:   .auto-claude/specs/009-sleep-tracking-with-5-status-system/memory/session_insights/session_025.json\n\tmodified:   .auto-claude/specs/009-sleep-tracking-with-5-status-system/task_logs.json\n\tmodified:   Bodii/Presentation/Components/Badges/SleepStatusBadge.swift\n\tmodified:   Bodii/Presentation/Components/Pickers/DurationPicker.swift\n\tmodified:   Bodii/Presentation/Components/Rows/SleepRecordRow.swift\n\tmodified:   Bodii/Presentation/Features/Sleep/SleepHistoryView.swift\n\tmodified:   Bodii/Presentation/Features/Sleep/SleepInputSheet.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:21:45.196825+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git commit -m \"auto-claude: 6.6 - Add V...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git commit -m \"auto-claude: 6.6 - Add V...",
+          "subtask_id": "6.6",
+          "session": 26
+        },
+        {
+          "timestamp": "2026-01-14T13:21:46.085426+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.6",
+          "session": 26,
+          "detail": "[auto-claude/009-sleep-tracking-with-5-status-system 2900801] auto-claude: 6.6 - Add VoiceOver accessibility labels to sleep UI com\n 12 files changed, 881 insertions(+), 10 deletions(-)\n create mode 100644 .auto-claude/specs/009-sleep-tracking-with-5-status-system/memory/session_insights/session_025.json",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:21:53.724067+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "6.6",
+          "session": 26
+        },
+        {
+          "timestamp": "2026-01-14T13:21:53.751306+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "6.6",
+          "session": 26,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:21:56.832145+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "6.6",
+          "session": 26
+        },
+        {
+          "timestamp": "2026-01-14T13:21:56.857902+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "6.6",
+          "session": 26,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:22:13.766179+00:00",
+          "type": "text",
+          "content": "Perfect! I've successfully completed subtask 6.6 - **Add VoiceOver accessibility labels to sleep UI components**. Here's a summary of what was implemented:\n\n## Accessibility Improvements Added\n\n### 1. **SleepStatusBadge** (Bodii/Presentation/Components/Badges/SleepStatusBadge.swift)\n- Added `.accessibilityLabel(\"수면 상태: \\(status.displayName)\")`\n- Added `.accessibilityAddTraits(.isStaticText)` to indicate it's static content\n\n### 2. **SleepRecordRow** (Bodii/Presentation/Components/Rows/SleepRecordRow.swift)\n- Combined all row information into a single accessibility element\n- Added comprehensive label: date, duration, and status\n- Added `.accessibilityAddTraits(.isButton)` since it's tappable\n- Added helpful hint: \"두 번 탭하여 수면 기록을 편집합니다\"\n\n### 3. **DurationPicker** (Bodii/Presentation/Components/Pickers/DurationPicker.swift)\n- Added labels to both hours and minutes pickers\n- Added dynamic `.accessibilityValue()` to show current selection\n- Added container hint: \"위아래로 스와이프하여 시간과 분을 선택하세요\"\n\n### 4. **SleepInputSheet** (Bodii/Presentation/Features/Sleep/SleepInputSheet.swift)\n- **Header section**: Hidden decorative moon icon, added warning label for forced entry mode\n- **Status preview**: Combined label with `.updatesFrequently` trait for real-time updates\n- **Summary card**: Added `.summaryElement` trait with formatted duration\n- **Save button**: Dynamic label based on saving state, hint shows what will be saved\n- **Skip button**: Clear label and hint for alternative action\n- **Close button**: Added to toolbar button\n\n### 5. **SleepHistoryView** (Bodii/Presentation/Features/Sleep/SleepHistoryView.swift)\n- **Statistic rows**: Combined icon and value into single accessible element\n- **Floating add button**: Clear label and hint for primary action\n- **Query mode menu**: Shows current filter selection in hint\n- **Empty state**: Hidden decorative icon, accessible button\n- **Loading state**: Added `.updatesFrequently` trait\n\n## Key Accessibility Features\n✅ **Clear labels** - All interactive elements have descriptive labels  \n✅ **Helpful hints** - Actions explain what will happen when activated  \n✅ **Dynamic values** - Real-time updates for pickers and status displays  \n✅ **Appropriate traits** - Static text, buttons, and updating elements properly marked  \n✅ **Grouped elements** - Related information combined for efficient navigation  \n✅ **Hidden decoratives** - Decorative icons hidden to reduce clutter  \n\n## Build Progress\n- **33/34 subtasks completed (97%)**\n- Successfully committed with detailed commit message\n- Next subtask: 6.7 - Final review and documentation\n\nAll changes follow SwiftUI accessibility best practices and ensure the sleep tracking feature is fully accessible to VoiceOver users! 🎉",
+          "phase": "coding",
+          "subtask_id": "6.6",
+          "session": 26
+        },
+        {
+          "timestamp": "2026-01-14T13:22:24.613729+00:00",
+          "type": "text",
+          "content": "I'll help you complete subtask 6.7 - Code review, documentation comments, and cleanup. Let me start by understanding the context and what needs to be reviewed.",
+          "phase": "coding",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:25.425056+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...009-sleep-tracking-with-5-status-system/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...009-sleep-tracking-with-5-status-system/spec.md",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:25.551654+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...g-with-5-status-system/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...g-with-5-status-system/implementation_plan.json",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:26.162213+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...racking-with-5-status-system/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...racking-with-5-status-system/build-progress.txt",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:26.207624+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:26.233598+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "6.7",
+          "session": 27,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:22:35.513440+00:00",
+          "type": "text",
+          "content": "Now I'll perform a comprehensive code review, check documentation, and do cleanup for the sleep tracking feature. Let me first get a list of all sleep-related files.",
+          "phase": "coding",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:35.983140+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*Sleep*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*Sleep*.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:37.162091+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...leep-tracking-with-5-status-system/context.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...leep-tracking-with-5-status-system/context.json",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:37.187542+00:00",
+          "type": "tool_end",
+          "content": "[Read] Error: <tool_use_error>File does not exist.</tool_use_error>",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "<tool_use_error>File does not exist.</tool_use_error>",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:22:43.134799+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*Duration*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*Duration*.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:51.900242+00:00",
+          "type": "tool_start",
+          "content": "[Task]",
+          "phase": "coding",
+          "tool_name": "Task",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:52.250263+00:00",
+          "type": "tool_end",
+          "content": "[Task] Done",
+          "phase": "coding",
+          "tool_name": "Task",
+          "subtask_id": "6.7",
+          "session": 27,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:22:54.875536+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tus-system/Bodii/Shared/Enums/SleepStatus.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tus-system/Bodii/Shared/Enums/SleepStatus.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:55.470672+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...stem/Bodii/Data/Mappers/SleepRecordMapper.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...stem/Bodii/Data/Mappers/SleepRecordMapper.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:56.100088+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:56.654974+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...m/Bodii/Data/Repositories/SleepRepository.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...m/Bodii/Data/Repositories/SleepRepository.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:57.356822+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Bodii/Domain/UseCases/RecordSleepUseCase.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Bodii/Domain/UseCases/RecordSleepUseCase.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:22:57.377495+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "     1→//\n     2→//  SleepStatus.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→import SwiftUI\n    10→\n    11→/// 수면 상태 열거형\n    12→///\n    13→/// 수면 시간(분)에 따른 수면 품질 상태를 나타냅니다.\n    14→/// Core Data 호환성을 위해 Int16 rawValue를 사용합니다.\n    15→///\n    16→/// - Cases:\n    17→///   - bad: 나쁨 (5시간 30분 미만)\n    18→///   - soso: 보통 (5시간 30분 ~ 6시간 30분)\n    19→///   - good: 좋음 (6시간 30분 ~ 7시간 30분)\n    20→///   - excellent: 매우 좋음 (7시간 30분 ~ 9시간)\n    21→///   - oversleep: 과다 수면 (9시간 초과)\n    22→///\n    23→/// - Example:\n    24→/// ```swift\n    25→/// let status = SleepStatus.from(durationMinutes: 420) // 7시간\n    26→/// print(status.displayName) // \"좋음\"\n    27→/// ```\n    28→enum SleepStatus: Int16, CaseIterable, Codable {\n    29→    case bad = 0\n    30→    case soso = 1\n    31→    case good = 2\n    32→    case excellent = 3\n    33→    case oversleep = 4\n    34→\n    35→    /// 사용자에게 표시할 수면 상태 이름\n    36→    var displayName: String {\n    37→        switch self {\n    38→        case .bad: return \"나쁨\"\n    39→        case .soso: return \"보통\"\n    40→        case .good: return \"좋음\"\n    41→        case .excellent: return \"매우 좋음\"\n    42→        case .oversleep: return \"과다 수면\"\n    43→        }\n    44→    }\n    45→\n    46→    /// 수면 상태에 해당하는 SwiftUI Color\n    47→    ///\n    48→    /// 시각적 피드백을 위한 상태별 색상을 반환합니다.\n    49→    ///\n    50→    /// - bad: 빨강 (수면 부족)\n    51→    /// - soso: 노랑 (보통)\n    52→    /// - good: 초록 (적정)\n    53→    /// - excellent: 파랑 (매우 좋음)\n    54→    /// - oversleep: 주황 (과다 수면)\n    55→    var color: Color {\n    56→        switch self {\n    57→        case .bad: return .red\n    58→        case .soso: return .yellow\n    59→        case .good: return .green\n    60→        case .excellent: return .blue\n    61→        case .oversleep: return .orange\n    62→        }\n    63→    }\n    64→\n    65→    /// 수면 상태에 해당하는 SF Symbol 아이콘 이름\n    66→    ///\n    67→    /// 시각적 피드백을 위한 상태별 아이콘을 반환합니다.\n    68→    ///\n    69→    /// - bad: moon.fill (수면 부족)\n    70→    /// - soso: moon.stars (보통)\n    71→    /// - good: moon.stars.fill (적정)\n    72→    /// - excellent: sparkles (매우 좋음)\n    73→    /// - oversleep: zzz (과다 수면)\n    74→    var iconName: String {\n    75→        switch self {\n    76→        case .bad: return \"moon.fill\"\n    77→        case .soso: return \"moon.stars\"\n    78→        case .good: return \"moon.stars.fill\"\n    79→        case .excellent: return \"sparkles\"\n    80→        case .oversleep: return \"zzz\"\n    81→        }\n    82→    }\n    83→\n    84→    /// 수면 시간(분)으로부터 수면 상태를 결정하는 팩토리 메서드\n    85→    ///\n    86→    /// - Parameter durationMinutes: 수면 시간 (분 단위)\n    87→    /// - Returns: 수면 시간에 해당하는 수면 상태\n    88→    ///\n    89→    /// 수면 상태 기준:\n    90→    /// - bad: 330분 미만 (5시간 30분 미만)\n    91→    /// - soso: 330분 ~ 390분 미만 (5시간 30분 ~ 6시간 30분)\n    92→    /// - good: 390분 ~ 450분 미만 (6시간 30분 ~ 7시간 30분)\n    93→    /// - excellent: 450분 ~ 540분 이하 (7시간 30분 ~ 9시간)\n    94→    /// - oversleep: 540분 초과 (9시간 초과)\n    95→    static func from(durationMinutes: Int32) -> SleepStatus {\n    96→        switch durationMinutes {\n    97→        case ..<330:\n    98→            return .bad\n    99→        case 330..<390:\n   100→            return .soso\n   101→        case 390..<450:\n   102→            return .good\n   103→        case 450...540:\n   104→            return .excellent\n   105→        default:\n   106→            return .oversleep\n   107→        }\n   108→    }\n   109→}\n   110→\n   111→// MARK: - Identifiable\n   112→\n   113→extension SleepStatus: Identifiable {\n   114→    var id: Int16 { rawValue }\n   115→}\n   116→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:23:02.498498+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Domain/UseCases/FetchSleepHistoryUseCase.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Domain/UseCases/FetchSleepHistoryUseCase.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:03.323260+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ii/Domain/UseCases/FetchSleepStatsUseCase.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ii/Domain/UseCases/FetchSleepStatsUseCase.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:03.985378+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Features/Sleep/SleepInputViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Features/Sleep/SleepInputViewModel.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:05.107407+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Features/Sleep/SleepPromptManager.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Features/Sleep/SleepPromptManager.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:05.448167+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tion/Features/Sleep/SleepHistoryViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tion/Features/Sleep/SleepHistoryViewModel.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:05.484031+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "     1→//\n     2→//  FetchSleepHistoryUseCase.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Query Use Case Pattern\n     9→// 수면 기록 히스토리 조회를 캡슐화하는 Use Case 패턴\n    10→// 💡 Java 비교: Service layer의 조회 메서드와 유사하지만 더 세분화됨\n    11→\n    12→import Foundation\n    13→\n    14→// MARK: - FetchSleepHistoryUseCase\n    15→\n    16→/// 수면 기록 히스토리 조회 Use Case\n    17→/// 목록 표시를 위해 수면 기록 데이터를 조회하고 변환합니다.\n    18→/// 📚 학습 포인트: Clean Architecture - Use Case Layer\n    19→/// - 특정 비즈니스 로직(히스토리 데이터 조회)을 독립적인 유닛으로 캡슐화\n    20→/// - Repository의 raw data를 UI에 최적화된 형태로 변환\n    21→/// - UI나 데이터베이스에 의존하지 않는 순수한 비즈니스 로직\n    22→/// 💡 Java 비교: Interactor 또는 Service 클래스의 단일 책임 메서드\n    23→struct FetchSleepHistoryUseCase {\n    24→\n    25→    // MARK: - Types\n    26→\n    27→    /// 히스토리 조회 모드\n    28→    /// 📚 학습 포인트: Enum for Query Modes\n    29→    /// - 다양한 조회 패턴을 타입으로 정의\n    30→    /// - 각 케이스가 다른 조회 방식을 나타냄\n    31→    /// 💡 Java 비교: Enum with strategy pattern과 유사\n    32→    enum QueryMode {\n    33→        /// 모든 기록 조회\n    34→        case all\n    35→\n    36→        /// 최근 N일 조회\n    37→        case recent(days: Int)\n    38→\n    39→        /// 특정 기간 조회\n    40→        case dateRange(from: Date, to: Date)\n    41→    }\n    42→\n    43→    /// 히스토리 조회에 필요한 입력 데이터\n    44→    /// 📚 학습 포인트: Nested Type\n    45→    /// - Use Case 내부에 관련된 타입을 중첩하여 네임스페이스 정리\n    46→    /// - 외부에서는 FetchSleepHistoryUseCase.Input으로 접근\n    47→    /// 💡 Java 비교: static nested class와 유사\n    48→    struct Input {\n    49→        /// 조회 모드 (기본값: 모든 기록)\n    50→        let mode: QueryMode\n    51→\n    52→        /// 초기화\n    53→        /// - Parameter mode: 조회 모드 (기본값: .all)\n    54→        init(mode: QueryMode = .all) {\n    55→            self.mode = mode\n    56→        }\n    57→    }\n    58→\n    59→    /// 히스토리 조회 결과\n    60→    /// 📚 학습 포인트: Result Type\n    61→    /// 조회된 데이터와 메타 정보를 함께 반환\n    62→    /// 💡 Java 비교: DTO (Data Transfer Object)와 유사\n    63→    struct Output {\n    64→        /// 수면 기록 배열 (날짜 내림차순 정렬 - 최신순)\n    65→        /// 📚 학습 포인트: Collection Type\n    66→        /// - UI 리스트에 최적화된 형태로 정렬\n    67→        /// - 최신 기록이 먼저 표시됨\n    68→        let records: [SleepRecord]\n    69→\n    70→        /// 조회 모드\n    71→        let mode: QueryMode\n    72→\n    73→        /// 조회 날짜 범위 (실제 조회된 데이터 기준)\n    74→        let dateRange: ClosedRange<Date>?\n    75→\n    76→        /// 데이터 존재 여부\n    77→        /// 📚 학습 포인트: Computed Property\n    78→        /// UI에서 empty state 표시 여부 판단에 사용\n    79→        var isEmpty: Bool {\n    80→            records.isEmpty\n    81→        }\n    82→\n    83→        /// 데이터 개수\n    84→        var count: Int {\n    85→            records.count\n    86→        }\n    87→\n    88→        /// 총 수면 시간 (분)\n    89→        /// 📚 학습 포인트: Aggregate Calculation\n    90→        /// 히스토리 요약 정보로 표시\n    91→        var totalDuration: Int32 {\n    92→            records.reduce(0) { $0 + $1.duration }\n    93→        }\n    94→\n    95→        /// 평균 수면 시간 (분)\n    96→        var averageDuration: Int32? {\n    97→            guard !isEmpty else { return nil }\n    98→            return totalDuration / Int32(count)\n    99→        }\n   100→\n   101→        /// 평균 수면 시간을 시:분 형식으로 반환\n   102→        /// 📚 학습 포인트: Computed Property\n   103→        /// UI에서 표시할 때 사용하기 쉬운 형태로 제공\n   104→        /// - Returns: (hours, minutes) 튜플\n   105→        var averageDurationFormatted: (hours: Int, minutes: Int)? {\n   106→            guard let avg = averageDuration else { return nil }\n   107→            let hours = Int(avg) / 60\n   108→            let minutes = Int(avg) % 60\n   109→            return (hours, minutes)\n   110→        }\n   111→\n   112→        /// 수면 상태별 분포\n   113→        /// 📚 학습 포인트: Dictionary Grouping\n   114→        /// 차트나 통계 표시에 사용\n   115→        /// - Returns: [SleepStatus: 개수]\n   116→        var statusDistribution: [SleepStatus: Int] {\n   117→            Dictionary(grouping: records) { $0.status }\n   118→                .mapValues { $0.count }\n   119→        }\n   120→\n   121→        /// 가장 많은 수면 상태\n   122→        /// 📚 학습 포인트: Max By Value\n   123→        /// 사용자의 주된 수면 상태 표시\n   124→        var mostCommonStatus: SleepStatus? {\n   125→            statusDistribution.max(by: { $0.value < $1.value })?.key\n   126→        }\n   127→\n   128→        /// 요약 문자열\n   129→        /// 📚 학습 포인트: UI Helper Method\n   130→        /// UI에서 바로 사용할 수 있는 요약 정보\n   131→        func summary() -> String {\n   132→            guard !isEmpty else {\n   133→                return \"수면 기록이 없습니다.\"\n   134→            }\n   135→\n   136→            var summary = \"\"\"\n   137→            총 \\(count)개의 수면 기록\n   138→            \"\"\"\n   139→\n   140→            if let avg = averageDurationFormatted {\n   141→                summary += \"\\n평균 수면 시간: \\(avg.hours)시간 \\(avg.minutes)분\"\n   142→            }\n   143→\n   144→            if let mostCommon = mostCommonStatus {\n   145→                let countForStatus = statusDistribution[mostCommon] ?? 0\n   146→                summary += \"\\n가장 많은 상태: \\(mostCommon.displayName) (\\(countForStatus)회)\"\n   147→            }\n   148→\n   149→            if let range = dateRange {\n   150→                let formatter = DateFormatter()\n   151→                formatter.dateStyle = .short\n   152→                formatter.timeStyle = .none\n   153→                formatter.locale = Locale(identifier: \"ko_KR\")\n   154→                let startStr = formatter.string(from: range.lowerBound)\n   155→                let endStr = formatter.string(from: range.upperBound)\n   156→                summary += \"\\n기간: \\(startStr) ~ \\(endStr)\"\n   157→            }\n   158→\n   159→            return summary\n   160→        }\n   161→    }\n   162→\n   163→    // MARK: - Error\n   164→\n   165→    /// 히스토리 조회 중 발생할 수 있는 에러\n   166→    /// 📚 학습 포인트: Custom Error Type\n   167→    /// Swift의 Error 프로토콜을 conform하여 throw 가능한 타입 정의\n   168→    /// 💡 Java 비교: Custom Exception과 유사\n   169→    enum HistoryError: Error, LocalizedError {\n   170→        /// 조회 실패\n   171→        case fetchFailed(Error)\n   172→\n   173→        /// 유효하지 않은 날짜 범위\n   174→        case invalidDateRange\n   175→\n   176→        /// 유효하지 않은 일수 값\n   177→        case invalidDays(Int)\n   178→\n   179→        /// 에러 설명 (사용자에게 표시할 메시지)\n   180→        /// 📚 학습 포인트: LocalizedError Protocol\n   181→        /// errorDescription을 구현하여 사용자 친화적인 에러 메시지 제공\n   182→        var errorDescription: String? {\n   183→            switch self {\n   184→            case .fetchFailed(let error):\n   185→                return \"히스토리 조회 실패: \\(error.localizedDescription)\"\n   186→            case .invalidDateRange:\n   187→                return \"유효하지 않은 날짜 범위입니다.\"\n   188→            case .invalidDays(let days):\n   189→                return \"유효하지 않은 일수입니다: \\(days). 1 이상의 값을 입력하세요.\"\n   190→            }\n   191→        }\n   192→    }\n   193→\n   194→    // MARK: - Dependencies\n   195→\n   196→    /// 수면 데이터 저장소\n   197→    /// 📚 학습 포인트: Dependency Injection\n   198→    /// 외부에서 주입받아 사용 (테스트 가능성 향상)\n   199→    /// 💡 Java 비교: @Autowired Repository와 유사\n   200→    private let sleepRepository: SleepRepositoryProtocol\n   201→\n   202→    // MARK: - Initialization\n   203→\n   204→    /// FetchSleepHistoryUseCase 초기화\n   205→    /// 📚 학습 포인트: Dependency Injection via Constructor\n   206→    /// - 모든 의존성을 생성자를 통해 주입받음\n   207→    /// - 의존성 역전 원칙 (Dependency Inversion Principle) 준수\n   208→    /// 💡 Java 비교: @Autowired constructor injection과 유사\n   209→    ///\n   210→    /// - Parameter sleepRepository: 수면 데이터 저장소 (필수)\n   211→    init(sleepRepository: SleepRepositoryProtocol) {\n   212→        self.sleepRepository = sleepRepository\n   213→    }\n   214→\n   215→    // MARK: - Execute\n   216→\n   217→    /// 히스토리 데이터 조회 실행\n   218→    /// 📚 학습 포인트: Async/Await\n   219→    /// - Swift 5.5+의 동시성 모델\n   220→    /// - 비동기 작업을 동기 코드처럼 작성 가능\n   221→    /// 💡 Java 비교: CompletableFuture 또는 Kotlin Coroutines와 유사\n   222→    ///\n   223→    /// 📚 학습 포인트: Query Optimization\n   224→    /// 1. Repository에서 조회 모드에 따라 데이터 조회\n   225→    /// 2. 날짜 내림차순 정렬 (최신순)\n   226→    /// 3. 메타 정보 계산 (총 개수, 평균, 분포 등)\n   227→    ///\n   228→    /// - Parameter input: 히스토리 조회 입력 데이터\n   229→    /// - Returns: 수면 기록 히스토리\n   230→    /// - Throws: HistoryError - 조회 실패 시\n   231→    func execute(input: Input) async throws -> Output {\n   232→        // Step 1: 조회 모드에 따라 데이터 조회\n   233→        // 📚 학습 포인트: Switch on Associated Values\n   234→        // Enum의 associated value에 따라 다른 로직 실행\n   235→        let records: [SleepRecord]\n   236→        let dateRange: ClosedRange<Date>?\n   237→\n   238→        do {\n   239→            switch input.mode {\n   240→            case .all:\n   241→                // 모든 기록 조회\n   242→                records = try await sleepRepository.fetchAll()\n   243→                // 날짜 범위 계산 (첫 기록 ~ 마지막 기록)\n   244→                if let first = records.first?.date, let last = records.last?.date {\n   245→                    // records는 내림차순이므로 first가 최신, last가 가장 오래된 것\n   246→                    dateRange = last...first\n   247→                } else {\n   248→                    dateRange = nil\n   249→                }\n   250→\n   251→            case .recent(let days):\n   252→                // 유효성 검증\n   253→                guard days > 0 else {\n   254→                    throw HistoryError.invalidDays(days)\n   255→                }\n   256→                // 최근 N일 조회\n   257→                records = try await sleepRepository.fetchRecent(days: days)\n   258→                // 날짜 범위 계산\n   259→                let endDate = Date()\n   260→                if let startDate = Calendar.current.date(byAdding: .day, value: -days, to: endDate) {\n   261→                    dateRange = startDate...endDate\n   262→                } else {\n   263→                    dateRange = nil\n   264→                }\n   265→\n   266→            case .dateRange(let from, let to):\n   267→                // 날짜 범위 유효성 검증\n   268→                guard from <= to else {\n   269→                    throw HistoryError.invalidDateRange\n   270→                }\n   271→                // 특정 기간 조회\n   272→                records = try await sleepRepository.fetch(from: from, to: to)\n   273→                dateRange = from...to\n   274→            }\n   275→        } catch let error as HistoryError {\n   27\n\n... [truncated - full output was 17906 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:23:11.157046+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ation/Features/Sleep/SleepTrendsViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ation/Features/Sleep/SleepTrendsViewModel.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:11.870516+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...esentation/Features/Sleep/SleepInputSheet.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...esentation/Features/Sleep/SleepInputSheet.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:12.485529+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...sentation/Features/Sleep/SleepHistoryView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...sentation/Features/Sleep/SleepHistoryView.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:13.198214+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...esentation/Features/Sleep/SleepTrendsView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...esentation/Features/Sleep/SleepTrendsView.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:13.814293+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Presentation/Features/Sleep/SleepTabView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Presentation/Features/Sleep/SleepTabView.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:13.835837+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "     1→//\n     2→//  SleepTrendsViewModel.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Chart-Focused ViewModel Pattern\n     9→// 수면 차트 데이터 관리와 기간 선택을 위한 ViewModel\n    10→// 💡 Java 비교: Android의 ViewModel과 유사하지만 차트 전용 상태 관리\n    11→\n    12→import Foundation\n    13→import SwiftUI\n    14→import Combine\n    15→\n    16→// MARK: - SleepTrendsViewModel\n    17→\n    18→/// 수면 트렌드 차트를 위한 ViewModel\n    19→/// 📚 학습 포인트: Chart Data Management\n    20→/// - 차트 표시를 위한 수면 통계 데이터 관리\n    21→/// - 기간 선택 및 네비게이션 처리\n    22→/// - 빈 상태 및 로딩 상태 관리\n    23→/// 💡 Java 비교: Android ViewModel + Chart data transformation\n    24→@MainActor\n    25→class SleepTrendsViewModel: ObservableObject {\n    26→\n    27→    // MARK: - Published Properties (View State)\n    28→\n    29→    /// 선택된 통계 기간\n    30→    /// 📚 학습 포인트: User Selection State\n    31→    /// - 사용자가 선택한 기간 (7일/30일/90일)\n    32→    /// - 변경 시 자동으로 데이터 다시 로드\n    33→    /// 💡 Java 비교: LiveData<StatsPeriod>와 유사\n    34→    @Published var selectedPeriod: FetchSleepStatsUseCase.StatsPeriod = .week\n    35→\n    36→    /// 통계 데이터 출력\n    37→    /// 📚 학습 포인트: Optional State\n    38→    /// - nil이면 아직 데이터 로드 안 됨\n    39→    /// - 값이 있으면 차트에 표시\n    40→    @Published var statsOutput: FetchSleepStatsUseCase.Output?\n    41→\n    42→    /// 로딩 상태\n    43→    /// 📚 학습 포인트: Loading State\n    44→    /// - 데이터 조회 중 로딩 인디케이터 표시\n    45→    @Published var isLoading: Bool = false\n    46→\n    47→    /// 에러 메시지\n    48→    /// 📚 학습 포인트: Error State\n    49→    /// - nil이면 에러 없음\n    50→    /// - 값이 있으면 에러 메시지 표시\n    51→    @Published var errorMessage: String?\n    52→\n    53→    /// 커스텀 날짜 범위 사용 여부\n    54→    /// 📚 학습 포인트: Advanced Feature Toggle\n    55→    /// - false: StatsPeriod 사용\n    56→    /// - true: customStartDate/customEndDate 사용\n    57→    @Published var useCustomDateRange: Bool = false\n    58→\n    59→    /// 커스텀 시작 날짜\n    60→    /// 📚 학습 포인트: Custom Date Range\n    61→    /// - useCustomDateRange가 true일 때만 사용\n    62→    @Published var customStartDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: Date())!\n    63→\n    64→    /// 커스텀 종료 날짜\n    65→    @Published var customEndDate: Date = Date()\n    66→\n    67→    // MARK: - Private Properties\n    68→\n    69→    /// 수면 통계 조회 Use Case\n    70→    /// 📚 학습 포인트: Dependency Injection\n    71→    /// - Use Case를 외부에서 주입받아 사용\n    72→    /// - 테스트 시 Mock으로 교체 가능\n    73→    private let fetchSleepStatsUseCase: FetchSleepStatsUseCase\n    74→\n    75→    /// 수면 데이터 저장소\n    76→    /// 📚 학습 포인트: Protocol-Oriented Programming\n    77→    /// - 직접 조회가 필요한 경우를 위해 Repository도 보유\n    78→    private let sleepRepository: SleepRepositoryProtocol\n    79→\n    80→    /// Combine 구독 저장소\n    81→    /// 📚 학습 포인트: Reactive Programming\n    82→    /// - selectedPeriod 변경 시 자동으로 데이터 다시 로드\n    83→    /// - 메모리 누수 방지를 위한 구독 관리\n    84→    /// 💡 Java 비교: RxJava의 CompositeDisposable과 유사\n    85→    private var cancellables = Set<AnyCancellable>()\n    86→\n    87→    // MARK: - Initialization\n    88→\n    89→    /// SleepTrendsViewModel 초기화\n    90→    /// 📚 학습 포인트: Dependency Injection via Constructor\n    91→    /// - 모든 의존성을 생성자를 통해 주입받음\n    92→    /// - 의존성 역전 원칙 (Dependency Inversion Principle) 준수\n    93→    /// 💡 Java 비교: @Inject constructor와 유사\n    94→    ///\n    95→    /// - Parameters:\n    96→    ///   - fetchSleepStatsUseCase: 수면 통계 조회 Use Case\n    97→    ///   - sleepRepository: 수면 데이터 저장소\n    98→    init(\n    99→        fetchSleepStatsUseCase: FetchSleepStatsUseCase,\n   100→        sleepRepository: SleepRepositoryProtocol\n   101→    ) {\n   102→        self.fetchSleepStatsUseCase = fetchSleepStatsUseCase\n   103→        self.sleepRepository = sleepRepository\n   104→\n   105→        // 📚 학습 포인트: Reactive State Observation\n   106→        // selectedPeriod 변경 시 자동으로 데이터 다시 로드\n   107→        setupPeriodObserver()\n   108→\n   109→        // 초기 데이터 로드\n   110→        Task {\n   111→            await loadStats()\n   112→        }\n   113→    }\n   114→\n   115→    // MARK: - Computed Properties\n   116→\n   117→    /// 데이터가 비어있는지 확인\n   118→    /// 📚 학습 포인트: Computed Property for Empty State\n   119→    /// - View에서 empty state UI 표시 여부 결정\n   120→    var isEmpty: Bool {\n   121→        statsOutput?.isEmpty ?? true\n   122→    }\n   123→\n   124→    /// 데이터 포인트 개수\n   125→    /// 📚 학습 포인트: Quick Access Property\n   126→    /// - UI에서 바로 사용할 수 있는 편의 속성\n   127→    var dataPointCount: Int {\n   128→        statsOutput?.count ?? 0\n   129→    }\n   130→\n   131→    /// 차트 데이터 포인트\n   132→    /// 📚 학습 포인트: Convenience Property\n   133→    /// - View에서 직접 접근 가능한 데이터 포인트 배열\n   134→    var dataPoints: [FetchSleepStatsUseCase.SleepDataPoint] {\n   135→        statsOutput?.dataPoints ?? []\n   136→    }\n   137→\n   138→    /// 기간 표시 문자열\n   139→    /// 📚 학습 포인트: UI Helper Property\n   140→    /// - \"2024.01.01 - 2024.01.07\" 형식\n   141→    var periodDisplayString: String {\n   142→        guard let output = statsOutput else { return \"\" }\n   143→\n   144→        let formatter = DateFormatter()\n   145→        formatter.dateStyle = .short\n   146→        formatter.timeStyle = .none\n   147→        formatter.locale = Locale(identifier: \"ko_KR\")\n   148→\n   149→        let startStr = formatter.string(from: output.startDate)\n   150→        let endStr = formatter.string(from: output.endDate)\n   151→\n   152→        return \"\\(startStr) - \\(endStr)\"\n   153→    }\n   154→\n   155→    /// 평균 수면 시간 문자열\n   156→    /// 📚 학습 포인트: UI Helper Property\n   157→    /// - 통계 표시를 위한 포맷팅된 문자열\n   158→    var averageDurationString: String {\n   159→        guard let avg = statsOutput?.averageDurationFormatted else {\n   160→            return \"-\"\n   161→        }\n   162→        if avg.minutes == 0 {\n   163→            return \"\\(avg.hours)시간\"\n   164→        } else {\n   165→            return \"\\(avg.hours)시간 \\(avg.minutes)분\"\n   166→        }\n   167→    }\n   168→\n   169→    /// 평균 수면 시간 (분)\n   170→    /// 📚 학습 포인트: Quick Access for Chart\n   171→    /// - 차트에 평균선 표시할 때 사용\n   172→    var averageDurationMinutes: Int32? {\n   173→        statsOutput?.averageDuration\n   174→    }\n   175→\n   176→    /// 가장 많은 수면 상태 문자열\n   177→    /// 📚 학습 포인트: Statistics Display\n   178→    /// - 사용자의 주된 수면 패턴 표시\n   179→    var mostCommonStatusString: String {\n   180→        guard let status = statsOutput?.mostCommonStatus else {\n   181→            return \"-\"\n   182→        }\n   183→        return status.displayName\n   184→    }\n   185→\n   186→    /// 좋은 수면 비율 문자열\n   187→    /// 📚 학습 포인트: Quality Metric Display\n   188→    /// - 수면 품질의 전반적인 평가 지표\n   189→    var goodSleepPercentageString: String {\n   190→        guard let output = statsOutput else { return \"-\" }\n   191→        let percentage = output.goodSleepPercentage * 100\n   192→        return String(format: \"%.0f%%\", percentage)\n   193→    }\n   194→\n   195→    /// 수면 일관성 점수 문자열\n   196→    /// 📚 학습 포인트: Consistency Score Display\n   197→    /// - 수면 패턴의 규칙성 평가\n   198→    var consistencyScoreString: String {\n   199→        guard let score = statsOutput?.consistencyScore else {\n   200→            return \"-\"\n   201→        }\n   202→        let percentage = score * 100\n   203→        return String(format: \"%.0f%%\", percentage)\n   204→    }\n   205→\n   206→    /// 상태별 통계\n   207→    /// 📚 학습 포인트: Detailed Statistics Access\n   208→    /// - UI에서 상태별 분포 차트 구성에 사용\n   209→    var statusStats: [FetchSleepStatsUseCase.StatusStats] {\n   210→        statsOutput?.statusStats ?? []\n   211→    }\n   212→\n   213→    /// 추세 정보\n   214→    /// 📚 학습 포인트: Trend Analysis Access\n   215→    /// - 최근 vs 이전 기간 비교\n   216→    var trendInfo: (recent: Int32, previous: Int32, change: Int32)? {\n   217→        statsOutput?.recentTrend()\n   218→    }\n   219→\n   220→    /// 추세 문자열\n   221→    /// 📚 학습 포인트: Trend Display Helper\n   222→    /// - \"1시간 30분 증가\" 또는 \"30분 감소\" 형식\n   223→    var trendString: String {\n   224→        guard let trend = trendInfo else { return \"-\" }\n   225→\n   226→        let hours = abs(trend.change) / 60\n   227→        let minutes = abs(trend.change) % 60\n   228→        let direction = trend.change >= 0 ? \"증가\" : \"감소\"\n   229→\n   230→        if hours == 0 {\n   231→            return \"\\(minutes)분 \\(direction)\"\n   232→        } else if minutes == 0 {\n   233→            return \"\\(hours)시간 \\(direction)\"\n   234→        } else {\n   235→            return \"\\(hours)시간 \\(minutes)분 \\(direction)\"\n   236→        }\n   237→    }\n   238→\n   239→    // MARK: - Public Methods\n   240→\n   241→    /// 통계 데이터 로드\n   242→    /// 📚 학습 포인트: Async Data Loading\n   243→    /// - Use Case를 호출하여 데이터 조회\n   244→    /// - 로딩 상태 및 에러 처리\n   245→    /// 💡 Java 비교: Kotlin Coroutines의 suspend function과 유사\n   246→    func loadStats() async {\n   247→        isLoading = true\n   248→        errorMessage = nil\n   249→\n   250→        do {\n   251→            // 📚 학습 포인트: Conditional Query Strategy\n   252→            // 커스텀 날짜 범위 사용 여부에 따라 다른 메서드 호출\n   253→            if useCustomDateRange {\n   254→                // 커스텀 날짜 범위로 조회\n   255→                let input = FetchSleepStatsUseCase.Input(\n   256→                    period: selectedPeriod,\n   257→                    endDate: customEndDate\n   258→                )\n   259→                statsOutput = try await fetchSleepStatsUseCase.execute(input: input)\n   260→            } else {\n   261→                // 표준 기간으로 조회\n   262→                statsOutput = try await fetchSleepStatsUseCase.execute(period: selectedPeriod)\n   263→            }\n   264→\n   265→        } catch let error as FetchSleepStatsUseCase.StatsError {\n   266→            // 📚 학습 포인트: Specific Error Handling\n   267→            // Use Case의 도메인 에러를 사용자 친화적 메시지로 변환\n   268→            errorMessage = error.localizedDescription\n   269→            statsOutput = nil\n   270→        } catch {\n   271→            // 📚 학습 포인트: Generic Error Handling\n   272→            errorMessage = \"통계 데이터 로드 실패: \\(error.localizedDescription)\"\n   273→            statsOutput = nil\n   274→        }\n   275→\n   276→        isLoading = false\n   277→    }\n   278→\n   279→    /// 기간 변경\n   280→    /// 📚 학습 포인트: State Update Method\n   281→    /// - 기간 변경 시 자동으로 데이터 다시 로드 (observer를 통해)\n   282→    ///\n   283→    /// - Parameter period: 새로운 기간\n   284→    func changePeriod(to period: FetchSleepStat\n\n... [truncated - full output was 22915 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:23:20.780261+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Components/Badges/SleepStatusBadge.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Components/Badges/SleepStatusBadge.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:21.595391+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...esentation/Components/Rows/SleepRecordRow.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...esentation/Components/Rows/SleepRecordRow.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:22.108421+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...sentation/Components/Charts/SleepBarChart.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...sentation/Components/Charts/SleepBarChart.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:22.822414+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Components/Cards/SleepDisplayCard.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Components/Cards/SleepDisplayCard.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:23.842440+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Components/Pickers/DurationPicker.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Components/Pickers/DurationPicker.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:23:23.913532+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "     1→//\n     2→//  SleepStatusBadge.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Status Badge Component\n     9→// 수면 상태를 시각적으로 표시하는 뱃지 컴포넌트\n    10→// 💡 Java 비교: Android의 Chip 또는 Badge View와 유사\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - SleepStatusBadge\n    15→\n    16→/// 수면 상태를 시각적으로 표시하는 뱃지 컴포넌트\n    17→/// 📚 학습 포인트: Visual Status Badge\n    18→/// - SleepStatus enum의 색상과 아이콘을 사용하여 상태 표시\n    19→/// - 다양한 스타일 옵션 제공 (compact, default, large)\n    20→/// - 재사용 가능한 컴포넌트로 여러 화면에서 사용\n    21→/// 💡 Java 비교: Android의 Material Chip, Badge View와 유사\n    22→struct SleepStatusBadge: View {\n    23→\n    24→    // MARK: - Properties\n    25→\n    26→    /// 표시할 수면 상태\n    27→    /// 📚 학습 포인트: SleepStatus Enum\n    28→    /// - color, iconName, displayName 프로퍼티 자동 사용\n    29→    let status: SleepStatus\n    30→\n    31→    /// 뱃지 스타일\n    32→    /// 📚 학습 포인트: Style Enum\n    33→    /// - compact: 아이콘만 (작은 공간에 적합)\n    34→    /// - default: 아이콘 + 텍스트 (일반적인 사용)\n    35→    /// - large: 큰 아이콘 + 텍스트 (강조용)\n    36→    var style: BadgeStyle = .default\n    37→\n    38→    /// 배경 표시 여부\n    39→    /// 📚 학습 포인트: Background Option\n    40→    /// - true: 색상 배경 표시 (더 눈에 띄는 디자인)\n    41→    /// - false: 투명 배경, 색상은 아이콘/텍스트만 (미니멀한 디자인)\n    42→    var showBackground: Bool = true\n    43→\n    44→    // MARK: - Badge Style Enum\n    45→\n    46→    /// 뱃지 스타일 정의\n    47→    /// 📚 학습 포인트: Nested Enum for Style Options\n    48→    /// - 컴포넌트 내부에 스타일 옵션 정의\n    49→    /// - 외부에서 간단하게 스타일 선택 가능\n    50→    enum BadgeStyle {\n    51→        case compact    // 아이콘만\n    52→        case `default`  // 아이콘 + 텍스트\n    53→        case large      // 큰 아이콘 + 텍스트\n    54→\n    55→        /// 아이콘 폰트 크기\n    56→        var iconSize: Font {\n    57→            switch self {\n    58→            case .compact: return .caption\n    59→            case .default: return .subheadline\n    60→            case .large: return .title3\n    61→            }\n    62→        }\n    63→\n    64→        /// 텍스트 폰트 크기\n    65→        var textSize: Font {\n    66→            switch self {\n    67→            case .compact: return .caption2\n    68→            case .default: return .caption\n    69→            case .large: return .subheadline\n    70→            }\n    71→        }\n    72→\n    73→        /// 패딩 크기\n    74→        var padding: CGFloat {\n    75→            switch self {\n    76→            case .compact: return 6\n    77→            case .default: return 8\n    78→            case .large: return 12\n    79→        }\n    80→\n    81→        /// 아이콘과 텍스트 간격\n    82→        var spacing: CGFloat {\n    83→            switch self {\n    84→            case .compact: return 0\n    85→            case .default: return 4\n    86→            case .large: return 6\n    87→            }\n    88→        }\n    89→    }\n    90→\n    91→    // MARK: - Body\n    92→\n    93→    var body: some View {\n    94→        Group {\n    95→            if style == .compact {\n    96→                // 📚 학습 포인트: Compact Style - Icon Only\n    97→                // 작은 공간에 적합 (리스트, 인라인 표시 등)\n    98→                compactBadge\n    99→            } else {\n   100→                // 📚 학습 포인트: Default/Large Style - Icon + Text\n   101→                // 아이콘과 텍스트를 함께 표시\n   102→                fullBadge\n   103→            }\n   104→        }\n   105→        .padding(.horizontal, style.padding)\n   106→        .padding(.vertical, style.padding * 0.6)\n   107→        .background(badgeBackground)\n   108→        .cornerRadius(style == .large ? 10 : 8)\n   109→        // 📚 학습 포인트: Accessibility Label\n   110→        // VoiceOver가 수면 상태를 읽어줄 수 있도록 레이블 추가\n   111→        .accessibilityLabel(\"수면 상태: \\(status.displayName)\")\n   112→        .accessibilityAddTraits(.isStaticText)\n   113→    }\n   114→\n   115→    // MARK: - Subviews\n   116→\n   117→    /// 컴팩트 뱃지 (아이콘만)\n   118→    /// 📚 학습 포인트: Icon-Only Badge\n   119→    /// - 최소한의 공간으로 상태 표시\n   120→    /// - 리스트 항목이나 작은 공간에 적합\n   121→    private var compactBadge: some View {\n   122→        Image(systemName: status.iconName)\n   123→            .font(style.iconSize)\n   124→            .foregroundStyle(foregroundColor)\n   125→    }\n   126→\n   127→    /// 전체 뱃지 (아이콘 + 텍스트)\n   128→    /// 📚 학습 포인트: Full Badge with Icon and Text\n   129→    /// - 아이콘과 텍스트로 명확한 상태 전달\n   130→    /// - 일반적으로 가장 많이 사용\n   131→    private var fullBadge: some View {\n   132→        HStack(spacing: style.spacing) {\n   133→            Image(systemName: status.iconName)\n   134→                .font(style.iconSize)\n   135→                .foregroundStyle(foregroundColor)\n   136→\n   137→            Text(status.displayName)\n   138→                .font(style.textSize)\n   139→                .fontWeight(.semibold)\n   140→                .foregroundStyle(foregroundColor)\n   141→        }\n   142→    }\n   143→\n   144→    /// 뱃지 배경\n   145→    /// 📚 학습 포인트: Conditional Background\n   146→    /// - showBackground에 따라 색상 배경 표시 여부 결정\n   147→    /// - 배경이 있을 때는 색상이 연하게 표시\n   148→    @ViewBuilder\n   149→    private var badgeBackground: some View {\n   150→        if showBackground {\n   151→            RoundedRectangle(cornerRadius: style == .large ? 10 : 8)\n   152→                .fill(status.color.opacity(0.15))\n   153→        }\n   154→    }\n   155→\n   156→    /// 전경 색상 (아이콘/텍스트 색상)\n   157→    /// 📚 학습 포인트: Foreground Color Logic\n   158→    /// - 배경이 있으면 진한 색상\n   159→    /// - 배경이 없으면 더 진한 색상 (가독성 향상)\n   160→    private var foregroundColor: Color {\n   161→        showBackground ? status.color : status.color\n   162→    }\n   163→}\n   164→\n   165→// MARK: - Convenience Initializers\n   166→\n   167→extension SleepStatusBadge {\n   168→    /// 📚 학습 포인트: Convenience Initializer - Compact Style\n   169→    /// - 아이콘만 표시하는 간단한 뱃지\n   170→    /// - 리스트나 작은 공간에 적합\n   171→    ///\n   172→    /// - Parameters:\n   173→    ///   - status: 수면 상태\n   174→    ///   - showBackground: 배경 표시 여부 (기본값: true)\n   175→    /// - Returns: 컴팩트 스타일의 SleepStatusBadge\n   176→    init(compact status: SleepStatus, showBackground: Bool = true) {\n   177→        self.status = status\n   178→        self.style = .compact\n   179→        self.showBackground = showBackground\n   180→    }\n   181→\n   182→    /// 📚 학습 포인트: Convenience Initializer - Large Style\n   183→    /// - 큰 크기로 강조하는 뱃지\n   184→    /// - 입력 화면이나 중요한 표시에 적합\n   185→    ///\n   186→    /// - Parameters:\n   187→    ///   - status: 수면 상태\n   188→    ///   - showBackground: 배경 표시 여부 (기본값: true)\n   189→    /// - Returns: 큰 스타일의 SleepStatusBadge\n   190→    init(large status: SleepStatus, showBackground: Bool = true) {\n   191→        self.status = status\n   192→        self.style = .large\n   193→        self.showBackground = showBackground\n   194→    }\n   195→}\n   196→\n   197→// MARK: - Preview\n   198→\n   199→#Preview(\"모든 수면 상태 - 기본 스타일\") {\n   200→    VStack(spacing: 16) {\n   201→        Text(\"기본 스타일 (아이콘 + 텍스트)\")\n   202→            .font(.headline)\n   203→\n   204→        VStack(spacing: 12) {\n   205→            ForEach(SleepStatus.allCases) { status in\n   206→                HStack {\n   207→                    Text(\"\\(status.displayName):\")\n   208→                        .font(.subheadline)\n   209→                        .foregroundStyle(.secondary)\n   210→                        .frame(width: 100, alignment: .leading)\n   211→\n   212→                    SleepStatusBadge(status: status)\n   213→\n   214→                    Spacer()\n   215→                }\n   216→            }\n   217→        }\n   218→    }\n   219→    .padding()\n   220→}\n   221→\n   222→#Preview(\"모든 수면 상태 - 컴팩트 스타일\") {\n   223→    VStack(spacing: 16) {\n   224→        Text(\"컴팩트 스타일 (아이콘만)\")\n   225→            .font(.headline)\n   226→\n   227→        VStack(spacing: 12) {\n   228→            ForEach(SleepStatus.allCases) { status in\n   229→                HStack {\n   230→                    Text(\"\\(status.displayName):\")\n   231→                        .font(.subheadline)\n   232→                        .foregroundStyle(.secondary)\n   233→                        .frame(width: 100, alignment: .leading)\n   234→\n   235→                    SleepStatusBadge(compact: status)\n   236→\n   237→                    Spacer()\n   238→                }\n   239→            }\n   240→        }\n   241→    }\n   242→    .padding()\n   243→}\n   244→\n   245→#Preview(\"모든 수면 상태 - 큰 스타일\") {\n   246→    VStack(spacing: 16) {\n   247→        Text(\"큰 스타일 (강조)\")\n   248→            .font(.headline)\n   249→\n   250→        VStack(spacing: 12) {\n   251→            ForEach(SleepStatus.allCases) { status in\n   252→                SleepStatusBadge(large: status)\n   253→            }\n   254→        }\n   255→    }\n   256→    .padding()\n   257→}\n   258→\n   259→#Preview(\"배경 없는 스타일\") {\n   260→    VStack(spacing: 16) {\n   261→        Text(\"배경 없음 (미니멀)\")\n   262→            .font(.headline)\n   263→\n   264→        VStack(spacing: 12) {\n   265→            ForEach(SleepStatus.allCases) { status in\n   266→                HStack {\n   267→                    Text(\"\\(status.displayName):\")\n   268→                        .font(.subheadline)\n   269→                        .foregroundStyle(.secondary)\n   270→                        .frame(width: 100, alignment: .leading)\n   271→\n   272→                    SleepStatusBadge(status: status, showBackground: false)\n   273→\n   274→                    Spacer()\n   275→                }\n   276→            }\n   277→        }\n   278→    }\n   279→    .padding()\n   280→}\n   281→\n   282→#Preview(\"리스트에서 사용\") {\n   283→    List {\n   284→        Section(\"최근 수면 기록\") {\n   285→            ForEach(SleepStatus.allCases) { status in\n   286→                HStack {\n   287→                    VStack(alignment: .leading, spacing: 4) {\n   288→                        Text(\"2026년 1월 14일\")\n   289→                            .font(.subheadline)\n   290→                            .fontWeight(.medium)\n   291→\n   292→                        Text(\"7시간 30분\")\n   293→                            .font(.caption)\n   294→                            .foregroundStyle(.secondary)\n   295→                    }\n   296→\n   297→                    Spacer()\n   298→\n   299→                    SleepStatusBadge(status: status)\n   300→                }\n   301→            }\n   302→        }\n   303→    }\n   304→}\n   305→\n   306→#\n\n... [truncated - full output was 19777 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:24:21.088166+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tus-system/Bodii/Shared/Enums/SleepStatus.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tus-system/Bodii/Shared/Enums/SleepStatus.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:21.703221+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...stem/Bodii/Data/Mappers/SleepRecordMapper.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...stem/Bodii/Data/Mappers/SleepRecordMapper.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:22.296422+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:22.936359+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...m/Bodii/Data/Repositories/SleepRepository.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...m/Bodii/Data/Repositories/SleepRepository.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:23.550960+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Bodii/Domain/UseCases/RecordSleepUseCase.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Bodii/Domain/UseCases/RecordSleepUseCase.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:23.573583+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "     1→//\n     2→//  SleepStatus.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→import SwiftUI\n    10→\n    11→/// 수면 상태 열거형\n    12→///\n    13→/// 수면 시간(분)에 따른 수면 품질 상태를 나타냅니다.\n    14→/// Core Data 호환성을 위해 Int16 rawValue를 사용합니다.\n    15→///\n    16→/// - Cases:\n    17→///   - bad: 나쁨 (5시간 30분 미만)\n    18→///   - soso: 보통 (5시간 30분 ~ 6시간 30분)\n    19→///   - good: 좋음 (6시간 30분 ~ 7시간 30분)\n    20→///   - excellent: 매우 좋음 (7시간 30분 ~ 9시간)\n    21→///   - oversleep: 과다 수면 (9시간 초과)\n    22→///\n    23→/// - Example:\n    24→/// ```swift\n    25→/// let status = SleepStatus.from(durationMinutes: 420) // 7시간\n    26→/// print(status.displayName) // \"좋음\"\n    27→/// ```\n    28→enum SleepStatus: Int16, CaseIterable, Codable {\n    29→    case bad = 0\n    30→    case soso = 1\n    31→    case good = 2\n    32→    case excellent = 3\n    33→    case oversleep = 4\n    34→\n    35→    /// 사용자에게 표시할 수면 상태 이름\n    36→    var displayName: String {\n    37→        switch self {\n    38→        case .bad: return \"나쁨\"\n    39→        case .soso: return \"보통\"\n    40→        case .good: return \"좋음\"\n    41→        case .excellent: return \"매우 좋음\"\n    42→        case .oversleep: return \"과다 수면\"\n    43→        }\n    44→    }\n    45→\n    46→    /// 수면 상태에 해당하는 SwiftUI Color\n    47→    ///\n    48→    /// 시각적 피드백을 위한 상태별 색상을 반환합니다.\n    49→    ///\n    50→    /// - bad: 빨강 (수면 부족)\n    51→    /// - soso: 노랑 (보통)\n    52→    /// - good: 초록 (적정)\n    53→    /// - excellent: 파랑 (매우 좋음)\n    54→    /// - oversleep: 주황 (과다 수면)\n    55→    var color: Color {\n    56→        switch self {\n    57→        case .bad: return .red\n    58→        case .soso: return .yellow\n    59→        case .good: return .green\n    60→        case .excellent: return .blue\n    61→        case .oversleep: return .orange\n    62→        }\n    63→    }\n    64→\n    65→    /// 수면 상태에 해당하는 SF Symbol 아이콘 이름\n    66→    ///\n    67→    /// 시각적 피드백을 위한 상태별 아이콘을 반환합니다.\n    68→    ///\n    69→    /// - bad: moon.fill (수면 부족)\n    70→    /// - soso: moon.stars (보통)\n    71→    /// - good: moon.stars.fill (적정)\n    72→    /// - excellent: sparkles (매우 좋음)\n    73→    /// - oversleep: zzz (과다 수면)\n    74→    var iconName: String {\n    75→        switch self {\n    76→        case .bad: return \"moon.fill\"\n    77→        case .soso: return \"moon.stars\"\n    78→        case .good: return \"moon.stars.fill\"\n    79→        case .excellent: return \"sparkles\"\n    80→        case .oversleep: return \"zzz\"\n    81→        }\n    82→    }\n    83→\n    84→    /// 수면 시간(분)으로부터 수면 상태를 결정하는 팩토리 메서드\n    85→    ///\n    86→    /// - Parameter durationMinutes: 수면 시간 (분 단위)\n    87→    /// - Returns: 수면 시간에 해당하는 수면 상태\n    88→    ///\n    89→    /// 수면 상태 기준:\n    90→    /// - bad: 330분 미만 (5시간 30분 미만)\n    91→    /// - soso: 330분 ~ 390분 미만 (5시간 30분 ~ 6시간 30분)\n    92→    /// - good: 390분 ~ 450분 미만 (6시간 30분 ~ 7시간 30분)\n    93→    /// - excellent: 450분 ~ 540분 이하 (7시간 30분 ~ 9시간)\n    94→    /// - oversleep: 540분 초과 (9시간 초과)\n    95→    static func from(durationMinutes: Int32) -> SleepStatus {\n    96→        switch durationMinutes {\n    97→        case ..<330:\n    98→            return .bad\n    99→        case 330..<390:\n   100→            return .soso\n   101→        case 390..<450:\n   102→            return .good\n   103→        case 450...540:\n   104→            return .excellent\n   105→        default:\n   106→            return .oversleep\n   107→        }\n   108→    }\n   109→}\n   110→\n   111→// MARK: - Identifiable\n   112→\n   113→extension SleepStatus: Identifiable {\n   114→    var id: Int16 { rawValue }\n   115→}\n   116→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:24:28.660737+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Domain/UseCases/FetchSleepHistoryUseCase.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Domain/UseCases/FetchSleepHistoryUseCase.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:29.372946+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ii/Domain/UseCases/FetchSleepStatsUseCase.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ii/Domain/UseCases/FetchSleepStatsUseCase.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:30.162494+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tation/Features/Sleep/SleepInputViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tation/Features/Sleep/SleepInputViewModel.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:30.893729+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Features/Sleep/SleepPromptManager.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Features/Sleep/SleepPromptManager.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:31.637757+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...tion/Features/Sleep/SleepHistoryViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...tion/Features/Sleep/SleepHistoryViewModel.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:31.660736+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "     1→//\n     2→//  FetchSleepHistoryUseCase.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Query Use Case Pattern\n     9→// 수면 기록 히스토리 조회를 캡슐화하는 Use Case 패턴\n    10→// 💡 Java 비교: Service layer의 조회 메서드와 유사하지만 더 세분화됨\n    11→\n    12→import Foundation\n    13→\n    14→// MARK: - FetchSleepHistoryUseCase\n    15→\n    16→/// 수면 기록 히스토리 조회 Use Case\n    17→/// 목록 표시를 위해 수면 기록 데이터를 조회하고 변환합니다.\n    18→/// 📚 학습 포인트: Clean Architecture - Use Case Layer\n    19→/// - 특정 비즈니스 로직(히스토리 데이터 조회)을 독립적인 유닛으로 캡슐화\n    20→/// - Repository의 raw data를 UI에 최적화된 형태로 변환\n    21→/// - UI나 데이터베이스에 의존하지 않는 순수한 비즈니스 로직\n    22→/// 💡 Java 비교: Interactor 또는 Service 클래스의 단일 책임 메서드\n    23→struct FetchSleepHistoryUseCase {\n    24→\n    25→    // MARK: - Types\n    26→\n    27→    /// 히스토리 조회 모드\n    28→    /// 📚 학습 포인트: Enum for Query Modes\n    29→    /// - 다양한 조회 패턴을 타입으로 정의\n    30→    /// - 각 케이스가 다른 조회 방식을 나타냄\n    31→    /// 💡 Java 비교: Enum with strategy pattern과 유사\n    32→    enum QueryMode {\n    33→        /// 모든 기록 조회\n    34→        case all\n    35→\n    36→        /// 최근 N일 조회\n    37→        case recent(days: Int)\n    38→\n    39→        /// 특정 기간 조회\n    40→        case dateRange(from: Date, to: Date)\n    41→    }\n    42→\n    43→    /// 히스토리 조회에 필요한 입력 데이터\n    44→    /// 📚 학습 포인트: Nested Type\n    45→    /// - Use Case 내부에 관련된 타입을 중첩하여 네임스페이스 정리\n    46→    /// - 외부에서는 FetchSleepHistoryUseCase.Input으로 접근\n    47→    /// 💡 Java 비교: static nested class와 유사\n    48→    struct Input {\n    49→        /// 조회 모드 (기본값: 모든 기록)\n    50→        let mode: QueryMode\n    51→\n    52→        /// 초기화\n    53→        /// - Parameter mode: 조회 모드 (기본값: .all)\n    54→        init(mode: QueryMode = .all) {\n    55→            self.mode = mode\n    56→        }\n    57→    }\n    58→\n    59→    /// 히스토리 조회 결과\n    60→    /// 📚 학습 포인트: Result Type\n    61→    /// 조회된 데이터와 메타 정보를 함께 반환\n    62→    /// 💡 Java 비교: DTO (Data Transfer Object)와 유사\n    63→    struct Output {\n    64→        /// 수면 기록 배열 (날짜 내림차순 정렬 - 최신순)\n    65→        /// 📚 학습 포인트: Collection Type\n    66→        /// - UI 리스트에 최적화된 형태로 정렬\n    67→        /// - 최신 기록이 먼저 표시됨\n    68→        let records: [SleepRecord]\n    69→\n    70→        /// 조회 모드\n    71→        let mode: QueryMode\n    72→\n    73→        /// 조회 날짜 범위 (실제 조회된 데이터 기준)\n    74→        let dateRange: ClosedRange<Date>?\n    75→\n    76→        /// 데이터 존재 여부\n    77→        /// 📚 학습 포인트: Computed Property\n    78→        /// UI에서 empty state 표시 여부 판단에 사용\n    79→        var isEmpty: Bool {\n    80→            records.isEmpty\n    81→        }\n    82→\n    83→        /// 데이터 개수\n    84→        var count: Int {\n    85→            records.count\n    86→        }\n    87→\n    88→        /// 총 수면 시간 (분)\n    89→        /// 📚 학습 포인트: Aggregate Calculation\n    90→        /// 히스토리 요약 정보로 표시\n    91→        var totalDuration: Int32 {\n    92→            records.reduce(0) { $0 + $1.duration }\n    93→        }\n    94→\n    95→        /// 평균 수면 시간 (분)\n    96→        var averageDuration: Int32? {\n    97→            guard !isEmpty else { return nil }\n    98→            return totalDuration / Int32(count)\n    99→        }\n   100→\n   101→        /// 평균 수면 시간을 시:분 형식으로 반환\n   102→        /// 📚 학습 포인트: Computed Property\n   103→        /// UI에서 표시할 때 사용하기 쉬운 형태로 제공\n   104→        /// - Returns: (hours, minutes) 튜플\n   105→        var averageDurationFormatted: (hours: Int, minutes: Int)? {\n   106→            guard let avg = averageDuration else { return nil }\n   107→            let hours = Int(avg) / 60\n   108→            let minutes = Int(avg) % 60\n   109→            return (hours, minutes)\n   110→        }\n   111→\n   112→        /// 수면 상태별 분포\n   113→        /// 📚 학습 포인트: Dictionary Grouping\n   114→        /// 차트나 통계 표시에 사용\n   115→        /// - Returns: [SleepStatus: 개수]\n   116→        var statusDistribution: [SleepStatus: Int] {\n   117→            Dictionary(grouping: records) { $0.status }\n   118→                .mapValues { $0.count }\n   119→        }\n   120→\n   121→        /// 가장 많은 수면 상태\n   122→        /// 📚 학습 포인트: Max By Value\n   123→        /// 사용자의 주된 수면 상태 표시\n   124→        var mostCommonStatus: SleepStatus? {\n   125→            statusDistribution.max(by: { $0.value < $1.value })?.key\n   126→        }\n   127→\n   128→        /// 요약 문자열\n   129→        /// 📚 학습 포인트: UI Helper Method\n   130→        /// UI에서 바로 사용할 수 있는 요약 정보\n   131→        func summary() -> String {\n   132→            guard !isEmpty else {\n   133→                return \"수면 기록이 없습니다.\"\n   134→            }\n   135→\n   136→            var summary = \"\"\"\n   137→            총 \\(count)개의 수면 기록\n   138→            \"\"\"\n   139→\n   140→            if let avg = averageDurationFormatted {\n   141→                summary += \"\\n평균 수면 시간: \\(avg.hours)시간 \\(avg.minutes)분\"\n   142→            }\n   143→\n   144→            if let mostCommon = mostCommonStatus {\n   145→                let countForStatus = statusDistribution[mostCommon] ?? 0\n   146→                summary += \"\\n가장 많은 상태: \\(mostCommon.displayName) (\\(countForStatus)회)\"\n   147→            }\n   148→\n   149→            if let range = dateRange {\n   150→                let formatter = DateFormatter()\n   151→                formatter.dateStyle = .short\n   152→                formatter.timeStyle = .none\n   153→                formatter.locale = Locale(identifier: \"ko_KR\")\n   154→                let startStr = formatter.string(from: range.lowerBound)\n   155→                let endStr = formatter.string(from: range.upperBound)\n   156→                summary += \"\\n기간: \\(startStr) ~ \\(endStr)\"\n   157→            }\n   158→\n   159→            return summary\n   160→        }\n   161→    }\n   162→\n   163→    // MARK: - Error\n   164→\n   165→    /// 히스토리 조회 중 발생할 수 있는 에러\n   166→    /// 📚 학습 포인트: Custom Error Type\n   167→    /// Swift의 Error 프로토콜을 conform하여 throw 가능한 타입 정의\n   168→    /// 💡 Java 비교: Custom Exception과 유사\n   169→    enum HistoryError: Error, LocalizedError {\n   170→        /// 조회 실패\n   171→        case fetchFailed(Error)\n   172→\n   173→        /// 유효하지 않은 날짜 범위\n   174→        case invalidDateRange\n   175→\n   176→        /// 유효하지 않은 일수 값\n   177→        case invalidDays(Int)\n   178→\n   179→        /// 에러 설명 (사용자에게 표시할 메시지)\n   180→        /// 📚 학습 포인트: LocalizedError Protocol\n   181→        /// errorDescription을 구현하여 사용자 친화적인 에러 메시지 제공\n   182→        var errorDescription: String? {\n   183→            switch self {\n   184→            case .fetchFailed(let error):\n   185→                return \"히스토리 조회 실패: \\(error.localizedDescription)\"\n   186→            case .invalidDateRange:\n   187→                return \"유효하지 않은 날짜 범위입니다.\"\n   188→            case .invalidDays(let days):\n   189→                return \"유효하지 않은 일수입니다: \\(days). 1 이상의 값을 입력하세요.\"\n   190→            }\n   191→        }\n   192→    }\n   193→\n   194→    // MARK: - Dependencies\n   195→\n   196→    /// 수면 데이터 저장소\n   197→    /// 📚 학습 포인트: Dependency Injection\n   198→    /// 외부에서 주입받아 사용 (테스트 가능성 향상)\n   199→    /// 💡 Java 비교: @Autowired Repository와 유사\n   200→    private let sleepRepository: SleepRepositoryProtocol\n   201→\n   202→    // MARK: - Initialization\n   203→\n   204→    /// FetchSleepHistoryUseCase 초기화\n   205→    /// 📚 학습 포인트: Dependency Injection via Constructor\n   206→    /// - 모든 의존성을 생성자를 통해 주입받음\n   207→    /// - 의존성 역전 원칙 (Dependency Inversion Principle) 준수\n   208→    /// 💡 Java 비교: @Autowired constructor injection과 유사\n   209→    ///\n   210→    /// - Parameter sleepRepository: 수면 데이터 저장소 (필수)\n   211→    init(sleepRepository: SleepRepositoryProtocol) {\n   212→        self.sleepRepository = sleepRepository\n   213→    }\n   214→\n   215→    // MARK: - Execute\n   216→\n   217→    /// 히스토리 데이터 조회 실행\n   218→    /// 📚 학습 포인트: Async/Await\n   219→    /// - Swift 5.5+의 동시성 모델\n   220→    /// - 비동기 작업을 동기 코드처럼 작성 가능\n   221→    /// 💡 Java 비교: CompletableFuture 또는 Kotlin Coroutines와 유사\n   222→    ///\n   223→    /// 📚 학습 포인트: Query Optimization\n   224→    /// 1. Repository에서 조회 모드에 따라 데이터 조회\n   225→    /// 2. 날짜 내림차순 정렬 (최신순)\n   226→    /// 3. 메타 정보 계산 (총 개수, 평균, 분포 등)\n   227→    ///\n   228→    /// - Parameter input: 히스토리 조회 입력 데이터\n   229→    /// - Returns: 수면 기록 히스토리\n   230→    /// - Throws: HistoryError - 조회 실패 시\n   231→    func execute(input: Input) async throws -> Output {\n   232→        // Step 1: 조회 모드에 따라 데이터 조회\n   233→        // 📚 학습 포인트: Switch on Associated Values\n   234→        // Enum의 associated value에 따라 다른 로직 실행\n   235→        let records: [SleepRecord]\n   236→        let dateRange: ClosedRange<Date>?\n   237→\n   238→        do {\n   239→            switch input.mode {\n   240→            case .all:\n   241→                // 모든 기록 조회\n   242→                records = try await sleepRepository.fetchAll()\n   243→                // 날짜 범위 계산 (첫 기록 ~ 마지막 기록)\n   244→                if let first = records.first?.date, let last = records.last?.date {\n   245→                    // records는 내림차순이므로 first가 최신, last가 가장 오래된 것\n   246→                    dateRange = last...first\n   247→                } else {\n   248→                    dateRange = nil\n   249→                }\n   250→\n   251→            case .recent(let days):\n   252→                // 유효성 검증\n   253→                guard days > 0 else {\n   254→                    throw HistoryError.invalidDays(days)\n   255→                }\n   256→                // 최근 N일 조회\n   257→                records = try await sleepRepository.fetchRecent(days: days)\n   258→                // 날짜 범위 계산\n   259→                let endDate = Date()\n   260→                if let startDate = Calendar.current.date(byAdding: .day, value: -days, to: endDate) {\n   261→                    dateRange = startDate...endDate\n   262→                } else {\n   263→                    dateRange = nil\n   264→                }\n   265→\n   266→            case .dateRange(let from, let to):\n   267→                // 날짜 범위 유효성 검증\n   268→                guard from <= to else {\n   269→                    throw HistoryError.invalidDateRange\n   270→                }\n   271→                // 특정 기간 조회\n   272→                records = try await sleepRepository.fetch(from: from, to: to)\n   273→                dateRange = from...to\n   274→            }\n   275→        } catch let error as HistoryError {\n   27\n\n... [truncated - full output was 17906 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:24:38.190399+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ation/Features/Sleep/SleepTrendsViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ation/Features/Sleep/SleepTrendsViewModel.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:38.903933+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...esentation/Features/Sleep/SleepInputSheet.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...esentation/Features/Sleep/SleepInputSheet.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:39.459980+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...sentation/Features/Sleep/SleepHistoryView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...sentation/Features/Sleep/SleepHistoryView.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:40.139982+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...esentation/Features/Sleep/SleepTrendsView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...esentation/Features/Sleep/SleepTrendsView.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:40.854851+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...sentation/Components/Charts/SleepBarChart.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...sentation/Components/Charts/SleepBarChart.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:24:40.878390+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "     1→//\n     2→//  SleepTrendsViewModel.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Chart-Focused ViewModel Pattern\n     9→// 수면 차트 데이터 관리와 기간 선택을 위한 ViewModel\n    10→// 💡 Java 비교: Android의 ViewModel과 유사하지만 차트 전용 상태 관리\n    11→\n    12→import Foundation\n    13→import SwiftUI\n    14→import Combine\n    15→\n    16→// MARK: - SleepTrendsViewModel\n    17→\n    18→/// 수면 트렌드 차트를 위한 ViewModel\n    19→/// 📚 학습 포인트: Chart Data Management\n    20→/// - 차트 표시를 위한 수면 통계 데이터 관리\n    21→/// - 기간 선택 및 네비게이션 처리\n    22→/// - 빈 상태 및 로딩 상태 관리\n    23→/// 💡 Java 비교: Android ViewModel + Chart data transformation\n    24→@MainActor\n    25→class SleepTrendsViewModel: ObservableObject {\n    26→\n    27→    // MARK: - Published Properties (View State)\n    28→\n    29→    /// 선택된 통계 기간\n    30→    /// 📚 학습 포인트: User Selection State\n    31→    /// - 사용자가 선택한 기간 (7일/30일/90일)\n    32→    /// - 변경 시 자동으로 데이터 다시 로드\n    33→    /// 💡 Java 비교: LiveData<StatsPeriod>와 유사\n    34→    @Published var selectedPeriod: FetchSleepStatsUseCase.StatsPeriod = .week\n    35→\n    36→    /// 통계 데이터 출력\n    37→    /// 📚 학습 포인트: Optional State\n    38→    /// - nil이면 아직 데이터 로드 안 됨\n    39→    /// - 값이 있으면 차트에 표시\n    40→    @Published var statsOutput: FetchSleepStatsUseCase.Output?\n    41→\n    42→    /// 로딩 상태\n    43→    /// 📚 학습 포인트: Loading State\n    44→    /// - 데이터 조회 중 로딩 인디케이터 표시\n    45→    @Published var isLoading: Bool = false\n    46→\n    47→    /// 에러 메시지\n    48→    /// 📚 학습 포인트: Error State\n    49→    /// - nil이면 에러 없음\n    50→    /// - 값이 있으면 에러 메시지 표시\n    51→    @Published var errorMessage: String?\n    52→\n    53→    /// 커스텀 날짜 범위 사용 여부\n    54→    /// 📚 학습 포인트: Advanced Feature Toggle\n    55→    /// - false: StatsPeriod 사용\n    56→    /// - true: customStartDate/customEndDate 사용\n    57→    @Published var useCustomDateRange: Bool = false\n    58→\n    59→    /// 커스텀 시작 날짜\n    60→    /// 📚 학습 포인트: Custom Date Range\n    61→    /// - useCustomDateRange가 true일 때만 사용\n    62→    @Published var customStartDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: Date())!\n    63→\n    64→    /// 커스텀 종료 날짜\n    65→    @Published var customEndDate: Date = Date()\n    66→\n    67→    // MARK: - Private Properties\n    68→\n    69→    /// 수면 통계 조회 Use Case\n    70→    /// 📚 학습 포인트: Dependency Injection\n    71→    /// - Use Case를 외부에서 주입받아 사용\n    72→    /// - 테스트 시 Mock으로 교체 가능\n    73→    private let fetchSleepStatsUseCase: FetchSleepStatsUseCase\n    74→\n    75→    /// 수면 데이터 저장소\n    76→    /// 📚 학습 포인트: Protocol-Oriented Programming\n    77→    /// - 직접 조회가 필요한 경우를 위해 Repository도 보유\n    78→    private let sleepRepository: SleepRepositoryProtocol\n    79→\n    80→    /// Combine 구독 저장소\n    81→    /// 📚 학습 포인트: Reactive Programming\n    82→    /// - selectedPeriod 변경 시 자동으로 데이터 다시 로드\n    83→    /// - 메모리 누수 방지를 위한 구독 관리\n    84→    /// 💡 Java 비교: RxJava의 CompositeDisposable과 유사\n    85→    private var cancellables = Set<AnyCancellable>()\n    86→\n    87→    // MARK: - Initialization\n    88→\n    89→    /// SleepTrendsViewModel 초기화\n    90→    /// 📚 학습 포인트: Dependency Injection via Constructor\n    91→    /// - 모든 의존성을 생성자를 통해 주입받음\n    92→    /// - 의존성 역전 원칙 (Dependency Inversion Principle) 준수\n    93→    /// 💡 Java 비교: @Inject constructor와 유사\n    94→    ///\n    95→    /// - Parameters:\n    96→    ///   - fetchSleepStatsUseCase: 수면 통계 조회 Use Case\n    97→    ///   - sleepRepository: 수면 데이터 저장소\n    98→    init(\n    99→        fetchSleepStatsUseCase: FetchSleepStatsUseCase,\n   100→        sleepRepository: SleepRepositoryProtocol\n   101→    ) {\n   102→        self.fetchSleepStatsUseCase = fetchSleepStatsUseCase\n   103→        self.sleepRepository = sleepRepository\n   104→\n   105→        // 📚 학습 포인트: Reactive State Observation\n   106→        // selectedPeriod 변경 시 자동으로 데이터 다시 로드\n   107→        setupPeriodObserver()\n   108→\n   109→        // 초기 데이터 로드\n   110→        Task {\n   111→            await loadStats()\n   112→        }\n   113→    }\n   114→\n   115→    // MARK: - Computed Properties\n   116→\n   117→    /// 데이터가 비어있는지 확인\n   118→    /// 📚 학습 포인트: Computed Property for Empty State\n   119→    /// - View에서 empty state UI 표시 여부 결정\n   120→    var isEmpty: Bool {\n   121→        statsOutput?.isEmpty ?? true\n   122→    }\n   123→\n   124→    /// 데이터 포인트 개수\n   125→    /// 📚 학습 포인트: Quick Access Property\n   126→    /// - UI에서 바로 사용할 수 있는 편의 속성\n   127→    var dataPointCount: Int {\n   128→        statsOutput?.count ?? 0\n   129→    }\n   130→\n   131→    /// 차트 데이터 포인트\n   132→    /// 📚 학습 포인트: Convenience Property\n   133→    /// - View에서 직접 접근 가능한 데이터 포인트 배열\n   134→    var dataPoints: [FetchSleepStatsUseCase.SleepDataPoint] {\n   135→        statsOutput?.dataPoints ?? []\n   136→    }\n   137→\n   138→    /// 기간 표시 문자열\n   139→    /// 📚 학습 포인트: UI Helper Property\n   140→    /// - \"2024.01.01 - 2024.01.07\" 형식\n   141→    var periodDisplayString: String {\n   142→        guard let output = statsOutput else { return \"\" }\n   143→\n   144→        let formatter = DateFormatter()\n   145→        formatter.dateStyle = .short\n   146→        formatter.timeStyle = .none\n   147→        formatter.locale = Locale(identifier: \"ko_KR\")\n   148→\n   149→        let startStr = formatter.string(from: output.startDate)\n   150→        let endStr = formatter.string(from: output.endDate)\n   151→\n   152→        return \"\\(startStr) - \\(endStr)\"\n   153→    }\n   154→\n   155→    /// 평균 수면 시간 문자열\n   156→    /// 📚 학습 포인트: UI Helper Property\n   157→    /// - 통계 표시를 위한 포맷팅된 문자열\n   158→    var averageDurationString: String {\n   159→        guard let avg = statsOutput?.averageDurationFormatted else {\n   160→            return \"-\"\n   161→        }\n   162→        if avg.minutes == 0 {\n   163→            return \"\\(avg.hours)시간\"\n   164→        } else {\n   165→            return \"\\(avg.hours)시간 \\(avg.minutes)분\"\n   166→        }\n   167→    }\n   168→\n   169→    /// 평균 수면 시간 (분)\n   170→    /// 📚 학습 포인트: Quick Access for Chart\n   171→    /// - 차트에 평균선 표시할 때 사용\n   172→    var averageDurationMinutes: Int32? {\n   173→        statsOutput?.averageDuration\n   174→    }\n   175→\n   176→    /// 가장 많은 수면 상태 문자열\n   177→    /// 📚 학습 포인트: Statistics Display\n   178→    /// - 사용자의 주된 수면 패턴 표시\n   179→    var mostCommonStatusString: String {\n   180→        guard let status = statsOutput?.mostCommonStatus else {\n   181→            return \"-\"\n   182→        }\n   183→        return status.displayName\n   184→    }\n   185→\n   186→    /// 좋은 수면 비율 문자열\n   187→    /// 📚 학습 포인트: Quality Metric Display\n   188→    /// - 수면 품질의 전반적인 평가 지표\n   189→    var goodSleepPercentageString: String {\n   190→        guard let output = statsOutput else { return \"-\" }\n   191→        let percentage = output.goodSleepPercentage * 100\n   192→        return String(format: \"%.0f%%\", percentage)\n   193→    }\n   194→\n   195→    /// 수면 일관성 점수 문자열\n   196→    /// 📚 학습 포인트: Consistency Score Display\n   197→    /// - 수면 패턴의 규칙성 평가\n   198→    var consistencyScoreString: String {\n   199→        guard let score = statsOutput?.consistencyScore else {\n   200→            return \"-\"\n   201→        }\n   202→        let percentage = score * 100\n   203→        return String(format: \"%.0f%%\", percentage)\n   204→    }\n   205→\n   206→    /// 상태별 통계\n   207→    /// 📚 학습 포인트: Detailed Statistics Access\n   208→    /// - UI에서 상태별 분포 차트 구성에 사용\n   209→    var statusStats: [FetchSleepStatsUseCase.StatusStats] {\n   210→        statsOutput?.statusStats ?? []\n   211→    }\n   212→\n   213→    /// 추세 정보\n   214→    /// 📚 학습 포인트: Trend Analysis Access\n   215→    /// - 최근 vs 이전 기간 비교\n   216→    var trendInfo: (recent: Int32, previous: Int32, change: Int32)? {\n   217→        statsOutput?.recentTrend()\n   218→    }\n   219→\n   220→    /// 추세 문자열\n   221→    /// 📚 학습 포인트: Trend Display Helper\n   222→    /// - \"1시간 30분 증가\" 또는 \"30분 감소\" 형식\n   223→    var trendString: String {\n   224→        guard let trend = trendInfo else { return \"-\" }\n   225→\n   226→        let hours = abs(trend.change) / 60\n   227→        let minutes = abs(trend.change) % 60\n   228→        let direction = trend.change >= 0 ? \"증가\" : \"감소\"\n   229→\n   230→        if hours == 0 {\n   231→            return \"\\(minutes)분 \\(direction)\"\n   232→        } else if minutes == 0 {\n   233→            return \"\\(hours)시간 \\(direction)\"\n   234→        } else {\n   235→            return \"\\(hours)시간 \\(minutes)분 \\(direction)\"\n   236→        }\n   237→    }\n   238→\n   239→    // MARK: - Public Methods\n   240→\n   241→    /// 통계 데이터 로드\n   242→    /// 📚 학습 포인트: Async Data Loading\n   243→    /// - Use Case를 호출하여 데이터 조회\n   244→    /// - 로딩 상태 및 에러 처리\n   245→    /// 💡 Java 비교: Kotlin Coroutines의 suspend function과 유사\n   246→    func loadStats() async {\n   247→        isLoading = true\n   248→        errorMessage = nil\n   249→\n   250→        do {\n   251→            // 📚 학습 포인트: Conditional Query Strategy\n   252→            // 커스텀 날짜 범위 사용 여부에 따라 다른 메서드 호출\n   253→            if useCustomDateRange {\n   254→                // 커스텀 날짜 범위로 조회\n   255→                let input = FetchSleepStatsUseCase.Input(\n   256→                    period: selectedPeriod,\n   257→                    endDate: customEndDate\n   258→                )\n   259→                statsOutput = try await fetchSleepStatsUseCase.execute(input: input)\n   260→            } else {\n   261→                // 표준 기간으로 조회\n   262→                statsOutput = try await fetchSleepStatsUseCase.execute(period: selectedPeriod)\n   263→            }\n   264→\n   265→        } catch let error as FetchSleepStatsUseCase.StatsError {\n   266→            // 📚 학습 포인트: Specific Error Handling\n   267→            // Use Case의 도메인 에러를 사용자 친화적 메시지로 변환\n   268→            errorMessage = error.localizedDescription\n   269→            statsOutput = nil\n   270→        } catch {\n   271→            // 📚 학습 포인트: Generic Error Handling\n   272→            errorMessage = \"통계 데이터 로드 실패: \\(error.localizedDescription)\"\n   273→            statsOutput = nil\n   274→        }\n   275→\n   276→        isLoading = false\n   277→    }\n   278→\n   279→    /// 기간 변경\n   280→    /// 📚 학습 포인트: State Update Method\n   281→    /// - 기간 변경 시 자동으로 데이터 다시 로드 (observer를 통해)\n   282→    ///\n   283→    /// - Parameter period: 새로운 기간\n   284→    func changePeriod(to period: FetchSleepStat\n\n... [truncated - full output was 22915 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:25:37.133933+00:00",
+          "type": "text",
+          "content": "Excellent! I have a comprehensive code review report. Now let me address the issues found and perform cleanup. I'll focus on the actionable items that can be fixed now.",
+          "phase": "coding",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:25:37.687709+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Shared/Enums/SleepStatus.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Shared/Enums/SleepStatus.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:25:38.299952+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Features/Sleep/SleepPromptManager.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Features/Sleep/SleepPromptManager.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:25:38.707121+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:25:38.730878+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "     1→//\n     2→//  SleepStatus.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→import SwiftUI\n    10→\n    11→/// 수면 상태 열거형\n    12→///\n    13→/// 수면 시간(분)에 따른 수면 품질 상태를 나타냅니다.\n    14→/// Core Data 호환성을 위해 Int16 rawValue를 사용합니다.\n    15→///\n    16→/// - Cases:\n    17→///   - bad: 나쁨 (5시간 30분 미만)\n    18→///   - soso: 보통 (5시간 30분 ~ 6시간 30분)\n    19→///   - good: 좋음 (6시간 30분 ~ 7시간 30분)\n    20→///   - excellent: 매우 좋음 (7시간 30분 ~ 9시간)\n    21→///   - oversleep: 과다 수면 (9시간 초과)\n    22→///\n    23→/// - Example:\n    24→/// ```swift\n    25→/// let status = SleepStatus.from(durationMinutes: 420) // 7시간\n    26→/// print(status.displayName) // \"좋음\"\n    27→/// ```\n    28→enum SleepStatus: Int16, CaseIterable, Codable {\n    29→    case bad = 0\n    30→    case soso = 1\n    31→    case good = 2\n    32→    case excellent = 3\n    33→    case oversleep = 4\n    34→\n    35→    /// 사용자에게 표시할 수면 상태 이름\n    36→    var displayName: String {\n    37→        switch self {\n    38→        case .bad: return \"나쁨\"\n    39→        case .soso: return \"보통\"\n    40→        case .good: return \"좋음\"\n    41→        case .excellent: return \"매우 좋음\"\n    42→        case .oversleep: return \"과다 수면\"\n    43→        }\n    44→    }\n    45→\n    46→    /// 수면 상태에 해당하는 SwiftUI Color\n    47→    ///\n    48→    /// 시각적 피드백을 위한 상태별 색상을 반환합니다.\n    49→    ///\n    50→    /// - bad: 빨강 (수면 부족)\n    51→    /// - soso: 노랑 (보통)\n    52→    /// - good: 초록 (적정)\n    53→    /// - excellent: 파랑 (매우 좋음)\n    54→    /// - oversleep: 주황 (과다 수면)\n    55→    var color: Color {\n    56→        switch self {\n    57→        case .bad: return .red\n    58→        case .soso: return .yellow\n    59→        case .good: return .green\n    60→        case .excellent: return .blue\n    61→        case .oversleep: return .orange\n    62→        }\n    63→    }\n    64→\n    65→    /// 수면 상태에 해당하는 SF Symbol 아이콘 이름\n    66→    ///\n    67→    /// 시각적 피드백을 위한 상태별 아이콘을 반환합니다.\n    68→    ///\n    69→    /// - bad: moon.fill (수면 부족)\n    70→    /// - soso: moon.stars (보통)\n    71→    /// - good: moon.stars.fill (적정)\n    72→    /// - excellent: sparkles (매우 좋음)\n    73→    /// - oversleep: zzz (과다 수면)\n    74→    var iconName: String {\n    75→        switch self {\n    76→        case .bad: return \"moon.fill\"\n    77→        case .soso: return \"moon.stars\"\n    78→        case .good: return \"moon.stars.fill\"\n    79→        case .excellent: return \"sparkles\"\n    80→        case .oversleep: return \"zzz\"\n    81→        }\n    82→    }\n    83→\n    84→    /// 수면 시간(분)으로부터 수면 상태를 결정하는 팩토리 메서드\n    85→    ///\n    86→    /// - Parameter durationMinutes: 수면 시간 (분 단위)\n    87→    /// - Returns: 수면 시간에 해당하는 수면 상태\n    88→    ///\n    89→    /// 수면 상태 기준:\n    90→    /// - bad: 330분 미만 (5시간 30분 미만)\n    91→    /// - soso: 330분 ~ 390분 미만 (5시간 30분 ~ 6시간 30분)\n    92→    /// - good: 390분 ~ 450분 미만 (6시간 30분 ~ 7시간 30분)\n    93→    /// - excellent: 450분 ~ 540분 이하 (7시간 30분 ~ 9시간)\n    94→    /// - oversleep: 540분 초과 (9시간 초과)\n    95→    static func from(durationMinutes: Int32) -> SleepStatus {\n    96→        switch durationMinutes {\n    97→        case ..<330:\n    98→            return .bad\n    99→        case 330..<390:\n   100→            return .soso\n   101→        case 390..<450:\n   102→            return .good\n   103→        case 450...540:\n   104→            return .excellent\n   105→        default:\n   106→            return .oversleep\n   107→        }\n   108→    }\n   109→}\n   110→\n   111→// MARK: - Identifiable\n   112→\n   113→extension SleepStatus: Identifiable {\n   114→    var id: Int16 { rawValue }\n   115→}\n   116→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:25:44.544665+00:00",
+          "type": "text",
+          "content": "Now I'll fix the magic numbers identified in the code review. Let me extract them as named constants for better maintainability.",
+          "phase": "coding",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:25:50.079242+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ./Bodii/Shared/Enums/SleepStatus.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "./Bodii/Shared/Enums/SleepStatus.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:25:56.221193+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ./Bodii/Shared/Enums/SleepStatus.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "./Bodii/Shared/Enums/SleepStatus.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:00.119082+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Sleep/SleepPromptManager.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Sleep/SleepPromptManager.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:05.412539+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ntation/Features/Sleep/SleepPromptManager.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ntation/Features/Sleep/SleepPromptManager.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:12.089719+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:15.264660+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:15.285861+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "The file ./Bodii/Shared/Enums/SleepStatus.swift has been updated successfully.",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:26:20.153967+00:00",
+          "type": "text",
+          "content": "Good! I've extracted the magic numbers to named constants. Now let me verify the changes compile correctly and check for any other issues.",
+          "phase": "coding",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:21.692691+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && xcodebuild -scheme Bodii -destination '...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && xcodebuild -scheme Bodii -destination '...",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:21.723660+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:26:28.470424+00:00",
+          "type": "text",
+          "content": "I understand. Let me continue with the code review without building. Let me check for any remaining issues and then document and commit the cleanup work.",
+          "phase": "coding",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:29.697003+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: TODO|FIXME",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: TODO|FIXME",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:30.652554+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: print\\(|dump\\(|debugPrint\\(",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: print\\(|dump\\(|debugPrint\\(",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:31.149566+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "Bodii/Data/DataSources/Local/SleepLocalDataSource.swift:100:            // TODO: User 가져와서 연결\nBodii/Data/DataSources/Local/SleepLocalDataSource.swift:563:            // TODO: User 가져와서 연결\nBodii/Presentation/Features/Sleep/SleepTrendsView.swift:554:    // TODO: ViewModel Mock 구현 후 Preview 추가\nBodii/Presentation/Features/Sleep/SleepTrendsView.swift:560:    // TODO: ViewModel Mock 구현 후 Preview 추가\nBodii/Presentation/Features/Sleep/SleepTrendsView.swift:565:    // TODO: ViewModel Mock 구현 후 Preview 추가\nBodii/Presentation/Features/Sleep/SleepTrendsView.swift:570:    // TODO: ViewModel Mock 구현 후 Preview 추가\nBodii/Presentation/Features/Sleep/SleepInputViewModel.swift:79:    /// - TODO: UserRepository에서 조회하도록 개선",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:26:40.009474+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...esentation/Components/Rows/SleepRecordRow.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...esentation/Components/Rows/SleepRecordRow.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:40.766039+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ntation/Components/Cards/SleepDisplayCard.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ntation/Components/Cards/SleepDisplayCard.swift",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:26:40.792099+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "   275→        List {\n   276→            Section(\"이번 주 수면 기록\") {\n   277→                ForEach(SleepRecord.sampleWeekRecords()) { record in\n   278→                    SleepRecordRow(record: record)\n   279→                        .swipeActions(edge: .trailing) {\n   280→                            Button(role: .destructive) {\n   281→                                print(\"Delete: \\(record.id)\")\n   282→                            } label: {\n   283→                                Label(\"삭제\", systemImage: \"trash\")\n   284→                            }\n   285→                        }\n   286→                        .swipeActions(edge: .leading) {\n   287→                            Button {\n   288→                                print(\"Edit: \\(record.id)\")\n   289→                            } label: {\n   290→                                Label(\"편집\", systemImage: \"pencil\")\n   291→                            }\n   292→                            .tint(.blue)\n   293→                        }\n   294→                }\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:26:49.680954+00:00",
+          "type": "text",
+          "content": "Good! The print statements I found are all acceptable:\n- In test files (for test output)\n- In SwiftUI preview code (for demonstrating interactions)\n- Intentional logging with emoji prefixes (⚠️, ℹ️, 🗑️) in SleepPromptManager for monitoring\n\nThe TODOs are also legitimate future work items that are properly documented.\n\nNow let me create a summary document and commit the changes:",
+          "phase": "coding",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:27:29.375052+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...ing-with-5-status-system/code-review-summary.md",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...ing-with-5-status-system/code-review-summary.md",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:27:29.937965+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "File created successfully at: ./.auto-claude/specs/009-sleep-tracking-with-5-status-system/code-review-summary.md",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:27:33.972789+00:00",
+          "type": "text",
+          "content": "Now let me update the build progress and commit the changes:",
+          "phase": "coding",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:27:34.854191+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...racking-with-5-status-system/build-progress.txt",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...racking-with-5-status-system/build-progress.txt",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:27:47.192419+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cat >> ./.auto-claude/specs/009-sleep-tracking-...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cat >> ./.auto-claude/specs/009-sleep-tracking-...",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:27:47.215274+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.7",
+          "session": 27,
+          "detail": "   350→**Next Steps:**\n   351→- Task 6.6: Add accessibility labels to UI components\n   352→- Task 6.7: Final review and documentation\n   353→\n   354→**Commit:** 9f8b5a8\n   355→\n   356→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:27:54.985567+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add -A && git commit -m \"auto-claude: 6.7 -...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add -A && git commit -m \"auto-claude: 6.7 -...",
+          "subtask_id": "6.7",
+          "session": 27
+        },
+        {
+          "timestamp": "2026-01-14T13:27:55.474389+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git log -1 --format=\"%H %s\"",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git log -1 --format=\"%H %s\"",
+          "subtask_id": "6.7",
+          "session": 27
         }
       ]
     },

@@ -41,6 +41,11 @@ class SleepPromptManager: ObservableObject {
     /// - 3회 건너뛰기 후 강제 입력 모드
     private static let maxSkipCount = 3
 
+    /// 건너뛰기 데이터 보관 기간 (일 단위)
+    /// 📚 학습 포인트: Data Retention Policy Constant
+    /// - 7일 이상 지난 건너뛰기 데이터는 자동 삭제
+    private static let cleanupDaysThreshold = 7
+
     // MARK: - Published Properties
 
     /// 프롬프트 표시 여부
@@ -250,7 +255,7 @@ class SleepPromptManager: ObservableObject {
 
     /// 오래된 건너뛰기 횟수 정리
     /// 📚 학습 포인트: Data Cleanup
-    /// - 7일 이상 지난 건너뛰기 횟수는 삭제
+    /// - cleanupDaysThreshold일 이상 지난 건너뛰기 횟수는 삭제
     /// - 메모리 및 저장 공간 관리
     /// - 백그라운드에서 실행 가능
     ///
@@ -259,7 +264,7 @@ class SleepPromptManager: ObservableObject {
     /// - 주기적으로 (예: 하루에 한 번)
     func cleanupOldSkipCounts() {
         let calendar = Calendar.current
-        let cutoffDate = calendar.date(byAdding: .day, value: -7, to: today) ?? today
+        let cutoffDate = calendar.date(byAdding: .day, value: -Self.cleanupDaysThreshold, to: today) ?? today
 
         // 📚 학습 포인트: UserDefaults Key Iteration
         // 모든 키를 순회하며 오래된 항목 삭제

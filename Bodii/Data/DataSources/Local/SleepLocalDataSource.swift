@@ -29,6 +29,14 @@ import CoreData
 /// - 날짜 필드에 인덱스 활용
 final class SleepLocalDataSource {
 
+    // MARK: - Constants
+
+    /// 최대 조회 레코드 수
+    /// 📚 학습 포인트: Performance Safeguard Constant
+    /// - 한 번에 너무 많은 데이터를 로드하지 않도록 제한
+    /// - 실제 앱에서는 페이징 구현 권장
+    private static let maxFetchLimit = 1000
+
     // MARK: - Properties
 
     /// Core Data 스택 관리자
@@ -239,7 +247,7 @@ final class SleepLocalDataSource {
             // 📚 학습 포인트: Performance Safeguard
             // 너무 많은 데이터를 한 번에 로드하지 않도록 제한
             // 실제 앱에서는 페이징 구현 권장
-            request.fetchLimit = 1000
+            request.fetchLimit = Self.maxFetchLimit
 
             let results = try context.fetch(request)
 
