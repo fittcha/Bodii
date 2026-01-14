@@ -330,8 +330,8 @@
           "id": "4.5",
           "title": "Create ExerciseInputView modal",
           "description": "Implement the full exercise input modal combining all components. Show real-time calorie preview as user makes selections.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Implemented ExerciseInputView with comprehensive features:\n\n**Core Components:**\n- Exercise type selection using ExerciseTypeGridView\n- Duration input using DurationInputView\n- Intensity selection using IntensityPickerView\n- Optional note input with multi-line TextField\n- Real-time calorie preview card\n\n**Features:**\n- Sheet modal presentation with NavigationStack\n- Real-time calorie calculation as user makes selections (previewCalories computed property)\n- Visual calculation details showing exercise, duration, intensity, and MET value\n- Save and Cancel buttons with proper loading state\n- Form validation with inline error messages\n- Keyboard management with @FocusState\n- Success/error handling with alerts and callbacks\n\n**UI/UX:**\n- Section-based layout with clear visual hierarchy\n- ScrollView for keyboard avoidance\n- Large calorie display (48pt bold) with numeric transition animation\n- Color-coded calorie preview card (orange theme with flame icon)\n- Disabled state for invalid forms (duration < 1 minute)\n- Loading state during save operation (ProgressView + \"\uc800\uc7a5 \uc911...\" text)\n- Haptic feedback inherited from child components\n\n**Integration:**\n- Integrates 4 custom components (ExerciseTypeGridView, DurationInputView, IntensityPickerView, TextField)\n- @Observable ViewModel (ExerciseInputViewModel) for state management\n- @Binding connections for two-way data flow\n- onSaveSuccess callback pattern for parent View communication\n- @Environment(\\.dismiss) for modal dismissal\n\n**Code Quality:**\n- Follows existing codebase patterns (similar to other components)\n- Comprehensive Korean learning comments explaining Form Sheet Modal Pattern\n- Three preview configurations: basic, saving state, different exercise types\n- Clean separation of view components using computed properties\n- Section-based organization (exerciseTypeSection, durationSection, intensitySection, noteSection)\n- Reusable sectionHeader helper function\n- Extensive documentation with usage examples\n\nAll acceptance criteria met:\n\u2705 Sheet modal presentation\n\u2705 Exercise type grid selection (ExerciseTypeGridView)\n\u2705 Duration input with validation (DurationInputView + validation error display)\n\u2705 Intensity picker (IntensityPickerView with MET multiplier)\n\u2705 Optional note input (TextField with @FocusState)\n\u2705 Real-time calorie preview (previewCalories computed property updates automatically)\n\u2705 Save and Cancel buttons (with proper disabled/loading states)\n\u2705 Loading state during save (isSaving boolean + ProgressView)\n\nThe view is ready for integration with ExerciseListView in Phase 5 when DI container is set up. Committed in b8de41a.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/ExerciseInputView.swift"
           ],
@@ -344,7 +344,8 @@
             "Real-time calorie preview",
             "Save and Cancel buttons",
             "Loading state during save"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:24:53.717586+00:00"
         }
       ]
     },
@@ -443,6 +444,6 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-14T03:21:22.505317+00:00",
+  "last_updated": "2026-01-14T03:24:53.717595+00:00",
   "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z"
 }
