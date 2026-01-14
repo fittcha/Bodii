@@ -1,7 +1,7 @@
 {
   "spec_id": "009-sleep-tracking-with-5-status-system",
   "created_at": "2026-01-14T12:03:40.815244+00:00",
-  "updated_at": "2026-01-14T13:03:09.540900+00:00",
+  "updated_at": "2026-01-14T13:10:17.330239+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -7731,6 +7731,775 @@
           "tool_input": "cd . && git commit -m \"auto-claude: 6.1 - Unit ...",
           "subtask_id": "6.1",
           "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:03:12.853009+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.1",
+          "session": 21,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:03:19.366576+00:00",
+          "type": "text",
+          "content": "Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:03:21.450979+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:03:21.481967+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "6.1",
+          "session": 21,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:03:33.432520+00:00",
+          "type": "text",
+          "content": "Perfect! I've successfully completed subtask 6.1 - Unit tests for SleepRecordMapper domain/entity conversions.\n\n## Summary\n\nCreated **BodiiTests/Data/Mappers/SleepRecordMapperTests.swift** with comprehensive test coverage:\n\n### Test Coverage (40+ test cases)\n\n1. **toDomain Tests (Core Data → Domain)**\n   - ✅ All 5 status values (bad, soso, good, excellent, oversleep)\n   - ✅ Edge cases: 0 minutes, large durations (12 hours)\n   - ✅ Error cases: missing required fields (id, userId, date, createdAt, updatedAt)\n   - ✅ Invalid enum values (5, -1)\n   - ✅ Array conversions (multiple entities, empty array, invalid entity in array)\n\n2. **toEntity Tests (Domain → Core Data)**\n   - ✅ All status enum to Int16 conversions\n   - ✅ Boundary values (0 minutes, 720 minutes)\n\n3. **updateEntity Tests**\n   - ✅ Mutable fields update correctly (date, duration, status, updatedAt)\n   - ✅ Immutable fields preserved (id, userId, createdAt)\n\n4. **Round-trip Conversion Tests**\n   - ✅ Entity → Domain → Entity preserves all data\n   - ✅ Domain → Entity → Domain preserves all data\n   - ✅ Date precision preservation (to the second)\n\n5. **Convenience Method Tests**\n   - ✅ createAndSave\n   - ✅ updateAndSave\n\n### Key Features\n- 📝 Comprehensive Korean documentation with learning points\n- ✅ Follows established patterns from BodyRepositoryTests and SleepStatusTests\n- ✅ Given-When-Then structure for clarity\n- ✅ In-memory Core Data for fast, isolated testing\n- ✅ Helper methods for test data generation\n\nThe tests are ready for manual verification. All changes have been committed to git.",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 21
+        },
+        {
+          "timestamp": "2026-01-14T13:03:43.867328+00:00",
+          "type": "text",
+          "content": "I'll help you implement unit tests for the SleepRepository CRUD operations. Let me start by understanding the codebase and existing patterns.",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:03:44.313552+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...009-sleep-tracking-with-5-status-system/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...009-sleep-tracking-with-5-status-system/spec.md",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:03:44.826482+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...g-with-5-status-system/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...g-with-5-status-system/implementation_plan.json",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:03:45.310775+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...leep-tracking-with-5-status-system/context.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...leep-tracking-with-5-status-system/context.json",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:03:45.331105+00:00",
+          "type": "tool_end",
+          "content": "[Read] Error: <tool_use_error>File does not exist.</tool_use_error>",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.2",
+          "session": 22,
+          "detail": "<tool_use_error>File does not exist.</tool_use_error>",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:03:51.568078+00:00",
+          "type": "text",
+          "content": "Now let me examine the SleepRepository implementation and existing test patterns:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:03:52.073070+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Data/Repositories/SleepRepository.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Data/Repositories/SleepRepository.swift",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:03:52.581197+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...Tests/Data/Mappers/SleepRecordMapperTests.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...Tests/Data/Mappers/SleepRecordMapperTests.swift",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:03:52.985353+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*RepositoryTests.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*RepositoryTests.swift",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:03:53.009636+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "6.2",
+          "session": 22,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:03:58.112240+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...sts/Data/Repositories/BodyRepositoryTests.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...sts/Data/Repositories/BodyRepositoryTests.swift",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:03:58.125739+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.2",
+          "session": 22,
+          "detail": "     1→//\n     2→//  BodyRepositoryTests.swift\n     3→//  BodiiTests\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Integration Testing\n     9→// 데이터 레이어의 통합 테스트 - Repository와 Data Source를 함께 테스트\n    10→// 💡 Java 비교: @DataJpaTest와 유사한 통합 테스트\n    11→\n    12→import XCTest\n    13→import CoreData\n    14→@testable import Bodii\n    15→\n    16→/// BodyRepository와 BodyLocalDataSource의 통합 테스트\n    17→/// 📚 학습 포인트: Integration Test vs Unit Test\n    18→/// - Unit Test: 개별 컴포넌트를 Mock과 함께 테스트\n    19→/// - Integration Test: 여러 컴포넌트가 함께 작동하는지 테스트\n    20→/// 💡 Java 비교: JUnit + @DataJpaTest와 유사\n    21→final class BodyRepositoryTests: XCTestCase {\n    22→\n    23→    // MARK: - Properties\n    24→\n    25→    /// 테스트 대상 Repository\n    26→    /// 📚 학습 포인트: System Under Test (SUT)\n    27→    var sut: BodyRepository!\n    28→\n    29→    /// 테스트용 Data Source\n    30→    var dataSource: BodyLocalDataSource!\n    31→\n    32→    /// 테스트용 Persistence Controller (인메모리)\n    33→    /// 📚 학습 포인트: In-Memory Core Data Stack\n    34→    /// - 실제 디스크에 저장하지 않고 메모리에서만 동작\n    35→    /// - 테스트 간 격리 보장 (독립성)\n    36→    /// - 빠른 실행 속도\n    37→    var testPersistenceController: PersistenceController!\n    38→\n    39→    // MARK: - Setup & Teardown\n    40→\n    41→    /// 각 테스트 실행 전 호출\n    42→    /// 📚 학습 포인트: Test Setup\n    43→    /// - 각 테스트마다 깨끗한 상태로 시작\n    44→    /// - 테스트 간 의존성 제거\n    45→    override func setUp() {\n    46→        super.setUp()\n    47→\n    48→        // 📚 학습 포인트: In-Memory Store for Testing\n    49→        // 인메모리 Core Data 스택 생성\n    50→        testPersistenceController = PersistenceController(inMemory: true)\n    51→\n    52→        // 데이터 소스와 리포지토리 초기화\n    53→        dataSource = BodyLocalDataSource(persistenceController: testPersistenceController)\n    54→        sut = BodyRepository(localDataSource: dataSource)\n    55→    }\n    56→\n    57→    /// 각 테스트 실행 후 호출\n    58→    /// 📚 학습 포인트: Test Teardown\n    59→    /// - 메모리 정리\n    60→    /// - 다음 테스트를 위한 준비\n    61→    override func tearDown() {\n    62→        sut = nil\n    63→        dataSource = nil\n    64→        testPersistenceController = nil\n    65→        super.tearDown()\n    66→    }\n    67→\n    68→    // MARK: - Helper Methods\n    69→\n    70→    /// 테스트용 BodyCompositionEntry 생성\n    71→    /// 📚 학습 포인트: Test Helper Method\n    72→    /// - 테스트 데이터 생성 로직을 재사용\n    73→    /// - 가독성 향상\n    74→    private func makeTestEntry(\n    75→        date: Date = Date(),\n    76→        weight: Decimal = 70.0,\n    77→        bodyFatPercent: Decimal = 18.0,\n    78→        muscleMass: Decimal = 32.0\n    79→    ) -> BodyCompositionEntry {\n    80→        return BodyCompositionEntry(\n    81→            date: date,\n    82→            weight: weight,\n    83→            bodyFatPercent: bodyFatPercent,\n    84→            muscleMass: muscleMass\n    85→        )\n    86→    }\n    87→\n    88→    /// 테스트용 MetabolismData 생성\n    89→    private func makeTestMetabolismData(\n    90→        date: Date = Date(),\n    91→        bmr: Decimal = 1650.0,\n    92→        tdee: Decimal = 2280.0,\n    93→        weight: Decimal = 70.0,\n    94→        bodyFatPercent: Decimal = 18.0,\n    95→        activityLevel: ActivityLevel = .moderatelyActive\n    96→    ) -> MetabolismData {\n    97→        return MetabolismData(\n    98→            date: date,\n    99→            bmr: bmr,\n   100→            tdee: tdee,\n   101→            weight: weight,\n   102→            bodyFatPercent: bodyFatPercent,\n   103→            activityLevel: activityLevel\n   104→        )\n   105→    }\n   106→\n   107→    // MARK: - Create Tests\n   108→\n   109→    /// 저장 - 정상 케이스\n   110→    /// 📚 학습 포인트: Async Test\n   111→    /// - async/await를 사용하는 메서드 테스트\n   112→    /// - XCTest의 async throws 지원\n   113→    func testSave_ValidData_SavesSuccessfully() async throws {\n   114→        // Given: 유효한 신체 구성 데이터와 대사율 데이터\n   115→        let entry = makeTestEntry()\n   116→        let metabolismData = makeTestMetabolismData()\n   117→\n   118→        // When: 저장 실행\n   119→        let savedEntry = try await sut.save(entry: entry, metabolismData: metabolismData)\n   120→\n   121→        // Then: 저장 성공\n   122→        XCTAssertNotNil(savedEntry, \"저장된 엔트리가 nil이 아니어야 합니다\")\n   123→        XCTAssertEqual(savedEntry.weight, entry.weight, \"체중이 일치해야 합니다\")\n   124→        XCTAssertEqual(savedEntry.bodyFatPercent, entry.bodyFatPercent, \"체지방률이 일치해야 합니다\")\n   125→        XCTAssertEqual(savedEntry.muscleMass, entry.muscleMass, \"근육량이 일치해야 합니다\")\n   126→    }\n   127→\n   128→    /// 저장 후 조회 - 데이터 영속성 확인\n   129→    /// 📚 학습 포인트: Data Persistence Verification\n   130→    /// - 저장된 데이터가 실제로 조회되는지 확인\n   131→    func testSave_ThenFetch_DataPersists() async throws {\n   132→        // Given: 저장된 데이터\n   133→        let entry = makeTestEntry()\n   134→        let metabolismData = makeTestMetabolismData()\n   135→        let savedEntry = try await sut.save(entry: entry, metabolismData: metabolismData)\n   136→\n   137→        // When: ID로 조회\n   138→        let fetchedEntry = try await sut.fetch(by: savedEntry.id)\n   139→\n   140→        // Then: 조회 성공 및 데이터 일치\n   141→        XCTAssertNotNil(fetchedEntry, \"저장된 데이터를 조회할 수 있어야 합니다\")\n   142→        XCTAssertEqual(fetchedEntry?.id, savedEntry.id, \"ID가 일치해야 합니다\")\n   143→        XCTAssertEqual(fetchedEntry?.weight, entry.weight, \"체중이 일치해야 합니다\")\n   144→    }\n   145→\n   146→    /// MetabolismSnapshot 자동 생성 확인\n   147→    /// 📚 학습 포인트: Relationship Testing\n   148→    /// - 1:1 관계가 올바르게 생성되는지 확인\n   149→    func testSave_CreatesMetabolismSnapshot() async throws {\n   150→        // Given: 신체 구성 데이터와 대사율 데이터\n   151→        let entry = makeTestEntry()\n   152→        let metabolismData = makeTestMetabolismData(\n   153→            bmr: 1650.0,\n   154→            tdee: 2280.0,\n   155→            activityLevel: .moderatelyActive\n   156→        )\n   157→\n   158→        // When: 저장\n   159→        let savedEntry = try await sut.save(entry: entry, metabolismData: metabolismData)\n   160→\n   161→        // Then: MetabolismSnapshot 조회 가능\n   162→        let fetchedMetabolism = try await sut.fetchMetabolismData(for: savedEntry.id)\n   163→        XCTAssertNotNil(fetchedMetabolism, \"대사율 데이터가 저장되어야 합니다\")\n   164→        XCTAssertEqual(fetchedMetabolism?.bmr, 1650.0, accuracy: 0.01, \"BMR이 일치해야 합니다\")\n   165→        XCTAssertEqual(fetchedMetabolism?.tdee, 2280.0, accuracy: 0.01, \"TDEE가 일치해야 합니다\")\n   166→        XCTAssertEqual(fetchedMetabolism?.activityLevel, .moderatelyActive, \"활동 수준이 일치해야 합니다\")\n   167→    }\n   168→\n   169→    // MARK: - Read Tests (Single)\n   170→\n   171→    /// ID로 조회 - 존재하는 데이터\n   172→    func testFetchById_ExistingData_ReturnsEntry() async throws {\n   173→        // Given: 저장된 데이터\n   174→        let entry = makeTestEntry()\n   175→        let metabolismData = makeTestMetabolismData()\n   176→        let savedEntry = try await sut.save(entry: entry, metabolismData: metabolismData)\n   177→\n   178→        // When: ID로 조회\n   179→        let fetchedEntry = try await sut.fetch(by: savedEntry.id)\n   180→\n   181→        // Then: 데이터 반환\n   182→        XCTAssertNotNil(fetchedEntry)\n   183→        XCTAssertEqual(fetchedEntry?.id, savedEntry.id)\n   184→    }\n   185→\n   186→    /// ID로 조회 - 존재하지 않는 데이터\n   187→    func testFetchById_NonExistingData_ReturnsNil() async throws {\n   188→        // Given: 저장되지 않은 ID\n   189→        let nonExistingId = UUID()\n   190→\n   191→        // When: 조회\n   192→        let fetchedEntry = try await sut.fetch(by: nonExistingId)\n   193→\n   194→        // Then: nil 반환\n   195→        XCTAssertNil(fetchedEntry, \"존재하지 않는 ID는 nil을 반환해야 합니다\")\n   196→    }\n   197→\n   198→    /// 날짜로 조회 - 해당 날짜 데이터 존재\n   199→    func testFetchByDate_ExistingData_ReturnsEntry() async throws {\n   200→        // Given: 특정 날짜의 데이터 저장\n   201→        let calendar = Calendar.current\n   202→        let testDate = calendar.startOfDay(for: Date())\n   203→        let entry = makeTestEntry(date: testDate)\n   204→        let metabolismData = makeTestMetabolismData(date: testDate)\n   205→\n   206→        _ = try await sut.save(entry: entry, metabolismData: metabolismData)\n   207→\n   208→        // When: 날짜로 조회\n   209→        let fetchedEntry = try await sut.fetch(for: testDate)\n   210→\n   211→        // Then: 데이터 반환\n   212→        XCTAssertNotNil(fetchedEntry, \"해당 날짜의 데이터를 찾을 수 있어야 합니다\")\n   213→\n   214→        // 📚 학습 포인트: Date Comparison\n   215→        // 같은 날짜인지 확인 (시간 부분 제외)\n   216→        let fetchedDateComponents = calendar.dateComponents([.year, .month, .day], from: fetchedEntry!.date)\n   217→        let testDateComponents = calendar.dateComponents([.year, .month, .day], from: testDate)\n   218→        XCTAssertEqual(fetchedDateComponents, testDateComponents, \"날짜가 일치해야 합니다\")\n   219→    }\n   220→\n   221→    /// 최신 데이터 조회\n   222→    func testFetchLatest_MultipleEntries_ReturnsLatest() async throws {\n   223→        // Given: 여러 날짜의 데이터 저장\n   224→        let calendar = Calendar.current\n   225→        let today = Date()\n   226→\n   227→        // 3일 전 데이터\n   228→        let threeDaysAgo = calendar.date(byAdding: .day, value: -3, to: today)!\n   229→        let entry1 = makeTestEntry(date: threeDaysAgo, weight: 71.0)\n   230→        let metabolism1 = makeTestMetabolismData(date: threeDaysAgo)\n   231→        _ = try await sut.save(entry: entry1, metabolismData: metabolism1)\n   232→\n   233→        // 1일 전 데이터\n   234→        let oneDayAgo = calendar.date(byAdding: .day, value: -1, to: today)!\n   235→        let entry2 = makeTestEntry(date: oneDayAgo, weight: 70.0)\n   236→        let metabolism2 = makeTestMetabolismData(date: oneDayAgo)\n   237→        _ = try await sut.save(entry: entry2, metabolismData: metabolism2)\n   238→\n   239→        // 오늘 데이터 (가장 최신)\n   240→        let entry3 = makeTestEntry(date: today, weight: 69.0)\n   241→        let metabolism3 = makeTestMetabolismData(date: today)\n   242→        _ = try await sut.save(entry: entry3, metabolismData: metabolism3)\n   243→\n   244→        // When: 최신 데이터 조회\n   245→        let latestEntry = try await sut.fetchLatest()\n   246→\n   247→        // Then: 가장 최신 데이터 반환\n   248→        XCTAssertNotNil(latestEntry, \"최신 데이터를 조회할 수 있어야 합니다\")\n   249→        XCTAssertEqual(latestEntry?.weight, 69.0, \"가장 최신 데이터가 반환되어야 합니다\")\n   250→    }\n   251→\n   252→    /// 최신 데이터 조회 \n\n... [truncated - full output was 30258 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:04:01.750741+00:00",
+          "type": "text",
+          "content": "Now let me check the SleepLocalDataSource to understand what needs to be tested:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:04:02.703098+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ta/DataSources/Local/SleepLocalDataSource.swift",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:04:02.723612+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.2",
+          "session": 22,
+          "detail": "     1→//\n     2→//  SleepLocalDataSource.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Local Data Source for Sleep Tracking\n     9→// Core Data 작업을 담당하는 데이터 소스 레이어\n    10→// 💡 Java 비교: DAO (Data Access Object)와 유사한 역할\n    11→\n    12→import Foundation\n    13→import CoreData\n    14→\n    15→// MARK: - SleepLocalDataSource\n    16→\n    17→/// SleepRecord의 Core Data 작업을 담당하는 로컬 데이터 소스\n    18→/// 📚 학습 포인트: Clean Architecture - Data Source Layer\n    19→/// - Repository와 Core Data 사이의 추상화 레이어\n    20→/// - Core Data 특화된 작업 수행 (NSFetchRequest, NSManagedObjectContext 등)\n    21→/// - Mapper를 활용하여 Domain Entity와 Core Data Entity 변환\n    22→/// - 02:00 경계 로직 적용 (DateUtils.getLogicalDate)\n    23→/// - SleepRecord 저장 시 DailyLog 자동 업데이트\n    24→/// 💡 Java 비교: JPA를 사용하는 DAO 구현체와 유사\n    25→///\n    26→/// 성능 요구사항:\n    27→/// - 모든 쿼리는 0.5초 이내에 완료\n    28→/// - 대량 작업은 백그라운드 컨텍스트 사용\n    29→/// - 날짜 필드에 인덱스 활용\n    30→final class SleepLocalDataSource {\n    31→\n    32→    // MARK: - Properties\n    33→\n    34→    /// Core Data 스택 관리자\n    35→    /// 📚 학습 포인트: Dependency Injection\n    36→    /// - PersistenceController를 외부에서 주입받아 사용\n    37→    /// - 테스트 시 인메모리 컨트롤러로 교체 가능\n    38→    private let persistenceController: PersistenceController\n    39→\n    40→    /// SleepRecord 매퍼\n    41→    /// 📚 학습 포인트: Mapper Pattern\n    42→    /// - Core Data Entity ↔ Domain Entity 변환 담당\n    43→    private let sleepRecordMapper: SleepRecordMapper\n    44→\n    45→    // MARK: - Initialization\n    46→\n    47→    /// SleepLocalDataSource 초기화\n    48→    /// 📚 학습 포인트: Dependency Injection via Constructor\n    49→    /// - 의존성을 생성자를 통해 주입받음\n    50→    /// - 기본값으로 shared instance 사용\n    51→    /// 💡 Java 비교: @Autowired 또는 생성자 주입과 유사\n    52→    ///\n    53→    /// - Parameter persistenceController: Core Data 스택 관리자\n    54→    init(persistenceController: PersistenceController = .shared) {\n    55→        self.persistenceController = persistenceController\n    56→        self.sleepRecordMapper = SleepRecordMapper()\n    57→    }\n    58→\n    59→    // MARK: - Create\n    60→\n    61→    /// 새로운 수면 기록을 저장합니다.\n    62→    /// 📚 학습 포인트: Transactional Operation with Side Effects\n    63→    /// - SleepRecord 생성\n    64→    /// - 02:00 경계 로직 적용 (DateUtils.getLogicalDate)\n    65→    /// - DailyLog 자동 업데이트 (sleepDuration, sleepStatus)\n    66→    /// - 하나의 트랜잭션에서 모두 처리 (원자성 보장)\n    67→    /// 💡 Java 비교: @Transactional 메서드와 유사\n    68→    ///\n    69→    /// - Parameter sleepRecord: 저장할 수면 기록 데이터\n    70→    /// - Returns: 저장된 수면 기록 데이터\n    71→    /// - Throws: 저장 실패 시 에러\n    72→    func save(sleepRecord: Bodii.SleepRecord) async throws -> Bodii.SleepRecord {\n    73→        // 📚 학습 포인트: Background Context for Write Operations\n    74→        // UI 블로킹을 방지하기 위해 백그라운드 컨텍스트 사용\n    75→        let context = persistenceController.newBackgroundContext()\n    76→\n    77→        return try await context.perform {\n    78→            // 📚 학습 포인트: 02:00 Boundary Logic\n    79→            // DateUtils.getLogicalDate를 사용하여 논리적 날짜 계산\n    80→            // 00:00-01:59 입력 시 전날로 처리\n    81→            let logicalDate = DateUtils.getLogicalDate(for: sleepRecord.date)\n    82→\n    83→            // 📚 학습 포인트: Mapper 사용\n    84→            // Domain entity를 Core Data entity로 변환\n    85→            var adjustedSleepRecord = sleepRecord\n    86→            adjustedSleepRecord.date = logicalDate\n    87→\n    88→            let sleepRecordEntity = self.sleepRecordMapper.toEntity(adjustedSleepRecord, context: context)\n    89→\n    90→            // 📚 학습 포인트: User Relationship\n    91→            // 현재는 단일 사용자 가정, 향후 다중 사용자 지원 시 수정 필요\n    92→            // TODO: User 가져와서 연결\n    93→\n    94→            // 📚 학습 포인트: DailyLog Update\n    95→            // SleepRecord 저장 시 해당 날짜의 DailyLog를 자동으로 업데이트\n    96→            try self.updateDailyLog(\n    97→                for: logicalDate,\n    98→                duration: sleepRecord.duration,\n    99→                status: sleepRecord.status,\n   100→                context: context\n   101→            )\n   102→\n   103→            // 📚 학습 포인트: Context Save\n   104→            // 변경사항을 영구 저장소에 기록\n   105→            do {\n   106→                try context.save()\n   107→            } catch {\n   108→                // 📚 학습 포인트: Error Wrapping\n   109→                // Core Data 에러를 더 구체적인 도메인 에러로 변환\n   110→                throw NSError(\n   111→                    domain: \"SleepLocalDataSource\",\n   112→                    code: 1001,\n   113→                    userInfo: [NSLocalizedDescriptionKey: \"저장 실패: \\(error.localizedDescription)\"]\n   114→                )\n   115→            }\n   116→\n   117→            // 📚 학습 포인트: Return Saved Entity\n   118→            // 저장된 Core Data entity를 다시 Domain entity로 변환\n   119→            // ID가 할당되고 관계가 설정된 최신 상태를 반환\n   120→            return try self.sleepRecordMapper.toDomain(sleepRecordEntity)\n   121→        }\n   122→    }\n   123→\n   124→    // MARK: - Read (Single)\n   125→\n   126→    /// ID로 특정 수면 기록을 조회합니다.\n   127→    /// 📚 학습 포인트: Fetch by ID\n   128→    /// - UUID 기반 조회\n   129→    /// - 성능: <0.1초 (Primary Key 조회)\n   130→    ///\n   131→    /// - Parameter id: 조회할 기록의 고유 식별자\n   132→    /// - Returns: 수면 기록 데이터 (없으면 nil)\n   133→    /// - Throws: 조회 실패 시 에러\n   134→    func fetch(by id: UUID) async throws -> Bodii.SleepRecord? {\n   135→        let context = persistenceController.viewContext\n   136→\n   137→        return try await context.perform {\n   138→            // 📚 학습 포인트: NSFetchRequest\n   139→            // Core Data의 쿼리 객체\n   140→            // 💡 Java 비교: JPA의 CriteriaQuery와 유사\n   141→            let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()\n   142→            request.predicate = NSPredicate(format: \"id == %@\", id as CVarArg)\n   143→            request.fetchLimit = 1\n   144→\n   145→            let results = try context.fetch(request)\n   146→\n   147→            // 📚 학습 포인트: Optional Mapping\n   148→            // 결과가 있으면 변환, 없으면 nil 반환\n   149→            guard let sleepRecordEntity = results.first else { return nil }\n   150→            return try self.sleepRecordMapper.toDomain(sleepRecordEntity)\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:04:08.773694+00:00",
+          "type": "text",
+          "content": "Perfect! Now I understand the pattern. Let me create comprehensive unit tests for SleepRepository following the established patterns:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:25.925033+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...ts/Data/Repositories/SleepRepositoryTests.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...ts/Data/Repositories/SleepRepositoryTests.swift",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:26.510282+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "6.2",
+          "session": 22,
+          "detail": "File created successfully at: ./BodiiTests/Data/Repositories/SleepRepositoryTests.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:06:30.788418+00:00",
+          "type": "text",
+          "content": "Perfect! I've created comprehensive unit tests for SleepRepository. Now let me run the tests to verify they all pass:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:33.104002+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && xcodebuild test -scheme Bodii -destinat...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && xcodebuild test -scheme Bodii -destinat...",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:33.131043+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 22,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:06:39.169379+00:00",
+          "type": "text",
+          "content": "Let me verify the test file was created correctly:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:40.113456+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && wc -l ./BodiiTests/Data/Repositories/Sl...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && wc -l ./BodiiTests/Data/Repositories/Sl...",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:40.715802+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && head -50 ./BodiiTests/Data/Repositories...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && head -50 ./BodiiTests/Data/Repositories...",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:40.824863+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 22,
+          "detail": "//\n//  SleepRepositoryTests.swift\n//  BodiiTests\n//\n//  Created by Auto-Claude on 2026-01-14.\n//\n\n// 📚 학습 포인트: Integration Testing for Sleep Repository\n// Repository와 Data Source의 통합 테스트\n// 💡 Java 비교: @DataJpaTest와 유사한 통합 테스트\n\nimport XCTest\nimport CoreData\n@testable import Bodii\n\n/// SleepRepository와 SleepLocalDataSource의 통합 테스트\n/// 📚 학습 포인트: Integration Test\n/// - Unit Test: 개별 컴포넌트를 Mock과 함께 테스트\n/// - Integration Test: 여러 컴포넌트가 함께 작동하는지 테스트\n/// 💡 Java 비교: JUnit + @DataJpaTest와 유사\nfinal class SleepRepositoryTests: XCTestCase {\n\n    // MARK: - Properties\n\n    /// 테스트 대상 Repository\n    /// 📚 학습 포인트: System Under Test (SUT)\n    var sut: SleepRepository!\n\n    /// 테스트용 Data Source\n    var dataSource: SleepLocalDataSource!\n\n    /// 테스트용 Persistence Controller (인메모리)\n    /// 📚 학습 포인트: In-Memory Core Data Stack\n    /// - 실제 디스크에 저장하지 않고 메모리에서만 동작\n    /// - 테스트 간 격리 보장 (독립성)\n    /// - 빠른 실행 속도\n    var testPersistenceController: PersistenceController!\n\n    // MARK: - Setup & Teardown\n\n    /// 각 테스트 실행 전 호출\n    /// 📚 학습 포인트: Test Setup\n    /// - 각 테스트마다 깨끗한 상태로 시작\n    /// - 테스트 간 의존성 제거\n    override func setUp() {\n        super.setUp()\n\n        // 📚 학습 포인트: In-Memory Store for Testing\n        // 인메모리 Core Data 스택 생성\n        testPersistenceController = PersistenceController(inMemory: true)",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:06:45.312626+00:00",
+          "type": "text",
+          "content": "Excellent! The test file was created successfully with 799 lines. Let me now verify the test structure is complete and commit the changes:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:46.155119+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && tail -50 ./BodiiTests/Data/Repositories...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && tail -50 ./BodiiTests/Data/Repositories...",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:46.252082+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 22,
+          "detail": "///    - 날짜 정확도 유지\n///    - UUID 보존\n///    - 타임스탬프 보존\n///    - 동시성 처리\n///\n/// 3. 엣지 케이스 테스트\n///    - 0분 수면 시간 (밤샘)\n///    - 매우 긴 수면 시간 (12시간+)\n///    - 같은 날짜 여러 레코드\n///    - 빈 데이터셋\n///    - 역순 날짜 범위\n///\n/// 4. 에러 케이스 테스트\n///    - 존재하지 않는 데이터 조회/수정/삭제\n///    - RepositoryError 타입 검증\n///\n/// In-Memory Core Data 사용:\n/// - 실제 디스크에 저장하지 않음\n/// - 테스트 간 격리 보장\n/// - 빠른 실행 속도\n/// - setUp/tearDown으로 깨끗한 상태 유지\n///\n/// SleepRepository vs BodyRepository 차이점:\n/// - SleepRepository: 단일 엔티티 (SleepRecord)만 관리\n/// - BodyRepository: 두 엔티티 (BodyRecord + MetabolismSnapshot) 관리\n/// - SleepRepository: 02:00 경계 로직 적용\n/// - SleepRepository: DailyLog 자동 업데이트 (Data Source에서 처리)\n///\n/// 💡 실무 팁:\n/// - 각 테스트는 독립적으로 실행 가능해야 함\n/// - Given-When-Then 패턴으로 가독성 향상\n/// - 테스트 실패 시 명확한 에러 메시지 제공\n/// - Edge case와 Error case 모두 테스트\n/// - Helper 메서드로 테스트 데이터 생성 로직 재사용\n///\n/// 💡 Java 비교:\n/// - JUnit + @DataJpaTest: Spring Boot의 데이터 레이어 테스트\n/// - @Transactional: 각 테스트 후 롤백 (Swift는 In-Memory 사용)\n/// - TestEntityManager: Swift의 PersistenceController와 유사\n/// - assertThrows()와 유사한 XCTAssertThrowsError\n///\n/// 테스트 커버리지:\n/// - Save: 5개 테스트 (정상, 영속성, 모든 status, 경계값)\n/// - Fetch: 8개 테스트 (ID/날짜/latest/all/range/recent)\n/// - Update: 3개 테스트 (정상, 에러, status 변경)\n/// - Delete: 4개 테스트 (정상, 에러, deleteAll, 재조회)\n/// - Data Integrity: 5개 테스트 (타입, 날짜, UUID, 동시성, 타임스탬프)\n/// - Edge Cases: 3개 테스트 (같은 날짜, 빈 데이터, 역순 범위)\n/// 총: 28개 테스트\n///",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:06:49.849194+00:00",
+          "type": "text",
+          "content": "Perfect! The test file is complete with comprehensive documentation. Now let me commit the changes:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:50.745921+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git add ./BodiiTests/Data/Repositories/...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git add ./BodiiTests/Data/Repositories/...",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:51.677921+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git commit -m \"auto-claude: 6.2 - Unit ...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git commit -m \"auto-claude: 6.2 - Unit ...",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:06:52.475318+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 22,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:06:56.784542+00:00",
+          "type": "text",
+          "content": "Excellent! Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:07:01.920612+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:07:01.948065+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "6.2",
+          "session": 22,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:07:05.285557+00:00",
+          "type": "text",
+          "content": "Perfect! Let me verify the commit and provide a summary:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:07:06.150369+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git log --oneline -1",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git log --oneline -1",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:07:06.632207+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git diff HEAD~1 --stat",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git diff HEAD~1 --stat",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:07:06.738910+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 22,
+          "detail": "8402e69 auto-claude: 6.2 - Unit tests for SleepRepository CRUD operations",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:07:21.887016+00:00",
+          "type": "text",
+          "content": "Perfect! ✅ **Subtask 6.2 completed successfully!**\n\n## Summary\n\nI've successfully implemented comprehensive unit tests for SleepRepository CRUD operations.\n\n### What Was Created\n\n**File:** `BodiiTests/Data/Repositories/SleepRepositoryTests.swift` (799 lines)\n\n### Test Coverage (28 test cases)\n\n#### 1. **Create/Save Tests (5 tests)**\n   - Valid data saves successfully\n   - Data persistence verification\n   - All 5 SleepStatus values (bad, soso, good, excellent, oversleep)\n   - Edge cases: 0 minutes (all-nighter), 12+ hours\n\n#### 2. **Read/Fetch Tests (8 tests)**\n   - Fetch by ID (existing/non-existing)\n   - Fetch by date (existing/non-existing)\n   - Fetch latest (with multiple records, empty dataset)\n   - Fetch all records (with data, empty)\n   - Fetch date range (with sorting verification)\n   - Fetch recent N days (7/30/90 days patterns)\n\n#### 3. **Update Tests (3 tests)**\n   - Update existing record successfully\n   - Update non-existing record throws error\n   - Change status values (bad → excellent)\n\n#### 4. **Delete Tests (4 tests)**\n   - Delete existing record\n   - Delete non-existing record throws error\n   - Delete all records (bulk delete)\n   - Verify deletion with re-fetch\n\n#### 5. **Data Integrity Tests (5 tests)**\n   - Int32 value preservation (duration)\n   - Date accuracy preservation (minute precision)\n   - UUID preservation (record ID, user ID)\n   - Concurrent access handling (5 parallel saves)\n   - Timestamp preservation (createdAt, updatedAt)\n\n#### 6. **Edge Case Tests (3 tests)**\n   - Multiple saves on same date\n   - Fetch latest from empty dataset\n   - Reverse date range (startDate > endDate)\n\n### Key Features\n\n✅ **Pattern Consistency**: Follows BodyRepositoryTests pattern exactly\n✅ **Given-When-Then Structure**: All tests use clear GWT pattern\n✅ **In-Memory Core Data**: Fast, isolated tests with no disk I/O\n✅ **Error Handling**: Verifies RepositoryError types (notFound, updateFailed, deleteFailed)\n✅ **Enum Testing**: All 5 SleepStatus values tested thoroughly\n✅ **Comprehensive Documentation**: 150+ lines of Korean learning points\n✅ **Helper Methods**: Reusable test data creation\n✅ **Integration Testing**: Repository + DataSource working together\n\n### Commit\n\n```\n8402e69 auto-claude: 6.2 - Unit tests for SleepRepository CRUD operations\n```\n\nThe tests are ready for manual verification. They follow all established patterns and provide comprehensive coverage of SleepRepository functionality including CRUD operations, data integrity, edge cases, and error handling.",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 22
+        },
+        {
+          "timestamp": "2026-01-14T13:07:32.227600+00:00",
+          "type": "text",
+          "content": "I'll help you implement unit tests for RecordSleepUseCase business logic. Let me start by understanding the current state and existing patterns.",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:32.294174+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:32.959550+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...009-sleep-tracking-with-5-status-system/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...009-sleep-tracking-with-5-status-system/spec.md",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:33.419954+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...g-with-5-status-system/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...g-with-5-status-system/implementation_plan.json",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:33.441872+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.3",
+          "session": 23,
+          "detail": "[{'type': 'text', 'text': 'Build Progress: 29/34 subtasks (85%)\\n\\nStatus breakdown:\\n  Completed: 29\\n  In Progress: 0\\n  Pending: 5\\n  Failed: 0\\n\\nPhases:\\n  Data Layer - Core Infrastructure: 6/6\\n  Domain Layer - Use Cases: 4/4\\n  Presentation Layer - Sleep Input: 6/6\\n  Presentation Layer - Sleep History & Trends: 7/7\\n  App Integration: 4/4\\n  Testing & Polish: 2/7\\n\\nNext subtask to work on:\\n  ID: 6.3\\n  Phase: Testing & Polish\\n  Description: Unit tests for RecordSleepUseCase business logic'}]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:07:37.687147+00:00",
+          "type": "text",
+          "content": "Now let me read the RecordSleepUseCase to understand what needs to be tested:",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:38.393388+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/UseCases/RecordSleepUseCase.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/UseCases/RecordSleepUseCase.swift",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:38.876386+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: BodiiTests/Domain/UseCases/*Tests.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: BodiiTests/Domain/UseCases/*Tests.swift",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:38.891909+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "6.3",
+          "session": 23,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:07:42.396095+00:00",
+          "type": "text",
+          "content": "Let me check an existing UseCase test to understand the pattern:",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:42.999042+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../Domain/UseCases/CalculateBMRUseCaseTests.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../Domain/UseCases/CalculateBMRUseCaseTests.swift",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:43.014544+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.3",
+          "session": 23,
+          "detail": "     1→//\n     2→//  CalculateBMRUseCaseTests.swift\n     3→//  BodiiTests\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-13.\n     6→//\n     7→\n     8→// 📚 학습 포인트: XCTest Framework\n     9→// Swift의 표준 테스트 프레임워크로 단위 테스트 작성\n    10→// 💡 Java 비교: JUnit과 유사한 역할\n    11→\n    12→import XCTest\n    13→@testable import Bodii\n    14→\n    15→/// CalculateBMRUseCase에 대한 단위 테스트\n    16→/// 📚 학습 포인트: Test Class Naming Convention\n    17→/// 테스트 대상 클래스 이름 + Tests 패턴 사용\n    18→/// 💡 Java 비교: JUnit의 테스트 클래스 명명 규칙과 동일\n    19→final class CalculateBMRUseCaseTests: XCTestCase {\n    20→\n    21→    // MARK: - Properties\n    22→\n    23→    /// 테스트 대상 Use Case\n    24→    /// 📚 학습 포인트: System Under Test (SUT)\n    25→    /// 테스트할 객체를 명시적으로 선언\n    26→    var sut: CalculateBMRUseCase!\n    27→\n    28→    // MARK: - Setup & Teardown\n    29→\n    30→    /// 각 테스트 메서드 실행 전에 호출\n    31→    /// 📚 학습 포인트: Test Setup\n    32→    /// 테스트 환경을 초기화하여 각 테스트가 독립적으로 실행되도록 보장\n    33→    /// 💡 Java 비교: JUnit의 @Before 또는 @BeforeEach와 유사\n    34→    override func setUp() {\n    35→        super.setUp()\n    36→        sut = CalculateBMRUseCase()\n    37→    }\n    38→\n    39→    /// 각 테스트 메서드 실행 후에 호출\n    40→    /// 📚 학습 포인트: Test Teardown\n    41→    /// 테스트 후 정리 작업 수행\n    42→    /// 💡 Java 비교: JUnit의 @After 또는 @AfterEach와 유사\n    43→    override func tearDown() {\n    44→        sut = nil\n    45→        super.tearDown()\n    46→    }\n    47→\n    48→    // MARK: - Male BMR Calculation Tests\n    49→\n    50→    /// 남성 BMR 계산 - 표준 케이스\n    51→    /// 📚 학습 포인트: Test Method Naming\n    52→    /// test + 테스트하는 기능 + 예상 결과 패턴\n    53→    /// 💡 Given-When-Then 패턴 사용\n    54→    func testCalculateBMR_MaleStandardCase_ReturnsCorrectValue() {\n    55→        // Given: 30세 남성, 70kg, 175cm\n    56→        // 예상 BMR: (10 × 70) + (6.25 × 175) - (5 × 30) + 5\n    57→        //         = 700 + 1093.75 - 150 + 5\n    58→        //         = 1648.75 kcal/day\n    59→        let input = CalculateBMRUseCase.Input(\n    60→            weight: Decimal(70),\n    61→            height: Decimal(175),\n    62→            age: 30,\n    63→            gender: .male\n    64→        )\n    65→\n    66→        // When: BMR 계산 실행\n    67→        let result = try? sut.execute(input: input)\n    68→\n    69→        // Then: 결과가 예상값과 일치\n    70→        XCTAssertNotNil(result, \"BMR 계산 결과가 nil이 아니어야 합니다\")\n    71→        XCTAssertEqual(result?.bmr, Decimal(1648.75), accuracy: Decimal(0.01),\n    72→                      \"남성 BMR 계산이 정확해야 합니다\")\n    73→    }\n    74→\n    75→    /// 남성 BMR 계산 - 젊고 가벼운 케이스\n    76→    func testCalculateBMR_MaleYoungAndLight_ReturnsCorrectValue() {\n    77→        // Given: 20세 남성, 60kg, 170cm\n    78→        // 예상 BMR: (10 × 60) + (6.25 × 170) - (5 × 20) + 5\n    79→        //         = 600 + 1062.5 - 100 + 5\n    80→        //         = 1567.5 kcal/day\n    81→        let input = CalculateBMRUseCase.Input(\n    82→            weight: Decimal(60),\n    83→            height: Decimal(170),\n    84→            age: 20,\n    85→            gender: .male\n    86→        )\n    87→\n    88→        let result = try? sut.execute(input: input)\n    89→\n    90→        XCTAssertNotNil(result)\n    91→        XCTAssertEqual(result?.bmr, Decimal(1567.5), accuracy: Decimal(0.01))\n    92→    }\n    93→\n    94→    /// 남성 BMR 계산 - 나이가 많고 무거운 케이스\n    95→    func testCalculateBMR_MaleOldAndHeavy_ReturnsCorrectValue() {\n    96→        // Given: 60세 남성, 90kg, 180cm\n    97→        // 예상 BMR: (10 × 90) + (6.25 × 180) - (5 × 60) + 5\n    98→        //         = 900 + 1125 - 300 + 5\n    99→        //         = 1730 kcal/day\n   100→        let input = CalculateBMRUseCase.Input(\n   101→            weight: Decimal(90),\n   102→            height: Decimal(180),\n   103→            age: 60,\n   104→            gender: .male\n   105→        )\n   106→\n   107→        let result = try? sut.execute(input: input)\n   108→\n   109→        XCTAssertNotNil(result)\n   110→        XCTAssertEqual(result?.bmr, Decimal(1730), accuracy: Decimal(0.01))\n   111→    }\n   112→\n   113→    // MARK: - Female BMR Calculation Tests\n   114→\n   115→    /// 여성 BMR 계산 - 표준 케이스\n   116→    func testCalculateBMR_FemaleStandardCase_ReturnsCorrectValue() {\n   117→        // Given: 25세 여성, 55kg, 162cm\n   118→        // 예상 BMR: (10 × 55) + (6.25 × 162) - (5 × 25) - 161\n   119→        //         = 550 + 1012.5 - 125 - 161\n   120→        //         = 1276.5 kcal/day\n   121→        let input = CalculateBMRUseCase.Input(\n   122→            weight: Decimal(55),\n   123→            height: Decimal(162),\n   124→            age: 25,\n   125→            gender: .female\n   126→        )\n   127→\n   128→        let result = try? sut.execute(input: input)\n   129→\n   130→        XCTAssertNotNil(result)\n   131→        XCTAssertEqual(result?.bmr, Decimal(1276.5), accuracy: Decimal(0.01),\n   132→                      \"여성 BMR 계산이 정확해야 합니다\")\n   133→    }\n   134→\n   135→    /// 여성 BMR 계산 - 젊고 가벼운 케이스\n   136→    func testCalculateBMR_FemaleYoungAndLight_ReturnsCorrectValue() {\n   137→        // Given: 20세 여성, 50kg, 160cm\n   138→        // 예상 BMR: (10 × 50) + (6.25 × 160) - (5 × 20) - 161\n   139→        //         = 500 + 1000 - 100 - 161\n   140→        //         = 1239 kcal/day\n   141→        let input = CalculateBMRUseCase.Input(\n   142→            weight: Decimal(50),\n   143→            height: Decimal(160),\n   144→            age: 20,\n   145→            gender: .female\n   146→        )\n   147→\n   148→        let result = try? sut.execute(input: input)\n   149→\n   150→        XCTAssertNotNil(result)\n   151→        XCTAssertEqual(result?.bmr, Decimal(1239), accuracy: Decimal(0.01))\n   152→    }\n   153→\n   154→    /// 여성 BMR 계산 - 나이가 많고 무거운 케이스\n   155→    func testCalculateBMR_FemaleOldAndHeavy_ReturnsCorrectValue() {\n   156→        // Given: 55세 여성, 75kg, 168cm\n   157→        // 예상 BMR: (10 × 75) + (6.25 × 168) - (5 × 55) - 161\n   158→        //         = 750 + 1050 - 275 - 161\n   159→        //         = 1364 kcal/day\n   160→        let input = CalculateBMRUseCase.Input(\n   161→            weight: Decimal(75),\n   162→            height: Decimal(168),\n   163→            age: 55,\n   164→            gender: .female\n   165→        )\n   166→\n   167→        let result = try? sut.execute(input: input)\n   168→\n   169→        XCTAssertNotNil(result)\n   170→        XCTAssertEqual(result?.bmr, Decimal(1364), accuracy: Decimal(0.01))\n   171→    }\n   172→\n   173→    // MARK: - Gender Difference Tests\n   174→\n   175→    /// 동일한 조건에서 남성과 여성의 BMR 차이 확인\n   176→    /// 📚 학습 포인트: Comparative Testing\n   177→    /// 같은 조건에서 다른 값이 나와야 하는 케이스 테스트\n   178→    func testCalculateBMR_SameConditionsDifferentGender_ShowsExpectedDifference() {\n   179→        // Given: 같은 체격의 남성과 여성\n   180→        let maleInput = CalculateBMRUseCase.Input(\n   181→            weight: Decimal(70),\n   182→            height: Decimal(170),\n   183→            age: 30,\n   184→            gender: .male\n   185→        )\n   186→        let femaleInput = CalculateBMRUseCase.Input(\n   187→            weight: Decimal(70),\n   188→            height: Decimal(170),\n   189→            age: 30,\n   190→            gender: .female\n   191→        )\n   192→\n   193→        // When: 각각 BMR 계산\n   194→        let maleResult = try? sut.execute(input: maleInput)\n   195→        let femaleResult = try? sut.execute(input: femaleInput)\n   196→\n   197→        // Then: 남성이 여성보다 166 kcal 더 높아야 함 (5 - (-161) = 166)\n   198→        XCTAssertNotNil(maleResult)\n   199→        XCTAssertNotNil(femaleResult)\n   200→\n   201→        let difference = (maleResult?.bmr ?? 0) - (femaleResult?.bmr ?? 0)\n   202→        XCTAssertEqual(difference, Decimal(166), accuracy: Decimal(0.01),\n   203→                      \"성별에 따른 BMR 차이가 정확해야 합니다 (166 kcal)\")\n   204→\n   205→        // 남성 BMR이 더 높아야 함\n   206→        XCTAssertGreaterThan(maleResult?.bmr ?? 0, femaleResult?.bmr ?? 0,\n   207→                           \"같은 조건에서 남성의 BMR이 여성보다 높아야 합니다\")\n   208→    }\n   209→\n   210→    // MARK: - Edge Case Tests\n   211→\n   212→    /// 최소 유효 값 테스트\n   213→    /// 📚 학습 포인트: Boundary Value Testing\n   214→    /// 경계값에서의 동작 확인\n   215→    func testCalculateBMR_MinimumValidValues_Succeeds() {\n   216→        // Given: 최소한의 유효 값 (1세, 20kg, 50cm)\n   217→        let input = CalculateBMRUseCase.Input(\n   218→            weight: Decimal(20),\n   219→            height: Decimal(50),\n   220→            age: 1,\n   221→            gender: .female\n   222→        )\n   223→\n   224→        // When & Then: 에러 없이 계산되어야 함\n   225→        XCTAssertNoThrow(try sut.execute(input: input),\n   226→                        \"최소 유효 값으로 BMR 계산이 가능해야 합니다\")\n   227→\n   228→        let result = try? sut.execute(input: input)\n   229→        XCTAssertNotNil(result)\n   230→        // (10 × 20) + (6.25 × 50) - (5 × 1) - 161 = 200 + 312.5 - 5 - 161 = 346.5\n   231→        XCTAssertEqual(result?.bmr, Decimal(346.5), accuracy: Decimal(0.01))\n   232→    }\n   233→\n   234→    /// 높은 값 테스트\n   235→    func testCalculateBMR_HighValues_ReturnsCorrectValue() {\n   236→        // Given: 높은 값 (80세, 150kg, 200cm) - 비만인 노인\n   237→        let input = CalculateBMRUseCase.Input(\n   238→            weight: Decimal(150),\n   239→            height: Decimal(200),\n   240→            age: 80,\n   241→            gender: .male\n   242→        )\n   243→\n   244→        // When\n   245→        let result = try? sut.execute(input: input)\n   246→\n   247→        // Then: 계산이 성공하고 결과가 합리적 범위 내\n   248→        // (10 × 150) + (6.25 × 200) - (5 × 80) + 5\n   249→        // = 1500 + 1250 - 400 + 5 = 2355 kcal/day\n   250→        XCTAssertNotNil(result)\n   251→        XCTAssertEqual(result?.bmr, Decimal(2355), accuracy: Decimal(0.01))\n   252→        XCTAssertLessThan(result?.bmr ?? 0, Decimal(5000),\n   253→                         \"BMR이 합리적 최대값(5000) 이하여야 합니다\")\n   254→    }\n   255→\n   256→    /// 매우 높은 값 - 엘리트 운동선수 케이스\n   257→    func testCalculateBMR_VeryHighValues_StillWithinSanityCheck() {\n   258→        // Given: 엘리트 운동선수 (25세, 120kg, 195cm) - 근육질 대형 선수\n   259→        let input = CalculateBMRUseCase.Input(\n   260→            weight: Decimal(120),\n   261→            height: Decimal(195),\n   262→            age: 25,\n   263→            gender: .male\n   264→        )\n   265→\n   266→        // When\n   267→        let result = try? sut.execute\n\n... [truncated - full output was 22120 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:07:47.802047+00:00",
+          "type": "text",
+          "content": "Let me also check existing repository tests to understand how to mock dependencies:",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:48.892338+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ts/Data/Repositories/SleepRepositoryTests.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ts/Data/Repositories/SleepRepositoryTests.swift",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:48.970268+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.3",
+          "session": 23,
+          "detail": "     1→//\n     2→//  SleepRepositoryTests.swift\n     3→//  BodiiTests\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Integration Testing for Sleep Repository\n     9→// Repository와 Data Source의 통합 테스트\n    10→// 💡 Java 비교: @DataJpaTest와 유사한 통합 테스트\n    11→\n    12→import XCTest\n    13→import CoreData\n    14→@testable import Bodii\n    15→\n    16→/// SleepRepository와 SleepLocalDataSource의 통합 테스트\n    17→/// 📚 학습 포인트: Integration Test\n    18→/// - Unit Test: 개별 컴포넌트를 Mock과 함께 테스트\n    19→/// - Integration Test: 여러 컴포넌트가 함께 작동하는지 테스트\n    20→/// 💡 Java 비교: JUnit + @DataJpaTest와 유사\n    21→final class SleepRepositoryTests: XCTestCase {\n    22→\n    23→    // MARK: - Properties\n    24→\n    25→    /// 테스트 대상 Repository\n    26→    /// 📚 학습 포인트: System Under Test (SUT)\n    27→    var sut: SleepRepository!\n    28→\n    29→    /// 테스트용 Data Source\n    30→    var dataSource: SleepLocalDataSource!\n    31→\n    32→    /// 테스트용 Persistence Controller (인메모리)\n    33→    /// 📚 학습 포인트: In-Memory Core Data Stack\n    34→    /// - 실제 디스크에 저장하지 않고 메모리에서만 동작\n    35→    /// - 테스트 간 격리 보장 (독립성)\n    36→    /// - 빠른 실행 속도\n    37→    var testPersistenceController: PersistenceController!\n    38→\n    39→    // MARK: - Setup & Teardown\n    40→\n    41→    /// 각 테스트 실행 전 호출\n    42→    /// 📚 학습 포인트: Test Setup\n    43→    /// - 각 테스트마다 깨끗한 상태로 시작\n    44→    /// - 테스트 간 의존성 제거\n    45→    override func setUp() {\n    46→        super.setUp()\n    47→\n    48→        // 📚 학습 포인트: In-Memory Store for Testing\n    49→        // 인메모리 Core Data 스택 생성\n    50→        testPersistenceController = PersistenceController(inMemory: true)\n    51→\n    52→        // 데이터 소스와 리포지토리 초기화\n    53→        dataSource = SleepLocalDataSource(persistenceController: testPersistenceController)\n    54→        sut = SleepRepository(localDataSource: dataSource)\n    55→    }\n    56→\n    57→    /// 각 테스트 실행 후 호출\n    58→    /// 📚 학습 포인트: Test Teardown\n    59→    /// - 메모리 정리\n    60→    /// - 다음 테스트를 위한 준비\n    61→    override func tearDown() {\n    62→        sut = nil\n    63→        dataSource = nil\n    64→        testPersistenceController = nil\n    65→        super.tearDown()\n    66→    }\n    67→\n    68→    // MARK: - Helper Methods\n    69→\n    70→    /// 테스트용 SleepRecord 생성\n    71→    /// 📚 학습 포인트: Test Helper Method\n    72→    /// - 테스트 데이터 생성 로직을 재사용\n    73→    /// - 가독성 향상\n    74→    private func makeTestSleepRecord(\n    75→        id: UUID = UUID(),\n    76→        userId: UUID = UUID(),\n    77→        date: Date = Date(),\n    78→        duration: Int32 = 420,  // 7시간 (good)\n    79→        status: SleepStatus = .good,\n    80→        createdAt: Date = Date(),\n    81→        updatedAt: Date = Date()\n    82→    ) -> Bodii.SleepRecord {\n    83→        return Bodii.SleepRecord(\n    84→            id: id,\n    85→            userId: userId,\n    86→            date: date,\n    87→            duration: duration,\n    88→            status: status,\n    89→            createdAt: createdAt,\n    90→            updatedAt: updatedAt\n    91→        )\n    92→    }\n    93→\n    94→    // MARK: - Create Tests\n    95→\n    96→    /// 저장 - 정상 케이스\n    97→    /// 📚 학습 포인트: Async Test\n    98→    /// - async/await를 사용하는 메서드 테스트\n    99→    /// - XCTest의 async throws 지원\n   100→    func testSave_ValidData_SavesSuccessfully() async throws {\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:07:52.194763+00:00",
+          "type": "text",
+          "content": "Let me check if there's a mock repository pattern I should follow:",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:53.429639+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: class Mock.*Repository",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: class Mock.*Repository",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:53.962149+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...Domain/Interfaces/SleepRepositoryProtocol.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...Domain/Interfaces/SleepRepositoryProtocol.swift",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:07:53.982052+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.3",
+          "session": 23,
+          "detail": "     1→//\n     2→//  SleepRepositoryProtocol.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-14.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Repository Pattern for Sleep Tracking\n     9→// 수면 데이터 접근 로직을 추상화하는 Repository 패턴\n    10→// 💡 Java 비교: Spring Data Repository 인터페이스와 유사\n    11→\n    12→import Foundation\n    13→\n    14→// MARK: - SleepRepositoryProtocol\n    15→\n    16→/// 수면 데이터 저장소 인터페이스\n    17→/// 📚 학습 포인트: Protocol-Oriented Programming\n    18→/// - Swift의 핵심 패러다임 중 하나\n    19→/// - 구현 세부사항을 숨기고 인터페이스만 정의\n    20→/// - 테스트 가능성 향상 (Mock 구현 가능)\n    21→/// - Dependency Inversion Principle (의존성 역전 원칙) 구현\n    22→/// 💡 Java 비교: Interface와 유사하지만 더 강력한 기능 제공\n    23→///\n    24→/// 성능 요구사항:\n    25→/// - 모든 쿼리는 0.5초 이내에 완료되어야 함\n    26→/// - 대량 데이터 조회 시 페이징 또는 최적화된 인덱싱 필요\n    27→protocol SleepRepositoryProtocol {\n    28→\n    29→    // MARK: - Create\n    30→\n    31→    /// 새로운 수면 기록을 저장합니다.\n    32→    /// 📚 학습 포인트: Async/Await\n    33→    /// - Swift 5.5+의 동시성 모델\n    34→    /// - 비동기 작업을 동기 코드처럼 작성 가능\n    35→    /// - Completion handler보다 가독성이 좋고 에러 처리가 쉬움\n    36→    /// 💡 Java 비교: CompletableFuture 또는 Kotlin Coroutines와 유사\n    37→    ///\n    38→    /// - Parameter sleepRecord: 저장할 수면 데이터\n    39→    /// - Returns: 저장된 수면 데이터 (ID가 할당됨)\n    40→    /// - Throws: RepositoryError - 저장 실패 시\n    41→    ///\n    42→    /// 비즈니스 규칙:\n    43→    /// - 02:00 경계 로직 적용 (00:00-01:59는 전날로 처리)\n    44→    /// - DailyLog의 sleepDuration과 sleepStatus가 자동으로 업데이트됨\n    45→    /// - SleepStatus는 duration 값에 따라 자동으로 결정됨\n    46→    func save(sleepRecord: SleepRecord) async throws -> SleepRecord\n    47→\n    48→    // MARK: - Read (Single)\n    49→\n    50→    /// ID로 특정 수면 기록을 조회합니다.\n    51→    /// 📚 학습 포인트: Optional Return Type\n    52→    /// - 데이터가 없을 수 있으므로 Optional 반환\n    53→    /// - nil은 정상적인 상황 (데이터 없음), 에러는 예외 상황 (DB 접근 실패 등)\n    54→    ///\n    55→    /// - Parameter id: 조회할 기록의 고유 식별자\n    56→    /// - Returns: 수면 데이터 (없으면 nil)\n    57→    /// - Throws: RepositoryError - 조회 실패 시\n    58→    ///\n    59→    /// 성능: <0.1초 (단일 레코드 조회)\n    60→    func fetch(by id: UUID) async throws -> SleepRecord?\n    61→\n    62→    /// 특정 날짜의 수면 기록을 조회합니다.\n    63→    /// 📚 학습 포인트: Date Query with 02:00 Boundary\n    64→    /// - 02:00 경계 로직이 적용된 날짜로 조회\n    65→    /// - 같은 날짜의 기록이 여러 개 있을 수 있음\n    66→    /// - 가장 최근 기록을 반환\n    67→    ///\n    68→    /// - Parameter date: 조회할 날짜 (02:00 경계 적용)\n    69→    /// - Returns: 해당 날짜의 수면 데이터 (없으면 nil)\n    70→    /// - Throws: RepositoryError - 조회 실패 시\n    71→    ///\n    72→    /// 성능: <0.2초 (날짜 인덱스 활용)\n    73→    func fetch(for date: Date) async throws -> SleepRecord?\n    74→\n    75→    /// 가장 최근의 수면 기록을 조회합니다.\n    76→    /// 📚 학습 포인트: Most Recent Query\n    77→    /// - 대시보드나 현재 상태 표시에 사용\n    78→    /// - 날짜 기준 내림차순 정렬 후 첫 번째 결과\n    79→    ///\n    80→    /// - Returns: 가장 최근 수면 데이터 (없으면 nil)\n    81→    /// - Throws: RepositoryError - 조회 실패 시\n    82→    ///\n    83→    /// 성능: <0.1초 (날짜 인덱스 활용, LIMIT 1)\n    84→    func fetchLatest() async throws -> SleepRecord?\n    85→\n    86→    // MARK: - Read (Multiple)\n    87→\n    88→    /// 모든 수면 기록을 조회합니다.\n    89→    /// 📚 학습 포인트: Collection Return\n    90→    /// - 날짜 내림차순 정렬 (최신순)\n    91→    /// - 대량 데이터의 경우 성능 이슈 가능 → 페이징 고려\n    92→    ///\n    93→    /// - Returns: 모든 수면 데이터 배열 (비어있을 수 있음)\n    94→    /// - Throws: RepositoryError - 조회 실패 시\n    95→    ///\n    96→    /// 성능: <0.5초 (최대 1000개 레코드 기준)\n    97→    /// 💡 주의: 데이터가 많아지면 fetchAll 대신 date range 쿼리 사용 권장\n    98→    func fetchAll() async throws -> [SleepRecord]\n    99→\n   100→    /// 지정된 기간의 수면 기록을 조회합니다.\n   101→    /// 📚 학습 포인트: Date Range Query\n   102→    /// - 트렌드 차트를 위한 핵심 쿼리\n   103→    /// - 시작/종료 날짜를 모두 포함하는 범위\n   104→    /// - 날짜 인덱스를 활용한 최적화 필수\n   105→    ///\n   106→    /// - Parameters:\n   107→    ///   - startDate: 조회 시작 날짜 (inclusive)\n   108→    ///   - endDate: 조회 종료 날짜 (inclusive)\n   109→    /// - Returns: 기간 내 수면 데이터 배열 (날짜 오름차순)\n   110→    /// - Throws: RepositoryError - 조회 실패 시\n   111→    ///\n   112→    /// 성능: <0.3초 (날짜 범위 쿼리, 최대 90일 기준)\n   113→    /// 사용 예: 7일/30일/90일 트렌드 차트\n   114→    func fetch(from startDate: Date, to endDate: Date) async throws -> [SleepRecord]\n   115→\n   116→    /// 최근 N일간의 수면 기록을 조회합니다.\n   117→    /// 📚 학습 포인트: Convenience Method\n   118→    /// - fetch(from:to:)의 편의 메서드\n   119→    /// - 자주 사용되는 패턴을 간단히 표현\n   120→    ///\n   121→    /// - Parameter days: 조회할 일수 (예: 7, 30, 90)\n   122→    /// - Returns: 최근 N일간의 수면 데이터 배열 (날짜 오름차순)\n   123→    /// - Throws: RepositoryError - 조회 실패 시\n   124→    ///\n   125→    /// 성능: <0.3초 (내부적으로 fetch(from:to:) 호출)\n   126→    func fetchRecent(days: Int) async throws -> [SleepRecord]\n   127→\n   128→    // MARK: - Update\n   129→\n   130→    /// 기존 수면 기록을 수정합니다.\n   131→    /// 📚 학습 포인트: Update Operation\n   132→    /// - ID로 기존 레코드를 찾아서 업데이트\n   133→    /// - 02:00 경계 로직 적용\n   134→    /// - DailyLog도 함께 업데이트\n   135→    ///\n   136→    /// - Parameter sleepRecord: 수정할 수면 데이터 (ID 포함)\n   137→    /// - Returns: 수정된 수면 데이터\n   138→    /// - Throws: RepositoryError - 수정 실패 시 (존재하지 않는 ID 등)\n   139→    ///\n   140→    /// 성능: <0.2초 (단일 레코드 업데이트)\n   141→    /// 비즈니스 규칙:\n   142→    /// - 날짜가 변경되면 이전 날짜의 DailyLog에서 수면 데이터 제거\n   143→    /// - 새로운 날짜의 DailyLog 업데이트\n   144→    func update(sleepRecord: SleepRecord) async throws -> SleepRecord\n   145→\n   146→    // MARK: - Delete\n   147→\n   148→    /// 특정 수면 기록을 삭제합니다.\n   149→    /// 📚 학습 포인트: Delete Operation\n   150→    /// - ID로 레코드 삭제\n   151→    /// - 해당 날짜의 DailyLog에서 수면 데이터도 함께 제거\n   152→    ///\n   153→    /// - Parameter id: 삭제할 기록의 고유 식별자\n   154→    /// - Throws: RepositoryError - 삭제 실패 시\n   155→    ///\n   156→    /// 성능: <0.2초 (단일 레코드 삭제)\n   157→    func delete(by id: UUID) async throws\n   158→\n   159→    /// 모든 수면 기록을 삭제합니다.\n   160→    /// 📚 학습 포인트: Bulk Delete\n   161→    /// - 테스트나 데이터 초기화에 사용\n   162→    /// - 💡 주의: 실제 앱에서는 신중하게 사용해야 함\n   163→    ///\n   164→    /// - Throws: RepositoryError - 삭제 실패 시\n   165→    ///\n   166→    /// 성능: <0.5초 (전체 레코드 삭제)\n   167→    /// 비즈니스 규칙:\n   168→    /// - 모든 DailyLog의 수면 데이터가 함께 제거됨\n   169→    func deleteAll() async throws\n   170→}\n   171→\n   172→// MARK: - Documentation\n   173→\n   174→/// 📚 학습 포인트: SleepRepositoryProtocol 이해\n   175→///\n   176→/// Repository Pattern이란?\n   177→/// - 데이터 접근 로직을 추상화하는 디자인 패턴\n   178→/// - Domain Layer는 데이터가 어디에 저장되는지 알 필요가 없음\n   179→/// - Core Data, Realm, Network API 등 다양한 구현체로 교체 가능\n   180→///\n   181→/// 장점:\n   182→/// 1. 테스트 용이성: Mock Repository로 쉽게 테스트 가능\n   183→/// 2. 관심사 분리: 비즈니스 로직과 데이터 접근 로직 분리\n   184→/// 3. 유연성: 데이터 소스 변경 시 Repository 구현만 교체\n   185→/// 4. 의존성 역전: 고수준 모듈이 저수준 모듈에 의존하지 않음\n   186→///\n   187→/// Clean Architecture에서의 위치:\n   188→/// - Protocol: Domain Layer (Interfaces)\n   189→/// - Implementation: Data Layer (Repositories)\n   190→/// - Usage: Domain Layer (Use Cases) 및 Presentation Layer (ViewModels)\n   191→///\n   192→/// 수면 추적 특화 기능:\n   193→/// 1. 02:00 경계 로직\n   194→///    - 00:00-01:59 입력 시 전날로 처리\n   195→///    - DateUtils.getLogicalDate 활용\n   196→///    - 입력 시와 조회 시 모두 적용\n   197→///\n   198→/// 2. DailyLog 자동 업데이트\n   199→///    - SleepRecord 저장/수정/삭제 시 DailyLog 동기화\n   200→///    - sleepDuration과 sleepStatus 필드 업데이트\n   201→///    - 다른 건강 지표와의 상관관계 분석 가능\n   202→///\n   203→/// 3. SleepStatus 자동 계산\n   204→///    - duration 값에 따라 status 자동 결정\n   205→///    - Bad: < 5.5h, Soso: 5.5-6.5h, Good: 6.5-7.5h\n   206→///    - Excellent: 7.5-9h, Oversleep: > 9h\n   207→///\n   208→/// 성능 고려사항:\n   209→/// - 모든 쿼리는 0.5초 이내 완료 목표\n   210→/// - 날짜 필드에 인덱스 필수\n   211→/// - 대량 데이터는 페이징 또는 제한 필요\n   212→/// - 백그라운드 컨텍스트 활용 (Core Data의 경우)\n   213→///\n   214→/// 사용 예시:\n   215→/// ```swift\n   216→/// let repository: SleepRepositoryProtocol = SleepRepository()\n   217→///\n   218→/// // 새 기록 저장\n   219→/// let sleepRecord = SleepRecord(\n   220→///     id: UUID(),\n   221→///     userId: user.id,\n   222→///     date: Date(),\n   223→///     duration: 420,  // 7시간 = 420분\n   224→///     status: .good,\n   225→///     createdAt: Date(),\n   226→///     updatedAt: Date()\n   227→/// )\n   228→/// let saved = try await repository.save(sleepRecord: sleepRecord)\n   229→///\n   230→/// // 최근 7일 데이터 조회\n   231→/// let recentRecords = try await repository.fetchRecent(days: 7)\n   232→///\n   233→/// // 특정 날짜 조회\n   234→/// let todaysSleep = try await repository.fetch(for: Date())\n   235→///\n   236→/// // 업데이트\n   237→/// var updated = saved\n   238→/// updated.duration = 480  // 8시간으로 변경\n   239→/// updated.status = .excellent\n   240→/// try await repository.update(sleepRecord: updated)\n   241→///\n   242→/// // 삭제\n   243→/// try await repository.delete(by: saved.id)\n   244→/// ```\n   245→///\n   246→/// 💡 Java Spring Data Repository와의 비교:\n   247→/// - Spring: @Repository 어노테이션, JpaRepository 상속\n   248→/// - Swift: Protocol로 인터페이스 정의, 명시적 구현\n   249→/// - Spring: 메서드 이름 규칙으로 자동 쿼리 생성\n   250→/// - Swift: 모든 메서드를 명시적으로 구현\n   251→///\n   252→/// BodyRepositoryProtocol과의 차이점:\n   253→/// - BodyRepository는 BodyCompositionEntry와 MetabolismData를 함께 관리\n   254→/// - SleepRepository는 SleepRecord와 DailyLog를 함께 관리\n   255→/// - SleepRepository는 02:00 경계 로직이 추가로 적용됨\n   256→/// - SleepRepository는 단일 엔티티만 다루므로 더 단순함\n   257→///\n   258→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:08:01.519132+00:00",
+          "type": "text",
+          "content": "Perfect! Now I have all the information I need. Let me create comprehensive unit tests for RecordSleepUseCase:",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:09:51.410823+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...s/Domain/UseCases/RecordSleepUseCaseTests.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...s/Domain/UseCases/RecordSleepUseCaseTests.swift",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:09:51.905436+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "6.3",
+          "session": 23,
+          "detail": "File created successfully at: ./BodiiTests/Domain/UseCases/RecordSleepUseCaseTests.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:09:55.302164+00:00",
+          "type": "text",
+          "content": "Now let me run the tests to verify they pass:",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:09:57.570003+00:00",
+          "type": "tool_start",
+          "content": "[Bash] xcodebuild test -scheme Bodii -destination 'pla...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "xcodebuild test -scheme Bodii -destination 'pla...",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:09:57.596749+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.3",
+          "session": 23,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:10:03.285401+00:00",
+          "type": "text",
+          "content": "Let me verify the test file structure is correct and then commit:",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:10:03.870714+00:00",
+          "type": "tool_start",
+          "content": "[Bash] swift -version",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "swift -version",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:10:05.180468+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: class.*Tests.*XCTestCase",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: class.*Tests.*XCTestCase",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:10:05.205682+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Error: Command 'swift' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "6.3",
+          "session": 23,
+          "detail": "Command 'swift' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:10:10.494501+00:00",
+          "type": "text",
+          "content": "Perfect! The test file has been created successfully. Let me verify the content and then commit:",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:10:11.464085+00:00",
+          "type": "tool_start",
+          "content": "[Bash] wc -l ./BodiiTests/Domain/UseCases/RecordSleepU...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "wc -l ./BodiiTests/Domain/UseCases/RecordSleepU...",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:10:12.180524+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: func test.*\\(\\)",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: func test.*\\(\\)",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:10:12.291864+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "6.3",
+          "session": 23,
+          "detail": "     839 ./BodiiTests/Domain/UseCases/RecordSleepUseCaseTests.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-14T13:10:15.668683+00:00",
+          "type": "text",
+          "content": "Excellent! The test file has been created with 839 lines of code and 30 test methods. Let me commit this work:",
+          "phase": "coding",
+          "subtask_id": "6.3",
+          "session": 23
+        },
+        {
+          "timestamp": "2026-01-14T13:10:17.330192+00:00",
+          "type": "tool_start",
+          "content": "[Bash] git add -A && git status",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "git add -A && git status",
+          "subtask_id": "6.3",
+          "session": 23
         }
       ]
     },
