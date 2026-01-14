@@ -1,83 +1,105 @@
-# Build Progress - 002-project-foundation-core-data-model
+## Build Progress for Spec 002: Project Foundation & Core Data Model
 
-## Subtask 2.3: Create Date+Extensions
-
-### Status: ✅ COMPLETED
-
-### Summary
-The Date+Extensions file was already fully implemented and committed (commit 96c7cc6). Verified the implementation meets all acceptance criteria and updated the implementation plan to reflect completion status.
-
-### Implementation Details
-- **File**: `Bodii/Shared/Extensions/Date+Extensions.swift`
-- **Purpose**: Provides convenient instance methods and computed properties for Date type
-- **Pattern**: Extensions delegate to DateUtils for actual implementation, providing cleaner API
-- **Key Features**:
-  - Computed properties for natural syntax (`date.startOfDay` vs `DateUtils.startOfDay(for: date)`)
-  - Instance methods for better readability (`date1.isSameDay(as: date2)`)
-  - Static methods for age calculation
-  - Type-safe FormatStyle enum for date formatting
-
-### Implemented Methods
-✅ **startOfDay** - Computed property returning 00:00:00 of the date
-✅ **endOfDay** - Computed property returning 23:59:59 of the date
-✅ **isSameDay(as:)** - Instance method comparing if two dates are the same day
-✅ **isToday** - Computed property checking if date is today
-✅ **daysBetween(and:)** - Instance method calculating days between dates
-✅ **age(from:referenceDate:)** - Static method calculating age from birth date
-✅ **formatted(style:)** - Instance method for Korean locale date formatting
-
-### FormatStyle Enum
-The implementation includes a nested FormatStyle enum for type-safe formatting:
-- **full**: "yyyy년 MM월 dd일" (e.g., "2024년 01월 15일")
-- **short**: "M월 d일" (e.g., "1월 15일")
-- **withWeekday**: "M월 d일 (E)" (e.g., "1월 15일 (월)")
-- **time**: "HH:mm" (e.g., "14:30")
-- **dateTime**: "M월 d일 HH:mm" (e.g., "1월 15일 14:30")
-
-### Examples
-```swift
-let today = Date()
-let dayStart = today.startOfDay // 오늘 00:00:00
-let dayEnd = today.endOfDay // 오늘 23:59:59
-let isSame = today.isSameDay(as: otherDate) // Boolean comparison
-let age = Date.age(from: birthDate) // Calculate age from birth date
-let formatted = today.formatted(style: .full) // "2024년 01월 15일"
-```
-
-### Acceptance Criteria Verification
-✅ startOfDay computed property
-✅ endOfDay computed property
-✅ age(from birthDate:) static method for calculating age
-✅ isSameDay(as:) comparison method
-✅ isToday computed property
-✅ daysBetween(and:) method
-✅ formatted(style:) for Korean date formatting
-✅ Follows project patterns (Korean docs, learning points, Java/Kotlin comparisons)
-✅ Comprehensive documentation with examples
-
-### Commits
-- 96c7cc6: auto-claude: 2.3 - Convenience extensions for Date type
-
-### Next Steps
-**Phase 2 (Utility Services)** - Progress: 3/5 completed (60%)
-- 2.1: Create DateUtils ✅ COMPLETED
-- 2.2: Create ValidationService ✅ COMPLETED
-- 2.3: Create Date+Extensions ✅ COMPLETED
-- 2.4: Create Decimal+Extensions ⏳ PENDING
-- 2.5: Create Formatters Utility ⏳ PENDING
-
-### Notes
-The Date+Extensions provides a more SwiftUI-friendly API by adding instance methods and computed properties to the Date type. All methods delegate to DateUtils for consistency and maintainability. This pattern is common in Swift - having both utility classes and convenience extensions.
-
-The FormatStyle enum provides type-safe date formatting, preventing string-based format errors and making code more readable.
+### Current Status: Phase 2 - Utility Services
 
 ---
 
-## Overall Progress
-- **Phase 1** (Enum Definitions & Type Safety): ✅ 10/10 completed (100%)
-- **Phase 2** (Utility Services): 🔄 3/5 completed (60%)
-- **Phase 3** (Domain Entities): ⏳ 0/9 completed (0%)
-- **Phase 4** (Core Data Entity Extensions): ⏳ 0/4 completed (0%)
-- **Phase 5** (Testing & Verification): ⏳ 0/4 completed (0%)
+### ✅ Completed Tasks
 
-**Total Progress**: 13/32 subtasks completed (41%)
+#### Phase 1: Enum Definitions & Type Safety (COMPLETED)
+- ✅ 1.1: Gender Enum (male/female)
+- ✅ 1.2: ActivityLevel Enum (5 levels with TDEE multipliers)
+- ✅ 1.3: MealType Enum (breakfast/lunch/dinner/snack)
+- ✅ 1.4: ExerciseType Enum (8 types with MET values)
+- ✅ 1.5: Intensity Enum (low/medium/high)
+- ✅ 1.6: FoodSource Enum (KFDA/USDA/UserCreated)
+- ✅ 1.7: GoalType Enum (lose/maintain/gain)
+- ✅ 1.8: SleepStatus Enum (5 statuses with duration thresholds)
+- ✅ 1.9: QuantityUnit Enum (serving/gram)
+- ✅ 1.10: Constants File (validation ranges, defaults, BMR/TDEE constants)
+
+#### Phase 2: Utility Services (IN PROGRESS)
+- ✅ 2.1: DateUtils (02:00 sleep boundary logic) - **COMPLETED THIS SESSION**
+
+---
+
+### 🎯 Subtask 2.1: DateUtils - COMPLETED
+
+**File:** `Bodii/Shared/Utils/DateUtils.swift`
+
+**Implementation Details:**
+- ✅ `getLogicalDate(for:)` - Returns previous day if hour < 02:00, current day otherwise
+  - 01:59 → previous day
+  - 02:00 → current day
+  - Correctly implements CRITICAL sleep boundary logic
+
+- ✅ `isNewDayForSleep(at:)` - Checks if time is past 02:00 boundary
+  - Returns true for hour >= 2
+  - Returns false for hour < 2
+
+- ✅ `startOfDay(for:)` - Returns 00:00:00 of date
+- ✅ `endOfDay(for:)` - Returns 23:59:59 of date
+
+- ✅ Korean locale date formatting utilities:
+  - `format(_:format:)` - Custom format with shared DateFormatter
+  - `formatFullDate(_:)` - "yyyy년 MM월 dd일"
+  - `formatShortDate(_:)` - "M월 d일"
+  - `formatDateWithWeekday(_:)` - "M월 d일 (E)"
+  - `formatTime(_:)` - "HH:mm"
+  - `formatDateTime(_:)` - "M월 d일 HH:mm"
+
+- ✅ Date comparison utilities:
+  - `isSameDay(_:_:)` - Compare if two dates are same day
+  - `isToday(_:)` - Check if date is today
+  - `daysBetween(_:and:)` - Calculate days between dates
+
+- ✅ Age calculation:
+  - `age(from:referenceDate:)` - Calculate age from birth date
+
+- ✅ Comprehensive documentation:
+  - Educational comments comparing to Java/Joda-Time
+  - Code examples for all methods
+  - Korean documentation
+  - Clear explanation of 02:00 boundary logic
+
+**Verification:**
+- All acceptance criteria met
+- Implementation follows existing code patterns
+- Uses Constants.Sleep.boundaryHour for sleep boundary
+- Shared DateFormatter for performance
+- Well-documented with examples
+
+---
+
+### 📋 Next Steps
+
+**Phase 2: Utility Services** (Continue)
+- ⏭️ 2.2: ValidationService (input validation with range checks)
+- ⏭️ 2.3: Date+Extensions (convenience extensions)
+- ⏭️ 2.4: Decimal+Extensions (Core Data conversions)
+- ⏭️ 2.5: Formatters Utility (centralized formatters)
+
+**Phase 3: Domain Entities** (Pending)
+- 3.1-3.9: Create 9 pure Swift domain models
+
+**Phase 4: Core Data Entity Extensions** (Pending)
+- 4.1-4.4: Create Core Data entity extensions
+
+**Phase 5: Testing & Verification** (Pending)
+- 5.1-5.4: Create unit tests
+
+---
+
+### 🎉 Acceptance Criteria Progress
+
+✅ AC-1: Xcode project created with iOS 17+ target and SwiftUI lifecycle
+✅ AC-2: Core Data model implements all 9 entities from ERD
+✅ AC-3: MVVM folder structure established
+✅ AC-4: PersistenceController manages Core Data stack
+✅ AC-5: DateUtils handles 02:00 sleep boundary logic correctly - **COMPLETED**
+⏳ AC-6: ValidationService validates all input ranges - **NEXT**
+
+---
+
+Last Updated: 2026-01-14
+Commit: 74a6517 - Mark DateUtils subtask as completed
