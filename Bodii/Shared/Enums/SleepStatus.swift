@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /// 수면 상태 열거형
 ///
@@ -39,6 +40,44 @@ enum SleepStatus: Int16, CaseIterable, Codable {
         case .good: return "좋음"
         case .excellent: return "매우 좋음"
         case .oversleep: return "과다 수면"
+        }
+    }
+
+    /// 수면 상태에 해당하는 SwiftUI Color
+    ///
+    /// 시각적 피드백을 위한 상태별 색상을 반환합니다.
+    ///
+    /// - bad: 빨강 (수면 부족)
+    /// - soso: 노랑 (보통)
+    /// - good: 초록 (적정)
+    /// - excellent: 파랑 (매우 좋음)
+    /// - oversleep: 주황 (과다 수면)
+    var color: Color {
+        switch self {
+        case .bad: return .red
+        case .soso: return .yellow
+        case .good: return .green
+        case .excellent: return .blue
+        case .oversleep: return .orange
+        }
+    }
+
+    /// 수면 상태에 해당하는 SF Symbol 아이콘 이름
+    ///
+    /// 시각적 피드백을 위한 상태별 아이콘을 반환합니다.
+    ///
+    /// - bad: moon.fill (수면 부족)
+    /// - soso: moon.stars (보통)
+    /// - good: moon.stars.fill (적정)
+    /// - excellent: sparkles (매우 좋음)
+    /// - oversleep: zzz (과다 수면)
+    var iconName: String {
+        switch self {
+        case .bad: return "moon.fill"
+        case .soso: return "moon.stars"
+        case .good: return "moon.stars.fill"
+        case .excellent: return "sparkles"
+        case .oversleep: return "zzz"
         }
     }
 
