@@ -279,8 +279,8 @@
           "id": "4.2",
           "title": "Create ExerciseTypeGridView component",
           "description": "Create a grid of exercise type buttons for selection. Each button shows icon and name, with selected state highlighting.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Implemented ExerciseTypeGridView component with comprehensive features:\n\n**UI Components:**\n- LazyVGrid layout with adaptive columns (minimum 100pt) for responsive design\n- All 8 exercise types displayed using ExerciseType.allCases\n- SF Symbols icons using exerciseType.systemIconName extension\n- Korean names using exerciseType.displayName property\n\n**Selection Features:**\n- Single selection pattern with @Binding for two-way data flow\n- Visual feedback for selected state:\n  - Selected: filled icon with accent color, bold text, colored border, stronger shadow\n  - Unselected: outlined icon with light background, regular text, subtle shadow\n- Each exercise type uses its unique accent color (blue for running, green for walking, etc.)\n\n**User Experience:**\n- Tappable buttons with spring animation (.spring(response: 0.3, dampingFraction: 0.7))\n- Haptic feedback on selection (UIImpactFeedbackGenerator)\n- Optional onSelect callback for additional logic\n- Smooth state transitions with animation\n\n**Code Quality:**\n- Follows existing codebase patterns with Korean learning comments\n- Comprehensive documentation explaining Selectable Grid Pattern\n- Two preview configurations: interactive selection and all types overview\n- Reusable component with @Binding for integration with any ViewModel\n- Accessibility-ready using Button instead of onTapGesture\n\n**Extensions Used:**\n- ExerciseType.systemIconName (from ExerciseCardView.swift)\n- ExerciseType.accentColor (from ExerciseCardView.swift)\n- ExerciseType.displayName (from ExerciseType.swift)\n\nAll acceptance criteria met:\n\u2705 Grid layout with all 8 exercise types (LazyVGrid with adaptive columns)\n\u2705 Each item shows icon and Korean name (SF Symbols + displayName)\n\u2705 Visual feedback for selected type (conditional styling with isSelected)\n\u2705 Tappable with animation (Button with spring animation + haptic feedback)\n\nComponent is ready for integration into ExerciseInputView. Committed in 724ff46.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/Components/ExerciseTypeGridView.swift"
           ],
@@ -289,14 +289,15 @@
             "Each item shows icon and Korean name",
             "Visual feedback for selected type",
             "Tappable with animation"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:13:54.583882+00:00"
         },
         {
           "id": "4.3",
           "title": "Create IntensityPickerView component",
           "description": "Create a segmented control or picker for intensity selection (\uc800\uac15\ub3c4/\uc911\uac15\ub3c4/\uace0\uac15\ub3c4).",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Implemented IntensityPickerView component with comprehensive features:\n\n**UI Components:**\n- Segmented control style with 3 horizontal buttons (\uc800\uac15\ub3c4/\uc911\uac15\ub3c4/\uace0\uac15\ub3c4)\n- Color-coded selection (green for low, orange for medium, red for high)\n- SF Symbols icons for each intensity level (hare.fill, figure.walk, bolt.fill)\n- Optional MET multiplier info display below the segmented control\n\n**Selection Features:**\n- Single selection pattern with @Binding for two-way data flow\n- Visual feedback for selected state:\n  - Selected: filled background with accent color, semibold text, icon display\n  - Unselected: clear background, regular text, no icon\n- Each intensity uses its unique accent color from Intensity.accentColor extension\n\n**User Experience:**\n- Tappable buttons with spring animation (.spring(response: 0.3, dampingFraction: 0.7))\n- Haptic feedback on selection (UIImpactFeedbackGenerator)\n- Prevents duplicate haptic on re-tap of same option\n- Optional onSelect callback for additional logic\n- Smooth state transitions with animation\n\n**Code Quality:**\n- Follows ExerciseTypeGridView pattern from the codebase\n- Comprehensive Korean learning comments explaining Segmented Control Pattern\n- Three preview configurations: basic, all intensities, interactive demo\n- Reusable component with @Binding for integration with any ViewModel\n- Accessibility-ready using Button instead of onTapGesture\n- Extension added: Intensity.accentColor for color consistency\n\n**Preview Configurations:**\n- \"Intensity Picker\": Interactive selection with selected intensity display\n- \"All Intensities\": Each intensity displayed individually with MET info\n- \"Interactive Demo\": Full simulation with calorie calculation demo\n\nAll acceptance criteria met:\n\u2705 Three options: \uc800\uac15\ub3c4, \uc911\uac15\ub3c4, \uace0\uac15\ub3c4\n\u2705 Segmented control style with horizontal buttons\n\u2705 Default selection: \uc911\uac15\ub3c4 (handled by ViewModel)\n\u2705 Shows MET multiplier info (optional showMetMultiplier parameter)\n\nComponent is ready for integration into ExerciseInputView. Committed in b4f5d1e.",
           "files": [
             "Bodii/Presentation/Features/Exercise/Views/Components/IntensityPickerView.swift"
           ],
@@ -305,7 +306,8 @@
             "Segmented control or horizontal buttons",
             "Default selection: \uc911\uac15\ub3c4",
             "Shows MET multiplier info (optional)"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:17:18.592603+00:00"
         },
         {
           "id": "4.4",
@@ -440,6 +442,6 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-14T03:11:20.800218+00:00",
+  "last_updated": "2026-01-14T03:17:18.592607+00:00",
   "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z"
 }
