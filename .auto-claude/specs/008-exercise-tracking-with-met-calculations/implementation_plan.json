@@ -358,8 +358,8 @@
           "id": "5.1",
           "title": "Register exercise services in DIContainer",
           "description": "Register all exercise-related services, repositories, and use cases in DIContainer for dependency injection.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Successfully registered all exercise-related components in DIContainer:\n\n**Data Sources (lazy initialization):**\n- ExerciseRecordLocalDataSource: Core Data operations for exercise records\n- DailyLogLocalDataSource: Core Data operations for daily logs\n\n**Repositories (protocol-based for testability):**\n- ExerciseRecordRepository: Abstraction over ExerciseRecordLocalDataSource\n- DailyLogRepository: Abstraction over DailyLogLocalDataSource\n\n**Services:**\n- DailyLogService: Business logic orchestration for DailyLog updates\n- ExerciseCalcService: Static utility enum (no registration needed, documented in code)\n\n**Use Cases (Clean Architecture pattern):**\n- AddExerciseRecordUseCase: Create new exercise records\n- UpdateExerciseRecordUseCase: Modify existing exercise records\n- DeleteExerciseRecordUseCase: Remove exercise records\n- GetExerciseRecordsUseCase: Query exercise records by date/range\n\n**Factory Methods (Dependency Injection pattern):**\n- makeExerciseListViewModel(userId:): Creates ExerciseListViewModel with all dependencies\n- makeExerciseInputViewModel(userId:userWeight:userBMR:userTDEE:): Creates ExerciseInputViewModel with user-specific data\n\n**Implementation Details:**\n- All dependencies use lazy initialization for optimal memory usage\n- Protocol-based repositories enable easy mocking for unit tests\n- Factory methods encapsulate complex dependency graphs\n- Thread-safe singleton pattern with DIContainer.shared\n- Comprehensive documentation with Korean learning comments\n\nAll acceptance criteria met. ViewModels can now resolve dependencies through DIContainer.shared factory methods. Committed in 11e043f.",
           "files": [
             "Bodii/App/DIContainer.swift"
           ],
@@ -369,14 +369,15 @@
             "DailyLogService registered",
             "All use cases registered",
             "ViewModels can resolve dependencies"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:29:03.827148+00:00"
         },
         {
           "id": "5.2",
           "title": "Integrate ExerciseListView into TabView",
           "description": "Add ExerciseListView to the main tab navigation with appropriate icon and label.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "\u2705 Successfully integrated ExerciseListView into main TabView:\n\n**Implementation:**\n- Replaced PlaceholderView with ExerciseListView in exerciseTab\n- Used DIContainer.shared.makeExerciseListViewModel(userId:) for dependency injection\n- Added temporary userId property for development (TODO: replace with AuthenticationService)\n- Added comprehensive Korean learning comments explaining DI pattern\n\n**Tab Configuration:**\n- Icon: \"figure.run\" (SF Symbol showing running figure)\n- Label: \"\uc6b4\ub3d9\" (Korean for \"Exercise\")\n- Tab order: dashboard \u2192 body \u2192 diet \u2192 **exercise** \u2192 sleep \u2192 settings\n\n**Code Quality:**\n- Follows existing codebase patterns for tab configuration\n- Clean dependency injection using DIContainer factory method\n- Maintains consistency with other tabs in styling and structure\n- Korean learning comments comparing with Dagger/Hilt pattern\n\nAll acceptance criteria met:\n\u2705 Exercise tab visible in TabView\n\u2705 Appropriate icon (figure.run)\n\u2705 Korean label: \uc6b4\ub3d9\n\u2705 Correct tab order per design\n\nCommitted in 6be4651.",
           "files": [
             "Bodii/App/ContentView.swift"
           ],
@@ -385,14 +386,15 @@
             "Appropriate icon (figure.run or similar)",
             "Korean label: \uc6b4\ub3d9",
             "Correct tab order per design"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:31:58.477774+00:00"
         },
         {
           "id": "5.3",
           "title": "Write unit tests for ExerciseCalcService",
           "description": "Test MET-based calorie calculations for all exercise types and intensity levels.",
-          "status": "pending",
-          "notes": "",
+          "status": "completed",
+          "notes": "✅ Implemented comprehensive unit tests for ExerciseCalcService with 35+ test methods:\n\n**Exercise Type Coverage:**\n- Walking: tested at all intensity levels (low/medium/high)\n- Running: tested at all intensity levels with verification\n- Cycling: tested at all intensity levels with 80kg weight\n- Swimming: tested at all intensity levels with 65kg weight\n- Weight training: tested at all intensity levels with 90kg weight\n- Crossfit: tested at all intensity levels with 75kg weight\n- Yoga: tested at all intensity levels with 60kg weight\n- Other: tested at all intensity levels with 70kg weight\n\n**Formula Verification:**\n- Verified MET formula accuracy: calories = MET × weight(kg) × hours\n- Tested linear scaling with different weights (50kg to 120kg)\n- Tested linear scaling with different durations (15min to 240min)\n- Manual calculation verification tests\n\n**Edge Cases:**\n- Minimum duration: 1 minute (9 kcal for running)\n- Very short duration: 5 minutes (47 kcal for running)\n- Large duration: 180 minutes / 3 hours (1680 kcal for running)\n- Very large duration: 240 minutes / 4 hours marathon (2240 kcal)\n- Low weight person: 45kg (180 kcal for 30min running)\n- High weight person: 120kg (480 kcal for 30min running)\n\n**Rounding Tests:**\n- Tested rounding behavior with decimal results\n- Verified proper Int32 conversion\n\n**Decimal Weight Tests:**\n- Tested Decimal parameter overload (70.5kg, 65.75kg)\n- Verified Decimal and Double weights produce identical results\n\n**Test Quality:**\n- Follows existing test patterns from ValidationServiceTests\n- Comprehensive Given-When-Then comments\n- Korean learning comments (테스트:)\n- Clear test method naming convention\n- Descriptive assertion messages\n\nAll acceptance criteria met:\n✅ Test walking at all intensity levels\n✅ Test running at all intensity levels\n✅ Test all 8 exercise types\n✅ Verify formula: MET × weight × hours\n✅ Edge cases: 1 minute, large durations\n\nCommitted in 228f7b6.",
           "files": [
             "BodiiTests/ExerciseCalcServiceTests.swift"
           ],
@@ -402,7 +404,8 @@
             "Test all 8 exercise types",
             "Verify formula: MET \u00d7 weight \u00d7 hours",
             "Edge cases: 1 minute, large durations"
-          ]
+          ],
+          "updated_at": "2026-01-14T03:35:00.000000+00:00"
         },
         {
           "id": "5.4",
@@ -444,6 +447,6 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-14T03:24:53.717595+00:00",
+  "last_updated": "2026-01-14T03:31:58.477781+00:00",
   "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z"
 }

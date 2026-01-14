@@ -130,13 +130,38 @@
 ### Phase 5: Integration & Testing (IN PROGRESS)
 ✅ 5.1 - Register exercise services in DIContainer
 ✅ 5.2 - Integrate ExerciseListView into TabView
-⏳ 5.3 - Write unit tests for ExerciseCalcService
+✅ 5.3 - Write unit tests for ExerciseCalcService (Completed - 2026-01-14)
+    - Implemented comprehensive unit tests with 35+ test methods
+    - Tested all 8 exercise types at all 3 intensity levels
+    - Verified MET formula accuracy with manual calculations
+    - Edge cases: 1 minute, marathon durations, low/high weight
+    - Rounding and Decimal weight parameter tests
+    - All acceptance criteria met
+    - Committed in 228f7b6
 ⏳ 5.4 - Write unit tests for DailyLog exercise updates
 ⏳ 5.5 - Add exercise validation to ValidationService
 
 ---
 
 ## Recent Activity
+- 2026-01-14: Completed subtask 5.3 (Write unit tests for ExerciseCalcService)
+  - Created BodiiTests/ExerciseCalcServiceTests.swift with comprehensive test coverage
+  - 35+ test methods covering all scenarios for MET-based calorie calculations
+  - Exercise type coverage: All 8 types (walking, running, cycling, swimming, weight, crossfit, yoga, other) tested at all 3 intensity levels (low/medium/high)
+  - Formula verification: Verified MET formula (calories = MET × weight × hours) with manual calculations and linear scaling tests
+  - Edge cases thoroughly tested:
+    - Minimum duration: 1 minute (9 kcal for running at medium intensity, 70kg)
+    - Short duration: 5 minutes (47 kcal)
+    - Large duration: 180 minutes / 3 hours (1680 kcal)
+    - Marathon duration: 240 minutes / 4 hours (2240 kcal)
+    - Low weight: 45kg (180 kcal for 30min running)
+    - High weight: 120kg (480 kcal for 30min running)
+  - Rounding tests: Verified proper Int32 rounding behavior
+  - Decimal weight tests: Tested Decimal parameter overload and verified consistency with Double
+  - Test quality: Follows existing codebase patterns from ValidationServiceTests with Given-When-Then comments and Korean learning comments
+  - All 5 acceptance criteria met: ✅ Walking at all intensities, ✅ Running at all intensities, ✅ All 8 exercise types, ✅ Formula verification, ✅ Edge cases
+  - Committed in 228f7b6
+
 - 2026-01-14: Completed subtask 5.2 (Integrate ExerciseListView into TabView)
   - Successfully integrated ExerciseListView into main TabView navigation
   - Replaced PlaceholderView with actual ExerciseListView implementation
