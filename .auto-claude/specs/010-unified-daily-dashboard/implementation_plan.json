@@ -1,8 +1,414 @@
 {
   "feature": "Unified Daily Dashboard",
-  "description": "# Unified Daily Dashboard\n\nCentral dashboard showing all daily health metrics: calorie balance (intake vs. TDEE), macro breakdown, exercise summary, sleep quality, and body composition status. Pre-calculated values for fast loading.\n\n## Rationale\nKey differentiator: all-in-one view that competitors don't provide. Users currently need 3-4 apps. Pre-calculated DailyLog entity ensures sub-0.5s performance, directly addressing MyFitnessPal's lag complaints and Lose It's freezing issues. Clean SwiftUI native interface unlike InBody's clunky app.\n\n## User Stories\n- As a user, I want one screen showing all my health data so that I have a complete picture\n- As a busy person, I want fast app loading so that tracking doesn't waste my time\n\n## Acceptance Criteria\n- [ ] Dashboard loads in under 0.5 seconds with pre-calculated values\n- [ ] Shows today's calorie intake vs. TDEE with visual indicator\n- [ ] Displays macro breakdown (protein/carbs/fat) with progress bars\n- [ ] Shows exercise calories burned for the day\n- [ ] Displays previous night's sleep duration and quality\n- [ ] Quick-add buttons for food, exercise, and body composition\n- [ ] Date navigation to view past days\n- [ ] Pull-to-refresh updates all metrics\n",
+  "description": "Central dashboard showing all daily health metrics: calorie balance (intake vs. TDEE), macro breakdown, exercise summary, sleep quality, and body composition status. Pre-calculated values from DailyLog for fast loading (<0.5s).",
   "created_at": "2026-01-14T09:02:15.645Z",
-  "updated_at": "2026-01-14T09:02:15.645Z",
-  "status": "pending",
-  "phases": []
+  "updated_at": "2026-01-15T10:00:00.000Z",
+  "status": "in_progress",
+  "planStatus": "in_progress",
+  "totalEstimatedHours": 25,
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Core ViewModel & Data Layer",
+      "description": "Create DashboardViewModel and extend DailyLogRepository for dashboard needs",
+      "subtasks": [
+        {
+          "id": "1.1",
+          "title": "Extend DailyLogRepository for Dashboard",
+          "description": "Add fetchCurrentDay method to DailyLogRepository protocol and implementation that returns DailyLog with all pre-calculated values. This will be the single source of truth for dashboard data.",
+          "status": "completed",
+          "estimatedHours": 1.5,
+          "files": [
+            "Bodii/Domain/Interfaces/DailyLogRepository.swift",
+            "Bodii/Data/Repositories/DailyLogRepositoryImpl.swift",
+            "Bodii/Data/DataSources/Local/DailyLogLocalDataSource.swift"
+          ],
+          "dependencies": [],
+          "notes": "Added fetchCurrentDay() method to DailyLogRepository protocol and implementation chain (DailyLogRepositoryImpl and DailyLogLocalDataSource). Method returns DailyLog for today's date with all pre-calculated values.",
+          "updated_at": "2026-01-15T08:05:46.659094+00:00"
+        },
+        {
+          "id": "1.2",
+          "title": "Create DashboardViewModel",
+          "description": "Create DashboardViewModel with @Published properties for DailyLog data, loading state, error handling, date navigation state. Implements loadDailyLog(for:), refresh(), navigateDate(by:) methods.",
+          "status": "completed",
+          "estimatedHours": 2.5,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/DashboardViewModel.swift"
+          ],
+          "dependencies": [
+            "1.1"
+          ],
+          "notes": "Created DashboardViewModel with @Observable pattern (iOS 17+). Includes @Published-like properties for DailyLog data (selectedDate, dailyLog, isLoading, errorMessage), loading state, error handling, and all required methods: loadDailyLog(for:), refresh(), navigateDate(by:). Also added convenience methods goToPreviousDay(), goToNextDay(), goToToday(), selectDate(). Includes computed properties for easy access to all DailyLog fields. Follows patterns from ExerciseListViewModel with proper Korean localization for date formatting.",
+          "updated_at": "2026-01-15T08:08:29.102311+00:00"
+        },
+        {
+          "id": "1.3",
+          "title": "Register DashboardViewModel in DIContainer",
+          "description": "Add factory method for DashboardViewModel in DIContainer, inject DailyLogRepository dependency.",
+          "status": "pending",
+          "estimatedHours": 0.5,
+          "files": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "dependencies": [
+            "1.2"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "Dashboard UI Components",
+      "description": "Build reusable card components for dashboard sections",
+      "subtasks": [
+        {
+          "id": "2.1",
+          "title": "Create CalorieBalanceCard",
+          "description": "Visual card showing today's calorie intake vs TDEE with circular progress indicator. Shows intake/TDEE/netCalories with color coding (deficit=green, surplus=red, balanced=blue).",
+          "status": "pending",
+          "estimatedHours": 2,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/CalorieBalanceCard.swift"
+          ],
+          "dependencies": [
+            "1.2"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "2.2",
+          "title": "Create MacroBreakdownCard",
+          "description": "Card displaying protein/carbs/fat breakdown with horizontal progress bars. Shows actual grams and ratio percentages. Uses carbsRatio, proteinRatio, fatRatio from DailyLog.",
+          "status": "pending",
+          "estimatedHours": 2,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/MacroBreakdownCard.swift"
+          ],
+          "dependencies": [
+            "1.2"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "2.3",
+          "title": "Create ExerciseSummaryCard",
+          "description": "Card showing today's exercise summary - total calories burned, exercise count, total minutes. Uses totalCaloriesOut, exerciseCount, exerciseMinutes from DailyLog.",
+          "status": "pending",
+          "estimatedHours": 1.5,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/ExerciseSummaryCard.swift"
+          ],
+          "dependencies": [
+            "1.2"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "2.4",
+          "title": "Create SleepQualityCard",
+          "description": "Card displaying previous night's sleep with emoji indicator (\ud83d\udd35/\ud83d\udfe2/\ud83d\udfe1/\ud83d\udd34/\ud83d\udfe0), duration in hours:minutes format, and quality label. Uses sleepDuration, sleepStatus from DailyLog.",
+          "status": "pending",
+          "estimatedHours": 1.5,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/SleepQualityCard.swift"
+          ],
+          "dependencies": [
+            "1.2"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "2.5",
+          "title": "Create BodyCompositionCard",
+          "description": "Card showing today's body composition if recorded - weight, body fat percentage. Shows 'No data today' message if weight is nil. Displays change from yesterday if available.",
+          "status": "pending",
+          "estimatedHours": 1.5,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/BodyCompositionCard.swift"
+          ],
+          "dependencies": [
+            "1.2"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "name": "Date Navigation & Quick Actions",
+      "description": "Add date navigation and quick-add functionality",
+      "subtasks": [
+        {
+          "id": "3.1",
+          "title": "Create DateNavigationHeader",
+          "description": "Reusable header component with left/right arrows to navigate dates, centered date display (\uc624\ub298, \uc5b4\uc81c, or formatted date), and 'today' button to return to current date.",
+          "status": "pending",
+          "estimatedHours": 1.5,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/DateNavigationHeader.swift"
+          ],
+          "dependencies": [],
+          "notes": ""
+        },
+        {
+          "id": "3.2",
+          "title": "Create QuickAddButtons",
+          "description": "Horizontal scroll of quick-add buttons for Food, Exercise, Body Composition. Each button navigates to respective input screen. Uses SF Symbols for icons.",
+          "status": "pending",
+          "estimatedHours": 1,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/QuickAddButtons.swift"
+          ],
+          "dependencies": [],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "name": "Dashboard Integration",
+      "description": "Integrate all components into DashboardView",
+      "subtasks": [
+        {
+          "id": "4.1",
+          "title": "Refactor DashboardView with New Components",
+          "description": "Replace placeholder cards with actual components. Integrate DashboardViewModel, add date navigation header, organize cards in ScrollView with proper spacing.",
+          "status": "pending",
+          "estimatedHours": 2,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/DashboardView.swift"
+          ],
+          "dependencies": [
+            "2.1",
+            "2.2",
+            "2.3",
+            "2.4",
+            "2.5",
+            "3.1",
+            "3.2"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "4.2",
+          "title": "Implement Pull-to-Refresh with DailyLog",
+          "description": "Connect refreshable modifier to DashboardViewModel.refresh() method. Show loading indicator during refresh. Update all cards with fresh DailyLog data.",
+          "status": "pending",
+          "estimatedHours": 0.5,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/DashboardView.swift"
+          ],
+          "dependencies": [
+            "4.1"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "4.3",
+          "title": "Add Navigation Callbacks for Quick-Add",
+          "description": "Implement navigation callbacks from quick-add buttons to Diet, Exercise, Body tabs. Add onNavigateToDiet, onNavigateToExercise callbacks to DashboardView.",
+          "status": "pending",
+          "estimatedHours": 1,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/DashboardView.swift",
+            "Bodii/App/ContentView.swift"
+          ],
+          "dependencies": [
+            "4.1"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "4.4",
+          "title": "Update ContentView Tab Integration",
+          "description": "Update ContentView to pass DashboardViewModel with proper dependencies and all navigation callbacks for tab switching.",
+          "status": "pending",
+          "estimatedHours": 0.5,
+          "files": [
+            "Bodii/App/ContentView.swift"
+          ],
+          "dependencies": [
+            "4.3"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "name": "Empty States & Polish",
+      "description": "Handle edge cases and add visual polish",
+      "subtasks": [
+        {
+          "id": "5.1",
+          "title": "Create Empty State Views",
+          "description": "Create EmptyStateView components for when DailyLog has no data. Show helpful messages and call-to-action buttons for each card type (no food, no exercise, no sleep recorded).",
+          "status": "pending",
+          "estimatedHours": 1.5,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/DashboardEmptyStates.swift"
+          ],
+          "dependencies": [
+            "4.1"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "5.2",
+          "title": "Add Loading Skeleton Views",
+          "description": "Create skeleton loading views for cards during initial load. Use shimmer effect for better UX during async data fetch.",
+          "status": "pending",
+          "estimatedHours": 1,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/DashboardSkeletonView.swift"
+          ],
+          "dependencies": [
+            "4.1"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "5.3",
+          "title": "Add Accessibility Support",
+          "description": "Add accessibility labels, hints, and traits to all dashboard components. Ensure VoiceOver reads meaningful information for each card.",
+          "status": "pending",
+          "estimatedHours": 1,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/Components/CalorieBalanceCard.swift",
+            "Bodii/Presentation/Features/Dashboard/Components/MacroBreakdownCard.swift",
+            "Bodii/Presentation/Features/Dashboard/Components/ExerciseSummaryCard.swift",
+            "Bodii/Presentation/Features/Dashboard/Components/SleepQualityCard.swift",
+            "Bodii/Presentation/Features/Dashboard/Components/BodyCompositionCard.swift"
+          ],
+          "dependencies": [
+            "4.1"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-6",
+      "name": "Testing & Documentation",
+      "description": "Add unit tests and documentation",
+      "subtasks": [
+        {
+          "id": "6.1",
+          "title": "Unit Tests for DashboardViewModel",
+          "description": "Test DashboardViewModel: loadDailyLog success/failure, date navigation, refresh behavior, state transitions. Use mock DailyLogRepository.",
+          "status": "pending",
+          "estimatedHours": 2,
+          "files": [
+            "BodiiTests/Presentation/Features/Dashboard/DashboardViewModelTests.swift"
+          ],
+          "dependencies": [
+            "1.2"
+          ],
+          "notes": ""
+        },
+        {
+          "id": "6.2",
+          "title": "SwiftUI Previews for All Components",
+          "description": "Create comprehensive SwiftUI previews for all dashboard components showing different states: with data, empty, loading, error.",
+          "status": "pending",
+          "estimatedHours": 1,
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/DashboardView.swift",
+            "Bodii/Presentation/Features/Dashboard/Components/CalorieBalanceCard.swift",
+            "Bodii/Presentation/Features/Dashboard/Components/MacroBreakdownCard.swift"
+          ],
+          "dependencies": [
+            "5.1",
+            "5.2"
+          ],
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "ac-1",
+      "description": "Dashboard loads in under 0.5 seconds with pre-calculated values",
+      "testable": true,
+      "relatedSubtasks": [
+        "1.1",
+        "1.2"
+      ]
+    },
+    {
+      "id": "ac-2",
+      "description": "Shows today's calorie intake vs. TDEE with visual indicator",
+      "testable": true,
+      "relatedSubtasks": [
+        "2.1"
+      ]
+    },
+    {
+      "id": "ac-3",
+      "description": "Displays macro breakdown (protein/carbs/fat) with progress bars",
+      "testable": true,
+      "relatedSubtasks": [
+        "2.2"
+      ]
+    },
+    {
+      "id": "ac-4",
+      "description": "Shows exercise calories burned for the day",
+      "testable": true,
+      "relatedSubtasks": [
+        "2.3"
+      ]
+    },
+    {
+      "id": "ac-5",
+      "description": "Displays previous night's sleep duration and quality",
+      "testable": true,
+      "relatedSubtasks": [
+        "2.4"
+      ]
+    },
+    {
+      "id": "ac-6",
+      "description": "Quick-add buttons for food, exercise, and body composition",
+      "testable": true,
+      "relatedSubtasks": [
+        "3.2",
+        "4.3"
+      ]
+    },
+    {
+      "id": "ac-7",
+      "description": "Date navigation to view past days",
+      "testable": true,
+      "relatedSubtasks": [
+        "3.1",
+        "1.2"
+      ]
+    },
+    {
+      "id": "ac-8",
+      "description": "Pull-to-refresh updates all metrics",
+      "testable": true,
+      "relatedSubtasks": [
+        "4.2"
+      ]
+    }
+  ],
+  "technicalNotes": [
+    "DailyLog entity already contains all pre-calculated values (totalCaloriesIn, tdee, netCalories, macros, exercise stats, sleep data)",
+    "Follow existing Clean Architecture pattern: Repository \u2192 Service \u2192 ViewModel \u2192 View",
+    "Use existing SleepStatus enum for sleep quality display",
+    "Existing MetabolismViewModel can be kept for BMR/TDEE card, but primary data comes from DailyLog",
+    "Date navigation should use DateUtils for consistent date handling (02:00 boundary)",
+    "Korean localization required for all user-facing strings"
+  ],
+  "qaSignOff": {
+    "status": "pending",
+    "tests_passed": "",
+    "issues": ""
+  },
+  "last_updated": "2026-01-15T08:08:29.102321+00:00"
 }
