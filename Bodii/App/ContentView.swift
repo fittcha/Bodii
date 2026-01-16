@@ -10,6 +10,7 @@
 // 💡 Java 비교: Android의 BottomNavigationView와 유사
 
 import SwiftUI
+import HealthKit
 
 // MARK: - Content View
 
@@ -104,11 +105,26 @@ struct ContentView: View {
     }
 
     private var settingsTab: some View {
-        PlaceholderView(title: "설정", systemImage: "gearshape.fill")
-            .tabItem {
-                Label("설정", systemImage: "gearshape.fill")
-            }
-            .tag(Tab.settings)
+        // 📚 학습 포인트: Settings View with HealthKit Integration
+        // TODO: Phase 7 - DIContainer에서 서비스 주입받도록 변경
+        let healthStore = HKHealthStore()
+        let authService = HealthKitAuthorizationService(healthStore: healthStore)
+        let readService = HealthKitReadService(healthStore: healthStore)
+        let writeService = HealthKitWriteService(healthStore: healthStore)
+        let syncService = HealthKitSyncService(
+            readService: readService,
+            writeService: writeService,
+            authService: authService
+        )
+
+        return SettingsView(
+            authService: authService,
+            syncService: syncService
+        )
+        .tabItem {
+            Label("설정", systemImage: "gearshape.fill")
+        }
+        .tag(Tab.settings)
     }
 }
 
