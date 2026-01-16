@@ -1074,6 +1074,313 @@ extension HealthKitReadService {
     }
 }
 
+// MARK: - Workout Data Reading
+
+extension HealthKitReadService {
+
+    /// 운동 데이터 구조체
+    ///
+    /// 📚 학습 포인트: Workout Data Model
+    /// - HealthKit에서 조회한 운동 데이터를 담는 구조체
+    /// - HKWorkout을 앱의 ExerciseRecord로 변환할 때 사용
+    /// 💡 Java 비교: DTO(Data Transfer Object)와 유사
+    ///
+    /// - Note: HKWorkout은 duration, calories, activityType 등의 정보 포함
+    ///
+    /// - Example:
+    /// ```swift
+    /// let workoutData = WorkoutData(
+    ///     workout: hkWorkout,
+    ///     exerciseType: .running,
+    ///     duration: 30,
+    ///     caloriesBurned: 350
+    /// )
+    /// ```
+    struct WorkoutData {
+        /// HealthKit 원본 운동 객체
+        ///
+        /// 📚 학습 포인트: HKWorkout
+        /// - HealthKit의 운동 기록 객체
+        /// - UUID를 통해 중복 검사 가능
+        /// 💡 Java 비교: Entity 객체와 유사
+        let workout: HKWorkout
+
+        /// 앱의 운동 종류 enum
+        ///
+        /// 📚 학습 포인트: HKWorkoutActivityType Mapping
+        /// - HKWorkoutActivityType을 ExerciseType으로 변환
+        /// - 앱에서 지원하는 운동 종류로 정규화
+        /// 💡 Java 비교: Enum Mapping과 유사
+        let exerciseType: ExerciseType
+
+        /// 운동 시간 (분 단위)
+        ///
+        /// 📚 학습 포인트: Duration Conversion
+        /// - HKWorkout.duration은 초 단위 (TimeInterval)
+        /// - 앱에서는 분 단위로 저장
+        /// 💡 Java 비교: Duration.toMinutes()와 유사
+        let duration: Int32
+
+        /// 소모 칼로리 (kcal)
+        ///
+        /// 📚 학습 포인트: Active Energy Burned
+        /// - HKWorkout.totalEnergyBurned에서 추출
+        /// - nil이면 0으로 처리 (일부 운동은 칼로리 데이터 없음)
+        /// 💡 Java 비교: Optional.orElse(0)와 유사
+        let caloriesBurned: Int32
+
+        /// 운동 강도 (HealthKit에는 없으므로 기본값 중강도)
+        ///
+        /// 📚 학습 포인트: Default Intensity
+        /// - HKWorkout에는 강도 정보가 없음
+        /// - 기본값으로 중강도(medium) 사용
+        /// - 추후 심박수 데이터로 추정 가능
+        /// 💡 Java 비교: Default value 설정과 유사
+        let intensity: Intensity
+
+        /// HealthKit UUID (중복 검사용)
+        ///
+        /// 📚 학습 포인트: Duplicate Detection
+        /// - HKWorkout의 UUID를 저장하여 중복 import 방지
+        /// - 앱의 ExerciseRecord에 healthKitId로 저장
+        /// 💡 Java 비교: External ID 참조와 유사
+        var healthKitId: UUID {
+            workout.uuid
+        }
+
+        /// 운동 시작 시간
+        var startDate: Date {
+            workout.startDate
+        }
+
+        /// 운동 종료 시간
+        var endDate: Date {
+            workout.endDate
+        }
+    }
+
+    /// 운동 데이터 조회 (기간별)
+    ///
+    /// 📚 학습 포인트: Workout Data Reading
+    /// - HKWorkoutType을 사용하여 운동 기록 조회
+    /// - Apple Watch, iPhone, 다른 앱의 운동 기록 통합 조회
+    /// 💡 Java 비교: findWorkoutsByDateRange()와 유사
+    ///
+    /// - Parameters:
+    ///   - startDate: 시작 날짜
+    ///   - endDate: 종료 날짜
+    ///
+    /// - Returns: 운동 데이터 배열 (최신 순)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 운동 타입 생성 실패
+    ///   - queryExecutionFailed: 쿼리 실행 실패
+    ///
+    /// - Note: HKWorkout 구조
+    ///   - workoutActivityType: 운동 종류 (running, cycling 등)
+    ///   - duration: 운동 시간 (초 단위)
+    ///   - totalEnergyBurned: 소모 칼로리 (kcal)
+    ///   - startDate, endDate: 운동 시작/종료 시간
+    ///   - uuid: 중복 검사용 고유 ID
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 최근 7일 운동 기록 조회
+    /// let (start, end) = service.getDateRange(days: 7)
+    /// let workouts = try await service.fetchWorkouts(from: start, to: end)
+    ///
+    /// for workout in workouts {
+    ///     print("운동: \(workout.exerciseType.displayName)")
+    ///     print("시간: \(workout.duration)분")
+    ///     print("칼로리: \(workout.caloriesBurned) kcal")
+    ///     print("날짜: \(workout.startDate)")
+    /// }
+    /// ```
+    func fetchWorkouts(from startDate: Date, to endDate: Date) async throws -> [WorkoutData] {
+        // 📚 학습 포인트: HKWorkoutType
+        // HealthKit의 운동 타입 (HKQuantityType, HKCategoryType과 별개)
+        // 💡 Java 비교: WorkoutEntity 타입과 유사
+        let workoutType = HealthKitDataTypes.workoutType
+
+        // 📚 학습 포인트: Generic fetchSamples with HKWorkout
+        // HKWorkout도 HKSample의 하위 타입이므로 제네릭 메서드 사용 가능
+        // 💡 Java 비교: Repository<T extends Entity>와 유사
+        let workouts: [HKWorkout] = try await fetchSamples(
+            type: workoutType,
+            from: startDate,
+            to: endDate,
+            ascending: false
+        )
+
+        // 📚 학습 포인트: Mapping to Domain Model
+        // HealthKit의 HKWorkout을 앱의 WorkoutData로 변환
+        // 💡 Java 비교: Entity to DTO mapping과 유사
+        return workouts.compactMap { workout in
+            // HKWorkoutActivityType을 ExerciseType으로 변환
+            guard let exerciseType = mapWorkoutActivityType(workout.workoutActivityType) else {
+                // 매핑 실패 시 해당 운동 스킵 (지원하지 않는 운동 종류)
+                return nil
+            }
+
+            // 운동 시간 (초 -> 분)
+            let duration = Int32(workout.duration / 60)
+
+            // 소모 칼로리 (nil이면 0)
+            let calories = workout.totalEnergyBurned?.doubleValue(for: .kilocalorie()) ?? 0.0
+            let caloriesBurned = Int32(calories)
+
+            // 기본 강도는 중강도 (HealthKit에는 강도 정보 없음)
+            let intensity = Intensity.medium
+
+            return WorkoutData(
+                workout: workout,
+                exerciseType: exerciseType,
+                duration: duration,
+                caloriesBurned: caloriesBurned,
+                intensity: intensity
+            )
+        }
+    }
+
+    /// HKWorkoutActivityType을 ExerciseType으로 변환
+    ///
+    /// 📚 학습 포인트: Workout Type Mapping
+    /// - HealthKit의 70+ 운동 종류를 앱의 8가지 운동 종류로 매핑
+    /// - 유사한 운동들을 그룹화하여 단순화
+    /// 💡 Java 비교: Enum Mapping Utility와 유사
+    ///
+    /// - Parameter activityType: HealthKit 운동 종류
+    ///
+    /// - Returns: 앱의 운동 종류 enum (매핑 실패 시 nil)
+    ///
+    /// - Note: 매핑 규칙
+    ///   - walking 계열 -> .walking
+    ///   - running/jogging 계열 -> .running
+    ///   - cycling 계열 -> .cycling
+    ///   - swimming 계열 -> .swimming
+    ///   - strength training 계열 -> .weight
+    ///   - cross training/HIIT 계열 -> .crossfit
+    ///   - yoga/pilates 계열 -> .yoga
+    ///   - 기타 모든 운동 -> .other
+    ///
+    /// - Example:
+    /// ```swift
+    /// let type1 = mapWorkoutActivityType(.running) // .running
+    /// let type2 = mapWorkoutActivityType(.cycling) // .cycling
+    /// let type3 = mapWorkoutActivityType(.tennis) // .other
+    /// ```
+    private func mapWorkoutActivityType(_ activityType: HKWorkoutActivityType) -> ExerciseType? {
+        // 📚 학습 포인트: Comprehensive Activity Type Mapping
+        // HealthKit의 다양한 운동 종류를 앱의 카테고리로 그룹화
+        // 💡 Java 비교: switch-case with grouping과 유사
+        switch activityType {
+        // MARK: Walking
+        case .walking,
+             .hiking:
+            return .walking
+
+        // MARK: Running
+        case .running,
+             .jogging:
+            return .running
+
+        // MARK: Cycling
+        case .cycling,
+             .wheelchairWalkPace,
+             .wheelchairRunPace:
+            return .cycling
+
+        // MARK: Swimming
+        case .swimming,
+             .waterFitness,
+             .waterPolo,
+             .waterSports:
+            return .swimming
+
+        // MARK: Weight Training
+        case .traditionalStrengthTraining,
+             .functionalStrengthTraining,
+             .coreTraining:
+            return .weight
+
+        // MARK: CrossFit / HIIT
+        case .crossTraining,
+             .highIntensityIntervalTraining,
+             .mixedCardio:
+            return .crossfit
+
+        // MARK: Yoga
+        case .yoga,
+             .pilates,
+             .flexibility,
+             .mindAndBody,
+             .barre,
+             .cooldown:
+            return .yoga
+
+        // MARK: Other (모든 나머지 운동)
+        // 📚 학습 포인트: Catch-All Case
+        // HealthKit의 다양한 운동 종류를 .other로 분류
+        // 테니스, 축구, 농구, 댄스 등 모든 기타 운동 포함
+        // 💡 Java 비교: default case와 유사
+        case .americanFootball,
+             .archery,
+             .australianFootball,
+             .badminton,
+             .baseball,
+             .basketball,
+             .bowling,
+             .boxing,
+             .climbing,
+             .cricket,
+             .curling,
+             .dance,
+             .danceInspiredTraining,
+             .elliptical,
+             .equestrianSports,
+             .fencing,
+             .fishing,
+             .fitnessGaming,
+             .golf,
+             .gymnastics,
+             .handball,
+             .hockey,
+             .hunting,
+             .lacrosse,
+             .martialArts,
+             .paddleSports,
+             .play,
+             .preparationAndRecovery,
+             .racquetball,
+             .rowing,
+             .rugby,
+             .sailing,
+             .skatingSports,
+             .snowSports,
+             .soccer,
+             .softball,
+             .squash,
+             .stairClimbing,
+             .surfingSports,
+             .tableTennis,
+             .tennis,
+             .trackAndField,
+             .volleyball,
+             .wrestling,
+             .other:
+            return .other
+
+        // MARK: Future-Proofing
+        // 📚 학습 포인트: Unknown Default Case
+        // 미래에 추가될 수 있는 새로운 운동 종류 대비
+        // 💡 Java 비교: default with logging과 유사
+        @unknown default:
+            // 알 수 없는 운동 종류는 .other로 분류
+            return .other
+        }
+    }
+}
+
 // MARK: - HKQuantity Conversion Helpers
 
 extension HealthKitReadService {

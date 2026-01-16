@@ -229,7 +229,7 @@
           "id": "3.4",
           "title": "Implement Sleep Data Reading",
           "description": "Add methods to read sleep analysis (HKCategoryType.sleepAnalysis). Calculate total sleep duration from segments.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitReadService.swift"
           ],
@@ -238,7 +238,9 @@
             "Handles multiple sleep segments",
             "Calculates total sleep duration in minutes",
             "Filters by sleep type (asleep only, not inBed)"
-          ]
+          ],
+          "notes": "Implemented sleep data reading methods in HealthKitReadService:\n\n\u2705 fetchSleepData(for date:) method - Queries sleep data for a specific date and returns SleepData struct\n\n\u2705 SleepData struct created with:\n  - totalDurationMinutes: Int - Total sleep duration in minutes\n  - segments: [HKCategorySample] - Array of sleep segments\n  - startDate: Date? - First sleep segment start time\n  - endDate: Date? - Last sleep segment end time\n\n\u2705 Handles multiple sleep segments:\n  - Extended search range (previous day 12:00 to next day 12:00) to handle sleep spanning midnight\n  - Aggregates all sleep segments into total duration\n  - Preserves individual segments for detailed analysis\n\n\u2705 Calculates total sleep duration in minutes:\n  - calculateTotalSleepDuration() helper method sums all segment durations\n  - Converts TimeInterval (seconds) to minutes\n  - Uses reduce() for efficient accumulation\n\n\u2705 Filters by sleep type (asleep only, not inBed):\n  - filterAsleepSamples() helper method filters sleep states\n  - Includes: .asleep, .asleepUnspecified, .asleepCore, .asleepDeep, .asleepREM\n  - Excludes: .inBed, .awake (not actual sleep time)\n  - Future-proof with @unknown default case\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Comprehensive documentation with usage examples\n- Type-safe access via HealthKitDataTypes.CategoryType.sleepAnalysis\n- Proper error handling with HealthKitError\n- Reuses generic fetchSamples<T> infrastructure\n- Similar structure to weight/body fat/calories reading methods\n\nAll acceptance criteria met and committed successfully.",
+          "updated_at": "2026-01-16T06:12:02.191556+00:00"
         },
         {
           "id": "3.5",
@@ -599,5 +601,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T06:08:57.336752+00:00"
+  "last_updated": "2026-01-16T06:12:02.191564+00:00"
 }
