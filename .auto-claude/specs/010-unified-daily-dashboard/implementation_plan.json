@@ -2,7 +2,7 @@
   "feature": "Unified Daily Dashboard",
   "description": "Central dashboard showing all daily health metrics: calorie balance (intake vs. TDEE), macro breakdown, exercise summary, sleep quality, and body composition status. Pre-calculated values from DailyLog for fast loading (<0.5s).",
   "created_at": "2026-01-14T09:02:15.645Z",
-  "updated_at": "2026-01-16T02:19:25.647Z",
+  "updated_at": "2026-01-16T04:58:35.598Z",
   "status": "in_progress",
   "planStatus": "in_progress",
   "totalEstimatedHours": 25,
@@ -328,7 +328,7 @@
           "id": "6.2",
           "title": "SwiftUI Previews for All Components",
           "description": "Create comprehensive SwiftUI previews for all dashboard components showing different states: with data, empty, loading, error.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 1,
           "files": [
             "Bodii/Presentation/Features/Dashboard/DashboardView.swift",
@@ -339,7 +339,8 @@
             "5.1",
             "5.2"
           ],
-          "notes": ""
+          "notes": "\u2705 Comprehensive SwiftUI previews already exist for all dashboard components, created during earlier implementation phases:\n\n**DashboardView** - 7 preview configurations:\n- \"\ub300\uc2dc\ubcf4\ub4dc - \ub370\uc774\ud130 \uc788\uc74c\" (with data)\n- \"\ub300\uc2dc\ubcf4\ub4dc - \ube48 \uc0c1\ud0dc\" (empty state)\n- \"\ub300\uc2dc\ubcf4\ub4dc - \ub85c\ub529 \uc911\" (loading with skeleton)\n- \"\ub300\uc2dc\ubcf4\ub4dc - \uc5d0\ub7ec \uc0c1\ud0dc\" (error alert)\n- \"\ub300\uc2dc\ubcf4\ub4dc - \uce7c\ub85c\ub9ac \uacfc\uc789\" (surplus scenario)\n- \"\ub2e4\ud06c \ubaa8\ub4dc - \ub370\uc774\ud130 \uc788\uc74c\" / \"\ub2e4\ud06c \ubaa8\ub4dc - \ube48 \uc0c1\ud0dc\"\n\n**All Card Components** - Multiple previews each:\n- CalorieBalanceCard: 5 previews (deficit, balanced, surplus, empty, various intakes)\n- MacroBreakdownCard: 6 previews (balanced, high carb, high protein, keto, empty, partial)\n- ExerciseSummaryCard: 4 previews (with exercises, empty, various times, high intensity)\n- SleepQualityCard: 7 previews (all sleep states: excellent, good, soso, bad, oversleep, empty)\n- BodyCompositionCard: 4 previews (with changes, without previous, empty, various changes)\n\n**Supporting Components**:\n- DateNavigationHeader: 4 previews (today, yesterday, other dates)\n- QuickAddButtons: 3 previews (light mode, dark mode, in context)\n\n**Empty States & Loading**:\n- DashboardEmptyStates: 7 previews (all empty state variants + dark mode)\n- DashboardSkeletonView: 3 previews (full dashboard, individual cards, headers)\n\n**DashboardViewModel Preview Helpers**:\n- makePreviewWithData() - Normal data state\n- makePreviewEmpty() - Empty state\n- makePreviewLoading() - Loading state\n- makePreviewError() - Error state\n- makePreviewSurplus() - Surplus calorie state\n\nAll required states (with data, empty, loading, error) are comprehensively covered across all components. No additional work needed.",
+          "updated_at": "2026-01-16T05:00:57.515455+00:00"
         }
       ]
     }
@@ -426,5 +427,7 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-16T02:55:22.885595+00:00"
+  "last_updated": "2026-01-16T05:00:57.515462+00:00",
+  "stagedAt": "2026-01-16T04:58:09.573Z",
+  "stagedInMainProject": true
 }
