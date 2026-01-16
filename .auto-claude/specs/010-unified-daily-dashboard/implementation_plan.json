@@ -219,7 +219,7 @@
           "id": "4.3",
           "title": "Add Navigation Callbacks for Quick-Add",
           "description": "Implement navigation callbacks from quick-add buttons to Diet, Exercise, Body tabs. Add onNavigateToDiet, onNavigateToExercise callbacks to DashboardView.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 1,
           "files": [
             "Bodii/Presentation/Features/Dashboard/DashboardView.swift",
@@ -228,13 +228,14 @@
           "dependencies": [
             "4.1"
           ],
-          "notes": ""
+          "notes": "Successfully implemented navigation callbacks from quick-add buttons. Updated ContentView to provide all three navigation callbacks (onNavigateToDiet, onNavigateToExercise, onNavigateToBody) to DashboardView. Each callback switches the TabView's selectedTab to the appropriate tab. Updated ContentView to use DIContainer.shared.makeDashboardViewModel(userId:) for proper dependency injection. All callbacks are properly wired through DashboardView \u2192 QuickAddButtons \u2192 ContentView. Committed as: df75e80",
+          "updated_at": "2026-01-16T02:36:06.551371+00:00"
         },
         {
           "id": "4.4",
           "title": "Update ContentView Tab Integration",
           "description": "Update ContentView to pass DashboardViewModel with proper dependencies and all navigation callbacks for tab switching.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 0.5,
           "files": [
             "Bodii/App/ContentView.swift"
@@ -242,7 +243,8 @@
           "dependencies": [
             "4.3"
           ],
-          "notes": ""
+          "notes": "Verified that ContentView properly passes DashboardViewModel with DIContainer dependency injection and all three navigation callbacks (onNavigateToDiet, onNavigateToExercise, onNavigateToBody) for tab switching. Implementation was completed in previous commit df75e80 during subtask 4.3. All requirements met:\n- DashboardViewModel created via DIContainer.shared.makeDashboardViewModel(userId:)\n- All navigation callbacks properly wired to switch selectedTab\n- Follows existing patterns with Korean documentation",
+          "updated_at": "2026-01-16T02:38:14.123001+00:00"
         }
       ]
     },
@@ -420,5 +422,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-16T02:33:23.086786+00:00"
+  "last_updated": "2026-01-16T02:38:14.123014+00:00"
 }
