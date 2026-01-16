@@ -45,26 +45,12 @@ struct ContentView: View {
     private var dashboardTab: some View {
         // 📚 학습 포인트: tabItem modifier with HealthKit Integration
         // 탭 바에 표시될 아이콘과 텍스트 정의
-        // TODO: Phase 7 - DIContainer에서 ViewModel 주입받도록 변경
-        // 현재는 임시로 직접 생성하여 사용
-        let bodyRepository = BodyRepository()
-        let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
-
-        // 📚 학습 포인트: HealthKit Service Initialization
-        // DashboardView에서 HealthKit 동기화 기능 제공
-        let healthStore = HKHealthStore()
-        let authService = HealthKitAuthorizationService(healthStore: healthStore)
-        let readService = HealthKitReadService(healthStore: healthStore)
-        let writeService = HealthKitWriteService(healthStore: healthStore)
-        let syncService = HealthKitSyncService(
-            readService: readService,
-            writeService: writeService,
-            authService: authService
-        )
-        let healthKitViewModel = HealthKitSettingsViewModel(
-            authService: authService,
-            syncService: syncService
-        )
+        // 📚 학습 포인트: DIContainer Dependency Injection
+        // DIContainer를 통해 ViewModel 생성 - 테스트 가능하고 유지보수 용이
+        // 💡 Java 비교: @Inject로 주입받는 패턴과 유사
+        let container = DIContainer.shared
+        let metabolismViewModel = container.makeMetabolismViewModel()
+        let healthKitViewModel = container.makeHealthKitSettingsViewModel()
 
         return DashboardView(
             metabolismViewModel: metabolismViewModel,
@@ -123,20 +109,14 @@ struct ContentView: View {
 
     private var settingsTab: some View {
         // 📚 학습 포인트: Settings View with HealthKit Integration
-        // TODO: Phase 7 - DIContainer에서 서비스 주입받도록 변경
-        let healthStore = HKHealthStore()
-        let authService = HealthKitAuthorizationService(healthStore: healthStore)
-        let readService = HealthKitReadService(healthStore: healthStore)
-        let writeService = HealthKitWriteService(healthStore: healthStore)
-        let syncService = HealthKitSyncService(
-            readService: readService,
-            writeService: writeService,
-            authService: authService
-        )
+        // 📚 학습 포인트: DIContainer Service Injection
+        // DIContainer를 통해 HealthKit 서비스 주입 - 단일 인스턴스 재사용
+        // 💡 Java 비교: @Autowired Service와 유사
+        let container = DIContainer.shared
 
         return SettingsView(
-            authService: authService,
-            syncService: syncService
+            authService: container.healthKitAuthorizationService,
+            syncService: container.healthKitSyncService
         )
         .tabItem {
             Label("설정", systemImage: "gearshape.fill")

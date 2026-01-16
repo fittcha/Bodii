@@ -65,10 +65,11 @@ struct BodiiApp: App {
 
     /// HealthKit 백그라운드 동기화 초기화
     ///
-    /// 📚 학습 포인트: Service Initialization
-    /// - HealthKit 서비스들을 초기화하고 백그라운드 동기화 준비
-    /// - DIContainer 대신 직접 초기화 (TODO: Phase 7에서 DIContainer로 이동 예정)
-    /// 💡 Java 비교: Service 초기화와 유사
+    /// 📚 학습 포인트: Service Initialization via DIContainer
+    /// - DIContainer를 통해 HealthKit 서비스 주입
+    /// - lazy initialization으로 필요할 때만 생성
+    /// - 단일 인스턴스 재사용으로 메모리 효율적
+    /// 💡 Java 비교: @Autowired Service 초기화와 유사
     private func setupHealthKitBackgroundSync() {
         // HealthKit 사용 가능 여부 확인
         guard HKHealthStore.isHealthDataAvailable() else {
@@ -76,34 +77,14 @@ struct BodiiApp: App {
             return
         }
 
-        // 📚 학습 포인트: Dependency Chain
-        // HealthKitBackgroundSync는 여러 서비스에 의존
-        // authService → readService → writeService → syncService → backgroundSync
-        // 💡 Java 비교: @Autowired 의존성 체인과 유사
+        // 📚 학습 포인트: DIContainer Dependency Injection
+        // DIContainer가 모든 의존성 체인을 관리
+        // healthStore → authService → readService → writeService → syncService → backgroundSync
+        // 💡 Java 비교: Spring @Autowired 의존성 체인과 유사
+        let container = DIContainer.shared
+        healthKitBackgroundSync = container.healthKitBackgroundSync
 
-        let healthStore = HKHealthStore()
-
-        // HealthKit 서비스 초기화
-        let authService = HealthKitAuthorizationService(healthStore: healthStore)
-        let readService = HealthKitReadService(healthStore: healthStore)
-        let writeService = HealthKitWriteService(healthStore: healthStore)
-        let mapper = HealthKitMapper()
-
-        let syncService = HealthKitSyncService(
-            readService: readService,
-            writeService: writeService,
-            authService: authService,
-            mapper: mapper
-        )
-
-        // 백그라운드 동기화 초기화
-        healthKitBackgroundSync = HealthKitBackgroundSync(
-            healthStore: healthStore,
-            syncService: syncService,
-            authService: authService
-        )
-
-        print("✅ HealthKit background sync initialized")
+        print("✅ HealthKit background sync initialized from DIContainer")
     }
 
     /// HealthKit 백그라운드 동기화 시작
