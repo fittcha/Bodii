@@ -100,6 +100,13 @@ struct DashboardView: View {
             }
             .navigationTitle("대시보드")
             .navigationBarTitleDisplayMode(.large)
+            .refreshable {
+                // 📚 학습 포인트: Pull-to-refresh
+                // SwiftUI의 refreshable modifier를 사용한 새로고침 기능
+                // Pull-to-refresh 제스처로 데이터를 새로고침
+                // 💡 Java 비교: Android의 SwipeRefreshLayout과 유사
+                await viewModel.refresh()
+            }
             .task {
                 // 📚 학습 포인트: task modifier
                 // View가 나타날 때 비동기 작업 실행

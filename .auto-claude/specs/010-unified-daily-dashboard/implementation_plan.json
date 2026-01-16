@@ -183,7 +183,7 @@
           "id": "4.1",
           "title": "Refactor DashboardView with New Components",
           "description": "Replace placeholder cards with actual components. Integrate DashboardViewModel, add date navigation header, organize cards in ScrollView with proper spacing.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 2,
           "files": [
             "Bodii/Presentation/Features/Dashboard/DashboardView.swift"
@@ -197,7 +197,8 @@
             "3.1",
             "3.2"
           ],
-          "notes": ""
+          "notes": "Refactored DashboardView to integrate all new components:\n- Replaced metabolismViewModel with DashboardViewModel using @Observable pattern\n- Integrated DateNavigationHeader for date navigation (left/right arrows, today button)\n- Added QuickAddButtons component for fast navigation to Diet/Exercise/Body tabs\n- Integrated all dashboard cards:\n  * CalorieBalanceCard - showing intake vs TDEE with circular progress\n  * MacroBreakdownCard - showing protein/carbs/fat breakdown with progress bars\n  * ExerciseSummaryCard - showing calories burned, exercise count, minutes\n  * SleepQualityCard - showing sleep duration and quality with emoji indicator\n  * BodyCompositionCard - showing weight and body fat percentage\n- Added navigation callbacks (onNavigateToDiet, onNavigateToExercise, onNavigateToBody)\n- Organized cards in ScrollView with 20pt spacing between components\n- Updated documentation to reflect new component-based architecture\n- All components use DashboardViewModel's computed properties from DailyLog\n- Committed as: 3a2f0f6",
+          "updated_at": "2026-01-16T02:31:19.579609+00:00"
         },
         {
           "id": "4.2",
@@ -418,5 +419,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-16T02:27:25.805076+00:00"
+  "last_updated": "2026-01-16T02:31:19.579616+00:00"
 }
