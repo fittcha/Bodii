@@ -1,8 +1,593 @@
 {
   "feature": "Apple HealthKit Integration",
-  "description": "# Apple HealthKit Integration\n\nBidirectional sync with Apple HealthKit for weight, body fat, active calories, sleep, and workout data. Read existing data and write Bodii records to maintain ecosystem connectivity.\n\n## Rationale\nEssential for iOS health app ecosystem. Users expect Apple Health integration. Differentiator vs. cross-platform apps that have limited HealthKit support. Native SwiftUI provides optimal integration quality that Flutter/React Native can't match.\n\n## User Stories\n- As an Apple Watch user, I want my workout data to sync to Bodii automatically\n- As a user, I want my Bodii data in Apple Health so that my doctors can see it\n\n## Acceptance Criteria\n- [ ] HealthKit entitlements properly configured\n- [ ] Permission request explains all data types needed\n- [ ] Read weight, body fat, active calories from HealthKit\n- [ ] Write Bodii records to HealthKit (weight, workouts, sleep)\n- [ ] Background sync when app is closed\n- [ ] Conflict resolution for duplicate entries\n- [ ] Graceful handling when user denies permissions\n",
+  "description": "Bidirectional sync with Apple HealthKit for weight, body fat, active calories, sleep, and workout data. Read existing data and write Bodii records to maintain ecosystem connectivity.",
   "created_at": "2026-01-14T09:02:17.099Z",
-  "updated_at": "2026-01-14T09:02:17.099Z",
-  "status": "pending",
-  "phases": []
+  "updated_at": "2026-01-16T14:35:00.000Z",
+  "status": "in_progress",
+  "planStatus": "planned",
+  "estimated_hours": 16,
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Infrastructure & Configuration",
+      "description": "Set up HealthKit entitlements, Info.plist, and base service structure",
+      "estimated_hours": 2,
+      "subtasks": [
+        {
+          "id": "1.1",
+          "title": "Create HealthKit Entitlements File",
+          "description": "Create Bodii.entitlements file with HealthKit capability. Add com.apple.developer.healthkit and com.apple.developer.healthkit.background-delivery keys.",
+          "status": "completed",
+          "files": [
+            "Bodii/Bodii.entitlements"
+          ],
+          "acceptance_criteria": [
+            "Bodii.entitlements file exists with HealthKit keys",
+            "Background delivery capability is enabled"
+          ],
+          "notes": "Created Bodii.entitlements file with com.apple.developer.healthkit and com.apple.developer.healthkit.background-delivery keys enabled. File follows standard iOS entitlements plist format.",
+          "updated_at": "2026-01-16T05:37:50.720578+00:00"
+        },
+        {
+          "id": "1.2",
+          "title": "Update Xcode Project Configuration",
+          "description": "Add HealthKit framework to project and enable HealthKit capability in Signing & Capabilities. Link entitlements file to target.",
+          "status": "completed",
+          "files": [
+            "Bodii.xcodeproj/project.pbxproj"
+          ],
+          "acceptance_criteria": [
+            "HealthKit.framework is linked",
+            "Entitlements file is referenced in project"
+          ],
+          "notes": "Added HealthKit.framework to Bodii target and configured entitlements. Updated project.pbxproj to:\n- Add HealthKit.framework file reference and link it to target\n- Reference Bodii.entitlements in project structure\n- Set CODE_SIGN_ENTITLEMENTS build setting in both Debug and Release configurations\n- Created Frameworks group for better organization\n\nAll acceptance criteria met:\n\u2705 HealthKit.framework is linked\n\u2705 Entitlements file is referenced in project",
+          "updated_at": "2026-01-16T05:40:33.665933+00:00"
+        },
+        {
+          "id": "1.3",
+          "title": "Add Info.plist Privacy Descriptions",
+          "description": "Create or update Info.plist with NSHealthShareUsageDescription and NSHealthUpdateUsageDescription keys explaining why HealthKit access is needed.",
+          "status": "completed",
+          "files": [
+            "Bodii/Info.plist"
+          ],
+          "acceptance_criteria": [
+            "NSHealthShareUsageDescription explains read access purpose",
+            "NSHealthUpdateUsageDescription explains write access purpose",
+            "Descriptions are in Korean with clear explanations"
+          ],
+          "notes": "Added HealthKit privacy descriptions to project.pbxproj using INFOPLIST_KEY_ approach for both Debug and Release configurations:\n\n\u2705 NSHealthShareUsageDescription: Explains why Bodii needs to read health data (weight, body fat, active calories, steps, sleep, workout records) for accurate health management\n\u2705 NSHealthUpdateUsageDescription: Explains why Bodii needs to write data to Apple Health app for sharing with other health apps\n\u2705 All descriptions are in Korean as required by project standards\n\u2705 Both Debug and Release configurations updated\n\nThe project uses the modern GENERATE_INFOPLIST_FILE = YES approach with INFOPLIST_KEY_ prefixed settings instead of a separate Info.plist file.",
+          "updated_at": "2026-01-16T05:43:34.391142+00:00"
+        },
+        {
+          "id": "1.4",
+          "title": "Create HealthKit Error Types",
+          "description": "Define HealthKitError enum with cases for authorization denied, data unavailable, write failed, background sync failed, etc.",
+          "status": "completed",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitError.swift"
+          ],
+          "acceptance_criteria": [
+            "Comprehensive error cases for all HealthKit operations",
+            "LocalizedError conformance with user-friendly messages",
+            "Korean error descriptions"
+          ],
+          "notes": "Created comprehensive HealthKitError enum with all required error cases:\n\n\u2705 Comprehensive error cases for all HealthKit operations:\n  - Authorization errors: healthKitNotAvailable, authorizationDenied, authorizationFailed, dataTypeNotAuthorized\n  - Data access errors: dataUnavailable, readFailed, writeFailed\n  - Background sync errors: backgroundSyncFailed, observerRegistrationFailed\n  - Query errors: queryExecutionFailed, statisticsUnavailable\n  - Validation errors: invalidSampleType, invalidDateRange, invalidUnit\n  - Duplicate/conflict errors: duplicateEntry, conflictDetected\n  - Mapping errors: mappingFailed, unsupportedWorkoutType, missingRequiredData\n  - Unknown error case\n\n\u2705 LocalizedError conformance with user-friendly messages in Korean\n\n\u2705 Recovery strategy extensions:\n  - isRecoverable: Determines if error can be recovered\n  - canRetry: Determines if operation should be retried\n  - isAuthorizationError: Identifies permission-related errors\n\n\u2705 Follows project patterns:\n  - Educational comments (\ud559\uc2b5 \ud3ec\uc778\ud2b8) comparing to Java\n  - Comprehensive documentation with examples\n  - Similar structure to NetworkError and FoodSearchError\n  - Error Protocol conformance for Swift error handling\n\nAll acceptance criteria met.",
+          "updated_at": "2026-01-16T05:46:17.221755+00:00"
+        },
+        {
+          "id": "1.5",
+          "title": "Create HealthKit Data Types Configuration",
+          "description": "Create HealthKitDataTypes enum/struct defining all HKQuantityType and HKCategoryType identifiers used (weight, bodyFat, activeCalories, steps, sleep, workouts).",
+          "status": "completed",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitDataTypes.swift"
+          ],
+          "acceptance_criteria": [
+            "All required HealthKit types are defined",
+            "Read types: weight, bodyFatPercentage, activeEnergyBurned, stepCount, sleepAnalysis",
+            "Write types: weight, bodyFatPercentage, dietaryEnergyConsumed, workout"
+          ],
+          "notes": "Created comprehensive HealthKitDataTypes.swift with all required configurations:\n\n\u2705 All required HealthKit types are defined:\n  - QuantityType enum: weight, bodyFatPercentage, activeEnergyBurned, stepCount, dietaryEnergyConsumed\n  - CategoryType enum: sleepAnalysis\n  - workoutType static property for HKWorkoutType\n\n\u2705 Read types properly defined:\n  - weight (HKQuantityType.bodyMass)\n  - bodyFatPercentage (HKQuantityType.bodyFatPercentage)\n  - activeEnergyBurned (HKQuantityType.activeEnergyBurned)\n  - stepCount (HKQuantityType.stepCount)\n  - sleepAnalysis (HKCategoryType.sleepAnalysis)\n  - workout (HKWorkoutType)\n\n\u2705 Write types properly defined:\n  - weight (HKQuantityType.bodyMass)\n  - bodyFatPercentage (HKQuantityType.bodyFatPercentage)\n  - dietaryEnergyConsumed (HKQuantityType.dietaryEnergyConsumed)\n  - workout (HKWorkoutType)\n\nAdditional features:\n- Type-safe enum-based configuration\n- Computed properties for HKQuantityType/HKCategoryType conversion\n- Display names in Korean for UI\n- Default units for each quantity type\n- Permission descriptions for authorization UI\n- Helper methods: isReadType(), isWriteType(), permissionDescription()\n- Comprehensive educational comments in Korean\n- Follows project patterns from HealthKitError.swift and APIConfig.swift\n\nFile committed with proper co-authorship attribution.",
+          "updated_at": "2026-01-16T05:48:53.609359+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "Permission Handling",
+      "description": "Implement HealthKit authorization request and status checking",
+      "estimated_hours": 3,
+      "subtasks": [
+        {
+          "id": "2.1",
+          "title": "Create HealthKitAuthorizationService",
+          "description": "Create service to handle HKHealthStore authorization. Implement requestAuthorization() method that requests read/write permissions for all data types.",
+          "status": "completed",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitAuthorizationService.swift"
+          ],
+          "acceptance_criteria": [
+            "HKHealthStore instance management",
+            "requestAuthorization() async throws method",
+            "Requests both read and write permissions",
+            "Handles HealthKit unavailable on device"
+          ],
+          "notes": "Created HealthKitAuthorizationService.swift with all required functionality:\n\n\u2705 HKHealthStore instance management with dependency injection\n\u2705 requestAuthorization() async throws method that requests both read and write permissions for all HealthKit data types\n\u2705 isHealthDataAvailable() check to handle devices where HealthKit is unavailable\n\u2705 getAuthorizationStatus(for:) method to check authorization status for specific types\n\u2705 canWrite(to:) method to verify write permissions\n\u2705 isFullyAuthorized computed property for bulk permission checking\n\u2705 getHealthStore() method to share HKHealthStore instance with other services\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Comprehensive documentation with examples\n- Clean architecture with MARK sections\n- Similar structure to DailyLogService and BodyRepository\n- Uses HealthKitDataTypes for type configuration\n- Throws HealthKitError for error handling\n- Async/await with proper error transformation\n\nAll acceptance criteria met and committed successfully.",
+          "updated_at": "2026-01-16T05:51:06.794323+00:00"
+        },
+        {
+          "id": "2.2",
+          "title": "Implement Authorization Status Checking",
+          "description": "Add methods to check current authorization status for each data type. Include isAuthorized(for:), canWrite(to:), and overall isFullyAuthorized computed property.",
+          "status": "completed",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitAuthorizationService.swift"
+          ],
+          "acceptance_criteria": [
+            "getAuthorizationStatus(for type:) method",
+            "isHealthDataAvailable() check",
+            "Handles partial authorization gracefully"
+          ],
+          "notes": "Added comprehensive authorization status checking methods to HealthKitAuthorizationService:\n\n\u2705 isAuthorized(for:) method - Boolean convenience wrapper for getAuthorizationStatus\n\u2705 Type-safe isAuthorized(for:) overloads for QuantityType and CategoryType enums\n\u2705 isAuthorizedForWorkouts computed property for workout authorization\n\u2705 Type-safe canWrite(to:) overloads for QuantityType with enum support\n\u2705 canWriteWorkouts computed property for workout write permission\n\u2705 AuthorizationSummary struct for detailed permission status tracking\n\u2705 getAuthorizationSummary() method for partial authorization handling\n\u2705 Handles partial authorization gracefully with authorized/denied type lists\n\u2705 All methods follow project patterns with Korean educational comments\n\u2705 Comprehensive documentation with usage examples\n\nAll acceptance criteria met:\n\u2705 getAuthorizationStatus(for type:) method (already existed from 2.1)\n\u2705 isHealthDataAvailable() check (already existed from 2.1)\n\u2705 Handles partial authorization gracefully with new AuthorizationSummary\n\nImplementation committed successfully.",
+          "updated_at": "2026-01-16T05:54:37.562626+00:00"
+        },
+        {
+          "id": "2.3",
+          "title": "Create HealthKit Permission Request View",
+          "description": "Create SwiftUI view for HealthKit permission onboarding. Shows explanation of each data type being requested with icons and descriptions.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Features/Settings/HealthKitPermissionView.swift"
+          ],
+          "acceptance_criteria": [
+            "Clear UI explaining each permission type",
+            "Request permission button",
+            "Handles success/failure states",
+            "Korean UI text"
+          ]
+        },
+        {
+          "id": "2.4",
+          "title": "Handle Permission Denied Gracefully",
+          "description": "Create HealthKitDeniedView that appears when permissions are denied. Shows how to enable in Settings app with deep link option.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Features/Settings/HealthKitDeniedView.swift"
+          ],
+          "acceptance_criteria": [
+            "Explains why permissions are needed",
+            "Button to open Settings app",
+            "Non-intrusive design",
+            "Korean UI text"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "name": "Read Operations",
+      "description": "Implement reading data from HealthKit (weight, body fat, active calories, steps, sleep, workouts)",
+      "estimated_hours": 4,
+      "subtasks": [
+        {
+          "id": "3.1",
+          "title": "Create HealthKitReadService Base",
+          "description": "Create base service with HKHealthStore, generic query methods, and date range helpers. Include fetchSamples<T>(type:from:to:) generic method.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitReadService.swift"
+          ],
+          "acceptance_criteria": [
+            "Generic sample fetching method",
+            "Date range query support",
+            "Ascending/descending sort options",
+            "Limit parameter support"
+          ]
+        },
+        {
+          "id": "3.2",
+          "title": "Implement Weight & Body Fat Reading",
+          "description": "Add methods to read weight (HKQuantityType.bodyMass) and body fat percentage (HKQuantityType.bodyFatPercentage) from HealthKit.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitReadService.swift"
+          ],
+          "acceptance_criteria": [
+            "fetchWeight(from:to:) method",
+            "fetchBodyFatPercentage(from:to:) method",
+            "fetchLatestWeight() method",
+            "Converts HKQuantity to Decimal correctly"
+          ]
+        },
+        {
+          "id": "3.3",
+          "title": "Implement Active Calories & Steps Reading",
+          "description": "Add methods to read active energy burned (HKQuantityType.activeEnergyBurned) and step count (HKQuantityType.stepCount).",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitReadService.swift"
+          ],
+          "acceptance_criteria": [
+            "fetchActiveCalories(for date:) method returns daily total",
+            "fetchSteps(for date:) method returns daily total",
+            "Uses HKStatisticsQuery for aggregation",
+            "Handles multiple sources correctly"
+          ]
+        },
+        {
+          "id": "3.4",
+          "title": "Implement Sleep Data Reading",
+          "description": "Add methods to read sleep analysis (HKCategoryType.sleepAnalysis). Calculate total sleep duration from segments.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitReadService.swift"
+          ],
+          "acceptance_criteria": [
+            "fetchSleepData(for date:) method",
+            "Handles multiple sleep segments",
+            "Calculates total sleep duration in minutes",
+            "Filters by sleep type (asleep only, not inBed)"
+          ]
+        },
+        {
+          "id": "3.5",
+          "title": "Implement Workout Data Reading",
+          "description": "Add methods to read workouts (HKWorkout). Map HKWorkoutActivityType to app's ExerciseType enum.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitReadService.swift"
+          ],
+          "acceptance_criteria": [
+            "fetchWorkouts(from:to:) method",
+            "Maps HKWorkoutActivityType to ExerciseType",
+            "Extracts duration, calories burned",
+            "Includes workout UUID for duplicate detection"
+          ]
+        },
+        {
+          "id": "3.6",
+          "title": "Create HealthKit to Domain Mappers",
+          "description": "Create mapper functions to convert HealthKit samples to domain entities (HKQuantitySample -> BodyRecord, HKWorkout -> ExerciseRecord, etc.).",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/Mappers/HealthKitMapper.swift"
+          ],
+          "acceptance_criteria": [
+            "mapToBodyRecord(from sample:) function",
+            "mapToExerciseRecord(from workout:) function",
+            "mapToSleepDuration(from samples:) function",
+            "Preserves HealthKit UUID for tracking"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "name": "Write Operations",
+      "description": "Implement writing Bodii records to HealthKit",
+      "estimated_hours": 3,
+      "subtasks": [
+        {
+          "id": "4.1",
+          "title": "Create HealthKitWriteService",
+          "description": "Create service for writing samples to HealthKit. Include save(sample:) and save(samples:) methods with proper error handling.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitWriteService.swift"
+          ],
+          "acceptance_criteria": [
+            "Generic sample saving methods",
+            "Batch saving support",
+            "Proper authorization checking before write",
+            "Error handling for write failures"
+          ]
+        },
+        {
+          "id": "4.2",
+          "title": "Implement Weight & Body Fat Writing",
+          "description": "Add methods to write weight and body fat percentage records to HealthKit when user enters body composition data.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitWriteService.swift"
+          ],
+          "acceptance_criteria": [
+            "saveWeight(kg:date:) method",
+            "saveBodyFatPercentage(percent:date:) method",
+            "Creates proper HKQuantitySample with Bodii as source",
+            "Associates with body record for tracking"
+          ]
+        },
+        {
+          "id": "4.3",
+          "title": "Implement Workout Writing",
+          "description": "Add method to save workout data to HealthKit when user logs exercise. Create HKWorkout with proper activity type mapping.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitWriteService.swift"
+          ],
+          "acceptance_criteria": [
+            "saveWorkout(exerciseRecord:) method",
+            "Maps ExerciseType to HKWorkoutActivityType",
+            "Includes duration and calories burned",
+            "Sets proper start/end dates"
+          ]
+        },
+        {
+          "id": "4.4",
+          "title": "Implement Dietary Energy Writing",
+          "description": "Add method to write dietary energy consumed (calories from food records) to HealthKit.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitWriteService.swift"
+          ],
+          "acceptance_criteria": [
+            "saveDietaryEnergy(calories:date:) method",
+            "Creates proper HKQuantitySample",
+            "Aggregates daily total or individual meals"
+          ]
+        },
+        {
+          "id": "4.5",
+          "title": "Create Domain to HealthKit Mappers",
+          "description": "Create mapper functions to convert domain entities to HealthKit samples for writing.",
+          "status": "pending",
+          "files": [
+            "Bodii/Data/Mappers/HealthKitMapper.swift"
+          ],
+          "acceptance_criteria": [
+            "createWeightSample(from record:) function",
+            "createBodyFatSample(from record:) function",
+            "createWorkout(from record:) function",
+            "Proper metadata and source bundle ID"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "name": "Sync & Conflict Resolution",
+      "description": "Implement background sync and duplicate detection/conflict resolution",
+      "estimated_hours": 3,
+      "subtasks": [
+        {
+          "id": "5.1",
+          "title": "Create HealthKitSyncService",
+          "description": "Create main sync service that orchestrates reading and writing. Implements sync(since:) method for incremental sync.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitSyncService.swift"
+          ],
+          "acceptance_criteria": [
+            "sync() method for full sync",
+            "syncSince(date:) for incremental sync",
+            "Tracks last sync date in UserDefaults",
+            "Coordinates read and write services"
+          ]
+        },
+        {
+          "id": "5.2",
+          "title": "Implement Duplicate Detection",
+          "description": "Add HealthKit UUID tracking to domain entities. Check for existing healthKitId before importing to prevent duplicates.",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Entities/ExerciseRecord.swift",
+            "Bodii/Infrastructure/HealthKit/HealthKitSyncService.swift"
+          ],
+          "acceptance_criteria": [
+            "healthKitId property on ExerciseRecord",
+            "isFromHealthKit computed property",
+            "Skip import if healthKitId already exists",
+            "Update existing record if data changed"
+          ]
+        },
+        {
+          "id": "5.3",
+          "title": "Implement Conflict Resolution Strategy",
+          "description": "When same-date records exist in both Bodii and HealthKit, implement resolution strategy: HealthKit data takes priority for external data, Bodii data preserved for user entries.",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitSyncService.swift"
+          ],
+          "acceptance_criteria": [
+            "resolveConflict(local:remote:) method",
+            "Priority rules documented",
+            "User-entered data preserved",
+            "Apple Watch data imported"
+          ]
+        },
+        {
+          "id": "5.4",
+          "title": "Implement Background Sync",
+          "description": "Enable HKObserverQuery for background delivery. Register for updates when app is closed using enableBackgroundDelivery().",
+          "status": "pending",
+          "files": [
+            "Bodii/Infrastructure/HealthKit/HealthKitBackgroundSync.swift",
+            "Bodii/App/BodiiApp.swift"
+          ],
+          "acceptance_criteria": [
+            "enableBackgroundDelivery(for types:) call",
+            "HKObserverQuery registration",
+            "Background task handling",
+            "App launch trigger for sync completion"
+          ]
+        },
+        {
+          "id": "5.5",
+          "title": "Add Sync to DailyLog Updates",
+          "description": "Update DailyLogService to trigger sync and update steps, activeCalories from HealthKit on getOrCreate().",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Services/DailyLogService.swift"
+          ],
+          "acceptance_criteria": [
+            "Fetches HealthKit steps on DailyLog creation",
+            "Updates DailyLog.steps from HealthKit",
+            "Non-blocking async sync"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-6",
+      "name": "UI Integration",
+      "description": "Add HealthKit toggle to settings and sync status indicators",
+      "estimated_hours": 2,
+      "subtasks": [
+        {
+          "id": "6.1",
+          "title": "Add HealthKit Toggle to Settings",
+          "description": "Add toggle switch in Settings view to enable/disable HealthKit sync. Triggers permission request on first enable.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Features/Settings/SettingsView.swift"
+          ],
+          "acceptance_criteria": [
+            "HealthKit sync toggle in settings",
+            "Shows authorization status",
+            "Triggers permission request if needed",
+            "Stores preference in UserDefaults"
+          ]
+        },
+        {
+          "id": "6.2",
+          "title": "Create HealthKitSettingsViewModel",
+          "description": "Create ViewModel for HealthKit settings. Manages authorization state, sync triggers, and last sync display.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Features/Settings/HealthKitSettingsViewModel.swift"
+          ],
+          "acceptance_criteria": [
+            "@Published isEnabled property",
+            "@Published lastSyncDate property",
+            "requestAuthorization() method",
+            "syncNow() method"
+          ]
+        },
+        {
+          "id": "6.3",
+          "title": "Show HealthKit Data Source Indicators",
+          "description": "Add visual indicator (Apple Watch icon) on records imported from HealthKit. Distinguish from manually entered data.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Components/ExerciseCardView.swift"
+          ],
+          "acceptance_criteria": [
+            "Apple Watch/HealthKit icon for imported records",
+            "Different styling for external data",
+            "Tooltip explaining data source"
+          ]
+        },
+        {
+          "id": "6.4",
+          "title": "Add Manual Sync Button",
+          "description": "Add pull-to-refresh or button for manual sync. Show sync progress and last sync time.",
+          "status": "pending",
+          "files": [
+            "Bodii/Presentation/Features/Dashboard/DashboardView.swift"
+          ],
+          "acceptance_criteria": [
+            "Manual sync trigger button or pull-to-refresh",
+            "Sync progress indicator",
+            "Last sync timestamp display"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-7",
+      "name": "DI & Testing",
+      "description": "Register services in DI container and create unit tests",
+      "estimated_hours": 2,
+      "subtasks": [
+        {
+          "id": "7.1",
+          "title": "Register HealthKit Services in DIContainer",
+          "description": "Add HealthKit services to DIContainer with lazy initialization. Create factory methods for ViewModels that need HealthKit.",
+          "status": "pending",
+          "files": [
+            "Bodii/App/DIContainer.swift"
+          ],
+          "acceptance_criteria": [
+            "healthKitAuthorizationService lazy var",
+            "healthKitReadService lazy var",
+            "healthKitWriteService lazy var",
+            "healthKitSyncService lazy var"
+          ]
+        },
+        {
+          "id": "7.2",
+          "title": "Create HealthKit Service Protocols",
+          "description": "Create protocols for HealthKit services to enable mocking in tests.",
+          "status": "pending",
+          "files": [
+            "Bodii/Domain/Interfaces/HealthKitServiceProtocol.swift"
+          ],
+          "acceptance_criteria": [
+            "HealthKitAuthorizationServiceProtocol",
+            "HealthKitReadServiceProtocol",
+            "HealthKitWriteServiceProtocol",
+            "HealthKitSyncServiceProtocol"
+          ]
+        },
+        {
+          "id": "7.3",
+          "title": "Create Mock HealthKit Services",
+          "description": "Create mock implementations for testing without real HealthKit access.",
+          "status": "pending",
+          "files": [
+            "BodiiTests/Mocks/MockHealthKitServices.swift"
+          ],
+          "acceptance_criteria": [
+            "MockHealthKitAuthorizationService",
+            "MockHealthKitReadService with sample data",
+            "MockHealthKitWriteService tracking saves",
+            "Configurable authorization states"
+          ]
+        },
+        {
+          "id": "7.4",
+          "title": "Write HealthKit Integration Tests",
+          "description": "Create unit tests for HealthKit mappers, sync logic, and conflict resolution.",
+          "status": "pending",
+          "files": [
+            "BodiiTests/Infrastructure/HealthKitTests.swift"
+          ],
+          "acceptance_criteria": [
+            "Mapper tests for all data types",
+            "Conflict resolution tests",
+            "Duplicate detection tests",
+            "Sync service tests with mocks"
+          ]
+        }
+      ]
+    }
+  ],
+  "qa_signoff": {
+    "status": "not_started",
+    "tests_passed": "",
+    "issues": ""
+  },
+  "dependencies": {
+    "frameworks": [
+      "HealthKit"
+    ],
+    "existing_entities": [
+      "BodyRecord",
+      "ExerciseRecord",
+      "SleepRecord",
+      "DailyLog"
+    ],
+    "existing_services": [
+      "DailyLogService"
+    ]
+  },
+  "notes": [
+    "HealthKit folder already exists at Bodii/Infrastructure/HealthKit/ with .gitkeep",
+    "DailyLog.steps field already exists for HealthKit data",
+    "Constants.HealthKit.defaultSyncDays already defined as 7",
+    "ExerciseRecord needs healthKitId property added for duplicate detection",
+    "Korean UI text required per project standards"
+  ],
+  "last_updated": "2026-01-16T05:54:37.562633+00:00"
 }
