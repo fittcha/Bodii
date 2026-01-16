@@ -1,7 +1,7 @@
 {
   "spec_id": "010-unified-daily-dashboard",
   "created_at": "2026-01-16T02:19:26.847339+00:00",
-  "updated_at": "2026-01-16T02:43:35.182333+00:00",
+  "updated_at": "2026-01-16T02:46:44.691882+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -3474,6 +3474,453 @@
           "tool_input": "cd . && git add -A && git commit -m \"auto-claud...",
           "subtask_id": "5.1",
           "session": 8
+        },
+        {
+          "timestamp": "2026-01-16T02:43:37.299542+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.1",
+          "session": 8,
+          "detail": "[auto-claude/010-unified-daily-dashboard 14cc444] auto-claude: 5.1 - Create EmptyStateView components for when DailyLog has no data\n 13 files changed, 1899 insertions(+), 161 deletions(-)\n create mode 100644 .auto-claude/specs/010-unified-daily-dashboard/memory/session_insights/session_006.json\n create mode 100644 .auto-claude/specs/010-unified-daily-dashboard/memory/session_insights/session_007.json\n create mode 100644 Bodii/Presentation/Features/Dashboard/Components/DashboardEmptyStates.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:43:41.656048+00:00",
+          "type": "text",
+          "content": "Now let me update the implementation plan to mark this subtask as completed:",
+          "phase": "coding",
+          "subtask_id": "5.1",
+          "session": 8
+        },
+        {
+          "timestamp": "2026-01-16T02:43:44.001959+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "5.1",
+          "session": 8
+        },
+        {
+          "timestamp": "2026-01-16T02:43:44.025614+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "5.1",
+          "session": 8,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:43:57.629012+00:00",
+          "type": "text",
+          "content": "Excellent! I've successfully completed subtask 5.1 - creating EmptyStateView components for the DailyLog dashboard. Here's what was implemented:\n\n## Summary of Changes\n\n### 1. **Created DashboardEmptyStates.swift** \n   - **Generic `DashboardEmptyState` component**: A flexible, reusable empty state component that accepts:\n     - Icon and color\n     - Title and message\n     - Optional action button with callback\n   \n   - **Specific empty state components**:\n     - `FoodEmptyState`: For CalorieBalanceCard and MacroBreakdownCard\n     - `ExerciseEmptyState`: For ExerciseSummaryCard\n     - `SleepEmptyState`: For SleepQualityCard (no action button)\n     - `BodyCompositionEmptyState`: For BodyCompositionCard\n\n### 2. **Updated All Dashboard Cards**\n   Each card now has conditional rendering that shows:\n   - **Empty State** when no data is available (with helpful messages and action buttons)\n   - **Actual Content** when data exists\n   \n   Updated files:\n   - `CalorieBalanceCard.swift` - Shows FoodEmptyState with \"음식 추가\" button\n   - `MacroBreakdownCard.swift` - Shows FoodEmptyState with \"음식 추가\" button\n   - `ExerciseSummaryCard.swift` - Shows ExerciseEmptyState with \"운동 추가\" button\n   - `SleepQualityCard.swift` - Shows SleepEmptyState (no action button as there's no separate sleep input screen)\n   - `BodyCompositionCard.swift` - Shows BodyCompositionEmptyState with \"체성분 기록\" button\n\n### 3. **Updated DashboardView.swift**\n   - Passed navigation callbacks (`onNavigateToDiet`, `onNavigateToExercise`, `onNavigateToBody`) to all cards\n   - Empty state action buttons now navigate to the appropriate tabs when clicked\n\n## Key Features\n\n✅ **Consistent Design**: All empty states follow the same visual pattern (large icon, title, message, optional action button)\n\n✅ **User-Friendly Messages**: Encouraging messages like \"첫 식사를 기록해 보세요\" guide users on what to do next\n\n✅ **Color Coding**: Each empty state uses the same color as its associated feature (food=orange, exercise=green, sleep=purple, body=blue)\n\n✅ **Action Buttons**: Quick access buttons that navigate users to the right place to add data\n\n✅ **Comprehensive Documentation**: Detailed Korean comments explaining the patterns and usage\n\n✅ **Multiple Previews**: Extensive preview configurations for all empty state variations\n\nThe implementation follows all existing patterns from the codebase and provides a polished user experience when there's no data to display.",
+          "phase": "coding",
+          "subtask_id": "5.1",
+          "session": 8
+        },
+        {
+          "timestamp": "2026-01-16T02:44:16.742741+00:00",
+          "type": "text",
+          "content": "I'll help you implement skeleton loading views for cards with shimmer effects. Let me start by understanding the current implementation and patterns.",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:17.334862+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...laude/specs/010-unified-daily-dashboard/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...laude/specs/010-unified-daily-dashboard/spec.md",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:17.738350+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...nified-daily-dashboard/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...nified-daily-dashboard/implementation_plan.json",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:18.542799+00:00",
+          "type": "tool_start",
+          "content": "[Read] .../specs/010-unified-daily-dashboard/context.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": ".../specs/010-unified-daily-dashboard/context.json",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:18.584195+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:18.613753+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Error: <tool_use_error>File does not exist.</tool_use_error>",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "<tool_use_error>File does not exist.</tool_use_error>",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:44:24.217546+00:00",
+          "type": "text",
+          "content": "Now let me explore the existing patterns for loading states and understand the card structures:",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:24.700338+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*Skeleton*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*Skeleton*.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:24.994825+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*Loading*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*Loading*.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:25.534418+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:25.989706+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...s/Dashboard/Components/CalorieBalanceCard.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...s/Dashboard/Components/CalorieBalanceCard.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:26.011034+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "     1→//\n     2→//  DashboardView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-12.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Dashboard View with Multiple Cards\n     9→// SwiftUI의 대시보드 화면 - 여러 모듈의 요약 정보를 한 곳에 표시\n    10→// 💡 Java 비교: Android의 Dashboard Fragment와 유사\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - DashboardView\n    15→\n    16→/// 대시보드 메인 화면\n    17→/// 📚 학습 포인트: Dashboard Pattern\n    18→/// - 여러 모듈의 요약 정보를 카드 형태로 표시\n    19→/// - 각 카드는 해당 모듈로 네비게이션 가능\n    20→/// - 주요 지표와 빠른 액세스 제공\n    21→/// 💡 Java 비교: Android의 Home Fragment + CardViews와 유사\n    22→struct DashboardView: View {\n    23→\n    24→    // MARK: - Properties\n    25→\n    26→    /// Dashboard ViewModel - 일일 건강 데이터 관리\n    27→    /// 📚 학습 포인트: @State with @Observable\n    28→    /// - iOS 17+의 @Observable을 사용한 현대적인 상태 관리\n    29→    /// - DailyLog의 사전 계산된 값을 사용하여 빠른 로딩\n    30→    /// 💡 Java 비교: Android ViewModel과 유사\n    31→    @State private var viewModel: DashboardViewModel\n    32→\n    33→    /// 식단 탭으로 이동하는 콜백\n    34→    /// 📚 학습 포인트: Closure-based Navigation\n    35→    /// - 부모 View에서 탭 전환 로직을 처리\n    36→    /// - Quick Add 버튼에서 호출되어 해당 탭으로 이동\n    37→    /// 💡 Java 비교: Callback interface와 유사\n    38→    var onNavigateToDiet: (() -> Void)?\n    39→\n    40→    /// 운동 탭으로 이동하는 콜백\n    41→    var onNavigateToExercise: (() -> Void)?\n    42→\n    43→    /// 체성분 탭으로 이동하는 콜백\n    44→    var onNavigateToBody: (() -> Void)?\n    45→\n    46→    // MARK: - Initialization\n    47→\n    48→    /// DashboardView 초기화\n    49→    /// 📚 학습 포인트: Dependency Injection via Constructor\n    50→    /// - ViewModel과 네비게이션 콜백을 외부에서 주입받음\n    51→    /// - 테스트 시 Mock ViewModel 주입 가능\n    52→    /// 💡 Java 비교: Constructor injection과 유사\n    53→    ///\n    54→    /// - Parameters:\n    55→    ///   - viewModel: 대시보드 ViewModel\n    56→    ///   - onNavigateToDiet: 식단 탭으로 이동하는 콜백\n    57→    ///   - onNavigateToExercise: 운동 탭으로 이동하는 콜백\n    58→    ///   - onNavigateToBody: 체성분 탭으로 이동하는 콜백\n    59→    init(\n    60→        viewModel: DashboardViewModel,\n    61→        onNavigateToDiet: (() -> Void)? = nil,\n    62→        onNavigateToExercise: (() -> Void)? = nil,\n    63→        onNavigateToBody: (() -> Void)? = nil\n    64→    ) {\n    65→        self._viewModel = State(wrappedValue: viewModel)\n    66→        self.onNavigateToDiet = onNavigateToDiet\n    67→        self.onNavigateToExercise = onNavigateToExercise\n    68→        self.onNavigateToBody = onNavigateToBody\n    69→    }\n    70→\n    71→    // MARK: - Body\n    72→\n    73→    var body: some View {\n    74→        NavigationStack {\n    75→            ScrollView {\n    76→                VStack(spacing: 20) {\n    77→                    // 날짜 네비게이션 헤더\n    78→                    dateNavigationHeader\n    79→\n    80→                    // 빠른 추가 버튼\n    81→                    quickAddButtons\n    82→\n    83→                    // 칼로리 밸런스 카드\n    84→                    calorieBalanceCard\n    85→\n    86→                    // 매크로 영양소 분석 카드\n    87→                    macroBreakdownCard\n    88→\n    89→                    // 운동 요약 카드\n    90→                    exerciseSummaryCard\n    91→\n    92→                    // 수면 품질 카드\n    93→                    sleepQualityCard\n    94→\n    95→                    // 체성분 카드\n    96→                    bodyCompositionCard\n    97→                }\n    98→                .padding(.horizontal, 16)\n    99→                .padding(.vertical, 20)\n   100→            }\n   101→            .navigationTitle(\"대시보드\")\n   102→            .navigationBarTitleDisplayMode(.large)\n   103→            .refreshable {\n   104→                // 📚 학습 포인트: Pull-to-refresh\n   105→                // SwiftUI의 refreshable modifier를 사용한 새로고침 기능\n   106→                // Pull-to-refresh 제스처로 데이터를 새로고침\n   107→                // 💡 Java 비교: Android의 SwipeRefreshLayout과 유사\n   108→                await viewModel.refresh()\n   109→            }\n   110→            .task {\n   111→                // 📚 학습 포인트: task modifier\n   112→                // View가 나타날 때 비동기 작업 실행\n   113→                // 💡 Java 비교: onResume()에서 데이터 로드와 유사\n   114→                await viewModel.loadDailyLog(for: viewModel.selectedDate)\n   115→            }\n   116→            .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   117→                Button(\"확인\") {\n   118→                    viewModel.clearError()\n   119→                }\n   120→            } message: {\n   121→                if let errorMessage = viewModel.errorMessage {\n   122→                    Text(errorMessage)\n   123→                }\n   124→            }\n   125→        }\n   126→    }\n   127→\n   128→    // MARK: - Subviews\n   129→\n   130→    /// 날짜 네비게이션 헤더\n   131→    /// 📚 학습 포인트: Date Navigation Component\n   132→    /// - 좌우 화살표로 날짜 이동\n   133→    /// - 중앙에 선택된 날짜 표시 (오늘, 어제, 또는 전체 날짜)\n   134→    /// - 오늘로 돌아가기 버튼\n   135→    private var dateNavigationHeader: some View {\n   136→        DateNavigationHeader(\n   137→            selectedDate: viewModel.selectedDate,\n   138→            isToday: viewModel.isToday,\n   139→            onPreviousDay: viewModel.goToPreviousDay,\n   140→            onNextDay: viewModel.goToNextDay,\n   141→            onToday: viewModel.goToToday\n   142→        )\n   143→    }\n   144→\n   145→    /// 빠른 추가 버튼\n   146→    /// 📚 학습 포인트: Quick Add Component\n   147→    /// - 가로 스크롤 버튼으로 빠른 데이터 입력\n   148→    /// - 음식, 운동, 체성분 기록 화면으로 이동\n   149→    private var quickAddButtons: some View {\n   150→        QuickAddButtons(\n   151→            onAddFood: {\n   152→                // 📚 학습 포인트: Callback Navigation\n   153→                // 버튼 탭 시 식단 탭으로 이동 콜백 호출\n   154→                onNavigateToDiet?()\n   155→            },\n   156→            onAddExercise: {\n   157→                onNavigateToExercise?()\n   158→            },\n   159→            onAddBodyComposition: {\n   160→                onNavigateToBody?()\n   161→            }\n   162→        )\n   163→    }\n   164→\n   165→    /// 칼로리 밸런스 카드\n   166→    /// 📚 학습 포인트: Calorie Balance Component\n   167→    /// - 오늘의 섭취 칼로리 vs TDEE\n   168→    /// - 원형 진행 표시기로 시각화\n   169→    /// - 칼로리 수지에 따라 색상 변경 (적자/균형/과잉)\n   170→    /// - Empty State에서 음식 추가 버튼 제공\n   171→    private var calorieBalanceCard: some View {\n   172→        CalorieBalanceCard(\n   173→            totalCaloriesIn: viewModel.totalCaloriesIn,\n   174→            tdee: viewModel.tdee,\n   175→            netCalories: viewModel.netCalories,\n   176→            onAddFood: onNavigateToDiet\n   177→        )\n   178→    }\n   179→\n   180→    /// 매크로 영양소 분석 카드\n   181→    /// 📚 학습 포인트: Macro Breakdown Component\n   182→    /// - 탄수화물/단백질/지방 섭취량과 비율\n   183→    /// - 가로 진행 바로 시각화\n   184→    /// - 각 영양소의 그램 수와 퍼센트 표시\n   185→    /// - Empty State에서 음식 추가 버튼 제공\n   186→    private var macroBreakdownCard: some View {\n   187→        MacroBreakdownCard(\n   188→            totalCarbs: viewModel.totalCarbs,\n   189→            totalProtein: viewModel.totalProtein,\n   190→            totalFat: viewModel.totalFat,\n   191→            carbsRatio: viewModel.carbsRatio,\n   192→            proteinRatio: viewModel.proteinRatio,\n   193→            fatRatio: viewModel.fatRatio,\n   194→            onAddFood: onNavigateToDiet\n   195→        )\n   196→    }\n   197→\n   198→    /// 운동 요약 카드\n   199→    /// 📚 학습 포인트: Exercise Summary Component\n   200→    /// - 오늘의 운동 정보 요약\n   201→    /// - 총 소모 칼로리, 운동 횟수, 운동 시간\n   202→    /// - 3개의 지표를 가로로 나열하여 표시\n   203→    /// - Empty State에서 운동 추가 버튼 제공\n   204→    private var exerciseSummaryCard: some View {\n   205→        ExerciseSummaryCard(\n   206→            totalCaloriesOut: viewModel.totalCaloriesOut,\n   207→            exerciseCount: viewModel.exerciseCount,\n   208→            exerciseMinutes: viewModel.exerciseMinutes,\n   209→            onAddExercise: onNavigateToExercise\n   210→        )\n   211→    }\n   212→\n   213→    /// 수면 품질 카드\n   214→    /// 📚 학습 포인트: Sleep Quality Component\n   215→    /// - 전날 밤 수면 정보\n   216→    /// - 수면 시간과 품질 표시\n   217→    /// - 이모지 인디케이터로 상태 시각화\n   218→    private var sleepQualityCard: some View {\n   219→        SleepQualityCard(\n   220→            sleepDuration: viewModel.sleepDuration,\n   221→            sleepStatus: viewModel.sleepStatus\n   222→        )\n   223→    }\n   224→\n   225→    /// 체성분 카드\n   226→    /// 📚 학습 포인트: Body Composition Component\n   227→    /// - 오늘의 체중과 체지방률\n   228→    /// - 전날 대비 변화량 표시 (TODO: 향후 구현)\n   229→    /// - Empty State에서 체성분 기록 버튼 제공\n   230→    private var bodyCompositionCard: some View {\n   231→        BodyCompositionCard(\n   232→            weight: viewModel.weight,\n   233→            bodyFatPct: viewModel.bodyFatPct,\n   234→            // TODO: 전날 데이터를 DailyLogRepository에서 조회하여 전달\n   235→            // 현재는 DailyLog에 전날 데이터가 없으므로 nil 전달\n   236→            previousWeight: nil,\n   237→            previousBodyFatPct: nil,\n   238→            onAddBodyComposition: onNavigateToBody\n   239→        )\n   240→    }\n   241→}\n   242→\n   243→// MARK: - Preview\n   244→\n   245→#if DEBUG\n   246→#Preview(\"대시보드 - 데이터 있음\") {\n   247→    // TODO: Mock DashboardViewModel 구현 후 Preview 추가\n   248→    // DashboardView(\n   249→    //     viewModel: .makePreviewWithData()\n   250→    // )\n   251→    Text(\"Preview를 위해 Mock DashboardViewModel이 필요합니다\")\n   252→}\n   253→\n   254→#Preview(\"대시보드 - 빈 상태\") {\n   255→    // TODO: Mock DashboardViewModel 구현 후 Preview 추가\n   256→    Text(\"Preview를 위해 Mock DashboardViewModel이 필요합니다\")\n   257→}\n   258→\n   259→#Preview(\"다크 모드\") {\n   260→    // TODO: Mock DashboardViewModel 구현 후 Preview 추가\n   261→    Text(\"Preview를 위해 Mock DashboardViewModel이 필요합니다\")\n   262→        .preferredColorScheme(.dark)\n   263→}\n   264→#endif\n   265→\n   266→// MARK: - Documentation\n   267→\n   268→/// 📚 학습 포인트: DashboardView 사용법\n   269→///\n   270→/// 기본 사용 (ContentView에서):\n   271→/// ```swift\n   272→/// struct ContentView: View {\n   273→///     @State private var selectedTab: Tab = .dashboard\n   274→///     let container: DIContainer\n   275→///\n   276→///     var body: some View {\n   277→///         TabView(selection: $selectedTab) {\n   278→///             DashboardView(\n   279→///                 viewModel: container.makeDashboardViewModel(userId: user.id),\n   280→///                 onNavigateToDiet: {\n   281→///                     selectedTab \n\n... [truncated - full output was 12870 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:44:30.619614+00:00",
+          "type": "text",
+          "content": "Let me check for existing shimmer or animation patterns:",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:31.850485+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: shimmer|Shimmer|redacted|Redacted",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: shimmer|Shimmer|redacted|Redacted",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:32.930642+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: @State.*animated|animation\\(|withAnimation",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: @State.*animated|animation\\(|withAnimation",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:34.118718+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ion/Features/Dashboard/DashboardViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ion/Features/Dashboard/DashboardViewModel.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:34.159402+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "     1→//\n     2→//  DashboardViewModel.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-15.\n     6→//\n     7→\n     8→// 📚 학습 포인트: SwiftUI ViewModel with @Observable\n     9→// iOS 17+의 @Observable 매크로를 사용한 현대적인 MVVM 패턴\n    10→// 💡 Java 비교: Android의 ViewModel + LiveData와 유사하지만 더 간단\n    11→\n    12→import Foundation\n    13→import Observation\n    14→\n    15→/// 대시보드 뷰 모델\n    16→///\n    17→/// 일일 건강 데이터(칼로리, 매크로, 운동, 수면, 체성분)를 관리합니다.\n    18→///\n    19→/// ## 책임\n    20→/// - 선택된 날짜의 DailyLog 조회\n    21→/// - 날짜 네비게이션 (이전/다음 날)\n    22→/// - 새로고침 기능\n    23→/// - 로딩 및 에러 상태 관리\n    24→///\n    25→/// ## 의존성\n    26→/// - DailyLogRepository: 일일 집계 조회\n    27→///\n    28→/// ## 사용 예시\n    29→/// ```swift\n    30→/// let viewModel = DashboardViewModel(\n    31→///     dailyLogRepository: dailyLogRepository,\n    32→///     userId: user.id\n    33→/// )\n    34→///\n    35→/// // View에서 사용\n    36→/// if let dailyLog = viewModel.dailyLog {\n    37→///     CalorieBalanceCard(dailyLog: dailyLog)\n    38→/// }\n    39→/// ```\n    40→@Observable\n    41→final class DashboardViewModel {\n    42→\n    43→    // MARK: - Properties\n    44→\n    45→    // 📚 학습 포인트: @Observable과 프로퍼티\n    46→    // @Observable 매크로는 자동으로 모든 프로퍼티를 관찰 가능하게 만듦\n    47→    // 💡 Java 비교: @Published (이전 SwiftUI) 또는 MutableLiveData와 유사\n    48→\n    49→    /// 현재 선택된 날짜\n    50→    var selectedDate: Date\n    51→\n    52→    /// 일일 집계 데이터\n    53→    var dailyLog: DailyLog?\n    54→\n    55→    /// 로딩 상태\n    56→    var isLoading: Bool = false\n    57→\n    58→    /// 에러 메시지\n    59→    var errorMessage: String?\n    60→\n    61→    // 📚 학습 포인트: Computed Property\n    62→    // 저장 공간 없이 계산되는 프로퍼티\n    63→    // 의존하는 프로퍼티가 변경되면 자동으로 재계산됨\n    64→\n    65→    /// 총 섭취 칼로리\n    66→    var totalCaloriesIn: Int32 {\n    67→        dailyLog?.totalCaloriesIn ?? 0\n    68→    }\n    69→\n    70→    /// TDEE (활동대사량)\n    71→    var tdee: Int32 {\n    72→        dailyLog?.tdee ?? 0\n    73→    }\n    74→\n    75→    /// 순 칼로리 (섭취 - TDEE)\n    76→    var netCalories: Int32 {\n    77→        dailyLog?.netCalories ?? 0\n    78→    }\n    79→\n    80→    /// 총 탄수화물 (g)\n    81→    var totalCarbs: Decimal {\n    82→        dailyLog?.totalCarbs ?? 0\n    83→    }\n    84→\n    85→    /// 총 단백질 (g)\n    86→    var totalProtein: Decimal {\n    87→        dailyLog?.totalProtein ?? 0\n    88→    }\n    89→\n    90→    /// 총 지방 (g)\n    91→    var totalFat: Decimal {\n    92→        dailyLog?.totalFat ?? 0\n    93→    }\n    94→\n    95→    /// 탄수화물 비율 (%)\n    96→    var carbsRatio: Decimal? {\n    97→        dailyLog?.carbsRatio\n    98→    }\n    99→\n   100→    /// 단백질 비율 (%)\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:44:38.412470+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...s/Dashboard/Components/MacroBreakdownCard.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...s/Dashboard/Components/MacroBreakdownCard.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:39.283570+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii/Presentation -name \"*.swift\" -type...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii/Presentation -name \"*.swift\" -type...",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:44:39.312749+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "   150→        // 📚 학습 포인트: Material Background with Shadow\n   151→        // iOS 네이티브 느낌의 카드 디자인\n   152→        RoundedRectangle(cornerRadius: 16)\n   153→            .fill(Color(.systemBackground))\n   154→            .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)\n   155→    }\n   156→\n   157→    /// 매크로 영양소 진행 바\n   158→    ///\n   159→    /// 개별 매크로 영양소의 섭취량과 비율을 가로 진행 바로 표시합니다.\n   160→    ///\n   161→    /// - Parameters:\n   162→    ///   - name: 영양소 이름 (예: \"탄수화물\")\n   163→    ///   - amount: 섭취량 (g)\n   164→    ///   - ratio: 비율 (%, 없으면 nil)\n   165→    ///   - color: 진행 바 색상\n   166→    ///   - icon: SF Symbol 아이콘 이름\n   167→    /// - Returns: 진행 바 뷰\n   168→    private func macroProgressBar(\n   169→        name: String,\n   170→        amount: Decimal,\n   171→        ratio: Decimal?,\n   172→        color: Color,\n   173→        icon: String\n   174→    ) -> some View {\n   175→        VStack(spacing: 8) {\n   176→            // 📚 학습 포인트: 헤더 레이아웃 (아이콘, 이름, 수치)\n   177→            // HStack으로 좌우 정렬, Spacer()로 양끝 배치\n   178→            HStack {\n   179→                // 아이콘과 이름\n   180→                HStack(spacing: 6) {\n   181→                    Image(systemName: icon)\n   182→                        .font(.caption)\n   183→                        .foregroundStyle(isEmpty ? .secondary : color)\n   184→\n   185→                    Text(name)\n   186→                        .font(.subheadline)\n   187→                        .fontWeight(.medium)\n   188→                        .foregroundStyle(isEmpty ? .secondary : .primary)\n   189→                }\n   190→\n   191→                Spacer()\n   192→\n   193→                // 수치 (그램과 비율)\n   194→                HStack(spacing: 8) {\n   195→                    // 섭취량\n   196→                    Text(\"\\(formattedDecimal(amount))g\")\n   197→                        .font(.subheadline)\n   198→                        .fontWeight(.semibold)\n   199→                        .foregroundStyle(isEmpty ? .secondary : .primary)\n   200→\n   201→                    // 비율 배지\n   202→                    if let ratio = ratio {\n   203→                        Text(\"\\(formattedDecimal(ratio))%\")\n   204→                            .font(.caption)\n   205→                            .fontWeight(.medium)\n   206→                            .foregroundStyle(color)\n   207→                            .padding(.horizontal, 8)\n   208→                            .padding(.vertical, 4)\n   209→                            .background(\n   210→                                RoundedRectangle(cornerRadius: 6)\n   211→                                    .fill(color.opacity(0.15))\n   212→                            )\n   213→                    } else {\n   214→                        Text(\"-%\")\n   215→                            .font(.caption)\n   216→                            .fontWeight(.medium)\n   217→                            .foregroundStyle(.secondary)\n   218→                            .padding(.horizontal, 8)\n   219→                            .padding(.vertical, 4)\n   220→                            .background(\n   221→                                RoundedRectangle(cornerRadius: 6)\n   222→                                    .fill(Color(.systemGray5))\n   223→                            )\n   224→                    }\n   225→                }\n   226→            }\n   227→\n   228→            // 📚 학습 포인트: Horizontal Progress Bar\n   229→            // GeometryReader로 부모 너비를 받아 비율만큼 채우기\n   230→            // 💡 Java 비교: LinearLayout with weight 또는 Box with fillMaxWidth()와 유사\n   231→            GeometryReader { geometry in\n   232→                ZStack(alignment: .leading) {\n   233→                    // 배경 (회색)\n   234→                    RoundedRectangle(cornerRadius: barHeight / 2)\n   235→                        .fill(Color(.systemGray5))\n   236→                        .frame(height: barHeight)\n   237→\n   238→                    // 진행 (색상)\n   239→                    if let ratio = ratio {\n   240→                        RoundedRectangle(cornerRadius: barHeight / 2)\n   241→                            .fill(isEmpty ? Color(.systemGray4) : color)\n   242→                            .frame(\n   243→                                width: min(\n   244→                                    geometry.size.width * CGFloat(truncating: ratio as NSNumber) / 100,\n   245→                                    geometry.size.width\n   246→                                ),\n   247→                                height: barHeight\n   248→                            )\n   249→                            .animation(.easeInOut(duration: 0.3), value: ratio)\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:44:46.900030+00:00",
+          "type": "text",
+          "content": "Perfect! Now I understand the patterns. Let me create the skeleton loading views with shimmer effect. I'll create a comprehensive skeleton system for all dashboard cards:",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:02.071329+00:00",
+          "type": "tool_start",
+          "content": "[Write] ...ashboard/Components/DashboardSkeletonView.swift",
+          "phase": "coding",
+          "tool_name": "Write",
+          "tool_input": "...ashboard/Components/DashboardSkeletonView.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:02.435718+00:00",
+          "type": "tool_end",
+          "content": "[Write] Done",
+          "phase": "coding",
+          "tool_name": "Write",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "File created successfully at: ./Bodii/Presentation/Features/Dashboard/Components/DashboardSkeletonView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:46:05.964103+00:00",
+          "type": "text",
+          "content": "Now let me integrate the skeleton views into the DashboardView:",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:06.820196+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:06.834017+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "    70→\n    71→    // MARK: - Body\n    72→\n    73→    var body: some View {\n    74→        NavigationStack {\n    75→            ScrollView {\n    76→                VStack(spacing: 20) {\n    77→                    // 날짜 네비게이션 헤더\n    78→                    dateNavigationHeader\n    79→\n    80→                    // 빠른 추가 버튼\n    81→                    quickAddButtons\n    82→\n    83→                    // 칼로리 밸런스 카드\n    84→                    calorieBalanceCard\n    85→\n    86→                    // 매크로 영양소 분석 카드\n    87→                    macroBreakdownCard\n    88→\n    89→                    // 운동 요약 카드\n    90→                    exerciseSummaryCard\n    91→\n    92→                    // 수면 품질 카드\n    93→                    sleepQualityCard\n    94→\n    95→                    // 체성분 카드\n    96→                    bodyCompositionCard\n    97→                }\n    98→                .padding(.horizontal, 16)\n    99→                .padding(.vertical, 20)\n   100→            }\n   101→            .navigationTitle(\"대시보드\")\n   102→            .navigationBarTitleDisplayMode(.large)\n   103→            .refreshable {\n   104→                // 📚 학습 포인트: Pull-to-refresh\n   105→                // SwiftUI의 refreshable modifier를 사용한 새로고침 기능\n   106→                // Pull-to-refresh 제스처로 데이터를 새로고침\n   107→                // 💡 Java 비교: Android의 SwipeRefreshLayout과 유사\n   108→                await viewModel.refresh()\n   109→            }\n   110→            .task {\n   111→                // 📚 학습 포인트: task modifier\n   112→                // View가 나타날 때 비동기 작업 실행\n   113→                // 💡 Java 비교: onResume()에서 데이터 로드와 유사\n   114→                await viewModel.loadDailyLog(for: viewModel.selectedDate)\n   115→            }\n   116→            .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   117→                Button(\"확인\") {\n   118→                    viewModel.clearError()\n   119→                }\n   120→            } message: {\n   121→                if let errorMessage = viewModel.errorMessage {\n   122→                    Text(errorMessage)\n   123→                }\n   124→            }\n   125→        }\n   126→    }\n   127→\n   128→    // MARK: - Subviews\n   129→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:46:22.581454+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:22.598996+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "The file ./Bodii/Presentation/Features/Dashboard/DashboardView.swift has been updated successfully.",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:46:25.620544+00:00",
+          "type": "text",
+          "content": "Now let's verify that the code compiles correctly:",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:27.609394+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && xcodebuild -scheme Bodii -sdk iphonesim...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && xcodebuild -scheme Bodii -sdk iphonesim...",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:27.631039+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:46:32.588462+00:00",
+          "type": "text",
+          "content": "Let me verify the files are properly created and check for any syntax issues:",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:33.984138+00:00",
+          "type": "tool_start",
+          "content": "[Bash] ls -la ./Bodii/Presentation/Features/Dashboard/...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "ls -la ./Bodii/Presentation/Features/Dashboard/...",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:34.481070+00:00",
+          "type": "tool_start",
+          "content": "[Bash] wc -l ./Bodii/Presentation/Features/Dashboard/C...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "wc -l ./Bodii/Presentation/Features/Dashboard/C...",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:35.165697+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:35.183156+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "     1→//\n     2→//  DashboardView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-12.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Dashboard View with Multiple Cards\n     9→// SwiftUI의 대시보드 화면 - 여러 모듈의 요약 정보를 한 곳에 표시\n    10→// 💡 Java 비교: Android의 Dashboard Fragment와 유사\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - DashboardView\n    15→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:46:39.588089+00:00",
+          "type": "text",
+          "content": "Let me verify the DashboardView was properly updated with the skeleton integration:",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:40.166051+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:40.182733+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "5.2",
+          "session": 9,
+          "detail": "    73→    var body: some View {\n    74→        NavigationStack {\n    75→            // 📚 학습 포인트: Conditional Rendering - Loading vs Content\n    76→            // isLoading 상태에 따라 스켈레톤 뷰 또는 실제 컨텐츠 표시\n    77→            // 💡 Java 비교: if-else 조건부 렌더링과 유사\n    78→            Group {\n    79→                if viewModel.isLoading && viewModel.dailyLog == nil {\n    80→                    // 초기 로딩 중: 스켈레톤 뷰 표시\n    81→                    DashboardSkeletonView()\n    82→                } else {\n    83→                    // 데이터 로드 완료: 실제 컨텐츠 표시\n    84→                    dashboardContent\n    85→                }\n    86→            }\n    87→            .navigationTitle(\"대시보드\")\n    88→            .navigationBarTitleDisplayMode(.large)\n    89→            .refreshable {\n    90→                // 📚 학습 포인트: Pull-to-refresh\n    91→                // SwiftUI의 refreshable modifier를 사용한 새로고침 기능\n    92→                // Pull-to-refresh 제스처로 데이터를 새로고침\n    93→                // 💡 Java 비교: Android의 SwipeRefreshLayout과 유사\n    94→                await viewModel.refresh()\n    95→            }\n    96→            .task {\n    97→                // 📚 학습 포인트: task modifier\n    98→                // View가 나타날 때 비동기 작업 실행\n    99→                // 💡 Java 비교: onResume()에서 데이터 로드와 유사\n   100→                await viewModel.loadDailyLog(for: viewModel.selectedDate)\n   101→            }\n   102→            .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   103→                Button(\"확인\") {\n   104→                    viewModel.clearError()\n   105→                }\n   106→            } message: {\n   107→                if let errorMessage = viewModel.errorMessage {\n   108→                    Text(errorMessage)\n   109→                }\n   110→            }\n   111→        }\n   112→    }\n   113→\n   114→    // MARK: - Dashboard Content\n   115→\n   116→    /// 대시보드 실제 컨텐츠\n   117→    /// 📚 학습 포인트: View Composition\n   118→    /// - 복잡한 body를 분리하여 가독성 향상\n   119→    /// - 로딩 상태와 컨텐츠 상태를 명확히 구분\n   120→    private var dashboardContent: some View {\n   121→        ScrollView {\n   122→            VStack(spacing: 20) {\n   123→                // 날짜 네비게이션 헤더\n   124→                dateNavigationHeader\n   125→\n   126→                // 빠른 추가 버튼\n   127→                quickAddButtons\n   128→\n   129→                // 칼로리 밸런스 카드\n   130→                calorieBalanceCard\n   131→\n   132→                // 매크로 영양소 분석 카드\n   133→                macroBreakdownCard\n   134→\n   135→                // 운동 요약 카드\n   136→                exerciseSummaryCard\n   137→\n   138→                // 수면 품질 카드\n   139→                sleepQualityCard\n   140→\n   141→                // 체성분 카드\n   142→                bodyCompositionCard\n   143→            }\n   144→            .padding(.horizontal, 16)\n   145→            .padding(.vertical, 20)\n   146→        }\n   147→    }\n   148→\n   149→    // MARK: - Subviews\n   150→\n   151→    /// 날짜 네비게이션 헤더\n   152→    /// 📚 학습 포인트: Date Navigation Component\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:46:43.948698+00:00",
+          "type": "text",
+          "content": "Perfect! Now let's commit the changes:",
+          "phase": "coding",
+          "subtask_id": "5.2",
+          "session": 9
+        },
+        {
+          "timestamp": "2026-01-16T02:46:44.691850+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git add -A && git status",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git add -A && git status",
+          "subtask_id": "5.2",
+          "session": 9
         }
       ]
     },

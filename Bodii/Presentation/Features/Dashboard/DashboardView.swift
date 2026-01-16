@@ -72,31 +72,17 @@ struct DashboardView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 날짜 네비게이션 헤더
-                    dateNavigationHeader
-
-                    // 빠른 추가 버튼
-                    quickAddButtons
-
-                    // 칼로리 밸런스 카드
-                    calorieBalanceCard
-
-                    // 매크로 영양소 분석 카드
-                    macroBreakdownCard
-
-                    // 운동 요약 카드
-                    exerciseSummaryCard
-
-                    // 수면 품질 카드
-                    sleepQualityCard
-
-                    // 체성분 카드
-                    bodyCompositionCard
+            // 📚 학습 포인트: Conditional Rendering - Loading vs Content
+            // isLoading 상태에 따라 스켈레톤 뷰 또는 실제 컨텐츠 표시
+            // 💡 Java 비교: if-else 조건부 렌더링과 유사
+            Group {
+                if viewModel.isLoading && viewModel.dailyLog == nil {
+                    // 초기 로딩 중: 스켈레톤 뷰 표시
+                    DashboardSkeletonView()
+                } else {
+                    // 데이터 로드 완료: 실제 컨텐츠 표시
+                    dashboardContent
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 20)
             }
             .navigationTitle("대시보드")
             .navigationBarTitleDisplayMode(.large)
@@ -122,6 +108,41 @@ struct DashboardView: View {
                     Text(errorMessage)
                 }
             }
+        }
+    }
+
+    // MARK: - Dashboard Content
+
+    /// 대시보드 실제 컨텐츠
+    /// 📚 학습 포인트: View Composition
+    /// - 복잡한 body를 분리하여 가독성 향상
+    /// - 로딩 상태와 컨텐츠 상태를 명확히 구분
+    private var dashboardContent: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                // 날짜 네비게이션 헤더
+                dateNavigationHeader
+
+                // 빠른 추가 버튼
+                quickAddButtons
+
+                // 칼로리 밸런스 카드
+                calorieBalanceCard
+
+                // 매크로 영양소 분석 카드
+                macroBreakdownCard
+
+                // 운동 요약 카드
+                exerciseSummaryCard
+
+                // 수면 품질 카드
+                sleepQualityCard
+
+                // 체성분 카드
+                bodyCompositionCard
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 20)
         }
     }
 
