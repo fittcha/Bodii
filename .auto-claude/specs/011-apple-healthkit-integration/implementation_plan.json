@@ -450,7 +450,7 @@
           "id": "5.5",
           "title": "Add Sync to DailyLog Updates",
           "description": "Update DailyLogService to trigger sync and update steps, activeCalories from HealthKit on getOrCreate().",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Domain/Services/DailyLogService.swift"
           ],
@@ -458,7 +458,9 @@
             "Fetches HealthKit steps on DailyLog creation",
             "Updates DailyLog.steps from HealthKit",
             "Non-blocking async sync"
-          ]
+          ],
+          "notes": "Successfully updated DailyLogService to trigger HealthKit sync on getOrCreate():\n\n\u2705 Added HealthKitReadService as optional dependency\n\u2705 Updated getOrCreate() to trigger background HealthKit sync\n\u2705 Implemented syncHealthKitData() private method:\n  - Fetches steps from HealthKit using fetchSteps(for:)\n  - Updates DailyLog.steps field via repository.update()\n  - Silent failure pattern - errors don't break app functionality\n\n\u2705 Non-blocking async sync with Task.detached\n\u2705 Comprehensive error handling with graceful degradation\n\u2705 Debug logging for development (#if DEBUG)\n\u2705 Follows project patterns with Korean educational comments\n\nImplementation details:\n- HealthKitReadService is optional dependency (nil by default)\n- Task.detached ensures main thread is not blocked\n- getOrCreate() returns immediately, sync happens in background\n- If HealthKit unavailable or unauthorized, app continues normally\n- Uses repository.fetch() + repository.update() pattern\n- Proper Decimal to Int32 conversion for steps field\n\nReady for DI Container integration in Phase 7.\n\nAll acceptance criteria met:\n\u2705 Fetches HealthKit steps on DailyLog creation\n\u2705 Updates DailyLog.steps from HealthKit\n\u2705 Non-blocking async sync",
+          "updated_at": "2026-01-16T06:54:02.102210+00:00"
         }
       ]
     },
@@ -472,7 +474,7 @@
           "id": "6.1",
           "title": "Add HealthKit Toggle to Settings",
           "description": "Add toggle switch in Settings view to enable/disable HealthKit sync. Triggers permission request on first enable.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Features/Settings/SettingsView.swift"
           ],
@@ -481,7 +483,9 @@
             "Shows authorization status",
             "Triggers permission request if needed",
             "Stores preference in UserDefaults"
-          ]
+          ],
+          "notes": "Successfully implemented HealthKit toggle in Settings view:\n\n\u2705 Created SettingsView.swift with comprehensive HealthKit integration\n\u2705 HealthKit sync toggle with @AppStorage for UserDefaults persistence\n\u2705 Authorization status display with detailed states:\n  - \"\uc5f0\ub3d9\ub428 \u00b7 \ubaa8\ub4e0 \uad8c\ud55c \ud5c8\uc6a9\" (fully authorized)\n  - \"\uc5f0\ub3d9\ub428 \u00b7 \uc77c\ubd80 \uad8c\ud55c\ub9cc \ud5c8\uc6a9\" (partially authorized)\n  - \"\uad8c\ud55c\uc774 \uac70\ubd80\ub418\uc5c8\uc2b5\ub2c8\ub2e4\" (fully denied)\n  - \"\ube44\ud65c\uc131\ud654\" (disabled)\n  - \"\uc774 \uae30\uae30\uc5d0\uc11c\ub294 \uc0ac\uc6a9\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4\" (HealthKit unavailable)\n\n\u2705 Triggers permission request on first enable:\n  - Shows HealthKitPermissionView sheet when toggled ON\n  - Shows HealthKitDeniedView if permissions already denied\n  - Automatic sync after permission granted\n\n\u2705 Stores preference in UserDefaults via @AppStorage(\"healthKitSyncEnabled\")\n\nAdditional features implemented:\n- Last sync date display with relative time formatting (RelativeDateTimeFormatter)\n- Manual \"\uc9c0\uae08 \ub3d9\uae30\ud654\" button with loading state (ProgressView)\n- App info section with version number\n- Error handling with Alert dialog\n- HealthKit availability check for iPad compatibility\n- Integrated with HealthKitAuthorizationService.getAuthorizationSummary()\n- Integrated with HealthKitSyncService.sync() and getLastSyncDate()\n- Updated ContentView to use SettingsView instead of PlaceholderView\n- Korean UI text throughout\n- Comprehensive documentation with \ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8 educational comments\n- SwiftUI Preview support for light and dark mode\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Dependency injection for services\n- Clean MARK sections organization\n- Async/await for sync operations\n- @MainActor for thread safety\n- Similar structure to BodyCompositionView\n\nAll acceptance criteria met:\n\u2705 HealthKit sync toggle in settings\n\u2705 Shows authorization status\n\u2705 Triggers permission request if needed\n\u2705 Stores preference in UserDefaults\n\nReady for ViewModel extraction in Subtask 6.2.",
+          "updated_at": "2026-01-16T06:57:46.092875+00:00"
         },
         {
           "id": "6.2",
@@ -623,5 +627,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T06:50:13.003895+00:00"
+  "last_updated": "2026-01-16T06:57:46.092882+00:00"
 }
