@@ -432,7 +432,7 @@
           "id": "5.4",
           "title": "Implement Background Sync",
           "description": "Enable HKObserverQuery for background delivery. Register for updates when app is closed using enableBackgroundDelivery().",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitBackgroundSync.swift",
             "Bodii/App/BodiiApp.swift"
@@ -442,7 +442,9 @@
             "HKObserverQuery registration",
             "Background task handling",
             "App launch trigger for sync completion"
-          ]
+          ],
+          "notes": "Successfully implemented HealthKit background sync with HKObserverQuery:\n\n\u2705 Created HealthKitBackgroundSync.swift service:\n  - setupBackgroundObservers(userId:) - Main setup method for background delivery\n  - enableBackgroundDelivery() - Activates background delivery for all data types\n  - registerObserverQueries(userId:) - Registers HKObserverQuery for change detection\n  - registerObserver(for:typeName:userId:) - Individual observer registration\n  - handleDataUpdate(for:typeName:userId:) - Sync trigger when data changes\n  - stopBackgroundObservers() - Cleanup method for resource management\n  - disableBackgroundDelivery() - Deactivates background delivery\n\n\u2705 enableBackgroundDelivery(for types:) implementation:\n  - Calls healthStore.enableBackgroundDelivery(for:frequency:) for each data type\n  - Uses .immediate frequency for real-time sync\n  - Handles all QuantityTypes: weight, bodyFatPercentage, activeEnergyBurned, stepCount, dietaryEnergyConsumed\n  - Handles all CategoryTypes: sleepAnalysis\n  - Handles WorkoutType\n  - Graceful error handling for individual type failures\n\n\u2705 HKObserverQuery registration:\n  - Creates observer for each data type with updateHandler\n  - updateHandler triggered when HealthKit data changes\n  - Automatically wakes app in background when data changes occur\n  - Calls completionHandler to notify iOS of task completion\n  - Stores queries in observerQueries array for cleanup\n\n\u2705 Background task handling:\n  - handleDataUpdate() performs incremental sync since last sync date\n  - Uses syncService.syncSince(date:userId:) for efficiency\n  - Non-blocking async execution with Task\n  - Errors logged but don't crash app\n\n\u2705 App launch trigger integration:\n  - Updated BodiiApp.swift to initialize HealthKitBackgroundSync\n  - setupHealthKitBackgroundSync() creates dependency chain\n  - startHealthKitBackgroundSync() called on ContentView.onAppear\n  - Uses \"default\" userId (TODO: Phase 7 authentication integration)\n  - Graceful handling of permission denied errors\n\n\u2705 CaseIterable extensions:\n  - HealthKitDataTypes.QuantityType.allCases\n  - HealthKitDataTypes.CategoryType.allCases\n  - Enables iteration over all data types for batch operations\n\nAll acceptance criteria met:\n\u2705 enableBackgroundDelivery(for types:) call\n\u2705 HKObserverQuery registration\n\u2705 Background task handling\n\u2705 App launch trigger for sync completion\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Comprehensive documentation with examples\n- Clean MARK sections organization\n- Async/await with proper error handling\n- Similar structure to other HealthKit services\n- @MainActor for thread safety\n\nReady for UI integration (Phase 6) and testing (Phase 7).",
+          "updated_at": "2026-01-16T06:50:13.003889+00:00"
         },
         {
           "id": "5.5",
@@ -621,5 +623,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T06:45:52.240796+00:00"
+  "last_updated": "2026-01-16T06:50:13.003895+00:00"
 }
