@@ -807,6 +807,185 @@ extension HealthKitWriteService {
     }
 }
 
+// MARK: - Dietary Energy Write Methods
+
+extension HealthKitWriteService {
+
+    /// HealthKit에 섭취 칼로리 데이터 저장
+    ///
+    /// 📚 학습 포인트: Dietary Energy Sample Creation
+    /// - 사용자가 입력한 식단(섭취 칼로리)을 HealthKit에 저장
+    /// - HKQuantitySample로 변환하여 저장
+    /// - 개별 식사 또는 일일 총량으로 저장 가능
+    /// - Bodii 출처 메타데이터 포함
+    /// 💡 Java 비교: Repository의 save() 메서드와 유사
+    ///
+    /// - Parameters:
+    ///   - calories: 섭취 칼로리 (kcal 단위)
+    ///   - date: 식사 일시 (기본값: 현재 시각)
+    ///   - metadata: 추가 메타데이터 (선택, 예: 식사 종류 "breakfast", "lunch", "dinner")
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 섭취 칼로리 타입 생성 실패
+    ///   - dataTypeNotAuthorized: 섭취 칼로리 쓰기 권한 없음
+    ///   - writeFailed: 저장 실패
+    ///
+    /// - Note:
+    ///   - 개별 식사별로 저장하면 HealthKit이 자동으로 일일 합계 계산
+    ///   - 하루 총 섭취량을 저장할 경우 date를 해당 날짜의 특정 시간으로 설정
+    ///   - FoodRecord 저장 후 HealthKit 동기화에 사용
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 개별 식사 저장 (아침 식사)
+    /// try await healthKitWriteService.saveDietaryEnergy(
+    ///     calories: 450.5,
+    ///     date: breakfastTime,
+    ///     metadata: ["meal_type": "breakfast"]
+    /// )
+    ///
+    /// // 점심 식사
+    /// try await healthKitWriteService.saveDietaryEnergy(
+    ///     calories: 680.0,
+    ///     date: lunchTime,
+    ///     metadata: ["meal_type": "lunch"]
+    /// )
+    ///
+    /// // 일일 총 섭취량 저장
+    /// try await healthKitWriteService.saveDietaryEnergy(
+    ///     calories: 1850.0,
+    ///     date: Date()
+    /// )
+    /// ```
+    func saveDietaryEnergy(
+        calories: Decimal,
+        date: Date = Date(),
+        metadata: [String: Any]? = nil
+    ) async throws {
+        // 📚 학습 포인트: HKQuantityType 가져오기
+        // HealthKitDataTypes를 사용한 타입 안전한 접근
+        // 💡 Java 비교: Enum-based Type Access
+        guard let dietaryType = HealthKitDataTypes.QuantityType.dietaryEnergyConsumed.type else {
+            throw HealthKitError.invalidSampleType(identifier: "dietaryEnergyConsumed")
+        }
+
+        // 📚 학습 포인트: Decimal to Double 변환
+        // Swift의 Decimal을 HKQuantity가 요구하는 Double로 변환
+        // 💡 Java 비교: BigDecimal.doubleValue()와 유사
+        let caloriesValue = NSDecimalNumber(decimal: calories).doubleValue
+
+        // 📚 학습 포인트: HKQuantity 생성
+        // 섭취 칼로리 수치와 단위(kcal)를 조합하여 HealthKit 수량 객체 생성
+        // 💡 Java 비교: Value Object 생성
+        let quantity = HKQuantity(
+            unit: HealthKitDataTypes.QuantityType.dietaryEnergyConsumed.unit, // kcal
+            doubleValue: caloriesValue
+        )
+
+        // 📚 학습 포인트: Metadata 생성
+        // Bodii 출처 정보를 포함한 메타데이터 생성
+        // 식사 종류 등 추가 정보 포함 가능
+        // 💡 Java 비교: @CreatedBy Auditing
+        let sampleMetadata = createMetadata(
+            source: "manual_entry",
+            additionalMetadata: metadata
+        )
+
+        // 📚 학습 포인트: HKQuantitySample 생성
+        // 섭취 칼로리 샘플 객체 생성 (타입, 수량, 시간, 메타데이터)
+        // 💡 Java 비교: Entity 객체 생성
+        let sample = HKQuantitySample(
+            type: dietaryType,
+            quantity: quantity,
+            start: date,
+            end: date,
+            metadata: sampleMetadata
+        )
+
+        // 📚 학습 포인트: Generic Save 메서드 재사용
+        // 이미 구현된 save(sample:)를 사용하여 코드 중복 방지
+        // 💡 Java 비교: Template Method Pattern
+        try await save(sample: sample)
+    }
+
+    /// HealthKit에 여러 식사의 섭취 칼로리를 배치 저장
+    ///
+    /// 📚 학습 포인트: Batch Dietary Energy Save
+    /// - 하루 동안의 여러 식사를 한 번에 저장하여 성능 향상
+    /// - 각 식사는 개별 시간대를 가짐
+    /// - 트랜잭션 단위로 처리되어 전체 성공 또는 전체 실패
+    /// 💡 Java 비교: Batch Insert Operation
+    ///
+    /// - Parameter meals: 식사 정보 배열 (칼로리, 시간, 메타데이터)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 타입 생성 실패
+    ///   - dataTypeNotAuthorized: 쓰기 권한 없음
+    ///   - writeFailed: 저장 실패
+    ///
+    /// - Note:
+    ///   - 배치 저장으로 네트워크 호출 최소화
+    ///   - HealthKit이 자동으로 일일 합계 계산
+    ///   - FoodRecord들을 한 번에 HealthKit에 동기화할 때 사용
+    ///
+    /// - Example:
+    /// ```swift
+    /// let meals: [(calories: Decimal, date: Date, metadata: [String: Any]?)] = [
+    ///     (450.5, breakfastTime, ["meal_type": "breakfast"]),
+    ///     (680.0, lunchTime, ["meal_type": "lunch"]),
+    ///     (720.5, dinnerTime, ["meal_type": "dinner"])
+    /// ]
+    /// try await healthKitWriteService.saveDietaryEnergyBatch(meals: meals)
+    /// ```
+    func saveDietaryEnergyBatch(
+        meals: [(calories: Decimal, date: Date, metadata: [String: Any]?)]
+    ) async throws {
+        // 📚 학습 포인트: Early Return Pattern
+        // 빈 배열이면 바로 반환 (불필요한 작업 방지)
+        // 💡 Java 비교: Guard Clause Pattern
+        guard !meals.isEmpty else {
+            return
+        }
+
+        // 📚 학습 포인트: HKQuantityType 가져오기
+        guard let dietaryType = HealthKitDataTypes.QuantityType.dietaryEnergyConsumed.type else {
+            throw HealthKitError.invalidSampleType(identifier: "dietaryEnergyConsumed")
+        }
+
+        var samples: [HKObject] = []
+
+        // 📚 학습 포인트: Sample Array Creation
+        // 각 식사를 HKQuantitySample로 변환
+        // 💡 Java 비교: Stream.map().collect()와 유사
+        for meal in meals {
+            let caloriesValue = NSDecimalNumber(decimal: meal.calories).doubleValue
+            let quantity = HKQuantity(
+                unit: HealthKitDataTypes.QuantityType.dietaryEnergyConsumed.unit,
+                doubleValue: caloriesValue
+            )
+
+            let sampleMetadata = createMetadata(
+                source: "manual_entry",
+                additionalMetadata: meal.metadata
+            )
+
+            let sample = HKQuantitySample(
+                type: dietaryType,
+                quantity: quantity,
+                start: meal.date,
+                end: meal.date,
+                metadata: sampleMetadata
+            )
+            samples.append(sample)
+        }
+
+        // 📚 학습 포인트: Batch Save
+        // 여러 샘플을 한 번에 저장하여 성능 향상
+        // 💡 Java 비교: saveAll() 메서드
+        try await save(samples: samples)
+    }
+}
+
 // MARK: - Metadata Helper
 
 extension HealthKitWriteService {
