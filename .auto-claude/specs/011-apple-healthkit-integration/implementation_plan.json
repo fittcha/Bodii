@@ -355,7 +355,7 @@
           "id": "4.5",
           "title": "Create Domain to HealthKit Mappers",
           "description": "Create mapper functions to convert domain entities to HealthKit samples for writing.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Data/Mappers/HealthKitMapper.swift"
           ],
@@ -364,7 +364,9 @@
             "createBodyFatSample(from record:) function",
             "createWorkout(from record:) function",
             "Proper metadata and source bundle ID"
-          ]
+          ],
+          "notes": "Created comprehensive Domain \u2192 HealthKit mapper functions in HealthKitMapper:\n\n\u2705 createWeightSample(from:metadata:) function\n  - Converts BodyRecord to HKQuantitySample for weight\n  - Decimal to Double conversion with kg unit\n  - Includes Bodii source metadata\n\n\u2705 createBodyFatSample(from:metadata:) function\n  - Converts BodyRecord to HKQuantitySample for body fat percentage\n  - Unit conversion: 0-100 range \u2192 0-1 range (18.5% \u2192 0.185)\n  - Handles optional body fat percent field\n\n\u2705 createWorkout(from:metadata:) function\n  - Converts ExerciseRecord to HKWorkout\n  - ExerciseType \u2192 HKWorkoutActivityType mapping\n  - Duration conversion: minutes \u2192 seconds\n  - Stores intensity in metadata (HealthKit doesn't have intensity field)\n  - Includes calories burned as HKQuantity\n\n\u2705 createBodyCompositionSamples(from:metadata:) function (bonus)\n  - Batch conversion for weight + body fat percentage\n  - Handles optional body fat gracefully\n\n\u2705 Proper metadata and source bundle ID\n  - HKMetadataKeySyncIdentifier: \"com.bodii.app\"\n  - HKMetadataKeySyncVersion: 1\n  - BodiiSource: \"bodii_manual_entry\"\n  - Custom metadata merge support\n\nHelper methods implemented:\n- mapExerciseTypeToWorkoutActivityType(_:) - Reverse mapping of ExerciseType to HKWorkoutActivityType\n- createMetadata(source:additionalMetadata:) - Metadata generation utility\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Comprehensive documentation with usage examples\n- Type-safe access via HealthKitDataTypes enums\n- Clean MARK sections organization\n- Proper error handling with MappingError\n- Similar structure to existing mappers (BodyRecordMapper)\n\nAll acceptance criteria met:\n\u2705 createWeightSample(from record:) function\n\u2705 createBodyFatSample(from record:) function\n\u2705 createWorkout(from record:) function\n\u2705 Proper metadata and source bundle ID\n\nReady for use in:\n- BodyRecord save \u2192 HealthKit sync workflows\n- ExerciseRecord save \u2192 HealthKit sync workflows\n- HealthKitSyncService integration (Phase 5)\n\nFile committed with proper co-authorship attribution.",
+          "updated_at": "2026-01-16T06:32:06.417008+00:00"
         }
       ]
     },
@@ -378,7 +380,7 @@
           "id": "5.1",
           "title": "Create HealthKitSyncService",
           "description": "Create main sync service that orchestrates reading and writing. Implements sync(since:) method for incremental sync.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitSyncService.swift"
           ],
@@ -387,7 +389,9 @@
             "syncSince(date:) for incremental sync",
             "Tracks last sync date in UserDefaults",
             "Coordinates read and write services"
-          ]
+          ],
+          "notes": "Created comprehensive HealthKitSyncService with all required functionality:\n\n\u2705 sync() method for full sync\n  - Default 7 days synchronization\n  - Parallel task execution with error isolation\n  - UserDefaults tracking for last sync date\n  - @MainActor sync locking to prevent concurrent operations\n\n\u2705 syncSince(date:) for incremental sync\n  - Date range-based synchronization\n  - Efficient incremental updates\n  - Permission-aware sync (only syncs authorized types)\n\n\u2705 Tracks last sync date in UserDefaults\n  - saveLastSyncDate() private method\n  - getLastSyncDate() public accessor\n  - clearLastSyncDate() for reset\n\n\u2705 Coordinates read and write services\n  - syncBodyComposition(): Weight & body fat sync (HealthKit \u2192 Bodii)\n  - syncWorkouts(): Exercise record sync (HealthKit \u2192 Bodii)\n  - syncSleep(): Sleep data sync (HealthKit \u2192 Bodii)\n  - exportBodyComposition(): Weight & body fat export (Bodii \u2192 HealthKit)\n  - exportWorkout(): Exercise record export (Bodii \u2192 HealthKit)\n  - exportDietaryEnergy(): Food calorie export (Bodii \u2192 HealthKit)\n\nAdditional features:\n- Permission checking before each operation\n- Graceful error handling (continues on partial failure)\n- Korean educational comments following project patterns\n- Comprehensive documentation with examples\n- Similar structure to DailyLogService\n- Ready for Repository integration (TODO comments added)\n\nArchitecture:\n- Orchestrates HealthKitReadService, HealthKitWriteService, HealthKitAuthorizationService\n- Uses HealthKitMapper for data transformations\n- Follows Service Pattern with clear separation of concerns\n\nFuture integration points (marked with TODO):\n- Subtask 5.2: healthKitId duplicate detection\n- Subtask 5.3: Conflict resolution strategy\n- Subtask 5.4: Background sync support\n- Subtask 5.5: DailyLogService integration for steps/calories\n- Repository integration for persisting imported data\n\nAll acceptance criteria met:\n\u2705 sync() method for full sync\n\u2705 syncSince(date:) for incremental sync\n\u2705 Tracks last sync date in UserDefaults\n\u2705 Coordinates read and write services\n\nFile committed with proper co-authorship attribution.",
+          "updated_at": "2026-01-16T06:35:58.739948+00:00"
         },
         {
           "id": "5.2",
@@ -613,5 +617,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T06:28:44.489207+00:00"
+  "last_updated": "2026-01-16T06:35:58.739957+00:00"
 }

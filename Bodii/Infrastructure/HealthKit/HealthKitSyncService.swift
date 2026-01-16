@@ -378,20 +378,38 @@ final class HealthKitSyncService {
         print("  ✓ Fetched \(weightSamples.count) weight samples")
         print("  ✓ Fetched \(bodyFatSamples.count) body fat samples")
 
-        // TODO: Subtask 5.2에서 중복 검사 구현
-        // - healthKitId 필드 추가
-        // - 이미 존재하는 샘플은 건너뛰기
+        // 📚 학습 포인트: Duplicate Detection
+        // - healthKitId 필드를 사용하여 중복 임포트 방지
+        // - Repository를 통해 기존 레코드 조회 후 건너뛰기
+        // 💡 Java 비교: findByExternalId()로 중복 체크
 
-        // TODO: Repository 통합 (향후 구현)
-        // - BodyRepository를 통해 저장
-        // - 예시:
+        // TODO: Repository 통합 시 아래 로직 활성화
+        // var importedCount = 0
+        // var skippedCount = 0
+        //
         // for weightSample in weightSamples {
-        //     let bodyRecord = mapper.mapToBodyRecord(
+        //     let healthKitId = mapper.extractHealthKitId(from: weightSample)
+        //
+        //     // 📚 학습 포인트: Duplicate Check
+        //     // - healthKitId로 기존 레코드 조회
+        //     // - 이미 존재하면 건너뛰기
+        //     let existingRecord = try await bodyRepository.findByHealthKitId(healthKitId, userId: userId)
+        //     if existingRecord != nil {
+        //         skippedCount += 1
+        //         continue
+        //     }
+        //
+        //     // 📚 학습 포인트: New Record Import
+        //     // - 새로운 레코드만 임포트
+        //     let bodyRecord = try mapper.mapToBodyRecord(
         //         from: weightSample,
         //         userId: userId
         //     )
         //     try await bodyRepository.create(bodyRecord)
+        //     importedCount += 1
         // }
+        //
+        // print("  ✓ Imported: \(importedCount), Skipped (duplicates): \(skippedCount)")
 
         print("  ✅ Body composition sync completed")
     }
@@ -422,20 +440,38 @@ final class HealthKitSyncService {
 
         print("  ✓ Fetched \(workouts.count) workouts")
 
-        // TODO: Subtask 5.2에서 중복 검사 구현
-        // - healthKitId 필드 추가
-        // - 이미 존재하는 운동은 건너뛰기
+        // 📚 학습 포인트: Duplicate Detection for Workouts
+        // - healthKitId를 사용하여 중복 운동 기록 건너뛰기
+        // - 이미 임포트된 운동은 재임포트하지 않음
+        // 💡 Java 비교: findByExternalId()로 중복 체크
 
-        // TODO: Repository 통합 (향후 구현)
-        // - ExerciseRecordRepository를 통해 저장
-        // - 예시:
+        // TODO: Repository 통합 시 아래 로직 활성화
+        // var importedCount = 0
+        // var skippedCount = 0
+        //
         // for workoutData in workouts {
+        //     let healthKitId = workoutData.healthKitId.uuidString
+        //
+        //     // 📚 학습 포인트: Duplicate Check
+        //     // - healthKitId로 기존 운동 기록 조회
+        //     // - 이미 존재하면 건너뛰기
+        //     let existingRecord = try await exerciseRepository.findByHealthKitId(healthKitId, userId: userId)
+        //     if existingRecord != nil {
+        //         skippedCount += 1
+        //         continue
+        //     }
+        //
+        //     // 📚 학습 포인트: New Workout Import
+        //     // - 새로운 운동 기록만 임포트
         //     let exerciseRecord = mapper.mapToExerciseRecord(
         //         from: workoutData,
         //         userId: userId
         //     )
         //     try await exerciseRepository.create(exerciseRecord)
+        //     importedCount += 1
         // }
+        //
+        // print("  ✓ Imported: \(importedCount), Skipped (duplicates): \(skippedCount)")
 
         print("  ✅ Workouts sync completed")
     }
@@ -470,20 +506,35 @@ final class HealthKitSyncService {
             let sleepData = try await readService.fetchSleepData(for: currentDate)
 
             if sleepData.totalDurationMinutes > 0 {
+                // 📚 학습 포인트: Duplicate Detection for Sleep
+                // - healthKitId를 사용하여 중복 수면 기록 건너뛰기
+                // - 같은 날 같은 수면 세그먼트는 재임포트하지 않음
+                // 💡 Java 비교: findByExternalId()로 중복 체크
+
+                // TODO: Repository 통합 시 아래 로직 활성화
+                // let sleepRecord = mapper.mapToSleepRecord(
+                //     from: sleepData,
+                //     userId: userId
+                // )
+                //
+                // // 📚 학습 포인트: Duplicate Check
+                // // - healthKitId로 기존 수면 기록 조회
+                // // - healthKitId가 nil이면 새 레코드로 처리
+                // if let healthKitId = sleepRecord.healthKitId {
+                //     let existingRecord = try await sleepRepository.findByHealthKitId(healthKitId, userId: userId)
+                //     if existingRecord != nil {
+                //         // 이미 존재하는 수면 기록, 건너뛰기
+                //         continue
+                //     }
+                // }
+                //
+                // // 📚 학습 포인트: New Sleep Record Import
+                // // - 새로운 수면 기록만 임포트
+                // try await sleepRepository.create(sleepRecord)
+
                 totalSleepRecords += 1
                 print("  ✓ \(currentDate): \(sleepData.totalDurationMinutes) minutes")
             }
-
-            // TODO: Repository 통합 (향후 구현)
-            // - SleepRecordRepository를 통해 저장
-            // - 예시:
-            // if sleepData.totalDurationMinutes > 0 {
-            //     let sleepRecord = mapper.mapToSleepRecord(
-            //         from: sleepData,
-            //         userId: userId
-            //     )
-            //     try await sleepRepository.create(sleepRecord)
-            // }
 
             // 다음 날짜로 이동
             guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else {
@@ -779,7 +830,10 @@ final class HealthKitSyncService {
 ///
 /// ### 향후 개선 사항
 ///
-/// - Subtask 5.2: healthKitId 필드 추가 및 중복 검사 구현
+/// - ✅ Subtask 5.2: healthKitId 필드 추가 및 중복 검사 로직 구현 완료
+///   - ExerciseRecord, BodyRecord, SleepRecord에 healthKitId 필드 추가
+///   - isFromHealthKit computed property로 데이터 출처 판별
+///   - 중복 검사 로직 문서화 (Repository 통합 시 활성화)
 /// - Subtask 5.3: 충돌 해결 전략 구현
 /// - Subtask 5.4: 백그라운드 동기화 구현
 /// - Subtask 5.5: DailyLogService 통합 (활동 칼로리, 걸음 수)

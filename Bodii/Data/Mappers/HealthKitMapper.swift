@@ -166,14 +166,21 @@ struct HealthKitMapper {
         // - endDate는 즉시 측정이므로 startDate와 동일한 경우가 많음
         let date = weightSample.startDate
 
+        // 📚 학습 포인트: HealthKit UUID Preservation
+        // - HealthKit 샘플의 UUID를 보존하여 중복 검사에 활용
+        // - 동일한 UUID를 가진 레코드는 이미 임포트된 것으로 간주
+        // 💡 Java 비교: External ID 추적과 유사
+        let healthKitId = extractHealthKitId(from: weightSample)
+
         return BodyRecord(
-            id: UUID(), // 📚 새 ID 생성 (HealthKit UUID는 metadata에 보관 가능)
+            id: UUID(), // 📚 새 ID 생성 (HealthKit UUID는 healthKitId 필드에 보관)
             userId: userId,
             date: date,
             weight: weight,
             bodyFatMass: bodyFatMass,
             bodyFatPercent: bodyFatPercent,
             muscleMass: nil, // HealthKit은 골격근량을 직접 제공하지 않음
+            healthKitId: healthKitId,
             createdAt: Date()
         )
     }
@@ -207,6 +214,12 @@ struct HealthKitMapper {
         // - WorkoutData는 이미 앱의 타입(ExerciseType, Intensity)으로 변환됨
         // - 단순히 도메인 엔티티 구조로 재구성
 
+        // 📚 학습 포인트: HealthKit UUID Preservation
+        // - WorkoutData의 healthKitId를 보존하여 중복 검사에 활용
+        // - 이미 임포트된 운동은 건너뛰기
+        // 💡 Java 비교: External ID 추적과 유사
+        let healthKitId = workoutData.healthKitId.uuidString
+
         return ExerciseRecord(
             id: UUID(), // 📚 새 ID 생성
             userId: userId,
@@ -215,6 +228,7 @@ struct HealthKitMapper {
             duration: workoutData.duration,
             intensity: workoutData.intensity,
             caloriesBurned: workoutData.caloriesBurned,
+            healthKitId: healthKitId,
             createdAt: Date()
         )
     }
@@ -254,12 +268,19 @@ struct HealthKitMapper {
         // - 실제로는 02:00 기준 처리가 필요하지만 여기서는 startDate 사용
         let date = sleepData.startDate ?? Date()
 
+        // 📚 학습 포인트: HealthKit UUID Preservation
+        // - 수면 세그먼트 중 첫 번째 세그먼트의 UUID를 대표 ID로 사용
+        // - 중복 임포트 방지에 활용
+        // 💡 Java 비교: External ID 추적과 유사
+        let healthKitId = sleepData.segments.first.map { extractHealthKitId(from: $0) }
+
         return SleepRecord(
             id: UUID(), // 📚 새 ID 생성
             userId: userId,
             date: date,
             duration: duration,
             status: status,
+            healthKitId: healthKitId,
             createdAt: Date(),
             updatedAt: Date()
         )
@@ -592,7 +613,7 @@ extension HealthKitMapper {
     ///
     /// 📚 학습 포인트: Duplicate Detection Helper
     /// - HKSample의 UUID를 String으로 변환
-    /// - ExerciseRecord, BodyRecord에 healthKitId 필드를 추가하여 저장 가능
+    /// - ExerciseRecord, BodyRecord, SleepRecord의 healthKitId 필드에 저장
     /// - 동일한 HealthKit UUID를 가진 레코드는 중복으로 간주
     /// 💡 Java 비교: External ID 추출과 유사
     ///
@@ -600,7 +621,7 @@ extension HealthKitMapper {
     ///
     /// - Returns: UUID 문자열
     ///
-    /// - Note: 향후 BodyRecord, ExerciseRecord에 healthKitId: String? 필드 추가 필요
+    /// - Note: 모든 도메인 엔티티에 healthKitId: String? 필드가 추가되어 중복 검사 가능
     func extractHealthKitId(from sample: HKSample) -> String {
         return sample.uuid.uuidString
     }
