@@ -40,52 +40,19 @@ struct SettingsView: View {
 
     // MARK: - Properties
 
-    /// HealthKit 권한 서비스
+    /// HealthKit 설정 ViewModel
     ///
-    /// 📚 학습 포인트: Dependency Injection
-    /// - 권한 요청 및 상태 확인을 담당하는 서비스
-    /// 💡 Java 비교: Constructor Injection
+    /// 📚 학습 포인트: @StateObject for ViewModel
+    /// - ViewModel의 생명주기를 View가 관리
+    /// - View가 재생성되어도 ViewModel은 유지
+    /// 💡 Java 비교: ViewModel by viewModels()
+    @StateObject private var viewModel: HealthKitSettingsViewModel
+
+    /// HealthKit 권한 서비스 (Sheet에 전달용)
+    ///
+    /// 📚 학습 포인트: Service Pass-through
+    /// - ViewModel 내부에 있지만 HealthKitPermissionView에 전달 필요
     let authService: HealthKitAuthorizationService
-
-    /// HealthKit 동기화 서비스
-    ///
-    /// 📚 학습 포인트: Service Injection
-    /// - 동기화 수행 및 마지막 동기화 시각 조회
-    let syncService: HealthKitSyncService
-
-    // MARK: - State
-
-    /// HealthKit 연동 활성화 상태
-    ///
-    /// 📚 학습 포인트: @AppStorage
-    /// - UserDefaults에 자동 저장되는 @State 래퍼
-    /// - 앱 재시작 후에도 값 유지
-    /// 💡 Java 비교: SharedPreferences와 유사
-    @AppStorage("healthKitSyncEnabled") private var healthKitSyncEnabled = false
-
-    /// 권한 온보딩 화면 표시 여부
-    ///
-    /// 📚 학습 포인트: @State for Sheet Presentation
-    /// - sheet modifier와 함께 사용하여 모달 표시
-    @State private var showPermissionView = false
-
-    /// 권한 거부 안내 화면 표시 여부
-    @State private var showDeniedView = false
-
-    /// 권한 상태 체크 트리거
-    ///
-    /// 📚 학습 포인트: State for Manual Refresh
-    /// - 권한 상태를 다시 확인하기 위한 트리거
-    @State private var authorizationCheckTrigger = false
-
-    /// 동기화 중 상태
-    @State private var isSyncing = false
-
-    /// 에러 메시지
-    @State private var errorMessage: String?
-
-    /// 에러 알림 표시 여부
-    @State private var showError = false
 
     // MARK: - Body
 
@@ -100,41 +67,36 @@ struct SettingsView: View {
             }
             .navigationTitle("설정")
             .navigationBarTitleDisplayMode(.large)
-            // 📚 학습 포인트: Sheet Presentation
-            // showPermissionView가 true일 때 모달 표시
-            .sheet(isPresented: $showPermissionView) {
+            // 📚 학습 포인트: Sheet Presentation with ViewModel
+            // viewModel.showPermissionView가 true일 때 모달 표시
+            .sheet(isPresented: $viewModel.showPermissionView) {
                 HealthKitPermissionView(
                     authService: authService,
                     onPermissionGranted: {
-                        // 📚 학습 포인트: Permission Success Callback
-                        // 권한 허용 후 설정 활성화 및 동기화 시작
-                        healthKitSyncEnabled = true
-                        authorizationCheckTrigger.toggle()
-
-                        // 백그라운드에서 동기화 시작
-                        Task {
-                            await performSync()
-                        }
+                        // 📚 학습 포인트: ViewModel Callback
+                        // ViewModel의 메서드 호출
+                        viewModel.onPermissionGranted()
                     }
                 )
             }
             // 권한 거부 안내 화면
-            .sheet(isPresented: $showDeniedView) {
+            .sheet(isPresented: $viewModel.showDeniedView) {
                 HealthKitDeniedView(
                     onSettingsOpened: {
-                        // 설정 앱에서 돌아온 후 권한 상태 재확인
-                        authorizationCheckTrigger.toggle()
+                        // 📚 학습 포인트: ViewModel Callback
+                        // ViewModel의 메서드 호출
+                        viewModel.onSettingsReturned()
                     }
                 )
             }
-            // 📚 학습 포인트: Error Alert
-            // 에러 발생 시 알림 표시
-            .alert("오류", isPresented: $showError) {
+            // 📚 학습 포인트: Error Alert with ViewModel
+            // ViewModel의 에러 상태에 바인딩
+            .alert("오류", isPresented: $viewModel.showError) {
                 Button("확인") {
-                    errorMessage = nil
+                    viewModel.errorMessage = nil
                 }
             } message: {
-                if let errorMessage = errorMessage {
+                if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
                 }
             }
@@ -152,7 +114,7 @@ struct SettingsView: View {
     private var healthKitSection: some View {
         Section {
             // HealthKit 토글
-            Toggle(isOn: $healthKitSyncEnabled) {
+            Toggle(isOn: $viewModel.isEnabled) {
                 HStack(spacing: 12) {
                     // Apple Health 아이콘
                     Image(systemName: "heart.fill")
@@ -175,19 +137,19 @@ struct SettingsView: View {
                     }
                 }
             }
-            .onChange(of: healthKitSyncEnabled) { oldValue, newValue in
-                // 📚 학습 포인트: Toggle onChange
-                // 토글 변경 시 권한 요청 또는 비활성화 처리
-                handleHealthKitToggleChange(oldValue: oldValue, newValue: newValue)
+            .onChange(of: viewModel.isEnabled) { oldValue, newValue in
+                // 📚 학습 포인트: Toggle onChange with ViewModel
+                // ViewModel의 메서드 호출
+                viewModel.toggleHealthKit(enabled: newValue)
             }
 
             // 마지막 동기화 시각 표시
-            if healthKitSyncEnabled {
+            if viewModel.isEnabled {
                 lastSyncRow
             }
 
             // 수동 동기화 버튼
-            if healthKitSyncEnabled && authService.isHealthDataAvailable() {
+            if viewModel.isEnabled && viewModel.isHealthKitAvailable {
                 syncNowButton
             }
 
@@ -204,33 +166,18 @@ struct SettingsView: View {
     /// - 권한 상태에 따라 다른 메시지 표시
     @ViewBuilder
     private var authorizationStatusText: some View {
-        // 📚 학습 포인트: HealthKit Availability Check
-        // HealthKit 사용 가능 여부 먼저 확인
-        if !authService.isHealthDataAvailable() {
+        // 📚 학습 포인트: ViewModel State Display
+        // ViewModel의 상태를 표시
+        if !viewModel.isHealthKitAvailable {
             Text("이 기기에서는 사용할 수 없습니다")
                 .font(.caption)
                 .foregroundStyle(.red)
-        } else if healthKitSyncEnabled {
-            // 권한 요약 정보 가져오기
-            let summary = authService.getAuthorizationSummary()
-
-            if summary.isFullyAuthorized {
-                Text("연동됨 · 모든 권한 허용")
-                    .font(.caption)
-                    .foregroundStyle(.green)
-            } else if summary.isPartiallyAuthorized {
-                Text("연동됨 · 일부 권한만 허용")
-                    .font(.caption)
-                    .foregroundStyle(.orange)
-            } else if summary.isFullyDenied {
-                Text("권한이 거부되었습니다")
-                    .font(.caption)
-                    .foregroundStyle(.red)
-            } else {
-                Text("권한 확인 중...")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+        } else if viewModel.isEnabled {
+            // 📚 학습 포인트: Enum-based UI State
+            // ViewModel의 AuthorizationStatus enum 사용
+            Text(viewModel.authorizationStatus.displayText)
+                .font(.caption)
+                .foregroundStyle(viewModel.authorizationStatus.color)
         } else {
             Text("비활성화")
                 .font(.caption)
@@ -250,7 +197,9 @@ struct SettingsView: View {
 
             Spacer()
 
-            if let lastSyncDate = syncService.getLastSyncDate() {
+            // 📚 학습 포인트: ViewModel State Display
+            // ViewModel의 lastSyncDate 사용
+            if let lastSyncDate = viewModel.lastSyncDate {
                 // 📚 학습 포인트: RelativeDateTimeFormatter
                 // "방금", "5분 전", "2시간 전" 등 상대 시간으로 표시
                 Text(lastSyncDate, style: .relative)
@@ -272,8 +221,10 @@ struct SettingsView: View {
     @ViewBuilder
     private var syncNowButton: some View {
         Button(action: {
+            // 📚 학습 포인트: ViewModel Method Call
+            // ViewModel의 syncNow() 메서드 호출
             Task {
-                await performSync()
+                await viewModel.syncNow()
             }
         }) {
             HStack {
@@ -281,7 +232,9 @@ struct SettingsView: View {
 
                 Spacer()
 
-                if isSyncing {
+                // 📚 학습 포인트: ViewModel State Display
+                // ViewModel의 isSyncing 상태 사용
+                if viewModel.isSyncing {
                     ProgressView()
                         .scaleEffect(0.8)
                 } else {
@@ -290,7 +243,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .disabled(isSyncing)
+        .disabled(!viewModel.canSync)
     }
 
     /// 앱 정보 섹션
@@ -318,126 +271,33 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Actions
+    // MARK: - Initialization
 
-    /// HealthKit 토글 변경 처리
+    /// SettingsView 초기화
     ///
-    /// 📚 학습 포인트: Toggle Change Handler
-    /// - 토글 ON: 권한 요청 또는 권한 거부 안내
-    /// - 토글 OFF: 동기화 비활성화
+    /// 📚 학습 포인트: ViewModel Initialization in View
+    /// - ViewModel을 @StateObject로 생성
+    /// - 서비스는 ViewModel에 주입
     ///
     /// - Parameters:
-    ///   - oldValue: 이전 값
-    ///   - newValue: 새 값
-    private func handleHealthKitToggleChange(oldValue: Bool, newValue: Bool) {
-        // 📚 학습 포인트: Guard HealthKit Availability
-        // HealthKit 사용 불가 시 토글 되돌리기
-        guard authService.isHealthDataAvailable() else {
-            healthKitSyncEnabled = false
-            errorMessage = "이 기기에서는 Apple Health를 사용할 수 없습니다."
-            showError = true
-            return
-        }
+    ///   - authService: HealthKit 권한 서비스
+    ///   - syncService: HealthKit 동기화 서비스
+    init(
+        authService: HealthKitAuthorizationService,
+        syncService: HealthKitSyncService
+    ) {
+        self.authService = authService
 
-        if newValue && !oldValue {
-            // 토글 ON: 권한 요청
-            // 📚 학습 포인트: Request Permission on Toggle
-            // 권한이 없으면 온보딩 화면 표시
-            requestHealthKitPermission()
-        } else if !newValue && oldValue {
-            // 토글 OFF: 동기화 비활성화
-            // 📚 학습 포인트: Disable Sync
-            // UserDefaults에 저장된 값만 변경 (권한은 취소하지 않음)
-            // 사용자가 원하면 설정 앱에서 직접 권한 취소 가능
-        }
-    }
-
-    /// HealthKit 권한 요청
-    ///
-    /// 📚 학습 포인트: Permission Request Flow
-    /// - 권한이 거부된 경우: 거부 안내 화면 표시
-    /// - 권한이 없는 경우: 온보딩 화면 표시
-    /// - 권한이 이미 허용된 경우: 동기화 시작
-    private func requestHealthKitPermission() {
-        let summary = authService.getAuthorizationSummary()
-
-        // 📚 학습 포인트: Handle Permission States
-        if summary.isFullyDenied {
-            // 권한 거부됨 → 설정 앱으로 안내
-            showDeniedView = true
-            healthKitSyncEnabled = false
-        } else if summary.isFullyAuthorized || summary.isPartiallyAuthorized {
-            // 이미 권한 허용됨 → 동기화 시작
-            Task {
-                await performSync()
-            }
-        } else {
-            // 권한 없음 → 온보딩 화면 표시
-            showPermissionView = true
-        }
-    }
-
-    /// 동기화 수행
-    ///
-    /// 📚 학습 포인트: Async Sync Operation
-    /// - 비동기로 동기화 수행
-    /// - 로딩 상태 관리
-    /// - 에러 처리
-    private func performSync() async {
-        // 로딩 시작
-        isSyncing = true
-        defer { isSyncing = false }
-
-        do {
-            // 📚 학습 포인트: Call Sync Service
-            // TODO: Phase 7 - 실제 userId로 교체
-            // 임시로 고정 UUID 사용 (실제 인증 구현 전)
-            let tempUserId = UUID(uuidString: "00000000-0000-0000-0000-000000000001") ?? UUID()
-            try await syncService.sync(userId: tempUserId)
-
-            // 권한 상태 업데이트 트리거
-            authorizationCheckTrigger.toggle()
-
-        } catch let error as HealthKitError {
-            // 📚 학습 포인트: Error Handling
-            // HealthKitError를 사용자 친화적인 메시지로 변환
-            errorMessage = error.localizedDescription
-            showError = true
-
-            // 권한 에러인 경우 토글 비활성화
-            if error.isAuthorizationError {
-                healthKitSyncEnabled = false
-            }
-
-        } catch {
-            // 예상치 못한 에러
-            errorMessage = "동기화 중 오류가 발생했습니다."
-            showError = true
-        }
+        // 📚 학습 포인트: @StateObject Initialization
+        // _viewModel을 사용하여 StateObject 초기화
+        // 💡 Java 비교: by viewModels() 팩토리 함수와 유사
+        _viewModel = StateObject(wrappedValue: HealthKitSettingsViewModel(
+            authService: authService,
+            syncService: syncService
+        ))
     }
 }
 
-// MARK: - Initialization Extensions
-
-extension SettingsView {
-    /// 기본 초기화
-    ///
-    /// 📚 학습 포인트: Default Initializer
-    /// - HKHealthStore를 새로 생성하여 서비스 초기화
-    /// - Preview나 간단한 테스트용
-    init() {
-        let healthStore = HKHealthStore()
-        self.authService = HealthKitAuthorizationService(healthStore: healthStore)
-
-        let readService = HealthKitReadService(healthStore: healthStore)
-        let writeService = HealthKitWriteService(healthStore: healthStore)
-        self.syncService = HealthKitSyncService(
-            readService: readService,
-            writeService: writeService,
-            authService: authService
-        )
-    }
-}
 
 // MARK: - Preview
 
