@@ -42,18 +42,29 @@ struct ContentView: View {
     // MARK: - Tab Views
 
     private var dashboardTab: some View {
-        // 📚 학습 포인트: tabItem modifier
-        // 탭 바에 표시될 아이콘과 텍스트 정의
-        // TODO: Phase 6 (6.1, 6.2) - DIContainer에서 ViewModel 주입받도록 변경
-        // 현재는 임시로 직접 생성하여 사용
-        let bodyRepository = BodyRepository()
-        let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
+        // 📚 학습 포인트: DIContainer Factory Pattern
+        // DIContainer의 factory 메서드를 통해 DashboardViewModel 생성
+        // TODO: Phase 7 - UserProfile을 실제 저장된 사용자 데이터로 교체
+        // 현재는 임시로 sample 데이터 사용
+        let viewModel = DIContainer.shared.makeDashboardViewModel(
+            userId: UserProfile.sample.id
+        )
 
         return DashboardView(
-            metabolismViewModel: metabolismViewModel,
+            viewModel: viewModel,
+            onNavigateToDiet: {
+                // 📚 학습 포인트: Tab Navigation from Quick-Add
+                // 음식 추가 버튼 탭 시 식단 탭으로 이동
+                selectedTab = .diet
+            },
+            onNavigateToExercise: {
+                // 📚 학습 포인트: Tab Navigation from Quick-Add
+                // 운동 추가 버튼 탭 시 운동 탭으로 이동
+                selectedTab = .exercise
+            },
             onNavigateToBody: {
-                // 📚 학습 포인트: Tab Navigation
-                // 대사율 카드 탭 시 체성분 탭으로 이동
+                // 📚 학습 포인트: Tab Navigation from Quick-Add
+                // 체성분 기록 버튼 탭 시 체성분 탭으로 이동
                 selectedTab = .body
             }
         )

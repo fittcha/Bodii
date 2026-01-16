@@ -2,7 +2,7 @@
 
 ## Last Updated: 2026-01-16
 
-## Completed Subtasks: 11/19 (58%)
+## Completed Subtasks: 12/19 (63%)
 
 ### Phase 1: Core ViewModel & Data Layer ✅
 - [x] 1.1 - Extend DailyLogRepository for Dashboard
@@ -21,8 +21,8 @@
 - [x] 3.2 - Create QuickAddButtons
 
 ### Phase 4: Dashboard Integration (In Progress)
-- [x] 4.1 - Refactor DashboardView with New Components ✨ JUST COMPLETED
-- [ ] 4.2 - Implement Pull-to-Refresh with DailyLog
+- [x] 4.1 - Refactor DashboardView with New Components
+- [x] 4.2 - Implement Pull-to-Refresh with DailyLog ✨ JUST COMPLETED
 - [ ] 4.3 - Add Navigation Callbacks for Quick-Add
 - [ ] 4.4 - Update ContentView Tab Integration
 
@@ -36,6 +36,20 @@
 - [ ] 6.2 - SwiftUI Previews for All Components
 
 ## Recent Activity
+
+### 2026-01-16 - Subtask 4.2 Completed
+- Implemented pull-to-refresh functionality for DashboardView
+- Added `.refreshable` modifier to ScrollView
+- Connected to DashboardViewModel.refresh() method
+- Pull-to-refresh gesture now updates all dashboard cards with fresh DailyLog data
+- Loading indicator automatically shown during refresh (handled by SwiftUI)
+- Implementation details:
+  - Placed `.refreshable` modifier before `.task` modifier
+  - Follows same pattern as ExerciseListView and BodyTrendsView
+  - Async/await pattern ensures smooth UI updates
+  - All cards (CalorieBalance, MacroBreakdown, Exercise, Sleep, BodyComposition) refresh together
+- Educational Korean documentation included
+- Committed as: 060a5a1
 
 ### 2026-01-16 - Subtask 4.1 Completed
 - Refactored DashboardView to integrate all new components
@@ -92,17 +106,12 @@
 
 ## Next Steps
 
-1. **Subtask 4.2** - Implement Pull-to-Refresh with DailyLog
-   - Connect refreshable modifier to DashboardViewModel.refresh() method
-   - Show loading indicator during refresh
-   - Update all cards with fresh DailyLog data
-
-2. **Subtask 4.3** - Add Navigation Callbacks for Quick-Add
+1. **Subtask 4.3** - Add Navigation Callbacks for Quick-Add
    - Implement navigation callbacks from quick-add buttons to Diet, Exercise, Body tabs
    - Add onNavigateToDiet, onNavigateToExercise callbacks to DashboardView
    - **Note**: This is partially complete as callbacks were added in 4.1, but ContentView integration is needed
 
-3. **Subtask 4.4** - Update ContentView Tab Integration
+2. **Subtask 4.4** - Update ContentView Tab Integration
    - Update ContentView to pass DashboardViewModel with proper dependencies
    - Wire up all navigation callbacks for tab switching
 
