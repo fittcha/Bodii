@@ -195,7 +195,7 @@
           "id": "3.2",
           "title": "Implement Weight & Body Fat Reading",
           "description": "Add methods to read weight (HKQuantityType.bodyMass) and body fat percentage (HKQuantityType.bodyFatPercentage) from HealthKit.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitReadService.swift"
           ],
@@ -204,13 +204,15 @@
             "fetchBodyFatPercentage(from:to:) method",
             "fetchLatestWeight() method",
             "Converts HKQuantity to Decimal correctly"
-          ]
+          ],
+          "notes": "Implemented weight and body fat percentage reading methods in HealthKitReadService:\n\n\u2705 fetchWeight(from:to:) method - Queries weight samples in date range\n\u2705 fetchBodyFatPercentage(from:to:) method - Queries body fat percentage samples in date range\n\u2705 fetchLatestWeight() method - Returns most recent weight sample\n\u2705 fetchLatestBodyFatPercentage() method - Returns most recent body fat percentage sample\n\u2705 convertWeightToDecimal(_:) - Converts HKQuantity to Decimal (kg unit)\n\u2705 convertBodyFatPercentageToDecimal(_:) - Converts HKQuantity to Decimal (0-100% range)\n\nAll acceptance criteria met:\n\u2705 fetchWeight(from:to:) method\n\u2705 fetchBodyFatPercentage(from:to:) method\n\u2705 fetchLatestWeight() method\n\u2705 Converts HKQuantity to Decimal correctly with proper units\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Type-safe usage of HealthKitDataTypes enums\n- Reuses generic fetchSamples<T> method for efficiency\n- Proper error handling with HealthKitError\n- Comprehensive documentation with usage examples\n- Correct unit conversions (kg for weight, 0-100% for body fat)\n\nCommitted successfully with proper co-authorship attribution.",
+          "updated_at": "2026-01-16T06:06:54.755308+00:00"
         },
         {
           "id": "3.3",
           "title": "Implement Active Calories & Steps Reading",
           "description": "Add methods to read active energy burned (HKQuantityType.activeEnergyBurned) and step count (HKQuantityType.stepCount).",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitReadService.swift"
           ],
@@ -219,7 +221,9 @@
             "fetchSteps(for date:) method returns daily total",
             "Uses HKStatisticsQuery for aggregation",
             "Handles multiple sources correctly"
-          ]
+          ],
+          "notes": "Implemented active calories and step count reading methods in HealthKitReadService:\n\n\u2705 fetchActiveCalories(for date:) method returns daily total\n  - Uses HKStatisticsQuery with .cumulativeSum option\n  - Aggregates data from Apple Watch, iPhone, and other apps\n  - Returns Decimal in kcal units, nil if no data available\n  \n\u2705 fetchSteps(for date:) method returns daily total\n  - Uses HKStatisticsQuery with .cumulativeSum option\n  - Merges iPhone and Apple Watch step data\n  - HealthKit automatically handles duplicate removal\n  - Returns Decimal count, nil if no data available\n\n\u2705 Uses HKStatisticsQuery for aggregation\n  - Leverages existing fetchStatistics() generic method\n  - .cumulativeSum option for daily totals\n  - Handles date range with getDateBounds() helper\n\n\u2705 Handles multiple sources correctly\n  - HealthKit automatically aggregates data from multiple devices/apps\n  - Duplicate data is automatically removed by HealthKit\n  - No manual deduplication needed\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Type-safe access via HealthKitDataTypes enums\n- Comprehensive error handling with HealthKitError\n- Detailed documentation with usage examples\n- Returns Optional Decimal for consistency with other read methods\n- Reuses existing infrastructure (fetchStatistics, getDateBounds)\n\nAll acceptance criteria met and committed successfully.",
+          "updated_at": "2026-01-16T06:08:57.336743+00:00"
         },
         {
           "id": "3.4",
@@ -595,5 +599,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T06:04:35.605782+00:00"
+  "last_updated": "2026-01-16T06:08:57.336752+00:00"
 }

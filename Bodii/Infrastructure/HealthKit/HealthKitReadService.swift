@@ -811,6 +811,269 @@ extension HealthKitReadService {
     }
 }
 
+// MARK: - Sleep Data Reading
+
+extension HealthKitReadService {
+
+    /// 수면 데이터 구조체
+    ///
+    /// 📚 학습 포인트: Sleep Data Model
+    /// - HealthKit에서 조회한 수면 데이터를 담는 구조체
+    /// - 여러 수면 세그먼트의 정보를 통합하여 제공
+    /// 💡 Java 비교: DTO(Data Transfer Object)와 유사
+    ///
+    /// - Note: HealthKit의 수면 데이터는 여러 세그먼트로 나뉠 수 있음
+    ///         (예: 자다가 깨어났다가 다시 잠든 경우)
+    ///
+    /// - Example:
+    /// ```swift
+    /// let sleepData = SleepData(
+    ///     totalDurationMinutes: 420,  // 7시간
+    ///     segments: sleepSamples,
+    ///     startDate: Date(),
+    ///     endDate: Date().addingTimeInterval(7 * 3600)
+    /// )
+    /// ```
+    struct SleepData {
+        /// 총 수면 시간 (분 단위)
+        ///
+        /// 📚 학습 포인트: Sleep Duration Calculation
+        /// - 여러 수면 세그먼트의 실제 수면 시간만 합산
+        /// - inBed 상태는 제외하고 asleep 상태만 계산
+        /// 💡 Java 비교: sum(durations)와 유사
+        let totalDurationMinutes: Int
+
+        /// 수면 세그먼트 배열
+        ///
+        /// 📚 학습 포인트: Sleep Segments
+        /// - HealthKit은 수면을 여러 세그먼트로 기록
+        /// - 각 세그먼트: inBed, asleep, awake, core, deep, REM 등
+        /// 💡 Java 비교: List<HKCategorySample>과 유사
+        let segments: [HKCategorySample]
+
+        /// 첫 번째 수면 세그먼트 시작 시간
+        ///
+        /// - Note: nil이면 수면 데이터가 없음
+        let startDate: Date?
+
+        /// 마지막 수면 세그먼트 종료 시간
+        ///
+        /// - Note: nil이면 수면 데이터가 없음
+        let endDate: Date?
+    }
+
+    /// 수면 데이터 조회 (특정 날짜)
+    ///
+    /// 📚 학습 포인트: Sleep Analysis
+    /// - HKCategoryType.sleepAnalysis 사용
+    /// - 수면 세그먼트를 조회하고 실제 수면 시간 계산
+    /// - inBed(침대에 누워있음)는 제외하고 asleep(실제 수면) 상태만 집계
+    /// 💡 Java 비교: findSleepRecordsByDate()와 유사
+    ///
+    /// - Parameter date: 조회할 날짜
+    ///
+    /// - Returns: SleepData 객체 (수면 데이터가 없으면 nil)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 수면 타입 생성 실패
+    ///   - queryExecutionFailed: 쿼리 실행 실패
+    ///
+    /// - Note: 수면 카테고리 종류
+    ///   - **HKCategoryValueSleepAnalysis.inBed**: 침대에 누워있음 (수면 시간 미포함)
+    ///   - **HKCategoryValueSleepAnalysis.asleep**: 수면 중 (구형, 수면 시간 포함)
+    ///   - **HKCategoryValueSleepAnalysis.awake**: 깨어있음 (수면 시간 미포함)
+    ///   - **HKCategoryValueSleepAnalysis.asleepCore**: 얕은 수면 (iOS 16+, 수면 시간 포함)
+    ///   - **HKCategoryValueSleepAnalysis.asleepDeep**: 깊은 수면 (iOS 16+, 수면 시간 포함)
+    ///   - **HKCategoryValueSleepAnalysis.asleepREM**: 렘수면 (iOS 16+, 수면 시간 포함)
+    ///   - **HKCategoryValueSleepAnalysis.asleepUnspecified**: 미분류 수면 (iOS 16+, 수면 시간 포함)
+    ///
+    /// - Note: 수면 시간 계산 규칙
+    ///   - asleep, asleepCore, asleepDeep, asleepREM, asleepUnspecified만 수면 시간으로 집계
+    ///   - inBed, awake는 수면 시간에서 제외
+    ///   - 여러 세그먼트의 총 시간을 합산
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 오늘의 수면 데이터 조회
+    /// if let sleepData = try await service.fetchSleepData(for: Date()) {
+    ///     print("총 수면 시간: \(sleepData.totalDurationMinutes)분")
+    ///     print("수면 세그먼트 수: \(sleepData.segments.count)개")
+    ///
+    ///     if let start = sleepData.startDate, let end = sleepData.endDate {
+    ///         print("수면 시작: \(start)")
+    ///         print("수면 종료: \(end)")
+    ///     }
+    /// } else {
+    ///     print("수면 데이터가 없습니다")
+    /// }
+    ///
+    /// // 어제의 수면 데이터 조회
+    /// let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+    /// if let sleepData = try await service.fetchSleepData(for: yesterday) {
+    ///     print("어제 수면 시간: \(sleepData.totalDurationMinutes)분")
+    /// }
+    /// ```
+    func fetchSleepData(for date: Date) async throws -> SleepData? {
+        // 📚 학습 포인트: Type Safety with Optional Unwrapping
+        // HealthKitDataTypes를 사용해 타입 안전하게 수면 타입 가져오기
+        // 💡 Java 비교: Optional.orElseThrow()와 유사
+        guard let sleepType = HealthKitDataTypes.CategoryType.sleepAnalysis.type else {
+            throw HealthKitError.invalidSampleType(
+                identifier: HealthKitDataTypes.CategoryType.sleepAnalysis.identifier.rawValue
+            )
+        }
+
+        // 📚 학습 포인트: Extended Date Range for Sleep
+        // 수면은 전날 밤부터 다음날 새벽까지 이어질 수 있으므로
+        // 검색 범위를 전날 12시부터 다음날 12시까지로 확장
+        // 💡 Java 비교: date.minusHours(12) ~ date.plusHours(36)과 유사
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+
+        // 전날 12:00부터 검색 (수면이 전날 밤부터 시작될 수 있음)
+        let searchStart = calendar.date(
+            byAdding: .hour,
+            value: -12,
+            to: startOfDay
+        ) ?? startOfDay
+
+        // 다음날 12:00까지 검색 (수면이 다음날 낮까지 이어질 수 있음)
+        let searchEnd = calendar.date(
+            byAdding: .hour,
+            value: 36,
+            to: startOfDay
+        ) ?? startOfDay
+
+        // 수면 샘플 조회
+        let samples: [HKCategorySample] = try await fetchSamples(
+            type: sleepType,
+            from: searchStart,
+            to: searchEnd,
+            ascending: true
+        )
+
+        // 📚 학습 포인트: Early Return Pattern
+        // 데이터가 없으면 nil 반환
+        // 💡 Java 비교: Optional.empty()와 유사
+        guard !samples.isEmpty else {
+            return nil
+        }
+
+        // 실제 수면 샘플만 필터링 (asleep 상태만)
+        let asleepSamples = filterAsleepSamples(samples)
+
+        // 수면 샘플이 없으면 nil 반환
+        guard !asleepSamples.isEmpty else {
+            return nil
+        }
+
+        // 총 수면 시간 계산 (분 단위)
+        let totalMinutes = calculateTotalSleepDuration(asleepSamples)
+
+        // 시작/종료 시간 계산
+        let startDate = asleepSamples.first?.startDate
+        let endDate = asleepSamples.last?.endDate
+
+        // SleepData 객체 생성
+        return SleepData(
+            totalDurationMinutes: totalMinutes,
+            segments: asleepSamples,
+            startDate: startDate,
+            endDate: endDate
+        )
+    }
+
+    /// 실제 수면 샘플만 필터링 (asleep 상태만)
+    ///
+    /// 📚 학습 포인트: Sleep State Filtering
+    /// - inBed(침대에 누워있음)와 awake(깨어있음)는 제외
+    /// - asleep 관련 상태만 실제 수면으로 간주
+    /// 💡 Java 비교: stream().filter()와 유사
+    ///
+    /// - Parameter samples: 전체 수면 샘플 배열
+    ///
+    /// - Returns: 실제 수면 샘플만 포함된 배열
+    ///
+    /// - Note: 수면으로 간주하는 상태
+    ///   - asleep (구형 기기)
+    ///   - asleepUnspecified (iOS 16+)
+    ///   - asleepCore (얕은 수면, iOS 16+)
+    ///   - asleepDeep (깊은 수면, iOS 16+)
+    ///   - asleepREM (렘수면, iOS 16+)
+    ///
+    /// - Example:
+    /// ```swift
+    /// let allSamples = [inBedSample, asleepSample, awakeSample]
+    /// let asleepOnly = filterAsleepSamples(allSamples)
+    /// // [asleepSample] 만 반환
+    /// ```
+    private func filterAsleepSamples(_ samples: [HKCategorySample]) -> [HKCategorySample] {
+        return samples.filter { sample in
+            // 📚 학습 포인트: HKCategoryValueSleepAnalysis
+            // HealthKit의 수면 상태 enum
+            // 💡 Java 비교: SleepState enum과 유사
+            let value = HKCategoryValueSleepAnalysis(rawValue: sample.value)
+
+            switch value {
+            case .asleep,           // 구형: 수면 중 (상세 단계 없음)
+                 .asleepUnspecified,// iOS 16+: 미분류 수면
+                 .asleepCore,       // iOS 16+: 얕은 수면 (코어 수면)
+                 .asleepDeep,       // iOS 16+: 깊은 수면
+                 .asleepREM:        // iOS 16+: 렘수면
+                return true
+            case .inBed,            // 침대에 누워있음 (수면 아님)
+                 .awake:            // 깨어있음 (수면 아님)
+                return false
+            @unknown default:
+                // 📚 학습 포인트: Future-Proofing
+                // 미래에 추가될 수 있는 수면 상태 대비
+                // 기본적으로 포함시키지 않음
+                return false
+            }
+        }
+    }
+
+    /// 수면 세그먼트의 총 수면 시간 계산 (분 단위)
+    ///
+    /// 📚 학습 포인트: Duration Calculation
+    /// - 각 수면 세그먼트의 시작/종료 시간 차이를 계산
+    /// - 모든 세그먼트의 시간을 합산
+    /// 💡 Java 비교: sum(endDate - startDate)와 유사
+    ///
+    /// - Parameter samples: 수면 샘플 배열
+    ///
+    /// - Returns: 총 수면 시간 (분 단위)
+    ///
+    /// - Note: TimeInterval은 초 단위이므로 60으로 나눠 분 단위로 변환
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 3개의 수면 세그먼트: 2시간, 30분, 4시간 30분
+    /// let samples = [sample1, sample2, sample3]
+    /// let totalMinutes = calculateTotalSleepDuration(samples)
+    /// // 420분 (7시간) 반환
+    /// ```
+    private func calculateTotalSleepDuration(_ samples: [HKCategorySample]) -> Int {
+        // 📚 학습 포인트: reduce with Accumulator
+        // 배열의 값을 누적하여 하나의 값으로 만들기
+        // 💡 Java 비교: stream().reduce()와 유사
+        let totalSeconds = samples.reduce(0.0) { total, sample in
+            // 📚 학습 포인트: TimeInterval
+            // Swift의 TimeInterval은 Double 타입으로 초 단위
+            // 💡 Java 비교: Duration.between()과 유사
+            let duration = sample.endDate.timeIntervalSince(sample.startDate)
+            return total + duration
+        }
+
+        // 📚 학습 포인트: Unit Conversion
+        // 초를 분으로 변환 (60으로 나눔)
+        // 💡 Java 비교: totalSeconds / 60과 동일
+        let totalMinutes = Int(totalSeconds / 60)
+
+        return totalMinutes
+    }
+}
+
 // MARK: - HKQuantity Conversion Helpers
 
 extension HealthKitReadService {
