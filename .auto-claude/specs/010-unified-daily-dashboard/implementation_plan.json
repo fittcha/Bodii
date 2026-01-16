@@ -2,7 +2,7 @@
   "feature": "Unified Daily Dashboard",
   "description": "Central dashboard showing all daily health metrics: calorie balance (intake vs. TDEE), macro breakdown, exercise summary, sleep quality, and body composition status. Pre-calculated values from DailyLog for fast loading (<0.5s).",
   "created_at": "2026-01-14T09:02:15.645Z",
-  "updated_at": "2026-01-15T10:00:00.000Z",
+  "updated_at": "2026-01-16T02:19:25.647Z",
   "status": "in_progress",
   "planStatus": "in_progress",
   "totalEstimatedHours": 25,
@@ -83,7 +83,7 @@
           "id": "2.2",
           "title": "Create MacroBreakdownCard",
           "description": "Card displaying protein/carbs/fat breakdown with horizontal progress bars. Shows actual grams and ratio percentages. Uses carbsRatio, proteinRatio, fatRatio from DailyLog.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 2,
           "files": [
             "Bodii/Presentation/Features/Dashboard/Components/MacroBreakdownCard.swift"
@@ -91,13 +91,14 @@
           "dependencies": [
             "1.2"
           ],
-          "notes": ""
+          "notes": "Created MacroBreakdownCard component with horizontal progress bars for protein/carbs/fat breakdown. Displays actual grams and ratio percentages using carbsRatio, proteinRatio, fatRatio from DailyLog. Features color-coded progress bars (blue for carbs, orange for protein, purple for fat), SF Symbol icons, and animated transitions. Includes comprehensive previews for balanced, high-carb, high-protein, keto, and empty states. Follows existing card patterns from CalorieBalanceCard.",
+          "updated_at": "2026-01-15T10:15:00.000000+00:00"
         },
         {
           "id": "2.3",
           "title": "Create ExerciseSummaryCard",
           "description": "Card showing today's exercise summary - total calories burned, exercise count, total minutes. Uses totalCaloriesOut, exerciseCount, exerciseMinutes from DailyLog.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 1.5,
           "files": [
             "Bodii/Presentation/Features/Dashboard/Components/ExerciseSummaryCard.swift"
@@ -105,13 +106,14 @@
           "dependencies": [
             "1.2"
           ],
-          "notes": ""
+          "notes": "Created ExerciseSummaryCard component showing today's exercise summary with three key metrics: total calories burned (totalCaloriesOut), exercise count (exerciseCount), and exercise minutes (exerciseMinutes). Displays stats in three equal-width cards with color-coded icons (orange for calories, green for count, blue for time). Includes time formatting helper (e.g., \"1\uc2dc\uac04 30\ubd84\"), empty state handling (gray tone when no exercise data), and comprehensive previews for various scenarios. Follows patterns from CalorieBalanceCard and MacroBreakdownCard.",
+          "updated_at": "2026-01-15T08:19:29.028800+00:00"
         },
         {
           "id": "2.4",
           "title": "Create SleepQualityCard",
           "description": "Card displaying previous night's sleep with emoji indicator (\ud83d\udd35/\ud83d\udfe2/\ud83d\udfe1/\ud83d\udd34/\ud83d\udfe0), duration in hours:minutes format, and quality label. Uses sleepDuration, sleepStatus from DailyLog.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 1.5,
           "files": [
             "Bodii/Presentation/Features/Dashboard/Components/SleepQualityCard.swift"
@@ -119,13 +121,14 @@
           "dependencies": [
             "1.2"
           ],
-          "notes": ""
+          "notes": "Created SleepQualityCard component showing sleep duration and quality with emoji indicator (\ud83d\udd35/\ud83d\udfe2/\ud83d\udfe1/\ud83d\udd34/\ud83d\udfe0) based on SleepStatus. Displays duration in hours:minutes format and includes quality label with informational messages. Handles empty state properly. Follows existing card patterns with comprehensive previews for all sleep states.",
+          "updated_at": "2026-01-15T08:22:22.458057+00:00"
         },
         {
           "id": "2.5",
           "title": "Create BodyCompositionCard",
           "description": "Card showing today's body composition if recorded - weight, body fat percentage. Shows 'No data today' message if weight is nil. Displays change from yesterday if available.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 1.5,
           "files": [
             "Bodii/Presentation/Features/Dashboard/Components/BodyCompositionCard.swift"
@@ -133,7 +136,8 @@
           "dependencies": [
             "1.2"
           ],
-          "notes": ""
+          "notes": "Created BodyCompositionCard component showing today's body composition data. Displays weight and body fat percentage in a two-column card layout. Shows 'No data today' message when weight is nil. Displays change from yesterday (weightChange, bodyFatPctChange) with color-coded indicators (green for decrease, red for increase, blue for no change). Includes comprehensive previews for all states (with data, without changes, empty state, various change scenarios). Follows existing patterns from CalorieBalanceCard and SleepQualityCard with proper Korean localization and educational comments.",
+          "updated_at": "2026-01-16T02:22:15.033868+00:00"
         }
       ]
     },
@@ -146,25 +150,27 @@
           "id": "3.1",
           "title": "Create DateNavigationHeader",
           "description": "Reusable header component with left/right arrows to navigate dates, centered date display (\uc624\ub298, \uc5b4\uc81c, or formatted date), and 'today' button to return to current date.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 1.5,
           "files": [
             "Bodii/Presentation/Features/Dashboard/Components/DateNavigationHeader.swift"
           ],
           "dependencies": [],
-          "notes": ""
+          "notes": "Created DateNavigationHeader component with left/right arrow navigation, centered date display (\uc624\ub298, \uc5b4\uc81c, or formatted date), and 'today' button to return to current date. Follows existing patterns from CalorieBalanceCard and SleepQualityCard with comprehensive Korean documentation. Includes accessibility support and multiple preview configurations for various date states.",
+          "updated_at": "2026-01-16T02:24:41.777419+00:00"
         },
         {
           "id": "3.2",
           "title": "Create QuickAddButtons",
           "description": "Horizontal scroll of quick-add buttons for Food, Exercise, Body Composition. Each button navigates to respective input screen. Uses SF Symbols for icons.",
-          "status": "pending",
+          "status": "completed",
           "estimatedHours": 1,
           "files": [
             "Bodii/Presentation/Features/Dashboard/Components/QuickAddButtons.swift"
           ],
           "dependencies": [],
-          "notes": ""
+          "notes": "Created QuickAddButtons component with horizontal scroll of quick-add buttons for Food, Exercise, and Body Composition. Each button navigates to respective input screen using callback pattern. Uses SF Symbols for icons (fork.knife, figure.run, scalemass.fill) with distinct colors (orange, green, blue). Follows existing patterns from DateNavigationHeader and CalorieBalanceCard with comprehensive Korean documentation, accessibility support, and multiple preview configurations.",
+          "updated_at": "2026-01-16T02:27:25.805072+00:00"
         }
       ]
     },
@@ -412,5 +418,5 @@
     "tests_passed": "",
     "issues": ""
   },
-  "last_updated": "2026-01-15T08:13:53.981486+00:00"
+  "last_updated": "2026-01-16T02:27:25.805076+00:00"
 }

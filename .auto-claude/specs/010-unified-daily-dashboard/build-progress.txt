@@ -1,80 +1,69 @@
 # Unified Daily Dashboard - Build Progress
 
-## Overview
-Central dashboard showing all daily health metrics with pre-calculated values from DailyLog for fast loading (<0.5s).
+## Last Updated: 2026-01-16
 
-## Timeline
+## Completed Subtasks: 9/19 (47%)
 
-### 2026-01-15 - Implementation Plan Created
-- Created detailed implementation plan with 6 phases and 17 subtasks
-- Total estimated hours: 25
-- Key architecture decisions:
-  - Use existing DailyLog entity as single source of truth
-  - Extend DailyLogRepository with fetch method for dashboard
-  - Create dedicated DashboardViewModel for state management
-  - Build reusable card components for each metric
+### Phase 1: Core ViewModel & Data Layer ✅
+- [x] 1.1 - Extend DailyLogRepository for Dashboard
+- [x] 1.2 - Create DashboardViewModel
+- [x] 1.3 - Register DashboardViewModel in DIContainer
 
-### 2026-01-15 - Phase 1 Completed: Core ViewModel & Data Layer
-- ✅ 1.1 Extended DailyLogRepository for Dashboard
-- ✅ 1.2 Created DashboardViewModel with @Observable pattern
-- ✅ 1.3 Registered DashboardViewModel in DIContainer
+### Phase 2: Dashboard UI Components ✅
+- [x] 2.1 - Create CalorieBalanceCard
+- [x] 2.2 - Create MacroBreakdownCard
+- [x] 2.3 - Create ExerciseSummaryCard
+- [x] 2.4 - Create SleepQualityCard
+- [x] 2.5 - Create BodyCompositionCard
 
-### 2026-01-15 - Phase 2 Started: Dashboard UI Components
-- ✅ 2.1 Created CalorieBalanceCard
-  - Circular progress indicator showing intake vs TDEE ratio
-  - Color coding: green (deficit), blue (balanced), red (surplus)
-  - Center display of intake/TDEE values with kcal unit
-  - Stats section showing intake, target (TDEE), and net calories
-  - Status badge with icon and descriptive label
-  - Empty state handling with gray tones
-  - Comprehensive SwiftUI previews for all calorie states
-  - Follows patterns from ExerciseDailySummaryCard and NutritionSummaryCard
+### Phase 3: Date Navigation & Quick Actions (In Progress)
+- [x] 3.1 - Create DateNavigationHeader ✨ JUST COMPLETED
+- [ ] 3.2 - Create QuickAddButtons
 
-## Phases Summary
+### Phase 4: Dashboard Integration
+- [ ] 4.1 - Refactor DashboardView with New Components
+- [ ] 4.2 - Implement Pull-to-Refresh with DailyLog
+- [ ] 4.3 - Add Navigation Callbacks for Quick-Add
+- [ ] 4.4 - Update ContentView Tab Integration
 
-### Phase 1: Core ViewModel & Data Layer (4.5h estimated)
-- 1.1 Extend DailyLogRepository for Dashboard
-- 1.2 Create DashboardViewModel
-- 1.3 Register DashboardViewModel in DIContainer
+### Phase 5: Empty States & Polish
+- [ ] 5.1 - Create Empty State Views
+- [ ] 5.2 - Add Loading Skeleton Views
+- [ ] 5.3 - Add Accessibility Support
 
-### Phase 2: Dashboard UI Components (8.5h estimated)
-- 2.1 CalorieBalanceCard - intake vs TDEE with circular progress
-- 2.2 MacroBreakdownCard - protein/carbs/fat progress bars
-- 2.3 ExerciseSummaryCard - calories, count, minutes
-- 2.4 SleepQualityCard - duration with emoji indicator
-- 2.5 BodyCompositionCard - weight, body fat %
+### Phase 6: Testing & Documentation
+- [ ] 6.1 - Unit Tests for DashboardViewModel
+- [ ] 6.2 - SwiftUI Previews for All Components
 
-### Phase 3: Date Navigation & Quick Actions (2.5h estimated)
-- 3.1 DateNavigationHeader - left/right arrows, today button
-- 3.2 QuickAddButtons - food, exercise, body composition
+## Recent Activity
 
-### Phase 4: Dashboard Integration (4h estimated)
-- 4.1 Refactor DashboardView with New Components
-- 4.2 Implement Pull-to-Refresh with DailyLog
-- 4.3 Add Navigation Callbacks for Quick-Add
-- 4.4 Update ContentView Tab Integration
+### 2026-01-16 - Subtask 3.1 Completed
+- Created DateNavigationHeader component
+- Implements left/right arrow navigation for date switching
+- Centered date display with smart formatting:
+  - Shows "오늘" for today
+  - Shows "어제" for yesterday
+  - Shows full date format "yyyy년 M월 d일 (요일)" for other dates
+- Includes "today" button to return to current date
+- Features:
+  - Circular buttons for left/right navigation (44x44pt)
+  - Conditional styling based on isToday state
+  - Accessibility labels and hints for VoiceOver
+  - Comprehensive previews for various date states
+- Follows existing patterns from other dashboard cards
+- Integrates with DashboardViewModel methods (goToPreviousDay, goToNextDay, goToToday)
+- Committed as: d403e20
 
-### Phase 5: Empty States & Polish (3.5h estimated)
-- 5.1 Create Empty State Views
-- 5.2 Add Loading Skeleton Views
-- 5.3 Add Accessibility Support
+## Next Steps
 
-### Phase 6: Testing & Documentation (3h estimated)
-- 6.1 Unit Tests for DashboardViewModel
-- 6.2 SwiftUI Previews for All Components
+1. **Subtask 3.2** - Create QuickAddButtons component
+   - Horizontal scroll of quick-add buttons for Food, Exercise, Body Composition
+   - Each button navigates to respective input screen
+   - Uses SF Symbols for icons
 
-## Acceptance Criteria
-- [ ] Dashboard loads in under 0.5 seconds
-- [x] Shows calorie intake vs. TDEE with visual indicator ✅ (2.1)
-- [ ] Displays macro breakdown with progress bars
-- [ ] Shows exercise calories burned for the day
-- [ ] Displays sleep duration and quality
-- [ ] Quick-add buttons for food, exercise, body composition
-- [ ] Date navigation to view past days
-- [ ] Pull-to-refresh updates all metrics
+## Notes
 
-## Technical Notes
-- DailyLog already has all pre-calculated values (no runtime calculation needed)
-- Follow Clean Architecture: Repository -> Service -> ViewModel -> View
-- Use existing SleepStatus enum for sleep quality display
-- Korean localization required for all user-facing strings
+- All components follow the established educational Korean documentation pattern
+- Each component includes comprehensive previews for different states
+- Components are designed to work with DailyLog's pre-calculated values for fast loading
+- Accessibility considerations included in all UI components
