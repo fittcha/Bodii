@@ -404,6 +404,189 @@ extension DashboardViewModel {
     }
 }
 
+// MARK: - Preview Helpers
+
+#if DEBUG
+extension DashboardViewModel {
+
+    /// 샘플 데이터가 있는 ViewModel (모든 섹션에 데이터 있음)
+    ///
+    /// 대시보드 Preview에서 정상 상태를 확인하는 용도입니다.
+    @MainActor
+    static func makePreviewWithData() -> DashboardViewModel {
+        let viewModel = DashboardViewModel(
+            dailyLogRepository: MockDailyLogRepository(),
+            userId: UUID()
+        )
+
+        // 샘플 DailyLog 설정
+        viewModel.dailyLog = DailyLog(
+            id: UUID(),
+            userId: viewModel.userId,
+            date: Date(),
+            // 섭취 (칼로리 적자 상태)
+            totalCaloriesIn: 1800,
+            totalCarbs: Decimal(187.5),
+            totalProtein: Decimal(93.75),
+            totalFat: Decimal(41.67),
+            carbsRatio: Decimal(50.0),
+            proteinRatio: Decimal(25.0),
+            fatRatio: Decimal(25.0),
+            // 대사
+            bmr: 1650,
+            tdee: 2310,
+            netCalories: -510,
+            // 운동
+            totalCaloriesOut: 450,
+            exerciseMinutes: 75,
+            exerciseCount: 2,
+            steps: 8500,
+            // 체성분
+            weight: Decimal(70.5),
+            bodyFatPct: Decimal(21.5),
+            // 수면
+            sleepDuration: 420,
+            sleepStatus: .good,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+
+        return viewModel
+    }
+
+    /// 빈 상태의 ViewModel (데이터 없음)
+    ///
+    /// Empty State를 확인하는 용도입니다.
+    @MainActor
+    static func makePreviewEmpty() -> DashboardViewModel {
+        let viewModel = DashboardViewModel(
+            dailyLogRepository: MockDailyLogRepository(),
+            userId: UUID()
+        )
+
+        // 빈 DailyLog (섭취, 운동, 체성분, 수면 모두 없음)
+        viewModel.dailyLog = DailyLog(
+            id: UUID(),
+            userId: viewModel.userId,
+            date: Date(),
+            totalCaloriesIn: 0,
+            totalCarbs: 0,
+            totalProtein: 0,
+            totalFat: 0,
+            carbsRatio: nil,
+            proteinRatio: nil,
+            fatRatio: nil,
+            bmr: 1650,
+            tdee: 2310,
+            netCalories: -2310,
+            totalCaloriesOut: 0,
+            exerciseMinutes: 0,
+            exerciseCount: 0,
+            steps: 0,
+            weight: nil,
+            bodyFatPct: nil,
+            sleepDuration: nil,
+            sleepStatus: nil,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+
+        return viewModel
+    }
+
+    /// 로딩 중인 ViewModel
+    ///
+    /// Loading State를 확인하는 용도입니다.
+    @MainActor
+    static func makePreviewLoading() -> DashboardViewModel {
+        let viewModel = DashboardViewModel(
+            dailyLogRepository: MockDailyLogRepository(),
+            userId: UUID()
+        )
+
+        viewModel.isLoading = true
+        viewModel.dailyLog = nil
+
+        return viewModel
+    }
+
+    /// 에러 상태의 ViewModel
+    ///
+    /// Error State를 확인하는 용도입니다.
+    @MainActor
+    static func makePreviewError() -> DashboardViewModel {
+        let viewModel = DashboardViewModel(
+            dailyLogRepository: MockDailyLogRepository(),
+            userId: UUID()
+        )
+
+        viewModel.errorMessage = "네트워크 연결을 확인해주세요."
+        viewModel.dailyLog = nil
+
+        return viewModel
+    }
+
+    /// 칼로리 과잉 상태의 ViewModel
+    ///
+    /// 칼로리 과잉 상태(surplus)를 확인하는 용도입니다.
+    @MainActor
+    static func makePreviewSurplus() -> DashboardViewModel {
+        let viewModel = DashboardViewModel(
+            dailyLogRepository: MockDailyLogRepository(),
+            userId: UUID()
+        )
+
+        viewModel.dailyLog = DailyLog(
+            id: UUID(),
+            userId: viewModel.userId,
+            date: Date(),
+            // 섭취 (칼로리 과잉 상태)
+            totalCaloriesIn: 2800,
+            totalCarbs: Decimal(280.0),
+            totalProtein: Decimal(140.0),
+            totalFat: Decimal(70.0),
+            carbsRatio: Decimal(52.0),
+            proteinRatio: Decimal(28.0),
+            fatRatio: Decimal(20.0),
+            bmr: 1650,
+            tdee: 2310,
+            netCalories: 490,
+            totalCaloriesOut: 200,
+            exerciseMinutes: 30,
+            exerciseCount: 1,
+            steps: 5000,
+            weight: Decimal(71.2),
+            bodyFatPct: Decimal(22.0),
+            sleepDuration: 360,
+            sleepStatus: .soso,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+
+        return viewModel
+    }
+}
+
+/// Mock DailyLogRepository for Previews
+///
+/// Preview에서만 사용되는 간단한 Mock Repository입니다.
+private final class MockDailyLogRepository: DailyLogRepository {
+    func fetch(for date: Date, userId: UUID) async throws -> DailyLog? {
+        // Preview에서는 실제 조회를 하지 않음
+        return nil
+    }
+
+    func save(_ dailyLog: DailyLog) async throws {
+        // Preview에서는 저장하지 않음
+    }
+
+    func fetchCurrentDay(userId: UUID) async throws -> DailyLog? {
+        // Preview에서는 실제 조회를 하지 않음
+        return nil
+    }
+}
+#endif
+
 // MARK: - Learning Notes
 
 /// ## @Observable 매크로 (iOS 17+)

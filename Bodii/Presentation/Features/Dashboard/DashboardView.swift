@@ -263,24 +263,137 @@ struct DashboardView: View {
 
 // MARK: - Preview
 
+// 📚 학습 포인트: Comprehensive SwiftUI Previews
+// 다양한 상태(데이터 있음, 빈 상태, 로딩, 에러)를 미리 보며 개발
+// 💡 Java 비교: Compose의 @Preview와 유사하지만 더 강력한 실시간 미리보기 제공
+
 #if DEBUG
 #Preview("대시보드 - 데이터 있음") {
-    // TODO: Mock DashboardViewModel 구현 후 Preview 추가
-    // DashboardView(
-    //     viewModel: .makePreviewWithData()
-    // )
-    Text("Preview를 위해 Mock DashboardViewModel이 필요합니다")
+    // 📚 학습 포인트: Preview with Sample Data
+    // 모든 카드에 데이터가 있는 정상 상태
+    // 칼로리 적자, 균형잡힌 매크로, 운동 2회, 좋은 수면, 체성분 기록
+    DashboardView(
+        viewModel: .makePreviewWithData(),
+        onNavigateToDiet: {
+            print("Navigate to Diet")
+        },
+        onNavigateToExercise: {
+            print("Navigate to Exercise")
+        },
+        onNavigateToBody: {
+            print("Navigate to Body")
+        }
+    )
 }
 
 #Preview("대시보드 - 빈 상태") {
-    // TODO: Mock DashboardViewModel 구현 후 Preview 추가
-    Text("Preview를 위해 Mock DashboardViewModel이 필요합니다")
+    // 📚 학습 포인트: Preview with Empty State
+    // 데이터가 전혀 없는 상태 (음식, 운동, 수면, 체성분 모두 미기록)
+    // Empty State 컴포넌트와 안내 메시지가 표시됨
+    DashboardView(
+        viewModel: .makePreviewEmpty(),
+        onNavigateToDiet: {
+            print("Navigate to Diet")
+        },
+        onNavigateToExercise: {
+            print("Navigate to Exercise")
+        },
+        onNavigateToBody: {
+            print("Navigate to Body")
+        }
+    )
 }
 
-#Preview("다크 모드") {
-    // TODO: Mock DashboardViewModel 구현 후 Preview 추가
-    Text("Preview를 위해 Mock DashboardViewModel이 필요합니다")
-        .preferredColorScheme(.dark)
+#Preview("대시보드 - 로딩 중") {
+    // 📚 학습 포인트: Preview with Loading State
+    // 데이터를 불러오는 중인 상태
+    // 스켈레톤 뷰(shimmer effect)가 표시됨
+    DashboardView(
+        viewModel: .makePreviewLoading(),
+        onNavigateToDiet: {
+            print("Navigate to Diet")
+        },
+        onNavigateToExercise: {
+            print("Navigate to Exercise")
+        },
+        onNavigateToBody: {
+            print("Navigate to Body")
+        }
+    )
+}
+
+#Preview("대시보드 - 에러 상태") {
+    // 📚 학습 포인트: Preview with Error State
+    // 데이터 로드 실패 상태
+    // 에러 알림 다이얼로그가 표시됨
+    DashboardView(
+        viewModel: .makePreviewError(),
+        onNavigateToDiet: {
+            print("Navigate to Diet")
+        },
+        onNavigateToExercise: {
+            print("Navigate to Exercise")
+        },
+        onNavigateToBody: {
+            print("Navigate to Body")
+        }
+    )
+}
+
+#Preview("대시보드 - 칼로리 과잉") {
+    // 📚 학습 포인트: Preview with Surplus Calories
+    // 칼로리를 과다 섭취한 상태
+    // 칼로리 밸런스 카드가 빨간색으로 표시됨
+    // 적은 운동량, 보통 수면 품질
+    DashboardView(
+        viewModel: .makePreviewSurplus(),
+        onNavigateToDiet: {
+            print("Navigate to Diet")
+        },
+        onNavigateToExercise: {
+            print("Navigate to Exercise")
+        },
+        onNavigateToBody: {
+            print("Navigate to Body")
+        }
+    )
+}
+
+#Preview("다크 모드 - 데이터 있음") {
+    // 📚 학습 포인트: Preview with Dark Mode
+    // 다크 모드에서의 UI 확인
+    // 색상 대비와 가독성 검증
+    DashboardView(
+        viewModel: .makePreviewWithData(),
+        onNavigateToDiet: {
+            print("Navigate to Diet")
+        },
+        onNavigateToExercise: {
+            print("Navigate to Exercise")
+        },
+        onNavigateToBody: {
+            print("Navigate to Body")
+        }
+    )
+    .preferredColorScheme(.dark)
+}
+
+#Preview("다크 모드 - 빈 상태") {
+    // 📚 학습 포인트: Preview with Dark Mode + Empty State
+    // 다크 모드에서 Empty State 확인
+    DashboardView(
+        viewModel: .makePreviewEmpty(),
+        onNavigateToDiet: {
+            print("Navigate to Diet")
+        },
+        onNavigateToExercise: {
+            print("Navigate to Exercise")
+        },
+        onNavigateToBody: {
+            print("Navigate to Body")
+        }
+    )
+    .preferredColorScheme(.dark)
 }
 #endif
 

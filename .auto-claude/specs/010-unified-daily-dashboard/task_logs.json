@@ -1,7 +1,7 @@
 {
   "spec_id": "010-unified-daily-dashboard",
   "created_at": "2026-01-16T02:19:26.847339+00:00",
-  "updated_at": "2026-01-16T02:55:15.094433+00:00",
+  "updated_at": "2026-01-16T02:59:38.725609+00:00",
   "phases": {
     "planning": {
       "phase": "planning",
@@ -4810,6 +4810,755 @@
           "tool_input": "cd . && git add -A && git commit -m \"auto-claud...",
           "subtask_id": "6.1",
           "session": 11
+        },
+        {
+          "timestamp": "2026-01-16T02:55:16.631564+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.1",
+          "session": 11,
+          "detail": "[auto-claude/010-unified-daily-dashboard 7972b20] auto-claude: 6.1 - Test DashboardViewModel: loadDailyLog success/fail\n 7 files changed, 1181 insertions(+), 12 deletions(-)\n create mode 100644 .auto-claude/specs/010-unified-daily-dashboard/memory/session_insights/session_010.json\n create mode 100644 BodiiTests/Presentation/Features/Dashboard/DashboardViewModelTests.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:55:20.915756+00:00",
+          "type": "text",
+          "content": "Now let me update the implementation plan to mark this subtask as completed.",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 11
+        },
+        {
+          "timestamp": "2026-01-16T02:55:22.877691+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__update_subtask_status]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "6.1",
+          "session": 11
+        },
+        {
+          "timestamp": "2026-01-16T02:55:22.901955+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__update_subtask_status] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__update_subtask_status",
+          "subtask_id": "6.1",
+          "session": 11,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:55:37.852191+00:00",
+          "type": "text",
+          "content": "Excellent! I've successfully completed subtask 6.1. Here's a summary of what was implemented:\n\n## ✅ Subtask 6.1 Completed: DashboardViewModel Unit Tests\n\n### Test Coverage (748 lines)\n\nI created comprehensive unit tests for `DashboardViewModel` with the following coverage:\n\n#### 1. **loadDailyLog Tests**\n- ✅ Success scenario - updates dailyLog and clears errors\n- ✅ No data scenario - sets dailyLog to nil\n- ✅ Loading state transitions\n- ✅ Failure scenario - sets error message\n- ✅ Failure then success - clears previous errors\n\n#### 2. **Date Navigation Tests**\n- ✅ `navigateDate(by:)` - moves to next/previous day\n- ✅ `goToPreviousDay()` - convenience method\n- ✅ `goToNextDay()` - convenience method\n- ✅ `goToToday()` - returns to current date\n- ✅ `selectDate()` - selects specific date\n\n#### 3. **Refresh Behavior Tests**\n- ✅ `refresh()` - reloads current date data\n- ✅ Refresh after error - can recover with new data\n\n#### 4. **State Transition Tests**\n- ✅ Initial state verification\n- ✅ Loading → Success transition\n- ✅ Loading → Error transition\n- ✅ `clearError()` functionality\n\n#### 5. **Computed Properties Tests**\n- ✅ All computed properties return correct values when data exists\n- ✅ All computed properties return default values when data is nil\n- ✅ Tests all 13+ computed properties\n\n#### 6. **Date Formatting Tests**\n- ✅ `formattedSelectedDate` - \"오늘\" for today\n- ✅ `formattedSelectedDate` - \"어제\" for yesterday\n- ✅ `formattedSelectedDate` - formatted string for other dates\n- ✅ `isToday` property\n- ✅ `isFuture` property\n\n#### 7. **MockDailyLogRepository**\n- Created a complete mock implementation for testing\n- Supports success/failure result configuration\n- Includes call count tracking\n- Simulates async delays for loading state tests\n\n### Key Features\n- **@MainActor async testing** - All tests properly handle async/await\n- **Given-When-Then pattern** - Clear test structure\n- **Comprehensive documentation** - Korean educational comments throughout\n- **Error scenarios** - Tests both success and failure paths\n- **State management** - Verifies all state transitions\n\n### Commit\n- Committed as: `7972b20`\n- Status: ✅ **Completed**\n\nThe tests follow the exact same patterns as the existing test files in the project (`BodyRepositoryTests`, `CalculateBMRUseCaseTests`) with proper Korean documentation and educational comments.",
+          "phase": "coding",
+          "subtask_id": "6.1",
+          "session": 11
+        },
+        {
+          "timestamp": "2026-01-16T02:55:48.657991+00:00",
+          "type": "text",
+          "content": "I'll help you create comprehensive SwiftUI previews for all dashboard components. Let me start by understanding the current state and structure.",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:55:49.148811+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...laude/specs/010-unified-daily-dashboard/spec.md",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...laude/specs/010-unified-daily-dashboard/spec.md",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:55:49.733933+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...nified-daily-dashboard/implementation_plan.json",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...nified-daily-dashboard/implementation_plan.json",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:55:49.785690+00:00",
+          "type": "tool_start",
+          "content": "[mcp__auto-claude__get_build_progress]",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:55:49.808755+00:00",
+          "type": "tool_end",
+          "content": "[mcp__auto-claude__get_build_progress] Done",
+          "phase": "coding",
+          "tool_name": "mcp__auto-claude__get_build_progress",
+          "subtask_id": "6.2",
+          "session": 12,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:55:57.445123+00:00",
+          "type": "text",
+          "content": "Now let me check the current state of previews across all dashboard components:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:55:57.959814+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: Bodii/Presentation/Features/Dashboard/**/*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: Bodii/Presentation/Features/Dashboard/**/*.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:55:58.308113+00:00",
+          "type": "tool_end",
+          "content": "[Glob] Done",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "subtask_id": "6.2",
+          "session": 12,
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:56:02.215033+00:00",
+          "type": "text",
+          "content": "Let me check the current state of previews in the components and look for pattern files:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:03.324433+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: #Preview",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: #Preview",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:03.887042+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...s/Dashboard/Components/CalorieBalanceCard.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...s/Dashboard/Components/CalorieBalanceCard.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:04.223106+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...s/Dashboard/Components/MacroBreakdownCard.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...s/Dashboard/Components/MacroBreakdownCard.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:04.244488+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "     1→//\n     2→//  CalorieBalanceCard.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-15.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Calorie Balance Card Component\n     9→// 일일 칼로리 섭취 vs TDEE를 원형 진행 표시기로 시각화하는 카드 컴포넌트\n    10→// 💡 칼로리 수지에 따라 색상이 변경되어 직관적인 피드백 제공\n    11→\n    12→import SwiftUI\n    13→\n    14→/// 칼로리 밸런스 카드\n    15→///\n    16→/// 오늘의 칼로리 섭취량을 TDEE와 비교하여 원형 진행 표시기로 시각화합니다.\n    17→/// 순 칼로리(섭취 - TDEE)에 따라 색상이 자동으로 변경됩니다.\n    18→///\n    19→/// **색상 규칙:**\n    20→/// - 칼로리 적자(deficit): 초록색 - 체중 감량 중\n    21→/// - 칼로리 균형(balanced): 파란색 - 유지 중\n    22→/// - 칼로리 과잉(surplus): 빨간색 - 과다 섭취\n    23→///\n    24→/// - Note: DailyLog의 사전 계산된 값을 사용하여 빠른 렌더링을 보장합니다.\n    25→///\n    26→/// - Example:\n    27→/// ```swift\n    28→/// CalorieBalanceCard(\n    29→///     totalCaloriesIn: 1800,\n    30→///     tdee: 2310,\n    31→///     netCalories: -510\n    32→/// )\n    33→/// ```\n    34→struct CalorieBalanceCard: View {\n    35→\n    36→    // MARK: - Properties\n    37→\n    38→    // 📚 학습 포인트: Immutable Props Pattern\n    39→    // View의 입력 데이터는 let으로 선언하여 불변성 보장\n    40→    // 💡 Java 비교: final 필드와 유사\n    41→\n    42→    /// 총 섭취 칼로리 (kcal)\n    43→    let totalCaloriesIn: Int32\n    44→\n    45→    /// TDEE (활동대사량, kcal)\n    46→    let tdee: Int32\n    47→\n    48→    /// 순 칼로리 (섭취 - TDEE, kcal)\n    49→    let netCalories: Int32\n    50→\n    51→    /// 음식 추가 콜백 (Empty State에서 사용)\n    52→    var onAddFood: (() -> Void)? = nil\n    53→\n    54→    // MARK: - Constants\n    55→\n    56→    /// 원형 진행 표시기 크기\n    57→    private let circleSize: CGFloat = 200\n    58→\n    59→    /// 원형 진행 표시기 선 두께\n    60→    private let lineWidth: CGFloat = 16\n    61→\n    62→    /// 균형 범위 (±50 kcal)\n    63→    private let balancedRange: Int32 = 50\n    64→\n    65→    // MARK: - Computed Properties\n    66→\n    67→    /// 칼로리 섭취 비율 (0.0 ~ 1.0+)\n    68→    ///\n    69→    /// TDEE 대비 섭취량 비율을 계산합니다.\n    70→    /// 1.0 이상이면 목표 칼로리를 초과한 것입니다.\n    71→    private var intakePercentage: Double {\n    72→        guard tdee > 0 else { return 0.0 }\n    73→        return Double(totalCaloriesIn) / Double(tdee)\n    74→    }\n    75→\n    76→    /// 칼로리 상태 색상\n    77→    ///\n    78→    /// 순 칼로리에 따라 적절한 색상을 반환합니다.\n    79→    /// - 적자 (< -50): 초록색 (체중 감량)\n    80→    /// - 균형 (±50): 파란색 (유지)\n    81→    /// - 과잉 (> +50): 빨간색 (과다 섭취)\n    82→    private var statusColor: Color {\n    83→        if netCalories < -balancedRange {\n    84→            // 칼로리 적자 - 체중 감량 중\n    85→            return .green\n    86→        } else if netCalories > balancedRange {\n    87→            // 칼로리 과잉 - 과다 섭취\n    88→            return .red\n    89→        } else {\n    90→            // 칼로리 균형 - 유지 중\n    91→            return .blue\n    92→        }\n    93→    }\n    94→\n    95→    /// 칼로리 상태 라벨\n    96→    ///\n    97→    /// 순 칼로리에 따라 사용자 친화적인 상태 문구를 반환합니다.\n    98→    private var statusLabel: String {\n    99→        if netCalories < -balancedRange {\n   100→            return \"칼로리 적자\"\n   101→        } else if netCalories > balancedRange {\n   102→            return \"칼로리 과잉\"\n   103→        } else {\n   104→            return \"칼로리 균형\"\n   105→        }\n   106→    }\n   107→\n   108→    /// 칼로리 상태 아이콘\n   109→    ///\n   110→    /// 순 칼로리에 따라 적절한 SF Symbol 아이콘을 반환합니다.\n   111→    private var statusIcon: String {\n   112→        if netCalories < -balancedRange {\n   113→            return \"arrow.down.circle.fill\"\n   114→        } else if netCalories > balancedRange {\n   115→            return \"arrow.up.circle.fill\"\n   116→        } else {\n   117→            return \"equal.circle.fill\"\n   118→        }\n   119→    }\n   120→\n   121→    /// 데이터가 비어있는지 여부\n   122→    private var isEmpty: Bool {\n   123→        totalCaloriesIn == 0 && tdee == 0\n   124→    }\n   125→\n   126→    // MARK: - Body\n   127→\n   128→    var body: some View {\n   129→        VStack(spacing: 16) {\n   130→            // 제목 섹션\n   131→            titleSection\n   132→\n   133→            // 📚 학습 포인트: Conditional Rendering - Empty State vs Content\n   134→            // 데이터 유무에 따라 Empty State 또는 실제 컨텐츠 표시\n   135→            // 💡 Java 비교: if-else 조건부 렌더링과 유사\n   136→            if isEmpty {\n   137→                // Empty State: 음식 기록이 없을 때\n   138→                FoodEmptyState(onAddFood: onAddFood)\n   139→                    .padding(.vertical, 8)\n   140→            } else {\n   141→                // 실제 컨텐츠: 데이터가 있을 때\n   142→                // 📚 학습 포인트: ZStack with Circular Progress\n   143→                // ZStack으로 원형 진행 표시기와 중앙 텍스트를 겹쳐서 표시\n   144→                // 💡 Java 비교: FrameLayout 또는 Box(contentAlignment = Alignment.Center)와 유사\n   145→                ZStack {\n   146→                    // 배경 원 (회색)\n   147→                    Circle()\n   148→                        .stroke(\n   149→                            Color(.systemGray5),\n   150→                            lineWidth: lineWidth\n   151→                        )\n   152→                        .frame(width: circleSize, height: circleSize)\n   153→\n   154→                    // 진행 원 (색상)\n   155→                    Circle()\n   156→                        .trim(from: 0, to: min(intakePercentage, 1.5)) // 최대 150%까지 표시\n   157→                        .stroke(\n   158→                            statusColor,\n   159→                            style: StrokeStyle(\n   160→                                lineWidth: lineWidth,\n   161→                                lineCap: .round\n   162→                            )\n   163→                        )\n   164→                        .frame(width: circleSize, height: circleSize)\n   165→                        .rotationEffect(.degrees(-90)) // 12시 방향부터 시작\n   166→\n   167→                    // 중앙 정보\n   168→                    centerInfo\n   169→                }\n   170→                .padding(.vertical, 8)\n   171→                // 📚 학습 포인트: Accessibility for Circular Progress\n   172→                // 원형 진행 표시기의 정보를 VoiceOver로 읽을 수 있도록 함\n   173→                .accessibilityElement(children: .ignore)\n   174→                .accessibilityLabel(\"칼로리 진행률\")\n   175→                .accessibilityValue(\"\\(totalCaloriesIn) 섭취, 목표 \\(tdee), \\(Int(intakePercentage * 100))퍼센트\")\n   176→\n   177→                // 통계 섹션\n   178→                statsSection\n   179→                    .accessibilityElement(children: .combine)\n   180→                    .accessibilityLabel(\"칼로리 통계\")\n   181→\n   182→                // 상태 라벨\n   183→                statusBadge\n   184→                    .accessibilityLabel(\"\\(statusLabel)\")\n   185→                    .accessibilityValue(netCalories >= 0 ? \"\\(netCalories) 킬로칼로리 과잉\" : \"\\(abs(netCalories)) 킬로칼로리 적자\")\n   186→            }\n   187→        }\n   188→        .padding(20)\n   189→        .background(cardBackground)\n   190→        .padding(.horizontal, 16)\n   191→        .padding(.vertical, 12)\n   192→        .accessibilityElement(children: .contain)\n   193→        .accessibilityLabel(\"칼로리 밸런스 카드\")\n   194→    }\n   195→\n   196→    // MARK: - View Components\n   197→\n   198→    /// 제목 섹션\n   199→    private var titleSection: some View {\n   200→        HStack {\n   201→            Text(\"칼로리 밸런스\")\n   202→                .font(.title2)\n   203→                .fontWeight(.bold)\n   204→                .foregroundStyle(isEmpty ? .secondary : .primary)\n   205→            Spacer()\n   206→        }\n   207→    }\n   208→\n   209→    /// 카드 배경\n   210→    private var cardBackground: some View {\n   211→        // 📚 학습 포인트: Material Background with Shadow\n   212→        // iOS 네이티브 느낌의 카드 디자인\n   213→        RoundedRectangle(cornerRadius: 16)\n   214→            .fill(Color(.systemBackground))\n   215→            .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)\n   216→    }\n   217→\n   218→    /// 중앙 정보 (원형 진행 표시기 내부)\n   219→    private var centerInfo: some View {\n   220→        VStack(spacing: 8) {\n   221→            // 섭취 칼로리\n   222→            Text(\"\\(totalCaloriesIn)\")\n   223→                .font(.system(size: 48, weight: .bold))\n   224→                .foregroundStyle(isEmpty ? .secondary : statusColor)\n   225→\n   226→            // 구분선\n   227→            Text(\"ㅡ\")\n   228→                .font(.title3)\n   229→                .foregroundStyle(.secondary)\n   230→\n   231→            // TDEE\n   232→            Text(\"\\(tdee)\")\n   233→                .font(.title2)\n   234→                .fontWeight(.medium)\n   235→                .foregroundStyle(.secondary)\n   236→\n   237→            // 단위\n   238→            Text(\"kcal\")\n   239→                .font(.caption)\n   240→                .foregroundStyle(.secondary)\n   241→        }\n   242→    }\n   243→\n   244→    /// 통계 섹션\n   245→    ///\n   246→    /// 섭취, TDEE, 순 칼로리를 나란히 표시합니다.\n   247→    private var statsSection: some View {\n   248→        HStack(spacing: 16) {\n   249→            // 섭취 칼로리\n   250→            statItem(\n   251→                title: \"섭취\",\n   252→                value: \"\\(totalCaloriesIn)\",\n   253→                unit: \"kcal\",\n   254→                color: .orange\n   255→            )\n   256→\n   257→            Divider()\n   258→                .frame(height: 40)\n   259→\n   260→            // TDEE\n   261→            statItem(\n   262→                title: \"목표\",\n   263→                value: \"\\(tdee)\",\n   264→                unit: \"kcal\",\n   265→                color: .blue\n   266→            )\n   267→\n   268→            Divider()\n   269→                .frame(height: 40)\n   270→\n   271→            // 순 칼로리\n   272→            statItem(\n   273→                title: \"수지\",\n   274→                value: netCalories >= 0 ? \"+\\(netCalories)\" : \"\\(netCalories)\",\n   275→                unit: \"kcal\",\n   276→                color: statusColor\n   277→            )\n   278→        }\n   279→        .padding(.horizontal, 8)\n   280→    }\n   281→\n   282→    /// 개별 통계 아이템\n   283→    ///\n   284→    /// - Parameters:\n   285→    ///   - title: 제목 (예: \"섭취\")\n   286→    ///   - value: 값 (예: \"1800\")\n   287→    ///   - unit: 단위 (예: \"kcal\")\n   288→    ///   - color: 색상\n   289→    /// - Returns: 통계 아이템 뷰\n   290→    private func statItem(\n   291→        title: String,\n   292→        value: String,\n   293→        unit: String,\n   294→        color: Color\n   295→    ) -> some View {\n   296→        VStack(spacing: 4) {\n   297→            // 제목\n   298→          \n\n... [truncated - full output was 19063 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:56:09.380655+00:00",
+          "type": "text",
+          "content": "Let me check the other dashboard component files to see their current preview states:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:10.784880+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -A 5 \"#Preview\" ./Bodii/Presentation/Featu...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -A 5 \"#Preview\" ./Bodii/Presentation/Featu...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:11.587602+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -A 5 \"#Preview\" ./Bodii/Presentation/Featu...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -A 5 \"#Preview\" ./Bodii/Presentation/Featu...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:12.504773+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -A 5 \"#Preview\" ./Bodii/Presentation/Featu...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -A 5 \"#Preview\" ./Bodii/Presentation/Featu...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:13.076880+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -A 5 \"#Preview\" ./Bodii/Presentation/Featu...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -A 5 \"#Preview\" ./Bodii/Presentation/Featu...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:13.198410+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "#Preview(\"Excellent Sleep\") {\n    VStack(spacing: 20) {\n        // 매우 좋음 (8시간) - 🔵\n        SleepQualityCard(\n            sleepDuration: 480,\n            sleepStatus: .excellent\n--\n#Preview(\"Good Sleep\") {\n    VStack(spacing: 20) {\n        // 좋음 (7시간) - 🟢\n        SleepQualityCard(\n            sleepDuration: 420,\n            sleepStatus: .good\n--\n#Preview(\"Soso Sleep\") {\n    VStack(spacing: 20) {\n        // 보통 (6시간) - 🟡\n        SleepQualityCard(\n            sleepDuration: 360,\n            sleepStatus: .soso",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:56:23.042295+00:00",
+          "type": "text",
+          "content": "Now let me check if DashboardEmptyStates and DashboardSkeletonView have previews, and read DashboardView to understand what needs to be done:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:24.176178+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:24.966103+00:00",
+          "type": "tool_start",
+          "content": "[Bash] wc -l ./Bodii/Presentation/Features/Dashboard/C...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "wc -l ./Bodii/Presentation/Features/Dashboard/C...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:24.984476+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "   250→    /// - Empty State에서 체성분 기록 버튼 제공\n   251→    private var bodyCompositionCard: some View {\n   252→        BodyCompositionCard(\n   253→            weight: viewModel.weight,\n   254→            bodyFatPct: viewModel.bodyFatPct,\n   255→            // TODO: 전날 데이터를 DailyLogRepository에서 조회하여 전달\n   256→            // 현재는 DailyLog에 전날 데이터가 없으므로 nil 전달\n   257→            previousWeight: nil,\n   258→            previousBodyFatPct: nil,\n   259→            onAddBodyComposition: onNavigateToBody\n   260→        )\n   261→    }\n   262→}\n   263→\n   264→// MARK: - Preview\n   265→\n   266→#if DEBUG\n   267→#Preview(\"대시보드 - 데이터 있음\") {\n   268→    // TODO: Mock DashboardViewModel 구현 후 Preview 추가\n   269→    // DashboardView(\n   270→    //     viewModel: .makePreviewWithData()\n   271→    // )\n   272→    Text(\"Preview를 위해 Mock DashboardViewModel이 필요합니다\")\n   273→}\n   274→\n   275→#Preview(\"대시보드 - 빈 상태\") {\n   276→    // TODO: Mock DashboardViewModel 구현 후 Preview 추가\n   277→    Text(\"Preview를 위해 Mock DashboardViewModel이 필요합니다\")\n   278→}\n   279→\n   280→#Preview(\"다크 모드\") {\n   281→    // TODO: Mock DashboardViewModel 구현 후 Preview 추가\n   282→    Text(\"Preview를 위해 Mock DashboardViewModel이 필요합니다\")\n   283→        .preferredColorScheme(.dark)\n   284→}\n   285→#endif\n   286→\n   287→// MARK: - Documentation\n   288→\n   289→/// 📚 학습 포인트: DashboardView 사용법\n   290→///\n   291→/// 기본 사용 (ContentView에서):\n   292→/// ```swift\n   293→/// struct ContentView: View {\n   294→///     @State private var selectedTab: Tab = .dashboard\n   295→///     let container: DIContainer\n   296→///\n   297→///     var body: some View {\n   298→///         TabView(selection: $selectedTab) {\n   299→///             DashboardView(\n   300→///                 viewModel: container.makeDashboardViewModel(userId: user.id),\n   301→///                 onNavigateToDiet: {\n   302→///                     selectedTab = .diet\n   303→///                 },\n   304→///                 onNavigateToExercise: {\n   305→///                     selectedTab = .exercise\n   306→///                 },\n   307→///                 onNavigateToBody: {\n   308→///                     selectedTab = .body\n   309→///                 }\n   310→///             )\n   311→///             .tabItem {\n   312→///                 Label(\"대시보드\", systemImage: \"chart.bar.fill\")\n   313→///             }\n   314→///             .tag(Tab.dashboard)\n   315→///\n   316→///             // 다른 탭들...\n   317→///         }\n   318→///     }\n   319→/// }\n   320→/// ```\n   321→///\n   322→/// 주요 기능:\n   323→/// - 날짜 네비게이션: 좌우 화살표로 날짜 이동, 오늘로 돌아가기\n   324→/// - 빠른 추가 버튼: 음식, 운동, 체성분 기록 화면으로 빠른 이동\n   325→/// - 칼로리 밸런스: 섭취 vs TDEE, 원형 진행 표시기\n   326→/// - 매크로 분석: 탄수화물/단백질/지방 비율 시각화\n   327→/// - 운동 요약: 소모 칼로리, 운동 횟수, 운동 시간\n   328→/// - 수면 품질: 수면 시간 및 품질 상태\n   329→/// - 체성분: 체중, 체지방률, 전날 대비 변화\n   330→///\n   331→/// 화면 구성:\n   332→/// 1. 날짜 네비게이션 헤더: DateNavigationHeader 컴포넌트\n   333→/// 2. 빠른 추가 버튼: QuickAddButtons 컴포넌트\n   334→/// 3. 칼로리 밸런스 카드: CalorieBalanceCard 컴포넌트\n   335→/// 4. 매크로 분석 카드: MacroBreakdownCard 컴포넌트\n   336→/// 5. 운동 요약 카드: ExerciseSummaryCard 컴포넌트\n   337→/// 6. 수면 품질 카드: SleepQualityCard 컴포넌트\n   338→/// 7. 체성분 카드: BodyCompositionCard 컴포넌트\n   339→///\n   340→/// 네비게이션:\n   341→/// - Quick Add 버튼: onNavigateToDiet/Exercise/Body 콜백 호출\n   342→/// - 부모 View에서 탭 전환 로직 처리\n   343→///\n   344→/// 상태 관리:\n   345→/// - DashboardViewModel: 일일 건강 데이터 관리\n   346→/// - @Observable (iOS 17+)을 사용한 현대적인 상태 관리\n   347→/// - DailyLog의 사전 계산된 값으로 빠른 로딩 (<0.5초)\n   348→/// - Closure를 통해 네비게이션 이벤트 전달\n   349→///\n   350→/// 성능 최적화:\n   351→/// - DailyLog에서 모든 값이 사전 계산되어 있어 추가 계산 불필요\n   352→/// - 컴포넌트 기반 설계로 재사용성과 유지보수성 향상\n   353→/// - 각 카드는 독립적으로 렌더링되어 효율적\n   354→///\n   355→/// 💡 Android 비교:\n   356→/// - Android: Fragment + RecyclerView with CardViews\n   357→/// - SwiftUI: View + ScrollView with VStack of Cards\n   358→/// - Android: ViewModel + LiveData\n   359→/// - SwiftUI: @Observable + @State\n   360→/// - Android: Fragment navigation via callback\n   361→/// - SwiftUI: Closure-based navigation\n   362→///\n   363→/// 접근성:\n   364→/// - VoiceOver 지원\n   365→/// - Dynamic Type 지원\n   366→/// - 충분한 터치 영역\n   367→/// - 명확한 레이블과 힌트\n   368→///\n   369→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:56:30.358819+00:00",
+          "type": "tool_start",
+          "content": "[Bash] tail -100 ./Bodii/Presentation/Features/Dashboa...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "tail -100 ./Bodii/Presentation/Features/Dashboa...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:31.021018+00:00",
+          "type": "tool_start",
+          "content": "[Bash] tail -100 ./Bodii/Presentation/Features/Dashboa...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "tail -100 ./Bodii/Presentation/Features/Dashboa...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:31.125173+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:56:35.448413+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -c \"#Preview\" ./Bodii/Presentation/Feature...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -c \"#Preview\" ./Bodii/Presentation/Feature...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:35.556295+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "./Bodii/Presentation/Features/Dashboard/Components/DashboardEmptyStates.swift:7\n./Bodii/Presentation/Features/Dashboard/Components/DashboardSkeletonView.swift:3\n./Bodii/Presentation/Features/Dashboard/Components/DateNavigationHeader.swift:4\n./Bodii/Presentation/Features/Dashboard/Components/QuickAddButtons.swift:3",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:56:42.958563+00:00",
+          "type": "text",
+          "content": "Let me look for pattern files to understand how to create mock ViewModels:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:43.365019+00:00",
+          "type": "tool_start",
+          "content": "[Glob] pattern: **/*Mock*.swift",
+          "phase": "coding",
+          "tool_name": "Glob",
+          "tool_input": "pattern: **/*Mock*.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:44.544630+00:00",
+          "type": "tool_start",
+          "content": "[Grep] pattern: makePreview|Preview.*ViewModel",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "tool_input": "pattern: makePreview|Preview.*ViewModel",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:44.957580+00:00",
+          "type": "tool_end",
+          "content": "[Grep] Done",
+          "phase": "coding",
+          "tool_name": "Grep",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "Found 6 files\nBodii/Presentation/Features/Dashboard/DashboardView.swift\nBodii/Presentation/Features/Dashboard/MetabolismViewModel.swift\nBodii/Presentation/Features/Body/BodyTrendsViewModel.swift\nBodii/Presentation/Features/Body/BodyCompositionView.swift\nBodii/Presentation/Features/Body/BodyCompositionViewModel.swift\nBodii/Presentation/Features/Body/BodyTrendsView.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:56:49.992773+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -A 30 \"makePreview\" ./Bodii/Presentation/F...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -A 30 \"makePreview\" ./Bodii/Presentation/F...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:50.654009+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -A 30 \"#Preview\" ./Bodii/Presentation/Feat...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -A 30 \"#Preview\" ./Bodii/Presentation/Feat...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:50.758282+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "    static func makePreview() -> BodyTrendsViewModel {\n        // Mock Repository 생성 (실제 구현 필요)\n        fatalError(\"Preview support not yet implemented. Need to create MockBodyRepository.\")\n    }\n\n    /// 샘플 데이터가 있는 ViewModel\n    /// 📚 학습 포인트: Sample Data for Preview\n    /// - 차트 미리보기를 위한 샘플 데이터 포함\n    static func makePreviewWithData(repository: BodyRepositoryProtocol) -> BodyTrendsViewModel {\n        let useCase = FetchBodyTrendsUseCase(bodyRepository: repository)\n        let viewModel = BodyTrendsViewModel(\n            fetchBodyTrendsUseCase: useCase,\n            bodyRepository: repository\n        )\n\n        // 샘플 데이터 설정\n        viewModel.trendsOutput = FetchBodyTrendsUseCase.sampleOutput()\n\n        return viewModel\n    }\n}\n#endif\n\n// MARK: - Documentation\n\n/// 📚 학습 포인트: Chart ViewModel Pattern 이해\n///\n/// BodyTrendsViewModel의 역할:\n/// - 차트 데이터 관리: FetchBodyTrendsUseCase를 통해 트렌드 데이터 조회\n/// - 기간 선택: 7/30/90일 기간 또는 커스텀 날짜 범위\n/// - 네비게이션: 이전/다음 기간으로 이동\n/// - 빈 상태 처리: 데이터 없을 때 empty state 표시\n/// - 로딩/에러 처리: 비동기 작업의 상태 관리\n///\n/// 주요 기능:\n/// 1. 기간 선택 (7/30/90일)\n/// 2. 날짜 범위 네비게이션 (이전/다음 기간)\n/// 3. 대사율 데이터 선택적 로딩\n/// 4. 실시간 상태 반영 (@Published)",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:56:57.159307+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ion/Features/Dashboard/DashboardViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ion/Features/Dashboard/DashboardViewModel.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:56:57.177187+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "     1→//\n     2→//  DashboardViewModel.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-15.\n     6→//\n     7→\n     8→// 📚 학습 포인트: SwiftUI ViewModel with @Observable\n     9→// iOS 17+의 @Observable 매크로를 사용한 현대적인 MVVM 패턴\n    10→// 💡 Java 비교: Android의 ViewModel + LiveData와 유사하지만 더 간단\n    11→\n    12→import Foundation\n    13→import Observation\n    14→\n    15→/// 대시보드 뷰 모델\n    16→///\n    17→/// 일일 건강 데이터(칼로리, 매크로, 운동, 수면, 체성분)를 관리합니다.\n    18→///\n    19→/// ## 책임\n    20→/// - 선택된 날짜의 DailyLog 조회\n    21→/// - 날짜 네비게이션 (이전/다음 날)\n    22→/// - 새로고침 기능\n    23→/// - 로딩 및 에러 상태 관리\n    24→///\n    25→/// ## 의존성\n    26→/// - DailyLogRepository: 일일 집계 조회\n    27→///\n    28→/// ## 사용 예시\n    29→/// ```swift\n    30→/// let viewModel = DashboardViewModel(\n    31→///     dailyLogRepository: dailyLogRepository,\n    32→///     userId: user.id\n    33→/// )\n    34→///\n    35→/// // View에서 사용\n    36→/// if let dailyLog = viewModel.dailyLog {\n    37→///     CalorieBalanceCard(dailyLog: dailyLog)\n    38→/// }\n    39→/// ```\n    40→@Observable\n    41→final class DashboardViewModel {\n    42→\n    43→    // MARK: - Properties\n    44→\n    45→    // 📚 학습 포인트: @Observable과 프로퍼티\n    46→    // @Observable 매크로는 자동으로 모든 프로퍼티를 관찰 가능하게 만듦\n    47→    // 💡 Java 비교: @Published (이전 SwiftUI) 또는 MutableLiveData와 유사\n    48→\n    49→    /// 현재 선택된 날짜\n    50→    var selectedDate: Date\n    51→\n    52→    /// 일일 집계 데이터\n    53→    var dailyLog: DailyLog?\n    54→\n    55→    /// 로딩 상태\n    56→    var isLoading: Bool = false\n    57→\n    58→    /// 에러 메시지\n    59→    var errorMessage: String?\n    60→\n    61→    // 📚 학습 포인트: Computed Property\n    62→    // 저장 공간 없이 계산되는 프로퍼티\n    63→    // 의존하는 프로퍼티가 변경되면 자동으로 재계산됨\n    64→\n    65→    /// 총 섭취 칼로리\n    66→    var totalCaloriesIn: Int32 {\n    67→        dailyLog?.totalCaloriesIn ?? 0\n    68→    }\n    69→\n    70→    /// TDEE (활동대사량)\n    71→    var tdee: Int32 {\n    72→        dailyLog?.tdee ?? 0\n    73→    }\n    74→\n    75→    /// 순 칼로리 (섭취 - TDEE)\n    76→    var netCalories: Int32 {\n    77→        dailyLog?.netCalories ?? 0\n    78→    }\n    79→\n    80→    /// 총 탄수화물 (g)\n    81→    var totalCarbs: Decimal {\n    82→        dailyLog?.totalCarbs ?? 0\n    83→    }\n    84→\n    85→    /// 총 단백질 (g)\n    86→    var totalProtein: Decimal {\n    87→        dailyLog?.totalProtein ?? 0\n    88→    }\n    89→\n    90→    /// 총 지방 (g)\n    91→    var totalFat: Decimal {\n    92→        dailyLog?.totalFat ?? 0\n    93→    }\n    94→\n    95→    /// 탄수화물 비율 (%)\n    96→    var carbsRatio: Decimal? {\n    97→        dailyLog?.carbsRatio\n    98→    }\n    99→\n   100→    /// 단백질 비율 (%)\n   101→    var proteinRatio: Decimal? {\n   102→        dailyLog?.proteinRatio\n   103→    }\n   104→\n   105→    /// 지방 비율 (%)\n   106→    var fatRatio: Decimal? {\n   107→        dailyLog?.fatRatio\n   108→    }\n   109→\n   110→    /// 운동 소모 칼로리\n   111→    var totalCaloriesOut: Int32 {\n   112→        dailyLog?.totalCaloriesOut ?? 0\n   113→    }\n   114→\n   115→    /// 운동 시간 (분)\n   116→    var exerciseMinutes: Int32 {\n   117→        dailyLog?.exerciseMinutes ?? 0\n   118→    }\n   119→\n   120→    /// 운동 횟수\n   121→    var exerciseCount: Int16 {\n   122→        dailyLog?.exerciseCount ?? 0\n   123→    }\n   124→\n   125→    /// 수면 시간 (분)\n   126→    var sleepDuration: Int32? {\n   127→        dailyLog?.sleepDuration\n   128→    }\n   129→\n   130→    /// 수면 상태\n   131→    var sleepStatus: SleepStatus? {\n   132→        dailyLog?.sleepStatus\n   133→    }\n   134→\n   135→    /// 체중 (kg)\n   136→    var weight: Decimal? {\n   137→        dailyLog?.weight\n   138→    }\n   139→\n   140→    /// 체지방률 (%)\n   141→    var bodyFatPct: Decimal? {\n   142→        dailyLog?.bodyFatPct\n   143→    }\n   144→\n   145→    /// 데이터가 비어있는지 여부\n   146→    var isEmpty: Bool {\n   147→        dailyLog == nil\n   148→    }\n   149→\n   150→    // 📚 학습 포인트: Private Dependencies\n   151→    // ViewModel은 Repository에 의존하지만, View는 이를 알 필요 없음\n   152→    // 의존성 주입을 통해 테스트 가능성 향상\n   153→\n   154→    /// 일일 집계 저장소\n   155→    private let dailyLogRepository: DailyLogRepository\n   156→\n   157→    /// 사용자 ID (private, but exposed via getter)\n   158→    private let _userId: UUID\n   159→\n   160→    /// 사용자 ID를 공개적으로 노출\n   161→    ///\n   162→    /// 다른 ViewModel이나 UseCase에서 필요할 수 있으므로 public getter 제공\n   163→    var userId: UUID {\n   164→        _userId\n   165→    }\n   166→\n   167→    // MARK: - Initialization\n   168→\n   169→    /// DashboardViewModel 초기화\n   170→    ///\n   171→    /// - Parameters:\n   172→    ///   - dailyLogRepository: 일일 집계 저장소\n   173→    ///   - userId: 사용자 ID\n   174→    ///   - selectedDate: 초기 선택 날짜 (기본값: 오늘)\n   175→    init(\n   176→        dailyLogRepository: DailyLogRepository,\n   177→        userId: UUID,\n   178→        selectedDate: Date = Date()\n   179→    ) {\n   180→        self.dailyLogRepository = dailyLogRepository\n   181→        self._userId = userId\n   182→        self.selectedDate = selectedDate\n   183→    }\n   184→\n   185→    // MARK: - Public Methods\n   186→\n   187→    /// 뷰가 나타날 때 호출\n   188→    ///\n   189→    /// 선택된 날짜의 DailyLog를 로드합니다.\n   190→    ///\n   191→    /// - Example:\n   192→    /// ```swift\n   193→    /// .onAppear {\n   194→    ///     viewModel.onAppear()\n   195→    /// }\n   196→    /// ```\n   197→    @MainActor\n   198→    func onAppear() {\n   199→        Task {\n   200→            await loadDailyLog(for: selectedDate)\n   201→        }\n   202→    }\n   203→\n   204→    /// 특정 날짜의 DailyLog를 로드합니다.\n   205→    ///\n   206→    /// ## 실행 순서\n   207→    /// 1. 로딩 상태 시작\n   208→    /// 2. DailyLog 조회\n   209→    /// 3. 로딩 상태 종료\n   210→    ///\n   211→    /// - Parameter date: 로드할 날짜\n   212→    /// - Note: 에러 발생 시 errorMessage에 메시지 저장\n   213→    @MainActor\n   214→    func loadDailyLog(for date: Date) async {\n   215→        isLoading = true\n   216→        errorMessage = nil\n   217→        defer { isLoading = false }\n   218→\n   219→        do {\n   220→            // 📚 학습 포인트: Repository를 통한 데이터 조회\n   221→            // DailyLog에는 모든 사전 계산된 값이 포함되어 있어\n   222→            // 추가 계산 없이 바로 UI에 표시 가능 (성능 최적화)\n   223→            dailyLog = try await dailyLogRepository.fetch(\n   224→                for: date,\n   225→                userId: _userId\n   226→            )\n   227→\n   228→        } catch {\n   229→            // 📚 학습 포인트: Error Handling\n   230→            // Swift의 Error 프로토콜을 사용한 에러 처리\n   231→            // localizedDescription으로 사용자 친화적 메시지 제공\n   232→            errorMessage = \"데이터 조회 실패: \\(error.localizedDescription)\"\n   233→            dailyLog = nil\n   234→        }\n   235→    }\n   236→\n   237→    /// 현재 선택된 날짜의 데이터를 새로고침합니다.\n   238→    ///\n   239→    /// Pull-to-refresh 기능에서 사용됩니다.\n   240→    ///\n   241→    /// - Example:\n   242→    /// ```swift\n   243→    /// .refreshable {\n   244→    ///     await viewModel.refresh()\n   245→    /// }\n   246→    /// ```\n   247→    @MainActor\n   248→    func refresh() async {\n   249→        await loadDailyLog(for: selectedDate)\n   250→    }\n   251→\n   252→    /// 날짜를 이동합니다.\n   253→    ///\n   254→    /// - Parameter days: 이동할 일수 (음수는 이전, 양수는 다음)\n   255→    ///\n   256→    /// - Example:\n   257→    /// ```swift\n   258→    /// // 이전 날로 이동\n   259→    /// viewModel.navigateDate(by: -1)\n   260→    ///\n   261→    /// // 다음 날로 이동\n   262→    /// viewModel.navigateDate(by: 1)\n   263→    /// ```\n   264→    @MainActor\n   265→    func navigateDate(by days: Int) {\n   266→        // 📚 학습 포인트: Calendar API\n   267→        // Swift의 Foundation 프레임워크에서 제공하는 날짜 계산\n   268→        // 💡 Java 비교: java.time.LocalDate.plusDays()와 유사\n   269→\n   270→        guard let newDate = Calendar.current.date(\n   271→            byAdding: .day,\n   272→            value: days,\n   273→            to: selectedDate\n   274→        ) else { return }\n   275→\n   276→        selectedDate = newDate\n   277→\n   278→        Task {\n   279→            await loadDailyLog(for: newDate)\n   280→        }\n   281→    }\n   282→\n   283→    /// 이전 날짜로 이동합니다.\n   284→    ///\n   285→    /// 하루 전 날짜로 이동하고 데이터를 다시 로드합니다.\n   286→    ///\n   287→    /// - Example:\n   288→    /// ```swift\n   289→    /// Button(\"이전\", action: viewModel.goToPreviousDay)\n   290→    /// ```\n   291→    @MainActor\n   292→    func goToPreviousDay() {\n   293→        navigateDate(by: -1)\n   294→    }\n   295→\n   296→    /// 다음 날짜로 이동합니다.\n   297→    ///\n   298→    /// 하루 후 날짜로 이동하고 데이터를 다시 로드합니다.\n   299→    ///\n   300→    /// - Example:\n   301→    /// ```swift\n   302→    /// Button(\"다음\", action: viewModel.goToNextDay)\n   303→    /// ```\n   304→    @MainActor\n   305→    func goToNextDay() {\n   306→        navigateDate(by: 1)\n   307→    }\n   308→\n   309→    /// 오늘 날짜로 돌아갑니다.\n   310→    ///\n   311→    /// - Example:\n   312→    /// ```swift\n   313→    /// Button(\"오늘\", action: viewModel.goToToday)\n   314→    /// ```\n   315→    @MainActor\n   316→    func goToToday() {\n   317→        selectedDate = Date()\n   318→\n   319→        Task {\n   320→            await loadDailyLog(for: selectedDate)\n   321→        }\n   322→    }\n   323→\n   324→    /// 특정 날짜로 이동합니다.\n   325→    ///\n   326→    /// - Parameter date: 이동할 날짜\n   327→    ///\n   328→    /// - Example:\n   329→    /// ```swift\n   330→    /// DatePicker(\"날짜 선택\", selection: Binding(\n   331→    ///     get: { viewModel.selectedDate },\n   332→    ///     set: { viewModel.selectDate($0) }\n   333→    /// ))\n   334→    /// ```\n   335→    @MainActor\n   336→    func selectDate(_ date: Date) {\n   337→        selectedDate = date\n   338→\n   339→        Task {\n   340→            await loadDailyLog(for: date)\n   341→        }\n   342→    }\n   343→\n   344→    /// 에러 메시지를 지웁니다.\n   345→    ///\n   346→    /// 에러 알림을 닫을 때 호출합니다.\n   347→    ///\n   348→    /// - Example:\n   349→    /// ```swift\n   350→    /// .alert(\"오류\", isPresented: $viewModel.hasError) {\n   351→    ///     Button(\"확인\") { viewModel.clearError() }\n   352→    /// }\n   353→    /// ```\n   354→    func clearError() {\n   355→        errorMessage = nil\n   356→    }\n   357→\n   358→    /// 에러가 있는지 여부\n   359→    var hasError: Bool {\n   360→        errorMessage != nil\n   361→    }\n   362→}\n   363→\n   364→// MARK: - Date Formatting Helper\n   365→\n   366→extension DashboardViewModel {\n   367→\n   368→    /// 선택된 날짜를 표시용 문자열로 변환\n   369→    ///\n   370→    /// - Returns: \"오늘\", \"어제\", 또는 \"2026년 1월 15일 (수)\" 형식의 문자열\n   37\n\n... [truncated - full output was 14729 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:57:03.737544+00:00",
+          "type": "tool_start",
+          "content": "[Bash] find ./Bodii -name \"DailyLog.swift\" -type f",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "find ./Bodii -name \"DailyLog.swift\" -type f",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:57:03.841970+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "./Bodii/Domain/Entities/DailyLog.swift",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:57:06.876142+00:00",
+          "type": "tool_start",
+          "content": "[Read] ./Bodii/Domain/Entities/DailyLog.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "./Bodii/Domain/Entities/DailyLog.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:57:06.910819+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "     1→//\n     2→//  DailyLog.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2024-01-12.\n     6→//\n     7→\n     8→import Foundation\n     9→\n    10→/// 일일 집계 도메인 엔티티\n    11→///\n    12→/// 사용자의 하루 동안의 식단, 운동, 체성분, 수면 등 모든 데이터를 집계합니다.\n    13→/// 각 날짜별로 고유한 레코드가 생성되며, 관련 이벤트 발생 시 자동으로 업데이트됩니다.\n    14→///\n    15→/// - Note: 섭취 데이터는 FoodRecord 추가/삭제 시 자동으로 업데이트됩니다.\n    16→/// - Note: 운동 데이터는 ExerciseRecord 추가/삭제 시 자동으로 업데이트됩니다.\n    17→/// - Note: 체성분 데이터는 해당일 BodyRecord 입력 시 자동으로 업데이트됩니다.\n    18→/// - Note: 수면 데이터는 SleepRecord 입력 시 자동으로 업데이트됩니다.\n    19→/// - Note: bmr, tdee는 DailyLog 생성 시 User.current* 값에서 복사됩니다.\n    20→///\n    21→/// - Example:\n    22→/// ```swift\n    23→/// let dailyLog = DailyLog(\n    24→///     id: UUID(),\n    25→///     userId: user.id,\n    26→///     date: Date(),\n    27→///     totalCaloriesIn: 2100,\n    28→///     totalCarbs: Decimal(260.5),\n    29→///     totalProtein: Decimal(105.2),\n    30→///     totalFat: Decimal(58.3),\n    31→///     carbsRatio: Decimal(49.6),\n    32→///     proteinRatio: Decimal(20.0),\n    33→///     fatRatio: Decimal(25.0),\n    34→///     bmr: 1650,\n    35→///     tdee: 2310,\n    36→///     netCalories: -210,\n    37→///     totalCaloriesOut: 450,\n    38→///     exerciseMinutes: 60,\n    39→///     exerciseCount: 2,\n    40→///     steps: 8500,\n    41→///     weight: Decimal(70.5),\n    42→///     bodyFatPct: Decimal(21.5),\n    43→///     sleepDuration: 420,\n    44→///     sleepStatus: .good,\n    45→///     createdAt: Date(),\n    46→///     updatedAt: Date()\n    47→/// )\n    48→/// ```\n    49→struct DailyLog {\n    50→    // MARK: - Primary Key\n    51→\n    52→    /// 고유 식별자\n    53→    let id: UUID\n    54→\n    55→    // MARK: - Foreign Key\n    56→\n    57→    /// User 참조\n    58→    let userId: UUID\n    59→\n    60→    // MARK: - Date\n    61→\n    62→    /// 날짜 (UNIQUE per user)\n    63→    ///\n    64→    /// 사용자별로 하루에 하나의 DailyLog만 존재합니다.\n    65→    var date: Date\n    66→\n    67→    // MARK: - 섭취 (Calorie Intake)\n    68→\n    69→    /// 총 섭취 칼로리 (kcal)\n    70→    ///\n    71→    /// FoodRecord 추가/삭제 시 자동으로 업데이트됩니다.\n    72→    var totalCaloriesIn: Int32\n    73→\n    74→    /// 총 탄수화물 (g)\n    75→    ///\n    76→    /// FoodRecord 추가/삭제 시 자동으로 업데이트됩니다.\n    77→    var totalCarbs: Decimal\n    78→\n    79→    /// 총 단백질 (g)\n    80→    ///\n    81→    /// FoodRecord 추가/삭제 시 자동으로 업데이트됩니다.\n    82→    var totalProtein: Decimal\n    83→\n    84→    /// 총 지방 (g)\n    85→    ///\n    86→    /// FoodRecord 추가/삭제 시 자동으로 업데이트됩니다.\n    87→    var totalFat: Decimal\n    88→\n    89→    /// 탄수화물 비율 (%)\n    90→    ///\n    91→    /// FoodRecord 추가/삭제 시 자동으로 재계산됩니다.\n    92→    /// 섭취한 음식이 없는 경우 nil입니다.\n    93→    var carbsRatio: Decimal?\n    94→\n    95→    /// 단백질 비율 (%)\n    96→    ///\n    97→    /// FoodRecord 추가/삭제 시 자동으로 재계산됩니다.\n    98→    /// 섭취한 음식이 없는 경우 nil입니다.\n    99→    var proteinRatio: Decimal?\n   100→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:57:12.115130+00:00",
+          "type": "text",
+          "content": "Now I'll create comprehensive SwiftUI previews for all dashboard components. Let me start by adding preview helpers to the DashboardViewModel:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:57:33.962881+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ion/Features/Dashboard/DashboardViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ion/Features/Dashboard/DashboardViewModel.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:57:33.982972+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Error: <tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:57:38.641613+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...ion/Features/Dashboard/DashboardViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...ion/Features/Dashboard/DashboardViewModel.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:57:38.660536+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "   400→    ///\n   401→    /// - Returns: 선택된 날짜가 미래이면 true\n   402→    var isFuture: Bool {\n   403→        selectedDate > Date()\n   404→    }\n   405→}\n   406→\n   407→// MARK: - Learning Notes\n   408→\n   409→/// ## @Observable 매크로 (iOS 17+)\n   410→///\n   411→/// @Observable은 iOS 17에서 도입된 새로운 관찰 메커니즘입니다.\n   412→/// 이전의 ObservableObject + @Published를 대체하며 더 간단하고 효율적입니다.\n   413→///\n   414→/// ### 주요 차이점\n   415→///\n   416→/// **이전 방식 (ObservableObject)**:\n   417→/// ```swift\n   418→/// class ViewModel: ObservableObject {\n   419→///     @Published var dailyLog: DailyLog?\n   420→///     @Published var isLoading = false\n   421→/// }\n   422→/// ```\n   423→///\n   424→/// **새로운 방식 (@Observable)**:\n   425→/// ```swift\n   426→/// @Observable\n   427→/// class ViewModel {\n   428→///     var dailyLog: DailyLog?\n   429→///     var isLoading = false\n   430→/// }\n   431→/// ```\n   432→///\n   433→/// ### 장점\n   434→///\n   435→/// 1. **간결성**: @Published 어노테이션 불필요\n   436→/// 2. **성능**: 변경된 프로퍼티만 관찰 (세분화된 업데이트)\n   437→/// 3. **타입 안정성**: 모든 프로퍼티가 자동으로 관찰 가능\n   438→///\n   439→/// ### 사용 방법 (View에서)\n   440→///\n   441→/// **이전 방식**:\n   442→/// ```swift\n   443→/// struct DashboardView: View {\n   444→///     @StateObject private var viewModel: DashboardViewModel\n   445→///     // 또는\n   446→///     @ObservedObject var viewModel: DashboardViewModel\n   447→/// }\n   448→/// ```\n   449→///\n   450→/// **새로운 방식**:\n   451→/// ```swift\n   452→/// struct DashboardView: View {\n   453→///     var viewModel: DashboardViewModel\n   454→///     // 또는 상태 소유가 필요한 경우\n   455→///     @State private var viewModel: DashboardViewModel\n   456→/// }\n   457→/// ```\n   458→///\n   459→/// ### @MainActor\n   460→///\n   461→/// @MainActor는 메서드나 프로퍼티가 메인 스레드에서 실행되도록 보장합니다.\n   462→/// UI 업데이트는 항상 메인 스레드에서 이루어져야 하므로 필수적입니다.\n   463→///\n   464→/// ```swift\n   465→/// @MainActor\n   466→/// func loadDailyLog(for date: Date) async {\n   467→///     // 이 코드는 메인 스레드에서 실행됨\n   468→///     self.isLoading = true\n   469→/// }\n   470→/// ```\n   471→///\n   472→/// ### Pre-calculated Values\n   473→///\n   474→/// DashboardViewModel은 DailyLog의 사전 계산된 값을 활용합니다:\n   475→/// - totalCaloriesIn, totalCarbs, totalProtein, totalFat\n   476→/// - carbsRatio, proteinRatio, fatRatio\n   477→/// - bmr, tdee, netCalories\n   478→/// - totalCaloriesOut, exerciseMinutes, exerciseCount\n   479→/// - sleepDuration, sleepStatus\n   480→/// - weight, bodyFatPct\n   481→///\n   482→/// 이렇게 하면 대시보드 로딩 시 추가 계산이 필요 없어 <0.5s 성능 목표를 달성할 수 있습니다.\n   483→///\n   484→/// ### 테스트 가능성\n   485→///\n   486→/// ViewModel은 의존성 주입을 통해 쉽게 테스트할 수 있습니다:\n   487→///\n   488→/// ```swift\n   489→/// func testLoadDailyLog() async {\n   490→///     // given\n   491→///     let mockRepository = MockDailyLogRepository()\n   492→///     let viewModel = DashboardViewModel(\n   493→///         dailyLogRepository: mockRepository,\n   494→///         userId: UUID()\n   495→///     )\n   496→///\n   497→///     // when\n   498→///     await viewModel.loadDailyLog(for: Date())\n   499→///\n   500→///     // then\n   501→///     XCTAssertFalse(viewModel.isEmpty)\n   502→/// }\n   503→/// ```\n   504→///\n   505→\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:58:04.106069+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...ion/Features/Dashboard/DashboardViewModel.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...ion/Features/Dashboard/DashboardViewModel.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:04.128055+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "The file ./Bodii/Presentation/Features/Dashboard/DashboardViewModel.swift has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n   400→    ///\n   401→    /// - Returns: 선택된 날짜가 미래이면 true\n   402→    var isFuture: Bool {\n   403→        selectedDate > Date()\n   404→    }\n   405→}\n   406→\n   407→// MARK: - Preview Helpers\n   408→\n   409→#if DEBUG\n   410→extension DashboardViewModel {\n   411→\n   412→    /// 샘플 데이터가 있는 ViewModel (모든 섹션에 데이터 있음)\n   413→    ///\n   414→    /// 대시보드 Preview에서 정상 상태를 확인하는 용도입니다.\n   415→    @MainActor\n   416→    static func makePreviewWithData() -> DashboardViewModel {\n   417→        let viewModel = DashboardViewModel(\n   418→            dailyLogRepository: MockDailyLogRepository(),\n   419→            userId: UUID()\n   420→        )\n   421→\n   422→        // 샘플 DailyLog 설정\n   423→        viewModel.dailyLog = DailyLog(\n   424→            id: UUID(),\n   425→            userId: viewModel.userId,\n   426→            date: Date(),\n   427→            // 섭취 (칼로리 적자 상태)\n   428→            totalCaloriesIn: 1800,\n   429→            totalCarbs: Decimal(187.5),\n   430→            totalProtein: Decimal(93.75),\n   431→            totalFat: Decimal(41.67),\n   432→            carbsRatio: Decimal(50.0),\n   433→            proteinRatio: Decimal(25.0),\n   434→            fatRatio: Decimal(25.0),\n   435→            // 대사\n   436→            bmr: 1650,\n   437→            tdee: 2310,\n   438→            netCalories: -510,\n   439→            // 운동\n   440→            totalCaloriesOut: 450,\n   441→            exerciseMinutes: 75,\n   442→            exerciseCount: 2,\n   443→            steps: 8500,\n   444→            // 체성분\n   445→            weight: Decimal(70.5),\n   446→            bodyFatPct: Decimal(21.5),\n   447→            // 수면\n   448→            sleepDuration: 420,\n   449→            sleepStatus: .good,\n   450→            createdAt: Date(),\n   451→            updatedAt: Date()\n   452→        )\n   453→\n   454→        return viewModel\n   455→    }\n   456→\n   457→    /// 빈 상태의 ViewModel (데이터 없음)\n   458→    ///\n   459→    /// Empty State를 확인하는 용도입니다.\n   460→    @MainActor\n   461→    static func makePreviewEmpty() -> DashboardViewModel {\n   462→        let viewModel = DashboardViewModel(\n   463→            dailyLogRepository: MockDailyLogRepository(),\n   464→            userId: UUID()\n   465→        )\n   466→\n   467→        // 빈 DailyLog (섭취, 운동, 체성분, 수면 모두 없음)\n   468→        viewModel.dailyLog = DailyLog(\n   469→            id: UUID(),\n   470→            userId: viewModel.userId,\n   471→            date: Date(),\n   472→            totalCaloriesIn: 0,\n   473→            totalCarbs: 0,\n   474→            totalProtein: 0,\n   475→            totalFat: 0,\n   476→            carbsRatio: nil,\n   477→            proteinRatio: nil,\n   478→            fatRatio: nil,\n   479→            bmr: 1650,\n   480→            tdee: 2310,\n   481→            netCalories: -2310,\n   482→            totalCaloriesOut: 0,\n   483→            exerciseMinutes: 0,\n   484→            exerciseCount: 0,\n   485→            steps: 0,\n   486→            weight: nil,\n   487→            bodyFatPct: nil,\n   488→            sleepDuration: nil,\n   489→            sleepStatus: nil,\n   490→            createdAt: Date(),\n   491→            updatedAt: Date()\n   492→        )\n   493→\n   494→        return viewModel\n   495→    }\n   496→\n   497→    /// 로딩 중인 ViewModel\n   498→    ///\n   499→    /// Loading State를 확인하는 용도입니다.\n   500→    @MainActor\n   501→    static func makePreviewLoading() -> DashboardViewModel {\n   502→        let viewModel = DashboardViewModel(\n   503→            dailyLogRepository: MockDailyLogRepository(),\n   504→            userId: UUID()\n   505→        )\n   506→\n   507→        viewModel.isLoading = true\n   508→        viewModel.dailyLog = nil\n   509→\n   510→        return viewModel\n   511→    }\n   512→\n   513→    /// 에러 상태의 ViewModel\n   514→    ///\n   515→    /// Error State를 확인하는 용도입니다.\n   516→    @MainActor\n   517→    static func makePreviewError() -> DashboardViewModel {\n   518→        let viewModel = DashboardViewModel(\n   519→            dailyLogRepository: MockDailyLogRepository(),\n   520→            userId: UUID()\n   521→        )\n   522→\n   523→        viewModel.errorMessage = \"네트워크 연결을 확인해주세요.\"\n   524→        viewModel.dailyLog = nil\n   525→\n   526→        return viewModel\n   527→    }\n   528→\n   529→    /// 칼로리 과잉 상태의 ViewModel\n   530→    ///\n   531→    /// 칼로리 과잉 상태(surplus)를 확인하는 용도입니다.\n   532→    @MainActor\n   533→    static func makePreviewSurplus() -> DashboardViewModel {\n   534→        let viewModel = DashboardViewModel(\n   535→            dailyLogRepository: MockDailyLogRepository(),\n   536→            userId: UUID()\n   537→        )\n   538→\n   539→        viewModel.dailyLog = DailyLog(\n   540→            id: UUID(),\n   541→            userId: viewModel.userId,\n   542→            date: Date(),\n   543→            // 섭취 (칼로리 과잉 상태)\n   544→            totalCaloriesIn: 2800,\n   545→            totalCarbs: Decimal(280.0),\n   546→            totalProtein: Decimal(140.0),\n   547→            totalFat: Decimal(70.0),\n   548→            carbsRatio: Decimal(52.0),\n   549→            proteinRatio: Decimal(28.0),\n   550→            fatRatio: Decimal(20.0),\n   551→            bmr: 1650,\n   552→            tdee: 2310,\n   553→            netCalories: 490,\n   554→            totalCaloriesOut: 200,\n   555→            exerciseMinutes: 30,\n   556→            exerciseCount: 1,\n   557→            steps: 5000,\n   558→            weight: Decimal(71.2),\n   559→            bodyFatPct: Decimal(22.0),\n   560→            sleepDuration: 360,\n   561→            sleepStatus: .soso,\n   562→            createdAt: Date(),\n   563→            updatedAt: Date()\n   564→        )\n   565→\n   566→        return viewModel\n   567→    }\n   568→}\n   569→\n   570→/// Mock DailyLogRepository for Previews\n   571→///\n   572→/// Preview에서만 사용되는 간단한 Mock Repository입니다.\n   573→private final class MockDailyLogRepository: DailyLogRepository {\n   574→    func fetch(for date: Date, userId: UUID) async throws -> DailyLog? {\n   575→        // Preview에서는 실제 조회를 하지 않음\n   576→        return nil\n   577→    }\n   578→\n   579→    func save(_ dailyLog: DailyLog) async throws {\n   580→        // Preview에서는 저장하지 않음\n   581→    }\n   582→\n   583→    func fetchCurrentDay(userId: UUID) async throws -> DailyLog? {\n   584→        // Preview에서는 실제 조회를 하지 않음\n   585→        return nil\n   586→    }\n   587→}\n   588→#endif\n   589→\n   590→// MARK: - Learning Notes\n   591→\n   592→/// ## @Observable 매크로 (iOS 17+)\n   593→///\n   594→/// @Observable은 iOS 17에서 도입된 새로운 관찰 메커니즘입니다.\n   595→/// 이전의 ObservableObject + @Published를 대체하며 더 간단하고 효율적입니다.\n   596→///",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:58:08.917073+00:00",
+          "type": "text",
+          "content": "Now let me update the DashboardView with comprehensive previews:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:09.920324+00:00",
+          "type": "tool_start",
+          "content": "[Read] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Read",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:09.934557+00:00",
+          "type": "tool_end",
+          "content": "[Read] Done",
+          "phase": "coding",
+          "tool_name": "Read",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "     1→//\n     2→//  DashboardView.swift\n     3→//  Bodii\n     4→//\n     5→//  Created by Auto-Claude on 2026-01-12.\n     6→//\n     7→\n     8→// 📚 학습 포인트: Dashboard View with Multiple Cards\n     9→// SwiftUI의 대시보드 화면 - 여러 모듈의 요약 정보를 한 곳에 표시\n    10→// 💡 Java 비교: Android의 Dashboard Fragment와 유사\n    11→\n    12→import SwiftUI\n    13→\n    14→// MARK: - DashboardView\n    15→\n    16→/// 대시보드 메인 화면\n    17→/// 📚 학습 포인트: Dashboard Pattern\n    18→/// - 여러 모듈의 요약 정보를 카드 형태로 표시\n    19→/// - 각 카드는 해당 모듈로 네비게이션 가능\n    20→/// - 주요 지표와 빠른 액세스 제공\n    21→/// 💡 Java 비교: Android의 Home Fragment + CardViews와 유사\n    22→struct DashboardView: View {\n    23→\n    24→    // MARK: - Properties\n    25→\n    26→    /// Dashboard ViewModel - 일일 건강 데이터 관리\n    27→    /// 📚 학습 포인트: @State with @Observable\n    28→    /// - iOS 17+의 @Observable을 사용한 현대적인 상태 관리\n    29→    /// - DailyLog의 사전 계산된 값을 사용하여 빠른 로딩\n    30→    /// 💡 Java 비교: Android ViewModel과 유사\n    31→    @State private var viewModel: DashboardViewModel\n    32→\n    33→    /// 식단 탭으로 이동하는 콜백\n    34→    /// 📚 학습 포인트: Closure-based Navigation\n    35→    /// - 부모 View에서 탭 전환 로직을 처리\n    36→    /// - Quick Add 버튼에서 호출되어 해당 탭으로 이동\n    37→    /// 💡 Java 비교: Callback interface와 유사\n    38→    var onNavigateToDiet: (() -> Void)?\n    39→\n    40→    /// 운동 탭으로 이동하는 콜백\n    41→    var onNavigateToExercise: (() -> Void)?\n    42→\n    43→    /// 체성분 탭으로 이동하는 콜백\n    44→    var onNavigateToBody: (() -> Void)?\n    45→\n    46→    // MARK: - Initialization\n    47→\n    48→    /// DashboardView 초기화\n    49→    /// 📚 학습 포인트: Dependency Injection via Constructor\n    50→    /// - ViewModel과 네비게이션 콜백을 외부에서 주입받음\n    51→    /// - 테스트 시 Mock ViewModel 주입 가능\n    52→    /// 💡 Java 비교: Constructor injection과 유사\n    53→    ///\n    54→    /// - Parameters:\n    55→    ///   - viewModel: 대시보드 ViewModel\n    56→    ///   - onNavigateToDiet: 식단 탭으로 이동하는 콜백\n    57→    ///   - onNavigateToExercise: 운동 탭으로 이동하는 콜백\n    58→    ///   - onNavigateToBody: 체성분 탭으로 이동하는 콜백\n    59→    init(\n    60→        viewModel: DashboardViewModel,\n    61→        onNavigateToDiet: (() -> Void)? = nil,\n    62→        onNavigateToExercise: (() -> Void)? = nil,\n    63→        onNavigateToBody: (() -> Void)? = nil\n    64→    ) {\n    65→        self._viewModel = State(wrappedValue: viewModel)\n    66→        self.onNavigateToDiet = onNavigateToDiet\n    67→        self.onNavigateToExercise = onNavigateToExercise\n    68→        self.onNavigateToBody = onNavigateToBody\n    69→    }\n    70→\n    71→    // MARK: - Body\n    72→\n    73→    var body: some View {\n    74→        NavigationStack {\n    75→            // 📚 학습 포인트: Conditional Rendering - Loading vs Content\n    76→            // isLoading 상태에 따라 스켈레톤 뷰 또는 실제 컨텐츠 표시\n    77→            // 💡 Java 비교: if-else 조건부 렌더링과 유사\n    78→            Group {\n    79→                if viewModel.isLoading && viewModel.dailyLog == nil {\n    80→                    // 초기 로딩 중: 스켈레톤 뷰 표시\n    81→                    DashboardSkeletonView()\n    82→                } else {\n    83→                    // 데이터 로드 완료: 실제 컨텐츠 표시\n    84→                    dashboardContent\n    85→                }\n    86→            }\n    87→            .navigationTitle(\"대시보드\")\n    88→            .navigationBarTitleDisplayMode(.large)\n    89→            .refreshable {\n    90→                // 📚 학습 포인트: Pull-to-refresh\n    91→                // SwiftUI의 refreshable modifier를 사용한 새로고침 기능\n    92→                // Pull-to-refresh 제스처로 데이터를 새로고침\n    93→                // 💡 Java 비교: Android의 SwipeRefreshLayout과 유사\n    94→                await viewModel.refresh()\n    95→            }\n    96→            .task {\n    97→                // 📚 학습 포인트: task modifier\n    98→                // View가 나타날 때 비동기 작업 실행\n    99→                // 💡 Java 비교: onResume()에서 데이터 로드와 유사\n   100→                await viewModel.loadDailyLog(for: viewModel.selectedDate)\n   101→            }\n   102→            .alert(\"오류\", isPresented: .constant(viewModel.errorMessage != nil)) {\n   103→                Button(\"확인\") {\n   104→                    viewModel.clearError()\n   105→                }\n   106→            } message: {\n   107→                if let errorMessage = viewModel.errorMessage {\n   108→                    Text(errorMessage)\n   109→                }\n   110→            }\n   111→        }\n   112→    }\n   113→\n   114→    // MARK: - Dashboard Content\n   115→\n   116→    /// 대시보드 실제 컨텐츠\n   117→    /// 📚 학습 포인트: View Composition\n   118→    /// - 복잡한 body를 분리하여 가독성 향상\n   119→    /// - 로딩 상태와 컨텐츠 상태를 명확히 구분\n   120→    private var dashboardContent: some View {\n   121→        ScrollView {\n   122→            VStack(spacing: 20) {\n   123→                // 날짜 네비게이션 헤더\n   124→                dateNavigationHeader\n   125→\n   126→                // 빠른 추가 버튼\n   127→                quickAddButtons\n   128→\n   129→                // 칼로리 밸런스 카드\n   130→                calorieBalanceCard\n   131→\n   132→                // 매크로 영양소 분석 카드\n   133→                macroBreakdownCard\n   134→\n   135→                // 운동 요약 카드\n   136→                exerciseSummaryCard\n   137→\n   138→                // 수면 품질 카드\n   139→                sleepQualityCard\n   140→\n   141→                // 체성분 카드\n   142→                bodyCompositionCard\n   143→            }\n   144→            .padding(.horizontal, 16)\n   145→            .padding(.vertical, 20)\n   146→        }\n   147→    }\n   148→\n   149→    // MARK: - Subviews\n   150→\n   151→    /// 날짜 네비게이션 헤더\n   152→    /// 📚 학습 포인트: Date Navigation Component\n   153→    /// - 좌우 화살표로 날짜 이동\n   154→    /// - 중앙에 선택된 날짜 표시 (오늘, 어제, 또는 전체 날짜)\n   155→    /// - 오늘로 돌아가기 버튼\n   156→    private var dateNavigationHeader: some View {\n   157→        DateNavigationHeader(\n   158→            selectedDate: viewModel.selectedDate,\n   159→            isToday: viewModel.isToday,\n   160→            onPreviousDay: viewModel.goToPreviousDay,\n   161→            onNextDay: viewModel.goToNextDay,\n   162→            onToday: viewModel.goToToday\n   163→        )\n   164→    }\n   165→\n   166→    /// 빠른 추가 버튼\n   167→    /// 📚 학습 포인트: Quick Add Component\n   168→    /// - 가로 스크롤 버튼으로 빠른 데이터 입력\n   169→    /// - 음식, 운동, 체성분 기록 화면으로 이동\n   170→    private var quickAddButtons: some View {\n   171→        QuickAddButtons(\n   172→            onAddFood: {\n   173→                // 📚 학습 포인트: Callback Navigation\n   174→                // 버튼 탭 시 식단 탭으로 이동 콜백 호출\n   175→                onNavigateToDiet?()\n   176→            },\n   177→            onAddExercise: {\n   178→                onNavigateToExercise?()\n   179→            },\n   180→            onAddBodyComposition: {\n   181→                onNavigateToBody?()\n   182→            }\n   183→        )\n   184→    }\n   185→\n   186→    /// 칼로리 밸런스 카드\n   187→    /// 📚 학습 포인트: Calorie Balance Component\n   188→    /// - 오늘의 섭취 칼로리 vs TDEE\n   189→    /// - 원형 진행 표시기로 시각화\n   190→    /// - 칼로리 수지에 따라 색상 변경 (적자/균형/과잉)\n   191→    /// - Empty State에서 음식 추가 버튼 제공\n   192→    private var calorieBalanceCard: some View {\n   193→        CalorieBalanceCard(\n   194→            totalCaloriesIn: viewModel.totalCaloriesIn,\n   195→            tdee: viewModel.tdee,\n   196→            netCalories: viewModel.netCalories,\n   197→            onAddFood: onNavigateToDiet\n   198→        )\n   199→    }\n   200→\n   201→    /// 매크로 영양소 분석 카드\n   202→    /// 📚 학습 포인트: Macro Breakdown Component\n   203→    /// - 탄수화물/단백질/지방 섭취량과 비율\n   204→    /// - 가로 진행 바로 시각화\n   205→    /// - 각 영양소의 그램 수와 퍼센트 표시\n   206→    /// - Empty State에서 음식 추가 버튼 제공\n   207→    private var macroBreakdownCard: some View {\n   208→        MacroBreakdownCard(\n   209→            totalCarbs: viewModel.totalCarbs,\n   210→            totalProtein: viewModel.totalProtein,\n   211→            totalFat: viewModel.totalFat,\n   212→            carbsRatio: viewModel.carbsRatio,\n   213→            proteinRatio: viewModel.proteinRatio,\n   214→            fatRatio: viewModel.fatRatio,\n   215→            onAddFood: onNavigateToDiet\n   216→        )\n   217→    }\n   218→\n   219→    /// 운동 요약 카드\n   220→    /// 📚 학습 포인트: Exercise Summary Component\n   221→    /// - 오늘의 운동 정보 요약\n   222→    /// - 총 소모 칼로리, 운동 횟수, 운동 시간\n   223→    /// - 3개의 지표를 가로로 나열하여 표시\n   224→    /// - Empty State에서 운동 추가 버튼 제공\n   225→    private var exerciseSummaryCard: some View {\n   226→        ExerciseSummaryCard(\n   227→            totalCaloriesOut: viewModel.totalCaloriesOut,\n   228→            exerciseCount: viewModel.exerciseCount,\n   229→            exerciseMinutes: viewModel.exerciseMinutes,\n   230→            onAddExercise: onNavigateToExercise\n   231→        )\n   232→    }\n   233→\n   234→    /// 수면 품질 카드\n   235→    /// 📚 학습 포인트: Sleep Quality Component\n   236→    /// - 전날 밤 수면 정보\n   237→    /// - 수면 시간과 품질 표시\n   238→    /// - 이모지 인디케이터로 상태 시각화\n   239→    private var sleepQualityCard: some View {\n   240→        SleepQualityCard(\n   241→            sleepDuration: viewModel.sleepDuration,\n   242→            sleepStatus: viewModel.sleepStatus\n   243→        )\n   244→    }\n   245→\n   246→    /// 체성분 카드\n   247→    /// 📚 학습 포인트: Body Composition Component\n   248→    /// - 오늘의 체중과 체지방률\n   249→    /// - 전날 대비 변화량 표시 (TODO: 향후 구현)\n   250→    /// - Empty State에서 체성분 기록 버튼 제공\n   251→    private var bodyCompositionCard: some View {\n   252→        BodyCompositionCard(\n   253→            weight: viewModel.weight,\n   254→            bodyFatPct: viewModel.bodyFatPct,\n   255→            // TODO: 전날 데이터를 DailyLogRepository에서 조회하여 전달\n   256→            // 현재는 DailyLog에 전날 데이터가 없으므로 nil 전달\n   257→            previousWeight: nil,\n   258→            previousBodyFatPct: nil,\n   259→            onAddBodyComposition: onNavigateToBody\n   260→        )\n   261→    }\n   262→}\n   263→\n   264→// MARK: - Preview\n   265→\n   266→#if DEBUG\n   267→#Preview(\"대시보드 - 데이터 있음\") {\n   268→    // TODO: Mock DashboardViewModel 구현 후 Preview 추가\n   269→    // DashboardView(\n   270→    //     viewModel: .makePreviewWithData()\n   271→    // )\n   272→    Text(\"Preview를 위해 Mock DashboardViewModel이 필요합니다\")\n   273→}\n   274→\n   275→#Preview(\"대시보드 - 빈 상태\") {\n   276→    // TODO: Mock DashboardViewModel 구현 후 Preview 추가\n   277→    Text(\"Preview를 위해 Mock DashboardViewModel이 필요합니다\")\n   278→}\n   279→\n   280→#Preview(\"다크 모드\") {\n\n<system-reminder>\nWhenever you read a file, you sh\n\n... [truncated - full output was 10528 chars]",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:58:37.813367+00:00",
+          "type": "tool_start",
+          "content": "[Edit] ...entation/Features/Dashboard/DashboardView.swift",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "tool_input": "...entation/Features/Dashboard/DashboardView.swift",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:37.833109+00:00",
+          "type": "tool_end",
+          "content": "[Edit] Done",
+          "phase": "coding",
+          "tool_name": "Edit",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "The file ./Bodii/Presentation/Features/Dashboard/DashboardView.swift has been updated. Here's the result of running `cat -n` on a snippet of the edited file:\n   260→        )\n   261→    }\n   262→}\n   263→\n   264→// MARK: - Preview\n   265→\n   266→// 📚 학습 포인트: Comprehensive SwiftUI Previews\n   267→// 다양한 상태(데이터 있음, 빈 상태, 로딩, 에러)를 미리 보며 개발\n   268→// 💡 Java 비교: Compose의 @Preview와 유사하지만 더 강력한 실시간 미리보기 제공\n   269→\n   270→#if DEBUG\n   271→#Preview(\"대시보드 - 데이터 있음\") {\n   272→    // 📚 학습 포인트: Preview with Sample Data\n   273→    // 모든 카드에 데이터가 있는 정상 상태\n   274→    // 칼로리 적자, 균형잡힌 매크로, 운동 2회, 좋은 수면, 체성분 기록\n   275→    DashboardView(\n   276→        viewModel: .makePreviewWithData(),\n   277→        onNavigateToDiet: {\n   278→            print(\"Navigate to Diet\")\n   279→        },\n   280→        onNavigateToExercise: {\n   281→            print(\"Navigate to Exercise\")\n   282→        },\n   283→        onNavigateToBody: {\n   284→            print(\"Navigate to Body\")\n   285→        }\n   286→    )\n   287→}\n   288→\n   289→#Preview(\"대시보드 - 빈 상태\") {\n   290→    // 📚 학습 포인트: Preview with Empty State\n   291→    // 데이터가 전혀 없는 상태 (음식, 운동, 수면, 체성분 모두 미기록)\n   292→    // Empty State 컴포넌트와 안내 메시지가 표시됨\n   293→    DashboardView(\n   294→        viewModel: .makePreviewEmpty(),\n   295→        onNavigateToDiet: {\n   296→            print(\"Navigate to Diet\")\n   297→        },\n   298→        onNavigateToExercise: {\n   299→            print(\"Navigate to Exercise\")\n   300→        },\n   301→        onNavigateToBody: {\n   302→            print(\"Navigate to Body\")\n   303→        }\n   304→    )\n   305→}\n   306→\n   307→#Preview(\"대시보드 - 로딩 중\") {\n   308→    // 📚 학습 포인트: Preview with Loading State\n   309→    // 데이터를 불러오는 중인 상태\n   310→    // 스켈레톤 뷰(shimmer effect)가 표시됨\n   311→    DashboardView(\n   312→        viewModel: .makePreviewLoading(),\n   313→        onNavigateToDiet: {\n   314→            print(\"Navigate to Diet\")\n   315→        },\n   316→        onNavigateToExercise: {\n   317→            print(\"Navigate to Exercise\")\n   318→        },\n   319→        onNavigateToBody: {\n   320→            print(\"Navigate to Body\")\n   321→        }\n   322→    )\n   323→}\n   324→\n   325→#Preview(\"대시보드 - 에러 상태\") {\n   326→    // 📚 학습 포인트: Preview with Error State\n   327→    // 데이터 로드 실패 상태\n   328→    // 에러 알림 다이얼로그가 표시됨\n   329→    DashboardView(\n   330→        viewModel: .makePreviewError(),\n   331→        onNavigateToDiet: {\n   332→            print(\"Navigate to Diet\")\n   333→        },\n   334→        onNavigateToExercise: {\n   335→            print(\"Navigate to Exercise\")\n   336→        },\n   337→        onNavigateToBody: {\n   338→            print(\"Navigate to Body\")\n   339→        }\n   340→    )\n   341→}\n   342→\n   343→#Preview(\"대시보드 - 칼로리 과잉\") {\n   344→    // 📚 학습 포인트: Preview with Surplus Calories\n   345→    // 칼로리를 과다 섭취한 상태\n   346→    // 칼로리 밸런스 카드가 빨간색으로 표시됨\n   347→    // 적은 운동량, 보통 수면 품질\n   348→    DashboardView(\n   349→        viewModel: .makePreviewSurplus(),\n   350→        onNavigateToDiet: {\n   351→            print(\"Navigate to Diet\")\n   352→        },\n   353→        onNavigateToExercise: {\n   354→            print(\"Navigate to Exercise\")\n   355→        },\n   356→        onNavigateToBody: {\n   357→            print(\"Navigate to Body\")\n   358→        }\n   359→    )\n   360→}\n   361→\n   362→#Preview(\"다크 모드 - 데이터 있음\") {\n   363→    // 📚 학습 포인트: Preview with Dark Mode\n   364→    // 다크 모드에서의 UI 확인\n   365→    // 색상 대비와 가독성 검증\n   366→    DashboardView(\n   367→        viewModel: .makePreviewWithData(),\n   368→        onNavigateToDiet: {\n   369→            print(\"Navigate to Diet\")\n   370→        },\n   371→        onNavigateToExercise: {\n   372→            print(\"Navigate to Exercise\")\n   373→        },\n   374→        onNavigateToBody: {\n   375→            print(\"Navigate to Body\")\n   376→        }\n   377→    )\n   378→    .preferredColorScheme(.dark)\n   379→}\n   380→\n   381→#Preview(\"다크 모드 - 빈 상태\") {\n   382→    // 📚 학습 포인트: Preview with Dark Mode + Empty State\n   383→    // 다크 모드에서 Empty State 확인\n   384→    DashboardView(\n   385→        viewModel: .makePreviewEmpty(),\n   386→        onNavigateToDiet: {\n   387→            print(\"Navigate to Diet\")\n   388→        },\n   389→        onNavigateToExercise: {\n   390→            print(\"Navigate to Exercise\")\n   391→        },\n   392→        onNavigateToBody: {\n   393→            print(\"Navigate to Body\")\n   394→        }\n   395→    )\n   396→    .preferredColorScheme(.dark)\n   397→}\n   398→#endif\n   399→\n   400→// MARK: - Documentation\n   401→\n   402→/// 📚 학습 포인트: DashboardView 사용법",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:58:41.423968+00:00",
+          "type": "text",
+          "content": "Perfect! Now let me verify that the code compiles correctly:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:43.208193+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && xcodebuild -project Bodii.xcodeproj -sc...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && xcodebuild -project Bodii.xcodeproj -sc...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:43.244195+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'xcodebuild' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "Command 'xcodebuild' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:58:53.949611+00:00",
+          "type": "text",
+          "content": "Let me check the existing previews for the remaining dashboard components to ensure they cover all necessary states:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:55.356747+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -A 3 \"^#Preview\" ./Bodii/Presentation/Feat...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -A 3 \"^#Preview\" ./Bodii/Presentation/Feat...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:56.036322+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -A 3 \"^#Preview\" ./Bodii/Presentation/Feat...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -A 3 \"^#Preview\" ./Bodii/Presentation/Feat...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:56.660242+00:00",
+          "type": "tool_start",
+          "content": "[Bash] grep -A 3 \"^#Preview\" ./Bodii/Presentation/Feat...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "grep -A 3 \"^#Preview\" ./Bodii/Presentation/Feat...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:58:56.762101+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "#Preview(\"Excellent Sleep\") {\n    VStack(spacing: 20) {\n        // 매우 좋음 (8시간) - 🔵\n        SleepQualityCard(\n--\n#Preview(\"Good Sleep\") {\n    VStack(spacing: 20) {\n        // 좋음 (7시간) - 🟢\n        SleepQualityCard(\n--\n#Preview(\"Soso Sleep\") {\n    VStack(spacing: 20) {\n        // 보통 (6시간) - 🟡\n        SleepQualityCard(\n--\n#Preview(\"Bad Sleep\") {\n    VStack(spacing: 20) {\n        // 나쁨 (5시간) - 🔴\n        SleepQualityCard(\n--\n#Preview(\"Oversleep\") {\n    VStack(spacing: 20) {\n        // 과다 수면 (9시간 30분) - 🟠\n        SleepQualityCard(\n--\n#Preview(\"Empty State\") {\n    VStack {\n        // 수면 기록이 없는 경우 - 회색 톤으로 표시\n        SleepQualityCard(\n--\n#Preview(\"All Sleep States\") {\n    ScrollView {\n        VStack(spacing: 20) {\n            // 나쁨 (4시간 30분) - 🔴",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:59:07.821258+00:00",
+          "type": "text",
+          "content": "Excellent! Let me verify the preview counts for all components:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:59:10.078997+00:00",
+          "type": "tool_start",
+          "content": "[Bash] for file in ./Bodii/Presentation/Features/Dashb...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "for file in ./Bodii/Presentation/Features/Dashb...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:59:10.218162+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "=== BodyCompositionCard.swift ===\n4\n=== CalorieBalanceCard.swift ===\n5\n=== DashboardEmptyStates.swift ===\n7\n=== DashboardSkeletonView.swift ===\n3\n=== DateNavigationHeader.swift ===\n4\n=== ExerciseSummaryCard.swift ===\n4\n=== MacroBreakdownCard.swift ===\n6\n=== QuickAddButtons.swift ===\n3\n=== SleepQualityCard.swift ===\n7\n=== DashboardView.swift ===\n7",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:59:16.557968+00:00",
+          "type": "text",
+          "content": "Perfect! All dashboard components now have comprehensive previews. Let me create a summary document and then commit the changes:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:59:25.948272+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cat > /tmp/preview_summary.txt << 'EOF'\nDashboa...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cat > /tmp/preview_summary.txt << 'EOF'\nDashboa...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:59:25.969344+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Error: Command 'Quick' is not in the allowed commands for this project",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "Command 'Quick' is not in the allowed commands for this project",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:59:29.932642+00:00",
+          "type": "tool_start",
+          "content": "[Bash] echo \"Dashboard Components - SwiftUI Preview Su...",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "echo \"Dashboard Components - SwiftUI Preview Su...",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:59:30.033964+00:00",
+          "type": "tool_end",
+          "content": "[Bash] Done",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "subtask_id": "6.2",
+          "session": 12,
+          "detail": "Dashboard Components - SwiftUI Preview Summary\n===============================================\n\nTotal Previews: 50",
+          "collapsed": true
+        },
+        {
+          "timestamp": "2026-01-16T02:59:38.029417+00:00",
+          "type": "text",
+          "content": "Now let me commit the changes and update the plan:",
+          "phase": "coding",
+          "subtask_id": "6.2",
+          "session": 12
+        },
+        {
+          "timestamp": "2026-01-16T02:59:38.725579+00:00",
+          "type": "tool_start",
+          "content": "[Bash] cd . && git add -A && git status",
+          "phase": "coding",
+          "tool_name": "Bash",
+          "tool_input": "cd . && git add -A && git status",
+          "subtask_id": "6.2",
+          "session": 12
         }
       ]
     },
