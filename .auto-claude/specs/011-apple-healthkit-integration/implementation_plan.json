@@ -548,7 +548,7 @@
           "id": "7.1",
           "title": "Register HealthKit Services in DIContainer",
           "description": "Add HealthKit services to DIContainer with lazy initialization. Create factory methods for ViewModels that need HealthKit.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/App/DIContainer.swift"
           ],
@@ -557,7 +557,9 @@
             "healthKitReadService lazy var",
             "healthKitWriteService lazy var",
             "healthKitSyncService lazy var"
-          ]
+          ],
+          "notes": "Successfully added HealthKit services to DIContainer with lazy initialization and factory methods:\n\n\u2705 All acceptance criteria met:\n- healthKitAuthorizationService lazy var \u2713\n- healthKitReadService lazy var \u2713\n- healthKitWriteService lazy var \u2713\n- healthKitSyncService lazy var \u2713\n\nAdditional services added:\n\u2705 healthStore: HKHealthStore - Shared HealthKit store instance\n\u2705 healthKitBackgroundSync: HealthKitBackgroundSync - Background observer service\n\nFactory methods:\n\u2705 makeHealthKitSettingsViewModel() - Creates HealthKitSettingsViewModel with proper dependencies\n\nIntegration completed:\n\u2705 Updated ContentView to use DIContainer for dashboard and settings tabs\n\u2705 Updated BodiiApp to use DIContainer for background sync\n\u2705 Removed manual service initialization code throughout the app\n\u2705 All ViewModels and services now use centralized DI pattern\n\nBenefits:\n- Single source of truth for HealthKit service instances\n- Lazy initialization for optimal performance\n- Easy to mock for testing in future subtasks\n- Consistent with existing DIContainer patterns (bodyRepository, use cases)\n- Memory efficient with shared instance reuse\n\nReady for next subtask 7.2 (Create HealthKit Service Protocols for testing).",
+          "updated_at": "2026-01-16T07:15:17.734247+00:00"
         },
         {
           "id": "7.2",
@@ -633,5 +635,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T07:10:38.303784+00:00"
+  "last_updated": "2026-01-16T07:15:17.734261+00:00"
 }
