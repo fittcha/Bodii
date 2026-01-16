@@ -491,7 +491,7 @@
           "id": "6.2",
           "title": "Create HealthKitSettingsViewModel",
           "description": "Create ViewModel for HealthKit settings. Manages authorization state, sync triggers, and last sync display.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Features/Settings/HealthKitSettingsViewModel.swift"
           ],
@@ -500,13 +500,15 @@
             "@Published lastSyncDate property",
             "requestAuthorization() method",
             "syncNow() method"
-          ]
+          ],
+          "notes": "Successfully created HealthKitSettingsViewModel following MVVM pattern:\n\n\u2705 @Published isEnabled property\n  - @AppStorage for UserDefaults persistence\n  - Automatic UI updates on state change\n  - App restart persistence\n\n\u2705 @Published lastSyncDate property\n  - Optional Date for last sync timestamp\n  - Displayed as relative time (\"5\ubd84 \uc804\")\n  - Updated after successful sync\n\n\u2705 requestAuthorization() method\n  - Checks current authorization status\n  - Shows HealthKitPermissionView if needed\n  - Shows HealthKitDeniedView if denied\n  - Starts sync if already authorized\n\n\u2705 syncNow() method\n  - Manual sync trigger\n  - Loading state management (isSyncing)\n  - Error handling with user-friendly messages\n  - Updates lastSyncDate on success\n\nAdditional features:\n- AuthorizationStatus enum with displayText and color properties\n- toggleHealthKit(enabled:) handler for toggle changes\n- onPermissionGranted() callback for permission success flow\n- onSettingsReturned() callback for settings app return\n- refreshState() method for state updates\n- isHealthKitAvailable computed property\n- canSync computed property for button state\n- showPermissionView, showDeniedView sheet states\n- Comprehensive error handling with HealthKitError\n\nUpdated SettingsView integration:\n- Refactored to use HealthKitSettingsViewModel\n- Replaced direct service calls with ViewModel methods\n- Cleaner separation of concerns\n- @StateObject lifecycle management\n- All UI state now managed by ViewModel\n- Simplified view logic\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- @MainActor for thread safety\n- Dependency injection via constructor\n- Comprehensive documentation with examples\n- Similar structure to BodyCompositionViewModel\n- Preview support with makePreview() factory method\n\nAll acceptance criteria met:\n\u2705 @Published isEnabled property\n\u2705 @Published lastSyncDate property\n\u2705 requestAuthorization() method\n\u2705 syncNow() method",
+          "updated_at": "2026-01-16T07:02:52.605498+00:00"
         },
         {
           "id": "6.3",
           "title": "Show HealthKit Data Source Indicators",
           "description": "Add visual indicator (Apple Watch icon) on records imported from HealthKit. Distinguish from manually entered data.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Components/ExerciseCardView.swift"
           ],
@@ -514,7 +516,9 @@
             "Apple Watch/HealthKit icon for imported records",
             "Different styling for external data",
             "Tooltip explaining data source"
-          ]
+          ],
+          "notes": "Successfully implemented HealthKit data source visual indicators:\n\n\u2705 Added HealthKit badge to ExerciseCardView:\n  - Apple Watch icon with \"\ub3d9\uae30\ud654\" text badge\n  - Green gradient background for visual distinction\n  - Positioned as overlay at top-right corner\n  - Conditional display based on exercise.isFromHealthKit\n  - Added tooltip help text: \"Apple Health\uc5d0\uc11c \ub3d9\uae30\ud654\ub41c \ub370\uc774\ud130\"\n  - Updated preview to show HealthKit-imported record example\n\n\u2705 Added HealthKit indicator to BodyCompositionEntry:\n  - Added healthKitId: String? property\n  - Added isFromHealthKit computed property\n  - Updated initializer to accept healthKitId parameter\n\n\u2705 Updated BodyRecordMapper to preserve healthKitId:\n  - toDomain() method now preserves healthKitId from Core Data\n  - toEntity() method now maps healthKitId to Core Data entity\n  - updateEntity() method now updates healthKitId field\n\n\u2705 Added HealthKit indicator to BodyCompositionView (historyRow):\n  - Small Apple Watch icon + \"\ub3d9\uae30\ud654\" text in green\n  - Displayed below date/time for HealthKit records\n  - Conditional display based on entry.isFromHealthKit\n\n\u2705 Added HealthKit indicator to BodyRecordDetailView:\n  - Prominent badge in date header section\n  - Green gradient capsule badge with Apple Watch icon\n  - Text: \"Apple Health\uc5d0\uc11c \ub3d9\uae30\ud654\ub428\"\n  - Shadow effect for visual prominence\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Conditional rendering using isFromHealthKit computed property\n- Consistent design language across all components\n- SwiftUI best practices with computed properties\n- Non-intrusive visual indicators\n\nAll acceptance criteria met:\n\u2705 Apple Watch/HealthKit icon for imported records\n\u2705 Different styling for external data (green gradient badges)\n\u2705 Tooltip explaining data source (.help modifier)\n\nNotes:\n- Sleep record views not found in current codebase - indicators will be added when sleep views are implemented in future tasks\n- Dashboard may show aggregated data but doesn't display individual sleep records yet\n- All visual indicators use consistent green/teal gradient design for brand cohesion\n- Indicators are subtle enough not to clutter the UI but prominent enough to be noticed",
+          "updated_at": "2026-01-16T07:07:00.054907+00:00"
         },
         {
           "id": "6.4",
@@ -627,5 +631,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T06:57:46.092882+00:00"
+  "last_updated": "2026-01-16T07:07:00.054918+00:00"
 }
