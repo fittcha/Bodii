@@ -524,7 +524,7 @@
           "id": "6.4",
           "title": "Add Manual Sync Button",
           "description": "Add pull-to-refresh or button for manual sync. Show sync progress and last sync time.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Features/Dashboard/DashboardView.swift"
           ],
@@ -532,7 +532,9 @@
             "Manual sync trigger button or pull-to-refresh",
             "Sync progress indicator",
             "Last sync timestamp display"
-          ]
+          ],
+          "notes": "Successfully implemented manual sync button and pull-to-refresh with HealthKit integration:\n\n\u2705 Created healthKitSyncStatus view component in DashboardView:\n  - Apple Health icon with gradient styling\n  - Last sync timestamp display with RelativeDateTimeFormatter\n  - Sync progress indicator (ProgressView) when syncing\n  - Manual sync button (arrow.clockwise.circle.fill icon)\n  - Conditional display: only when HealthKit is enabled\n  - Disabled state handling: button grayed out when !canSync\n\n\u2705 Integrated HealthKitSettingsViewModel into DashboardView:\n  - Optional @StateObject for HealthKitSettingsViewModel\n  - Proper initialization in init() method\n  - State updates in .task modifier on view appear\n  - Automatic state refresh when view loads\n\n\u2705 Pull-to-refresh integration:\n  - Updated refreshData() with parallel async task execution\n  - Uses withTaskGroup for concurrent ViewModel refreshes\n  - Automatically triggers HealthKit sync when enabled\n  - Only syncs if healthKitViewModel.canSync is true\n  - Optimal performance with parallel execution\n\n\u2705 Updated ContentView dashboard tab:\n  - Creates HealthKit services (authService, readService, writeService, syncService)\n  - Creates HealthKitSettingsViewModel instance\n  - Passes viewModel to DashboardView\n  - TODO comment for Phase 7 DIContainer integration\n\nAll acceptance criteria met:\n\u2705 Manual sync trigger button or pull-to-refresh\n\u2705 Sync progress indicator\n\u2705 Last sync timestamp display\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- @ViewBuilder for component composition\n- Conditional rendering with if let\n- Similar design to SettingsView sync UI\n- Comprehensive inline documentation\n- SwiftUI best practices with computed properties\n\nUI Design:\n- Compact banner design (not intrusive)\n- Red/pink gradient border matching Apple Health branding\n- Relative time formatting (\"\ubc29\uae08\", \"5\ubd84 \uc804\", \"2\uc2dc\uac04 \uc804\")\n- Loading state with scaled ProgressView\n- Disabled button state with visual feedback\n- Professional card-based layout with shadow\n\nPerformance:\n- Parallel async tasks in refreshData() using withTaskGroup\n- Non-blocking UI updates with @MainActor\n- Efficient state management with @Published properties\n- Only triggers sync when necessary (enabled + canSync)\n\nReady for Phase 7 (DI Container integration and testing).",
+          "updated_at": "2026-01-16T07:10:38.303776+00:00"
         }
       ]
     },
@@ -631,5 +633,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T07:07:00.054918+00:00"
+  "last_updated": "2026-01-16T07:10:38.303784+00:00"
 }
