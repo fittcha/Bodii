@@ -216,6 +216,35 @@ final class HealthKitAuthorizationService {
         return healthStore.authorizationStatus(for: type)
     }
 
+    /// 특정 데이터 타입에 대한 권한이 있는지 확인 (간편 메서드)
+    ///
+    /// 📚 학습 포인트: Simplified Authorization Check
+    /// - getAuthorizationStatus를 Bool로 단순화
+    /// - sharingAuthorized인 경우만 true 반환
+    /// 💡 Java 비교: hasPermission() Boolean 메서드
+    ///
+    /// - Parameter type: 확인할 HKObjectType
+    ///
+    /// - Returns: 권한이 허용되었으면 true
+    ///
+    /// - Note: 쓰기 권한만 정확히 확인 가능. 읽기 권한은 프라이버시로 인해 정확하지 않을 수 있음
+    ///
+    /// - Example:
+    /// ```swift
+    /// guard let weightType = HKQuantityType.quantityType(forIdentifier: .bodyMass) else {
+    ///     return
+    /// }
+    ///
+    /// if service.isAuthorized(for: weightType) {
+    ///     print("체중 권한 허용됨")
+    /// } else {
+    ///     print("체중 권한 없음 또는 미확인")
+    /// }
+    /// ```
+    func isAuthorized(for type: HKObjectType) -> Bool {
+        return healthStore.authorizationStatus(for: type) == .sharingAuthorized
+    }
+
     /// 특정 데이터 타입에 쓰기 권한이 있는지 확인
     ///
     /// 📚 학습 포인트: Write Permission Check
@@ -271,6 +300,278 @@ final class HealthKitAuthorizationService {
         return writeTypes.allSatisfy { type in
             healthStore.authorizationStatus(for: type) == .sharingAuthorized
         }
+    }
+
+    // MARK: - Type-Safe Authorization Checks
+
+    /// QuantityType에 대한 권한 확인 (타입 안전)
+    ///
+    /// 📚 학습 포인트: Type-Safe API
+    /// - HealthKitDataTypes enum을 사용한 타입 안전한 권한 확인
+    /// - HKQuantityType 생성 실패 시 false 반환
+    /// 💡 Java 비교: Enum-based Permission Check
+    ///
+    /// - Parameter quantityType: 확인할 QuantityType
+    ///
+    /// - Returns: 권한이 허용되었으면 true
+    ///
+    /// - Example:
+    /// ```swift
+    /// if service.isAuthorized(for: .weight) {
+    ///     print("체중 권한 허용됨")
+    /// }
+    ///
+    /// if service.isAuthorized(for: .activeEnergyBurned) {
+    ///     print("활동 칼로리 권한 허용됨")
+    /// }
+    /// ```
+    func isAuthorized(for quantityType: HealthKitDataTypes.QuantityType) -> Bool {
+        guard let type = quantityType.type else {
+            return false
+        }
+        return isAuthorized(for: type)
+    }
+
+    /// CategoryType에 대한 권한 확인 (타입 안전)
+    ///
+    /// 📚 학습 포인트: Category Type Permission
+    /// - HKCategoryType에 대한 타입 안전한 권한 확인
+    /// 💡 Java 비교: Enum-based Category Permission
+    ///
+    /// - Parameter categoryType: 확인할 CategoryType
+    ///
+    /// - Returns: 권한이 허용되었으면 true
+    ///
+    /// - Example:
+    /// ```swift
+    /// if service.isAuthorized(for: .sleepAnalysis) {
+    ///     print("수면 분석 권한 허용됨")
+    /// }
+    /// ```
+    func isAuthorized(for categoryType: HealthKitDataTypes.CategoryType) -> Bool {
+        guard let type = categoryType.type else {
+            return false
+        }
+        return isAuthorized(for: type)
+    }
+
+    /// Workout 타입에 대한 권한 확인
+    ///
+    /// 📚 학습 포인트: Workout Authorization
+    /// - HKWorkoutType 권한 확인
+    /// 💡 Java 비교: Specific Type Permission Check
+    ///
+    /// - Returns: 운동 데이터 권한이 허용되었으면 true
+    ///
+    /// - Example:
+    /// ```swift
+    /// if service.isAuthorizedForWorkouts {
+    ///     print("운동 데이터 권한 허용됨")
+    /// }
+    /// ```
+    var isAuthorizedForWorkouts: Bool {
+        return isAuthorized(for: HealthKitDataTypes.workoutType)
+    }
+
+    /// QuantityType에 대한 쓰기 권한 확인 (타입 안전)
+    ///
+    /// 📚 학습 포인트: Type-Safe Write Permission
+    /// - HealthKitDataTypes enum을 사용한 타입 안전한 쓰기 권한 확인
+    /// 💡 Java 비교: Enum-based Write Permission Check
+    ///
+    /// - Parameter quantityType: 확인할 QuantityType
+    ///
+    /// - Returns: 쓰기 권한이 있으면 true
+    ///
+    /// - Example:
+    /// ```swift
+    /// if service.canWrite(to: .weight) {
+    ///     // 체중 데이터 저장 가능
+    /// }
+    ///
+    /// if service.canWrite(to: .dietaryEnergyConsumed) {
+    ///     // 섭취 칼로리 저장 가능
+    /// }
+    /// ```
+    func canWrite(to quantityType: HealthKitDataTypes.QuantityType) -> Bool {
+        guard let type = quantityType.type else {
+            return false
+        }
+        return canWrite(to: type)
+    }
+
+    /// Workout 타입에 대한 쓰기 권한 확인
+    ///
+    /// 📚 학습 포인트: Workout Write Permission
+    /// - 운동 데이터 저장 가능 여부 확인
+    /// 💡 Java 비교: Boolean Permission Check
+    ///
+    /// - Returns: 운동 데이터 쓰기 권한이 있으면 true
+    ///
+    /// - Example:
+    /// ```swift
+    /// if service.canWriteWorkouts {
+    ///     // 운동 데이터 저장 가능
+    ///     try await writeService.saveWorkout(exerciseRecord)
+    /// }
+    /// ```
+    var canWriteWorkouts: Bool {
+        return canWrite(to: HealthKitDataTypes.workoutType)
+    }
+}
+
+// MARK: - Partial Authorization Handling
+
+extension HealthKitAuthorizationService {
+
+    /// 부분 권한 상태 정보
+    ///
+    /// 📚 학습 포인트: Authorization Summary
+    /// - 어떤 권한이 허용/거부되었는지 상세 정보 제공
+    /// - UI에서 사용자에게 권한 상태 표시할 때 사용
+    /// 💡 Java 비교: PermissionStatus DTO
+    ///
+    /// **포함 정보:**
+    /// - totalRequested: 요청한 전체 권한 수
+    /// - authorized: 허용된 권한 수
+    /// - denied: 거부된 권한 수
+    /// - notDetermined: 아직 결정되지 않은 권한 수
+    /// - authorizedTypes: 허용된 데이터 타입 목록
+    /// - deniedTypes: 거부된 데이터 타입 목록
+    struct AuthorizationSummary {
+        /// 요청한 전체 권한 수
+        let totalRequested: Int
+
+        /// 허용된 권한 수
+        let authorized: Int
+
+        /// 거부된 권한 수
+        let denied: Int
+
+        /// 아직 결정되지 않은 권한 수
+        let notDetermined: Int
+
+        /// 허용된 데이터 타입의 표시 이름 목록
+        let authorizedTypes: [String]
+
+        /// 거부된 데이터 타입의 표시 이름 목록
+        let deniedTypes: [String]
+
+        /// 모든 권한이 허용되었는지 여부
+        var isFullyAuthorized: Bool {
+            return authorized == totalRequested && denied == 0
+        }
+
+        /// 일부 권한만 허용되었는지 여부
+        var isPartiallyAuthorized: Bool {
+            return authorized > 0 && (denied > 0 || notDetermined > 0)
+        }
+
+        /// 모든 권한이 거부되었는지 여부
+        var isFullyDenied: Bool {
+            return denied == totalRequested
+        }
+    }
+
+    /// 현재 권한 상태 요약 조회
+    ///
+    /// 📚 학습 포인트: Graceful Partial Authorization Handling
+    /// - 부분 권한 허용 상황을 우아하게 처리
+    /// - 사용자에게 어떤 권한이 필요한지 명확히 표시
+    /// 💡 Java 비교: Permission Status Summary
+    ///
+    /// - Returns: 권한 상태 요약 정보
+    ///
+    /// - Example:
+    /// ```swift
+    /// let summary = service.getAuthorizationSummary()
+    ///
+    /// if summary.isFullyAuthorized {
+    ///     print("모든 권한 허용됨")
+    /// } else if summary.isPartiallyAuthorized {
+    ///     print("일부 권한만 허용됨")
+    ///     print("허용됨: \(summary.authorizedTypes)")
+    ///     print("거부됨: \(summary.deniedTypes)")
+    /// } else {
+    ///     print("권한이 거부되었습니다")
+    /// }
+    /// ```
+    func getAuthorizationSummary() -> AuthorizationSummary {
+        let writeTypes = HealthKitDataTypes.writeTypes
+
+        var authorized = 0
+        var denied = 0
+        var notDetermined = 0
+        var authorizedTypeNames: [String] = []
+        var deniedTypeNames: [String] = []
+
+        // 📚 학습 포인트: Status Aggregation
+        // 각 데이터 타입의 권한 상태를 집계
+        for type in writeTypes {
+            let status = healthStore.authorizationStatus(for: type)
+            let typeName = getTypeName(for: type)
+
+            switch status {
+            case .sharingAuthorized:
+                authorized += 1
+                authorizedTypeNames.append(typeName)
+
+            case .sharingDenied:
+                denied += 1
+                deniedTypeNames.append(typeName)
+
+            case .notDetermined:
+                notDetermined += 1
+
+            @unknown default:
+                notDetermined += 1
+            }
+        }
+
+        return AuthorizationSummary(
+            totalRequested: writeTypes.count,
+            authorized: authorized,
+            denied: denied,
+            notDetermined: notDetermined,
+            authorizedTypes: authorizedTypeNames,
+            deniedTypes: deniedTypeNames
+        )
+    }
+
+    /// 데이터 타입의 표시 이름 반환
+    ///
+    /// - Parameter type: HKSampleType
+    ///
+    /// - Returns: 한국어 표시 이름
+    private func getTypeName(for type: HKSampleType) -> String {
+        let identifier = type.identifier
+
+        // QuantityType 확인
+        for quantityType in [
+            HealthKitDataTypes.QuantityType.weight,
+            .bodyFatPercentage,
+            .activeEnergyBurned,
+            .stepCount,
+            .dietaryEnergyConsumed
+        ] {
+            if quantityType.type?.identifier == identifier {
+                return quantityType.displayName
+            }
+        }
+
+        // CategoryType 확인
+        for categoryType in [HealthKitDataTypes.CategoryType.sleepAnalysis] {
+            if categoryType.type?.identifier == identifier {
+                return categoryType.displayName
+            }
+        }
+
+        // WorkoutType 확인
+        if identifier == HealthKitDataTypes.workoutType.identifier {
+            return HealthKitDataTypes.workoutDisplayName
+        }
+
+        return "알 수 없는 타입"
     }
 }
 
