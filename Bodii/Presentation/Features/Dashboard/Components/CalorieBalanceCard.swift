@@ -168,18 +168,29 @@ struct CalorieBalanceCard: View {
                     centerInfo
                 }
                 .padding(.vertical, 8)
+                // 📚 학습 포인트: Accessibility for Circular Progress
+                // 원형 진행 표시기의 정보를 VoiceOver로 읽을 수 있도록 함
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("칼로리 진행률")
+                .accessibilityValue("\(totalCaloriesIn) 섭취, 목표 \(tdee), \(Int(intakePercentage * 100))퍼센트")
 
                 // 통계 섹션
                 statsSection
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("칼로리 통계")
 
                 // 상태 라벨
                 statusBadge
+                    .accessibilityLabel("\(statusLabel)")
+                    .accessibilityValue(netCalories >= 0 ? "\(netCalories) 킬로칼로리 과잉" : "\(abs(netCalories)) 킬로칼로리 적자")
             }
         }
         .padding(20)
         .background(cardBackground)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("칼로리 밸런스 카드")
     }
 
     // MARK: - View Components

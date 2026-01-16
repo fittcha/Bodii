@@ -130,6 +130,8 @@ struct MacroBreakdownCard: View {
         .background(cardBackground)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("매크로 영양소 카드")
     }
 
     // MARK: - View Components
@@ -252,6 +254,11 @@ struct MacroBreakdownCard: View {
             }
             .frame(height: barHeight)
         }
+        // 📚 학습 포인트: Accessibility for Progress Bar
+        // 진행 바의 정보를 VoiceOver로 읽을 수 있도록 함
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(name)
+        .accessibilityValue("\(formattedDecimal(amount)) 그램, \(ratio != nil ? formattedDecimal(ratio!) + " 퍼센트" : "비율 없음")")
     }
 
     // MARK: - Helpers

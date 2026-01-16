@@ -128,6 +128,7 @@ struct SleepQualityCard: View {
                     Text(statusEmoji)
                         .font(.system(size: 80))
                         .padding(.top, 8)
+                        .accessibilityHidden(true)
 
                     // 수면 시간
                     VStack(spacing: 4) {
@@ -150,15 +151,24 @@ struct SleepQualityCard: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
+                // 📚 학습 포인트: Accessibility for Sleep Quality
+                // 수면 정보를 VoiceOver로 읽을 수 있도록 함
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("수면 정보")
+                .accessibilityValue("\(formattedSleepTime), \(qualityLabel)")
 
                 // 수면 설명 섹션
                 sleepInfoSection
+                    .accessibilityLabel("수면 조언")
+                    .accessibilityValue(sleepInfoMessage)
             }
         }
         .padding(20)
         .background(cardBackground)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("어젯밤 수면 카드")
     }
 
     // MARK: - View Components

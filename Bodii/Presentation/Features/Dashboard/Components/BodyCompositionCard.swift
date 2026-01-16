@@ -225,6 +225,8 @@ struct BodyCompositionCard: View {
         .background(cardBackground)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("오늘의 체성분 카드")
     }
 
     // MARK: - View Components
@@ -328,6 +330,11 @@ struct BodyCompositionCard: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(color.opacity(0.1))
         )
+        // 📚 학습 포인트: Accessibility for Body Composition Stat Card
+        // 체성분 정보를 VoiceOver로 읽을 수 있도록 함
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(title)
+        .accessibilityValue(change.isEmpty ? "\(value) \(unit)" : "\(value) \(unit), 전날 대비 \(change) \(unit)")
     }
 }
 
