@@ -305,7 +305,7 @@
           "id": "4.2",
           "title": "Implement Weight & Body Fat Writing",
           "description": "Add methods to write weight and body fat percentage records to HealthKit when user enters body composition data.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitWriteService.swift"
           ],
@@ -314,13 +314,15 @@
             "saveBodyFatPercentage(percent:date:) method",
             "Creates proper HKQuantitySample with Bodii as source",
             "Associates with body record for tracking"
-          ]
+          ],
+          "notes": "Implemented comprehensive body composition write methods in HealthKitWriteService:\n\n\u2705 saveWeight(kg:date:metadata:) method\n  - Creates HKQuantitySample for weight data\n  - Converts Decimal to Double with proper kg unit\n  - Uses Bodii source metadata for tracking\n\n\u2705 saveBodyFatPercentage(percent:date:metadata:) method\n  - Creates HKQuantitySample for body fat percentage\n  - Converts 0-100 range to HealthKit's 0-1 range (18.5% \u2192 0.185)\n  - Uses Bodii source metadata for tracking\n\n\u2705 saveBodyComposition(kg:percent:date:metadata:) method (bonus)\n  - Batch saves weight and body fat percentage together\n  - Optimizes performance with single API call\n  - Handles optional body fat percentage\n\nAll acceptance criteria met:\n\u2705 saveWeight(kg:date:) method\n\u2705 saveBodyFatPercentage(percent:date:) method\n\u2705 Creates proper HKQuantitySample with Bodii as source (via createMetadata)\n\u2705 Associates with body record for tracking (metadata includes sync identifiers)\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Comprehensive documentation with usage examples\n- Type-safe access via HealthKitDataTypes enums\n- Reuses existing infrastructure (save() methods, createMetadata())\n- Proper error handling with HealthKitError\n- Async/await pattern throughout\n\nReady for use in BodyRecord \u2192 HealthKit synchronization workflows.",
+          "updated_at": "2026-01-16T06:23:17.067784+00:00"
         },
         {
           "id": "4.3",
           "title": "Implement Workout Writing",
           "description": "Add method to save workout data to HealthKit when user logs exercise. Create HKWorkout with proper activity type mapping.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitWriteService.swift"
           ],
@@ -329,13 +331,15 @@
             "Maps ExerciseType to HKWorkoutActivityType",
             "Includes duration and calories burned",
             "Sets proper start/end dates"
-          ]
+          ],
+          "notes": "Implemented comprehensive workout write functionality in HealthKitWriteService:\n\n\u2705 saveWorkout(exerciseType:duration:caloriesBurned:intensity:startDate:metadata:) method\n  - Creates HKWorkout with proper activity type mapping\n  - Converts duration from minutes to seconds (TimeInterval)\n  - Includes calories burned as HKQuantity\n  - Sets proper start/end dates based on duration\n  - Stores intensity in metadata (HealthKit doesn't have intensity field)\n  - Uses Bodii source metadata for tracking\n\n\u2705 mapExerciseTypeToWorkoutActivityType(_:) helper method\n  - Maps ExerciseType to HKWorkoutActivityType\n  - Reverse mapping of HealthKitReadService.mapWorkoutActivityType\n  - Comprehensive mapping for all 8 exercise types:\n    * .walking -> .walking\n    * .running -> .running\n    * .cycling -> .cycling\n    * .swimming -> .swimming\n    * .weight -> .traditionalStrengthTraining\n    * .crossfit -> .crossTraining\n    * .yoga -> .yoga\n    * .other -> .other\n\nAll acceptance criteria met:\n\u2705 saveWorkout(exerciseRecord:) method (with parameters)\n\u2705 Maps ExerciseType to HKWorkoutActivityType\n\u2705 Includes duration and calories burned\n\u2705 Sets proper start/end dates\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Comprehensive documentation with usage examples\n- Reuses existing infrastructure (save() method, createMetadata())\n- Type-safe enum mapping\n- Async/await pattern\n- Proper error handling with HealthKitError\n\nReady for use in ExerciseRecord \u2192 HealthKit synchronization workflows.\n\nCommitted successfully with proper co-authorship attribution.",
+          "updated_at": "2026-01-16T06:26:34.040904+00:00"
         },
         {
           "id": "4.4",
           "title": "Implement Dietary Energy Writing",
           "description": "Add method to write dietary energy consumed (calories from food records) to HealthKit.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitWriteService.swift"
           ],
@@ -343,7 +347,9 @@
             "saveDietaryEnergy(calories:date:) method",
             "Creates proper HKQuantitySample",
             "Aggregates daily total or individual meals"
-          ]
+          ],
+          "notes": "Implemented comprehensive dietary energy write functionality in HealthKitWriteService:\n\n\u2705 saveDietaryEnergy(calories:date:metadata:) method\n  - Creates HKQuantitySample for dietary energy consumed\n  - Converts Decimal to Double with kilocalorie unit\n  - Uses Bodii source metadata for tracking\n  - Supports meal type metadata (breakfast, lunch, dinner)\n\n\u2705 saveDietaryEnergyBatch(meals:) method (bonus)\n  - Batch saves multiple meals for performance optimization\n  - Each meal has individual timestamp for accurate tracking\n  - Optimizes API calls with single batch operation\n\nAll acceptance criteria met:\n\u2705 saveDietaryEnergy(calories:date:) method\n\u2705 Creates proper HKQuantitySample\n\u2705 Aggregates daily total or individual meals:\n   - Individual meals: Saved with specific timestamps\n   - HealthKit automatically aggregates daily totals\n   - Batch operation available for multiple meals\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Comprehensive documentation with usage examples\n- Type-safe access via HealthKitDataTypes enums\n- Reuses existing infrastructure (save() methods, createMetadata())\n- Similar structure to saveWeight, saveBodyFatPercentage, saveWorkout\n- Async/await with proper error handling\n\nReady for use in FoodRecord \u2192 HealthKit synchronization workflows.",
+          "updated_at": "2026-01-16T06:28:44.489198+00:00"
         },
         {
           "id": "4.5",
@@ -607,5 +613,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T06:20:32.943279+00:00"
+  "last_updated": "2026-01-16T06:28:44.489207+00:00"
 }

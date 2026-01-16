@@ -305,6 +305,283 @@ struct HealthKitMapper {
             mapToExerciseRecord(from: workoutData, userId: userId)
         }
     }
+
+    // MARK: - Domain → HealthKit (Write Operations)
+
+    /// BodyRecord를 체중 HKQuantitySample로 변환
+    ///
+    /// 📚 학습 포인트: Domain to HealthKit Mapping
+    /// - 앱의 BodyRecord를 HealthKit에 저장할 수 있는 HKQuantitySample로 변환
+    /// - HealthKit에 데이터를 쓸 때 사용
+    /// - Bodii 출처 메타데이터 포함
+    /// 💡 Java 비교: Entity → DTO 변환과 유사
+    ///
+    /// - Parameters:
+    ///   - record: 변환할 BodyRecord
+    ///   - metadata: 추가 메타데이터 (선택)
+    ///
+    /// - Returns: HealthKit 체중 샘플
+    ///
+    /// - Throws: MappingError
+    ///   - invalidDataType: 체중 타입 생성 실패
+    ///
+    /// - Example:
+    /// ```swift
+    /// let bodyRecord = BodyRecord(weight: 70.5, ...)
+    /// let weightSample = try mapper.createWeightSample(from: bodyRecord)
+    /// try await healthStore.save(weightSample)
+    /// ```
+    func createWeightSample(
+        from record: BodyRecord,
+        metadata: [String: Any]? = nil
+    ) throws -> HKQuantitySample {
+        // 📚 학습 포인트: HKQuantityType 생성
+        // HealthKitDataTypes enum을 사용한 타입 안전한 접근
+        // 💡 Java 비교: Type-safe Enum Access
+        guard let weightType = HealthKitDataTypes.QuantityType.weight.type else {
+            throw MappingError.invalidDataType("bodyMass")
+        }
+
+        // 📚 학습 포인트: Decimal to Double 변환
+        // Swift의 Decimal을 HKQuantity가 요구하는 Double로 변환
+        // 💡 Java 비교: BigDecimal.doubleValue()와 유사
+        let weightValue = NSDecimalNumber(decimal: record.weight).doubleValue
+
+        // 📚 학습 포인트: HKQuantity 생성
+        // 체중 수치와 단위(kg)를 조합하여 HealthKit 수량 객체 생성
+        // 💡 Java 비교: Value Object 생성
+        let quantity = HKQuantity(
+            unit: HealthKitDataTypes.QuantityType.weight.unit, // kg
+            doubleValue: weightValue
+        )
+
+        // 📚 학습 포인트: Metadata 생성
+        // Bodii 출처 정보를 포함한 메타데이터 생성
+        // 💡 Java 비교: @CreatedBy Auditing
+        let sampleMetadata = createMetadata(
+            source: "bodii_manual_entry",
+            additionalMetadata: metadata
+        )
+
+        // 📚 학습 포인트: HKQuantitySample 생성
+        // 체중 샘플 객체 생성 (타입, 수량, 시간, 메타데이터)
+        // 💡 Java 비교: Entity 객체 생성
+        let sample = HKQuantitySample(
+            type: weightType,
+            quantity: quantity,
+            start: record.date,
+            end: record.date,
+            metadata: sampleMetadata
+        )
+
+        return sample
+    }
+
+    /// BodyRecord를 체지방률 HKQuantitySample로 변환
+    ///
+    /// 📚 학습 포인트: Body Fat Percentage Mapping
+    /// - BodyRecord의 체지방률을 HealthKit 샘플로 변환
+    /// - 앱: 0-100 범위 (18.5% = 18.5)
+    /// - HealthKit: 0-1 범위 (18.5% = 0.185)
+    /// 💡 Java 비교: Unit Conversion Mapper
+    ///
+    /// - Parameters:
+    ///   - record: 변환할 BodyRecord
+    ///   - metadata: 추가 메타데이터 (선택)
+    ///
+    /// - Returns: HealthKit 체지방률 샘플
+    ///
+    /// - Throws: MappingError
+    ///   - invalidDataType: 체지방률 타입 생성 실패
+    ///   - missingRequiredField: 체지방률 데이터 누락
+    ///
+    /// - Example:
+    /// ```swift
+    /// let bodyRecord = BodyRecord(weight: 70.5, bodyFatPercent: 18.5, ...)
+    /// if let bodyFatSample = try? mapper.createBodyFatSample(from: bodyRecord) {
+    ///     try await healthStore.save(bodyFatSample)
+    /// }
+    /// ```
+    func createBodyFatSample(
+        from record: BodyRecord,
+        metadata: [String: Any]? = nil
+    ) throws -> HKQuantitySample {
+        // 📚 학습 포인트: Optional Field Check
+        // 체지방률은 선택 사항이므로 nil 체크 필요
+        // 💡 Java 비교: Optional.orElseThrow()와 유사
+        guard let bodyFatPercent = record.bodyFatPercent else {
+            throw MappingError.missingRequiredField("bodyFatPercent")
+        }
+
+        // 📚 학습 포인트: HKQuantityType 생성
+        guard let bodyFatType = HealthKitDataTypes.QuantityType.bodyFatPercentage.type else {
+            throw MappingError.invalidDataType("bodyFatPercentage")
+        }
+
+        // 📚 학습 포인트: Percentage Unit Conversion
+        // Bodii: 0-100 범위 (18.5% = 18.5)
+        // HealthKit: 0-1 범위 (18.5% = 0.185)
+        // 💡 Java 비교: Unit Conversion
+        let percentValue = NSDecimalNumber(decimal: bodyFatPercent).doubleValue / 100.0
+
+        // 📚 학습 포인트: HKQuantity 생성
+        let quantity = HKQuantity(
+            unit: HealthKitDataTypes.QuantityType.bodyFatPercentage.unit, // percent
+            doubleValue: percentValue
+        )
+
+        // 📚 학습 포인트: Metadata 생성
+        let sampleMetadata = createMetadata(
+            source: "bodii_manual_entry",
+            additionalMetadata: metadata
+        )
+
+        // 📚 학습 포인트: HKQuantitySample 생성
+        let sample = HKQuantitySample(
+            type: bodyFatType,
+            quantity: quantity,
+            start: record.date,
+            end: record.date,
+            metadata: sampleMetadata
+        )
+
+        return sample
+    }
+
+    /// ExerciseRecord를 HKWorkout으로 변환
+    ///
+    /// 📚 학습 포인트: Workout Mapping
+    /// - ExerciseRecord를 HealthKit 운동 기록으로 변환
+    /// - ExerciseType을 HKWorkoutActivityType으로 매핑
+    /// - 운동 강도는 메타데이터에 저장 (HealthKit에는 강도 필드 없음)
+    /// 💡 Java 비교: Complex Entity Mapping
+    ///
+    /// - Parameters:
+    ///   - record: 변환할 ExerciseRecord
+    ///   - metadata: 추가 메타데이터 (선택)
+    ///
+    /// - Returns: HealthKit 운동 기록
+    ///
+    /// - Throws: MappingError
+    ///   - unsupportedWorkoutType: 지원하지 않는 운동 종류
+    ///
+    /// - Example:
+    /// ```swift
+    /// let exerciseRecord = ExerciseRecord(
+    ///     exerciseType: .running,
+    ///     duration: 30,
+    ///     intensity: .high,
+    ///     caloriesBurned: 350
+    /// )
+    /// let workout = try mapper.createWorkout(from: exerciseRecord)
+    /// try await healthStore.save(workout)
+    /// ```
+    func createWorkout(
+        from record: ExerciseRecord,
+        metadata: [String: Any]? = nil
+    ) throws -> HKWorkout {
+        // 📚 학습 포인트: ExerciseType to HKWorkoutActivityType 매핑
+        // 앱의 운동 종류를 HealthKit의 운동 종류로 변환
+        // 💡 Java 비교: Enum Mapping
+        let activityType = mapExerciseTypeToWorkoutActivityType(record.exerciseType)
+
+        // 📚 학습 포인트: Duration Conversion
+        // 분 단위 → 초 단위 (TimeInterval)
+        // HKWorkout.duration은 TimeInterval (초 단위)
+        // 💡 Java 비교: Duration.ofMinutes().toSeconds()와 유사
+        let durationInSeconds = TimeInterval(record.duration * 60)
+
+        // 📚 학습 포인트: Date Range Calculation
+        // 운동 시작 시간과 종료 시간 계산
+        // 💡 Java 비교: LocalDateTime.plusMinutes()와 유사
+        let endDate = record.date.addingTimeInterval(durationInSeconds)
+
+        // 📚 학습 포인트: HKQuantity for Calories
+        // 소모 칼로리를 HKQuantity로 변환
+        // 💡 Java 비교: Value Object 생성
+        let caloriesQuantity = HKQuantity(
+            unit: .kilocalorie(),
+            doubleValue: Double(record.caloriesBurned)
+        )
+
+        // 📚 학습 포인트: Metadata 생성
+        // Bodii 출처 정보와 운동 강도를 포함한 메타데이터 생성
+        // 💡 Java 비교: @CreatedBy Auditing
+        var workoutMetadata = createMetadata(
+            source: "bodii_manual_entry",
+            additionalMetadata: metadata
+        )
+
+        // 📚 학습 포인트: Intensity Storage in Metadata
+        // 운동 강도 정보를 메타데이터에 추가 (HealthKit에는 강도 필드가 없음)
+        // 추후 읽기 시 강도 정보를 복원하기 위해 저장
+        // 💡 Java 비교: Custom Field Storage
+        workoutMetadata["BodiiIntensity"] = record.intensity.rawValue
+
+        // 📚 학습 포인트: HKWorkout 생성
+        // 운동 객체 생성 (타입, 시작/종료 시간, 시간, 칼로리, 메타데이터)
+        // 💡 Java 비교: Entity 객체 생성
+        let workout = HKWorkout(
+            activityType: activityType,
+            start: record.date,
+            end: endDate,
+            duration: durationInSeconds,
+            totalEnergyBurned: caloriesQuantity,
+            totalDistance: nil,  // 거리 데이터는 별도 처리 (추후 확장 가능)
+            metadata: workoutMetadata
+        )
+
+        return workout
+    }
+
+    /// BodyRecord에서 체중과 체지방률 샘플을 함께 생성
+    ///
+    /// 📚 학습 포인트: Batch Sample Creation
+    /// - 체중과 체지방률을 한 번에 변환
+    /// - 배치 저장에 활용
+    /// 💡 Java 비교: Multiple Entity Creation
+    ///
+    /// - Parameters:
+    ///   - record: 변환할 BodyRecord
+    ///   - metadata: 추가 메타데이터 (선택)
+    ///
+    /// - Returns: HKQuantitySample 배열 (체중 + 체지방률)
+    ///
+    /// - Throws: MappingError - 변환 실패 시
+    ///
+    /// - Example:
+    /// ```swift
+    /// let bodyRecord = BodyRecord(weight: 70.5, bodyFatPercent: 18.5, ...)
+    /// let samples = try mapper.createBodyCompositionSamples(from: bodyRecord)
+    /// try await healthStore.save(samples)
+    /// ```
+    func createBodyCompositionSamples(
+        from record: BodyRecord,
+        metadata: [String: Any]? = nil
+    ) throws -> [HKQuantitySample] {
+        var samples: [HKQuantitySample] = []
+
+        // 📚 학습 포인트: Weight Sample (Required)
+        // 체중 샘플은 필수이므로 항상 생성
+        // 💡 Java 비교: Required Field
+        let weightSample = try createWeightSample(from: record, metadata: metadata)
+        samples.append(weightSample)
+
+        // 📚 학습 포인트: Body Fat Sample (Optional)
+        // 체지방률은 선택 사항이므로 nil 체크 후 생성
+        // 💡 Java 비교: Optional Field Processing
+        if record.bodyFatPercent != nil {
+            do {
+                let bodyFatSample = try createBodyFatSample(from: record, metadata: metadata)
+                samples.append(bodyFatSample)
+            } catch {
+                // 체지방률 샘플 생성 실패 시 체중 샘플만 반환
+                // 일부 실패가 전체를 차단하지 않도록 처리
+            }
+        }
+
+        return samples
+    }
 }
 
 // MARK: - Helper Extensions
@@ -349,6 +626,116 @@ extension HealthKitMapper {
         let timeDifference = abs(sample1.startDate.timeIntervalSince(sample2.startDate))
         let thresholdSeconds = Double(thresholdMinutes * 60)
         return timeDifference <= thresholdSeconds
+    }
+
+    /// ExerciseType을 HKWorkoutActivityType으로 변환
+    ///
+    /// 📚 학습 포인트: Reverse Exercise Type Mapping
+    /// - 앱의 8가지 운동 종류를 HealthKit의 운동 종류로 매핑
+    /// - HealthKitReadService의 mapWorkoutActivityType과 반대 방향 매핑
+    /// 💡 Java 비교: Enum to Enum Mapping Utility
+    ///
+    /// - Parameter exerciseType: 앱의 운동 종류
+    ///
+    /// - Returns: HealthKit 운동 종류
+    ///
+    /// - Note: 매핑 규칙
+    ///   - .walking -> .walking
+    ///   - .running -> .running
+    ///   - .cycling -> .cycling
+    ///   - .swimming -> .swimming
+    ///   - .weight -> .traditionalStrengthTraining
+    ///   - .crossfit -> .crossTraining
+    ///   - .yoga -> .yoga
+    ///   - .other -> .other
+    ///
+    /// - Example:
+    /// ```swift
+    /// let activityType1 = mapper.mapExerciseTypeToWorkoutActivityType(.running)
+    /// // HKWorkoutActivityType.running
+    ///
+    /// let activityType2 = mapper.mapExerciseTypeToWorkoutActivityType(.weight)
+    /// // HKWorkoutActivityType.traditionalStrengthTraining
+    /// ```
+    private func mapExerciseTypeToWorkoutActivityType(
+        _ exerciseType: ExerciseType
+    ) -> HKWorkoutActivityType {
+        // 📚 학습 포인트: Exercise Type to HealthKit Mapping
+        // 앱의 운동 카테고리를 HealthKit의 대표 운동 종류로 매핑
+        // 💡 Java 비교: switch-case mapping과 유사
+        switch exerciseType {
+        case .walking:
+            return .walking
+        case .running:
+            return .running
+        case .cycling:
+            return .cycling
+        case .swimming:
+            return .swimming
+        case .weight:
+            // 📚 학습 포인트: Strength Training Mapping
+            // 웨이트 운동은 HealthKit의 traditionalStrengthTraining으로 매핑
+            // 💡 Java 비교: Specific Type Selection
+            return .traditionalStrengthTraining
+        case .crossfit:
+            // 📚 학습 포인트: Cross Training Mapping
+            // 크로스핏은 HealthKit의 crossTraining으로 매핑
+            // 💡 Java 비교: Specific Type Selection
+            return .crossTraining
+        case .yoga:
+            return .yoga
+        case .other:
+            return .other
+        }
+    }
+
+    /// Bodii 앱에서 생성한 샘플임을 표시하는 메타데이터 생성
+    ///
+    /// 📚 학습 포인트: Sample Metadata
+    /// - HealthKit 샘플에 메타데이터를 추가하여 출처 추적
+    /// - 다른 앱과 구분하기 위한 식별자 포함
+    /// 💡 Java 비교: Entity Auditing (createdBy, source 등)
+    ///
+    /// - Parameters:
+    ///   - source: 데이터 출처 (예: "bodii_manual_entry", "sync", "import")
+    ///   - additionalMetadata: 추가 메타데이터 (선택)
+    ///
+    /// - Returns: 메타데이터 딕셔너리
+    ///
+    /// - Note: HealthKit 샘플 생성 시 metadata 파라미터로 전달
+    ///
+    /// - Example:
+    /// ```swift
+    /// let metadata = mapper.createMetadata(source: "bodii_manual_entry")
+    /// let sample = HKQuantitySample(
+    ///     type: weightType,
+    ///     quantity: quantity,
+    ///     start: date,
+    ///     end: date,
+    ///     metadata: metadata
+    /// )
+    /// ```
+    private func createMetadata(
+        source: String = "Bodii",
+        additionalMetadata: [String: Any]? = nil
+    ) -> [String: Any] {
+        // 📚 학습 포인트: HKMetadataKey
+        // HealthKit에서 정의한 표준 메타데이터 키 사용
+        // 💡 Java 비교: Standard Property Names
+        var metadata: [String: Any] = [
+            HKMetadataKeySyncIdentifier: "com.bodii.app",
+            HKMetadataKeySyncVersion: 1
+        ]
+
+        // 데이터 출처 추가 (커스텀 키)
+        metadata["BodiiSource"] = source
+
+        // 추가 메타데이터 병합
+        if let additional = additionalMetadata {
+            metadata.merge(additional) { _, new in new }
+        }
+
+        return metadata
     }
 }
 
