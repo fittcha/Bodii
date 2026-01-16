@@ -477,3 +477,244 @@ extension HealthKitReadService {
         )
     }
 }
+
+// MARK: - Weight & Body Fat Reading
+
+extension HealthKitReadService {
+
+    /// 체중 데이터 조회 (기간별)
+    ///
+    /// 📚 학습 포인트: Weight Data Reading
+    /// - HealthKit의 HKQuantityType.bodyMass 사용
+    /// - 여러 소스(앱, 스마트 저울 등)의 체중 기록 통합 조회
+    /// 💡 Java 비교: findWeightByDateRange()와 유사
+    ///
+    /// - Parameters:
+    ///   - startDate: 시작 날짜
+    ///   - endDate: 종료 날짜
+    ///
+    /// - Returns: 체중 샘플 배열 (최신 순)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 체중 타입 생성 실패
+    ///   - queryExecutionFailed: 쿼리 실행 실패
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 최근 7일 체중 기록 조회
+    /// let (start, end) = service.getDateRange(days: 7)
+    /// let weights = try await service.fetchWeight(from: start, to: end)
+    ///
+    /// for sample in weights {
+    ///     let kg = sample.quantity.doubleValue(for: .gramUnit(with: .kilo))
+    ///     print("체중: \(kg) kg, 날짜: \(sample.startDate)")
+    /// }
+    /// ```
+    func fetchWeight(from startDate: Date, to endDate: Date) async throws -> [HKQuantitySample] {
+        // 📚 학습 포인트: Type Safety with Optional Unwrapping
+        // HealthKitDataTypes를 사용해 타입 안전하게 체중 타입 가져오기
+        // 💡 Java 비교: Optional.orElseThrow()와 유사
+        guard let weightType = HealthKitDataTypes.QuantityType.weight.type else {
+            throw HealthKitError.invalidSampleType(
+                identifier: HealthKitDataTypes.QuantityType.weight.identifier.rawValue
+            )
+        }
+
+        // 제네릭 fetchSamples 메서드 재사용
+        return try await fetchSamples(
+            type: weightType,
+            from: startDate,
+            to: endDate,
+            ascending: false
+        )
+    }
+
+    /// 체지방률 데이터 조회 (기간별)
+    ///
+    /// 📚 학습 포인트: Body Fat Percentage Reading
+    /// - HealthKit의 HKQuantityType.bodyFatPercentage 사용
+    /// - 스마트 저울이나 InBody 기기에서 기록한 체지방률 조회
+    /// 💡 Java 비교: findBodyFatPercentageByDateRange()와 유사
+    ///
+    /// - Parameters:
+    ///   - startDate: 시작 날짜
+    ///   - endDate: 종료 날짜
+    ///
+    /// - Returns: 체지방률 샘플 배열 (최신 순)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 체지방률 타입 생성 실패
+    ///   - queryExecutionFailed: 쿼리 실행 실패
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 최근 30일 체지방률 기록 조회
+    /// let (start, end) = service.getDateRange(days: 30)
+    /// let bodyFats = try await service.fetchBodyFatPercentage(from: start, to: end)
+    ///
+    /// for sample in bodyFats {
+    ///     let percent = sample.quantity.doubleValue(for: .percent())
+    ///     print("체지방률: \(percent * 100)%, 날짜: \(sample.startDate)")
+    /// }
+    /// ```
+    func fetchBodyFatPercentage(from startDate: Date, to endDate: Date) async throws -> [HKQuantitySample] {
+        // 체지방률 타입 가져오기
+        guard let bodyFatType = HealthKitDataTypes.QuantityType.bodyFatPercentage.type else {
+            throw HealthKitError.invalidSampleType(
+                identifier: HealthKitDataTypes.QuantityType.bodyFatPercentage.identifier.rawValue
+            )
+        }
+
+        // 제네릭 fetchSamples 메서드 재사용
+        return try await fetchSamples(
+            type: bodyFatType,
+            from: startDate,
+            to: endDate,
+            ascending: false
+        )
+    }
+
+    /// 최근 체중 조회 (1개)
+    ///
+    /// 📚 학습 포인트: Latest Record Query
+    /// - 가장 최근에 기록된 체중 데이터 1개만 조회
+    /// - 사용자의 현재 체중 표시에 사용
+    /// 💡 Java 비교: findTopByOrderByDateDesc()와 유사
+    ///
+    /// - Returns: 최근 체중 샘플 (없으면 nil)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 체중 타입 생성 실패
+    ///   - queryExecutionFailed: 쿼리 실행 실패
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 최근 체중 1개 조회
+    /// if let latestWeight = try await service.fetchLatestWeight() {
+    ///     let kg = latestWeight.quantity.doubleValue(for: .gramUnit(with: .kilo))
+    ///     print("현재 체중: \(kg) kg")
+    /// } else {
+    ///     print("체중 기록이 없습니다")
+    /// }
+    /// ```
+    func fetchLatestWeight() async throws -> HKQuantitySample? {
+        // 체중 타입 가져오기
+        guard let weightType = HealthKitDataTypes.QuantityType.weight.type else {
+            throw HealthKitError.invalidSampleType(
+                identifier: HealthKitDataTypes.QuantityType.weight.identifier.rawValue
+            )
+        }
+
+        // 📚 학습 포인트: fetchRecentSamples with limit 1
+        // 최근 1개만 조회하여 성능 최적화
+        // 💡 Java 비교: findFirstByOrderByDateDesc()와 유사
+        let samples: [HKQuantitySample] = try await fetchRecentSamples(
+            type: weightType,
+            limit: 1
+        )
+
+        // 첫 번째 샘플 반환 (없으면 nil)
+        return samples.first
+    }
+
+    /// 최근 체지방률 조회 (1개)
+    ///
+    /// 📚 학습 포인트: Latest Body Fat Query
+    /// - 가장 최근에 기록된 체지방률 데이터 1개만 조회
+    /// - 사용자의 현재 체지방률 표시에 사용
+    /// 💡 Java 비교: findTopByOrderByDateDesc()와 유사
+    ///
+    /// - Returns: 최근 체지방률 샘플 (없으면 nil)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 체지방률 타입 생성 실패
+    ///   - queryExecutionFailed: 쿼리 실행 실패
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 최근 체지방률 1개 조회
+    /// if let latestBodyFat = try await service.fetchLatestBodyFatPercentage() {
+    ///     let percent = latestBodyFat.quantity.doubleValue(for: .percent())
+    ///     print("현재 체지방률: \(percent * 100)%")
+    /// } else {
+    ///     print("체지방률 기록이 없습니다")
+    /// }
+    /// ```
+    func fetchLatestBodyFatPercentage() async throws -> HKQuantitySample? {
+        // 체지방률 타입 가져오기
+        guard let bodyFatType = HealthKitDataTypes.QuantityType.bodyFatPercentage.type else {
+            throw HealthKitError.invalidSampleType(
+                identifier: HealthKitDataTypes.QuantityType.bodyFatPercentage.identifier.rawValue
+            )
+        }
+
+        // 최근 1개만 조회
+        let samples: [HKQuantitySample] = try await fetchRecentSamples(
+            type: bodyFatType,
+            limit: 1
+        )
+
+        // 첫 번째 샘플 반환 (없으면 nil)
+        return samples.first
+    }
+}
+
+// MARK: - HKQuantity Conversion Helpers
+
+extension HealthKitReadService {
+
+    /// HKQuantity를 Decimal로 변환 (체중용)
+    ///
+    /// 📚 학습 포인트: Unit Conversion
+    /// - HealthKit의 HKQuantity를 앱의 Decimal 타입으로 변환
+    /// - kg 단위로 통일
+    /// 💡 Java 비교: BigDecimal 변환과 유사
+    ///
+    /// - Parameter quantity: 변환할 HKQuantity
+    ///
+    /// - Returns: kg 단위의 Decimal 값
+    ///
+    /// - Example:
+    /// ```swift
+    /// let sample = try await service.fetchLatestWeight()
+    /// if let sample = sample {
+    ///     let weight = service.convertWeightToDecimal(sample.quantity)
+    ///     print("체중: \(weight) kg") // Decimal 타입
+    /// }
+    /// ```
+    func convertWeightToDecimal(_ quantity: HKQuantity) -> Decimal {
+        // 📚 학습 포인트: Double to Decimal Conversion
+        // Double은 부동소수점 오차가 있으므로 금융/건강 데이터는 Decimal 사용
+        // 💡 Java 비교: BigDecimal.valueOf(double)과 유사
+        let kg = quantity.doubleValue(for: .gramUnit(with: .kilo))
+        return Decimal(kg)
+    }
+
+    /// HKQuantity를 Decimal로 변환 (체지방률용)
+    ///
+    /// 📚 학습 포인트: Percentage Unit Conversion
+    /// - HealthKit의 percent는 0.0~1.0 범위 (0.185 = 18.5%)
+    /// - 앱에서는 0~100 범위로 변환하여 사용
+    /// 💡 Java 비교: BigDecimal 변환과 유사
+    ///
+    /// - Parameter quantity: 변환할 HKQuantity
+    ///
+    /// - Returns: 퍼센트 값의 Decimal (0~100 범위)
+    ///
+    /// - Example:
+    /// ```swift
+    /// let sample = try await service.fetchLatestBodyFatPercentage()
+    /// if let sample = sample {
+    ///     let bodyFat = service.convertBodyFatPercentageToDecimal(sample.quantity)
+    ///     print("체지방률: \(bodyFat)%") // 18.5% -> Decimal(18.5)
+    /// }
+    /// ```
+    func convertBodyFatPercentageToDecimal(_ quantity: HKQuantity) -> Decimal {
+        // 📚 학습 포인트: HealthKit Percent Unit
+        // HealthKit percent(): 0.0 ~ 1.0 범위
+        // 앱 표시: 0 ~ 100 범위
+        // 💡 Java 비교: (double * 100)을 BigDecimal로 변환
+        let percentValue = quantity.doubleValue(for: .percent())
+        return Decimal(percentValue * 100)
+    }
+}

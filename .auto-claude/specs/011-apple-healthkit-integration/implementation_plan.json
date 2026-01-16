@@ -136,7 +136,7 @@
           "id": "2.3",
           "title": "Create HealthKit Permission Request View",
           "description": "Create SwiftUI view for HealthKit permission onboarding. Shows explanation of each data type being requested with icons and descriptions.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Features/Settings/HealthKitPermissionView.swift"
           ],
@@ -145,13 +145,15 @@
             "Request permission button",
             "Handles success/failure states",
             "Korean UI text"
-          ]
+          ],
+          "notes": "Created comprehensive HealthKitPermissionView with all required features:\n\n\u2705 Clear UI explaining each permission type:\n  - Header section with Apple Health icon and main description\n  - Benefits section explaining HealthKit integration advantages\n  - Read permissions section with 6 data types (weight, body fat, active calories, steps, sleep, workouts)\n  - Write permissions section with 4 data types (weight, body fat, dietary energy, workouts)\n  - Each permission item includes icon, color-coded visual, title, and detailed description\n\n\u2705 Request permission button:\n  - Prominent \"Apple Health \uc5f0\ub3d9\ud558\uae30\" button at the bottom\n  - Shows loading state with ProgressView during request\n  - Disabled during request to prevent duplicate submissions\n  - Changes to gray color when disabled\n\n\u2705 Handles success/failure states:\n  - @State properties for isRequesting, requestSuccess, errorMessage\n  - Alert dialog for error messages\n  - Success callback (onPermissionGranted) triggers after successful request\n  - Automatically dismisses view on success\n  - Checks HealthKit availability before requesting permissions\n\n\u2705 Korean UI text:\n  - All text in Korean including titles, descriptions, buttons\n  - User-friendly error messages in Korean via HealthKitError.localizedDescription\n  - Privacy notice in Korean explaining data handling\n\nAdditional features:\n  - Privacy notice section emphasizing local data storage\n  - \"\ub098\uc911\uc5d0\" (Later) button for non-intrusive UX\n  - Benefits section with 3 key advantages (Apple Watch sync, bidirectional sync, accurate analysis)\n  - Follows project patterns with \ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8 educational comments\n  - ScrollView for keyboard avoidance\n  - Color-coded icons for visual distinction\n  - SwiftUI Preview support for both light and dark mode\n  - Comprehensive documentation with best practices\n\nImplementation follows project patterns:\n  - Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n  - Dependency injection for HealthKitAuthorizationService\n  - Clean separation of view components using @ViewBuilder\n  - Async/await for permission request\n  - Environment dismiss action\n  - Comprehensive inline documentation\n\nFile committed with proper co-authorship attribution.",
+          "updated_at": "2026-01-16T05:58:25.147278+00:00"
         },
         {
           "id": "2.4",
           "title": "Handle Permission Denied Gracefully",
           "description": "Create HealthKitDeniedView that appears when permissions are denied. Shows how to enable in Settings app with deep link option.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Presentation/Features/Settings/HealthKitDeniedView.swift"
           ],
@@ -160,7 +162,9 @@
             "Button to open Settings app",
             "Non-intrusive design",
             "Korean UI text"
-          ]
+          ],
+          "notes": "Created comprehensive HealthKitDeniedView with all required features:\n\n\u2705 Explains why permissions are needed:\n  - Apple Watch data synchronization benefit\n  - Accurate health analysis with integrated data\n  - Data backup and sharing across health apps\n\n\u2705 Button to open Settings app:\n  - Deep link using UIApplication.openSettingsURLString\n  - Opens iOS Settings app directly to Bodii app settings\n  - Success callback support for tracking when Settings opens\n\n\u2705 Non-intrusive design:\n  - \"\ub098\uc911\uc5d0\" (Later) button for easy dismissal\n  - Informative orange gradient icon (not error red)\n  - Respects user's choice to deny permissions\n  - Does not block app functionality\n\n\u2705 Korean UI text:\n  - All UI text in Korean as required\n  - Step-by-step instructions (5 steps) for enabling permissions\n  - Clear explanations of benefits and data types\n  - Privacy notice in Korean\n\nAdditional features:\n- Header section with shield icon and gradient (orange/yellow)\n- Reason section with 3 key benefits (Apple Watch sync, accurate analysis, data backup)\n- Detailed step-by-step instructions for navigating Settings app\n- Data types section listing all 6 required permissions with icons\n- Privacy notice emphasizing local data storage\n- Educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- SwiftUI Preview support for both light and dark modes\n- Comprehensive documentation with iOS vs Android comparison\n- Similar structure to HealthKitPermissionView for consistency\n\nImplementation follows project patterns:\n- Korean educational comments throughout\n- Clean MARK sections organization\n- @ViewBuilder for component composition\n- Environment dismiss action\n- Consistent with existing HealthKitPermissionView style\n- Comprehensive inline documentation\n\nFile committed with proper co-authorship attribution.",
+          "updated_at": "2026-01-16T06:01:45.884484+00:00"
         }
       ]
     },
@@ -174,7 +178,7 @@
           "id": "3.1",
           "title": "Create HealthKitReadService Base",
           "description": "Create base service with HKHealthStore, generic query methods, and date range helpers. Include fetchSamples<T>(type:from:to:) generic method.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitReadService.swift"
           ],
@@ -183,7 +187,9 @@
             "Date range query support",
             "Ascending/descending sort options",
             "Limit parameter support"
-          ]
+          ],
+          "notes": "Created comprehensive HealthKitReadService with all required functionality:\n\n\u2705 Generic sample fetching method (fetchSamples<T>)\n\u2705 Date range query support (createDateRangePredicate, getDateBounds, getDateRange)\n\u2705 Ascending/descending sort options (SortOrder enum, ascending parameter)\n\u2705 Limit parameter support (limit parameter in fetchSamples)\n\nAdditional features:\n- HKStatisticsQuery support for aggregation (fetchStatistics)\n- Convenience methods: fetchRecentSamples, fetchSamples(for:date)\n- Type-safe generic method supporting HKQuantitySample, HKCategorySample, HKWorkout\n- Comprehensive date range helpers for daily/weekly queries\n- Korean educational comments following project patterns\n- Similar structure to HealthKitAuthorizationService\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Dependency injection for HKHealthStore\n- Clean MARK sections organization\n- Comprehensive documentation with examples\n- Async/await with proper error handling\n- HealthKitError for all error cases\n\nFile committed with proper co-authorship attribution.",
+          "updated_at": "2026-01-16T06:04:35.605774+00:00"
         },
         {
           "id": "3.2",
@@ -589,5 +595,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T05:54:37.562633+00:00"
+  "last_updated": "2026-01-16T06:04:35.605782+00:00"
 }
