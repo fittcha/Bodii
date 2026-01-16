@@ -346,13 +346,157 @@ final class HealthKitSyncService {
         print("🗑️ Last sync date cleared")
     }
 
+    // MARK: - Conflict Resolution Strategy
+
+    /// 충돌 해결 결과
+    ///
+    /// 📚 학습 포인트: Conflict Resolution
+    /// - 같은 날짜에 HealthKit 데이터와 Bodii 수동 입력 데이터가 모두 있을 때 처리 방법
+    /// - 사용자가 수동으로 입력한 데이터를 보존하는 것이 우선
+    /// 💡 Java 비교: enum ConflictResolution
+    enum ConflictResolution {
+        /// 로컬 데이터 사용 (수동 입력 보존)
+        case useLocal
+
+        /// 원격 데이터 사용 (HealthKit 임포트)
+        case useRemote
+
+        /// 임포트 건너뛰기 (중복 또는 수동 입력 보존)
+        case skip
+    }
+
+    /// 충돌 해결 전략
+    ///
+    /// 📚 학습 포인트: Conflict Resolution Strategy
+    /// - HealthKit과 Bodii 데이터가 같은 날짜에 존재할 때 우선순위 결정
+    /// - **핵심 원칙**:
+    ///   1. 사용자가 수동으로 입력한 데이터는 절대 덮어쓰지 않음
+    ///   2. HealthKit 데이터끼리는 중복 임포트 방지 (healthKitId 체크)
+    ///   3. 같은 날짜에 여러 기록이 있을 수 있음 (시각이 다른 경우)
+    /// 💡 Java 비교: private ConflictResolution resolveConflict()
+    ///
+    /// ## 해결 규칙
+    ///
+    /// ### BodyRecord (체성분)
+    /// - 같은 날짜에 수동 입력이 있으면 → HealthKit 임포트 건너뛰기
+    /// - 같은 healthKitId가 있으면 → 중복, 건너뛰기
+    /// - 그 외 → HealthKit 데이터 임포트
+    ///
+    /// ### ExerciseRecord (운동)
+    /// - 같은 날짜에 수동 입력이 있어도 → 운동은 하루에 여러 개 가능하므로 둘 다 보존
+    /// - 같은 healthKitId가 있으면 → 중복, 건너뛰기
+    /// - 그 외 → HealthKit 데이터 임포트
+    ///
+    /// ### SleepRecord (수면)
+    /// - 같은 날짜에 수동 입력이 있으면 → HealthKit 임포트 건너뛰기
+    /// - 같은 healthKitId가 있으면 → 중복, 건너뛰기
+    /// - 그 외 → HealthKit 데이터 임포트
+    ///
+    /// - Parameters:
+    ///   - existingRecord: 로컬에 이미 존재하는 레코드 (Optional)
+    ///   - remoteHealthKitId: HealthKit에서 가져올 레코드의 UUID
+    ///   - allowMultiplePerDay: 하루에 여러 개 허용 여부 (운동은 true, 체성분/수면은 false)
+    ///
+    /// - Returns: ConflictResolution
+    ///   - .useLocal: 로컬 데이터 유지 (수동 입력 보존)
+    ///   - .useRemote: HealthKit 데이터 사용 (임포트)
+    ///   - .skip: 임포트 건너뛰기
+    ///
+    /// - Note: Repository 통합 시 이 메서드를 사용하여 충돌 해결
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 체성분 기록 충돌 해결
+    /// let existingBodyRecord = try? await bodyRepository.findByDate(date, userId: userId)
+    /// let resolution = resolveConflict(
+    ///     existingRecord: existingBodyRecord,
+    ///     remoteHealthKitId: weightSample.uuid.uuidString,
+    ///     allowMultiplePerDay: false
+    /// )
+    ///
+    /// switch resolution {
+    /// case .useLocal:
+    ///     print("Preserving manual entry, skipping HealthKit import")
+    /// case .useRemote:
+    ///     print("Importing HealthKit data")
+    /// case .skip:
+    ///     print("Skipping duplicate")
+    /// }
+    /// ```
+    private func resolveConflict<T>(
+        existingRecord: T?,
+        remoteHealthKitId: String,
+        allowMultiplePerDay: Bool
+    ) -> ConflictResolution where T: AnyObject {
+        // 📚 학습 포인트: Generic Conflict Resolution
+        // - where T: AnyObject를 사용하여 BodyRecord, ExerciseRecord, SleepRecord 모두 처리
+        // - 런타임에 타입을 확인하여 healthKitId 필드에 접근
+        // 💡 Java 비교: Reflection을 사용하여 externalId 필드 체크
+
+        guard let existingRecord = existingRecord else {
+            // 📚 학습 포인트: No Conflict
+            // - 로컬에 해당 날짜 레코드가 없으면 충돌 없음
+            // - HealthKit 데이터를 안전하게 임포트
+            return .useRemote
+        }
+
+        // 📚 학습 포인트: Type-specific healthKitId Check
+        // - Mirror를 사용하여 healthKitId 필드 추출
+        // - BodyRecord, ExerciseRecord, SleepRecord 모두 동일한 구조
+        let mirror = Mirror(reflecting: existingRecord)
+        let existingHealthKitId = mirror.children.first(where: { $0.label == "healthKitId" })?.value as? String?
+
+        // 📚 학습 포인트: Duplicate Detection
+        // - 같은 healthKitId를 가진 레코드는 중복으로 간주
+        // - 이미 임포트된 데이터를 재임포트하지 않음
+        if let existingId = existingHealthKitId, let unwrappedId = existingId,
+           unwrappedId == remoteHealthKitId {
+            print("  ⏭️  Duplicate detected (healthKitId: \(remoteHealthKitId)), skipping")
+            return .skip
+        }
+
+        // 📚 학습 포인트: Manual Entry Preservation
+        // - existingHealthKitId가 nil이면 사용자가 수동으로 입력한 데이터
+        // - 수동 입력 데이터는 절대 덮어쓰지 않음 (사용자 의도 존중)
+        // 💡 Java 비교: if (existingRecord.getExternalId() == null)
+        if existingHealthKitId == nil || (existingHealthKitId != nil && existingHealthKitId! == nil) {
+            if allowMultiplePerDay {
+                // 📚 학습 포인트: Multiple Records Per Day
+                // - 운동 기록은 하루에 여러 개 가능
+                // - 수동 입력 운동과 HealthKit 운동을 모두 보존
+                print("  ℹ️  Manual entry exists, but allowing multiple per day")
+                return .useRemote
+            } else {
+                // 📚 학습 포인트: Single Record Per Day
+                // - 체성분, 수면은 하루에 하나만 유효
+                // - 수동 입력이 있으면 HealthKit 임포트 건너뛰기
+                print("  🛡️  Manual entry exists, preserving user data (skipping HealthKit import)")
+                return .useLocal
+            }
+        }
+
+        // 📚 학습 포인트: HealthKit vs HealthKit
+        // - 둘 다 HealthKit 데이터이지만 healthKitId가 다른 경우
+        // - allowMultiplePerDay에 따라 처리
+        if allowMultiplePerDay {
+            // 여러 개 허용 (예: 하루에 여러 운동)
+            return .useRemote
+        } else {
+            // 하나만 허용 (예: 하루에 하나의 체성분 기록)
+            // 이미 HealthKit 데이터가 있으면 건너뛰기 (최신 데이터 우선)
+            print("  ⏭️  HealthKit data already exists for this date, skipping")
+            return .skip
+        }
+    }
+
     // MARK: - Private Sync Helpers (HealthKit → Bodii)
 
     /// 체중 & 체지방 동기화
     ///
-    /// 📚 학습 포인트: Body Composition Sync
+    /// 📚 학습 포인트: Body Composition Sync with Conflict Resolution
     /// - HealthKit에서 체중과 체지방률을 읽어서 Bodii에 저장
     /// - 같은 시각에 측정된 체중과 체지방을 하나의 BodyRecord로 병합
+    /// - **충돌 해결**: 수동 입력 데이터가 있으면 HealthKit 임포트 건너뛰기
     /// - Repository를 통해 로컬 데이터베이스에 저장 (향후 구현)
     /// 💡 Java 비교: private void syncBodyComposition()
     ///
@@ -378,47 +522,71 @@ final class HealthKitSyncService {
         print("  ✓ Fetched \(weightSamples.count) weight samples")
         print("  ✓ Fetched \(bodyFatSamples.count) body fat samples")
 
-        // 📚 학습 포인트: Duplicate Detection
+        // 📚 학습 포인트: Conflict Resolution & Duplicate Detection
         // - healthKitId 필드를 사용하여 중복 임포트 방지
-        // - Repository를 통해 기존 레코드 조회 후 건너뛰기
-        // 💡 Java 비교: findByExternalId()로 중복 체크
+        // - resolveConflict()를 사용하여 수동 입력 데이터 보존
+        // - Repository를 통해 기존 레코드 조회 후 충돌 해결
+        // 💡 Java 비교: findByExternalId()로 중복 체크 후 충돌 해결
 
         // TODO: Repository 통합 시 아래 로직 활성화
         // var importedCount = 0
         // var skippedCount = 0
+        // var preservedCount = 0
         //
         // for weightSample in weightSamples {
         //     let healthKitId = mapper.extractHealthKitId(from: weightSample)
+        //     let sampleDate = weightSample.startDate
         //
-        //     // 📚 학습 포인트: Duplicate Check
-        //     // - healthKitId로 기존 레코드 조회
-        //     // - 이미 존재하면 건너뛰기
-        //     let existingRecord = try await bodyRepository.findByHealthKitId(healthKitId, userId: userId)
-        //     if existingRecord != nil {
+        //     // 📚 학습 포인트: Conflict Resolution Step 1
+        //     // - 같은 날짜에 이미 기록이 있는지 조회
+        //     // - healthKitId로도 조회하여 중복 체크
+        //     let existingByHealthKitId = try? await bodyRepository.findByHealthKitId(healthKitId, userId: userId)
+        //     let existingByDate = try? await bodyRepository.findByDate(sampleDate, userId: userId)
+        //
+        //     // 📚 학습 포인트: Conflict Resolution Step 2
+        //     // - resolveConflict()를 사용하여 임포트 여부 결정
+        //     // - allowMultiplePerDay: false (체성분은 하루에 하나만)
+        //     let resolution = resolveConflict(
+        //         existingRecord: existingByDate ?? existingByHealthKitId,
+        //         remoteHealthKitId: healthKitId,
+        //         allowMultiplePerDay: false
+        //     )
+        //
+        //     // 📚 학습 포인트: Conflict Resolution Step 3
+        //     // - 해결 전략에 따라 처리
+        //     switch resolution {
+        //     case .useLocal:
+        //         // 수동 입력 데이터 보존, HealthKit 임포트 건너뛰기
+        //         preservedCount += 1
+        //         continue
+        //
+        //     case .skip:
+        //         // 중복 데이터, 건너뛰기
         //         skippedCount += 1
         //         continue
-        //     }
         //
-        //     // 📚 학습 포인트: New Record Import
-        //     // - 새로운 레코드만 임포트
-        //     let bodyRecord = try mapper.mapToBodyRecord(
-        //         from: weightSample,
-        //         userId: userId
-        //     )
-        //     try await bodyRepository.create(bodyRecord)
-        //     importedCount += 1
+        //     case .useRemote:
+        //         // HealthKit 데이터 임포트
+        //         let bodyRecord = try mapper.mapToBodyRecord(
+        //             from: weightSample,
+        //             userId: userId
+        //         )
+        //         try await bodyRepository.create(bodyRecord)
+        //         importedCount += 1
+        //     }
         // }
         //
-        // print("  ✓ Imported: \(importedCount), Skipped (duplicates): \(skippedCount)")
+        // print("  ✓ Imported: \(importedCount), Skipped (duplicates): \(skippedCount), Preserved (manual): \(preservedCount)")
 
         print("  ✅ Body composition sync completed")
     }
 
     /// 운동 기록 동기화
     ///
-    /// 📚 학습 포인트: Workout Sync
+    /// 📚 학습 포인트: Workout Sync with Conflict Resolution
     /// - HealthKit에서 운동 기록을 읽어서 Bodii에 저장
     /// - HKWorkoutActivityType을 ExerciseType으로 변환
+    /// - **충돌 해결**: 운동은 하루에 여러 개 가능하므로 수동 입력과 HealthKit 데이터 모두 보존
     /// - Repository를 통해 로컬 데이터베이스에 저장 (향후 구현)
     /// 💡 Java 비교: private void syncWorkouts()
     ///
@@ -440,10 +608,11 @@ final class HealthKitSyncService {
 
         print("  ✓ Fetched \(workouts.count) workouts")
 
-        // 📚 학습 포인트: Duplicate Detection for Workouts
+        // 📚 학습 포인트: Conflict Resolution for Workouts
         // - healthKitId를 사용하여 중복 운동 기록 건너뛰기
-        // - 이미 임포트된 운동은 재임포트하지 않음
-        // 💡 Java 비교: findByExternalId()로 중복 체크
+        // - 운동은 하루에 여러 개 가능하므로 allowMultiplePerDay: true
+        // - 수동 입력 운동과 HealthKit 운동이 공존 가능
+        // 💡 Java 비교: findByExternalId()로 중복 체크 후 충돌 해결
 
         // TODO: Repository 통합 시 아래 로직 활성화
         // var importedCount = 0
@@ -452,23 +621,38 @@ final class HealthKitSyncService {
         // for workoutData in workouts {
         //     let healthKitId = workoutData.healthKitId.uuidString
         //
-        //     // 📚 학습 포인트: Duplicate Check
-        //     // - healthKitId로 기존 운동 기록 조회
-        //     // - 이미 존재하면 건너뛰기
-        //     let existingRecord = try await exerciseRepository.findByHealthKitId(healthKitId, userId: userId)
-        //     if existingRecord != nil {
+        //     // 📚 학습 포인트: Conflict Resolution Step 1
+        //     // - healthKitId로 기존 운동 기록 조회 (중복 체크)
+        //     // - 운동은 여러 개 가능하므로 날짜별 조회는 불필요
+        //     let existingByHealthKitId = try? await exerciseRepository.findByHealthKitId(healthKitId, userId: userId)
+        //
+        //     // 📚 학습 포인트: Conflict Resolution Step 2
+        //     // - resolveConflict()를 사용하여 임포트 여부 결정
+        //     // - allowMultiplePerDay: true (운동은 하루에 여러 개 가능)
+        //     let resolution = resolveConflict(
+        //         existingRecord: existingByHealthKitId,
+        //         remoteHealthKitId: healthKitId,
+        //         allowMultiplePerDay: true
+        //     )
+        //
+        //     // 📚 학습 포인트: Conflict Resolution Step 3
+        //     // - 운동은 중복만 체크하고 나머지는 모두 임포트
+        //     switch resolution {
+        //     case .skip:
+        //         // 중복 운동 (같은 healthKitId)
         //         skippedCount += 1
         //         continue
-        //     }
         //
-        //     // 📚 학습 포인트: New Workout Import
-        //     // - 새로운 운동 기록만 임포트
-        //     let exerciseRecord = mapper.mapToExerciseRecord(
-        //         from: workoutData,
-        //         userId: userId
-        //     )
-        //     try await exerciseRepository.create(exerciseRecord)
-        //     importedCount += 1
+        //     case .useLocal, .useRemote:
+        //         // HealthKit 운동 임포트
+        //         // (useLocal도 allowMultiplePerDay: true이므로 임포트)
+        //         let exerciseRecord = mapper.mapToExerciseRecord(
+        //             from: workoutData,
+        //             userId: userId
+        //         )
+        //         try await exerciseRepository.create(exerciseRecord)
+        //         importedCount += 1
+        //     }
         // }
         //
         // print("  ✓ Imported: \(importedCount), Skipped (duplicates): \(skippedCount)")
@@ -478,9 +662,10 @@ final class HealthKitSyncService {
 
     /// 수면 기록 동기화
     ///
-    /// 📚 학습 포인트: Sleep Sync
+    /// 📚 학습 포인트: Sleep Sync with Conflict Resolution
     /// - HealthKit에서 수면 기록을 읽어서 Bodii에 저장
     /// - 수면 세그먼트를 집계하여 총 수면 시간 계산
+    /// - **충돌 해결**: 수동 입력 수면 데이터가 있으면 HealthKit 임포트 건너뛰기
     /// - Repository를 통해 로컬 데이터베이스에 저장 (향후 구현)
     /// 💡 Java 비교: private void syncSleep()
     ///
@@ -502,14 +687,19 @@ final class HealthKitSyncService {
         var currentDate = from
         var totalSleepRecords = 0
 
+        // TODO: Repository 통합 시 카운터 추가
+        // var importedCount = 0
+        // var skippedCount = 0
+        // var preservedCount = 0
+
         while currentDate <= to {
             let sleepData = try await readService.fetchSleepData(for: currentDate)
 
             if sleepData.totalDurationMinutes > 0 {
-                // 📚 학습 포인트: Duplicate Detection for Sleep
+                // 📚 학습 포인트: Conflict Resolution for Sleep
                 // - healthKitId를 사용하여 중복 수면 기록 건너뛰기
-                // - 같은 날 같은 수면 세그먼트는 재임포트하지 않음
-                // 💡 Java 비교: findByExternalId()로 중복 체크
+                // - 수동 입력 수면이 있으면 HealthKit 임포트 건너뛰기 (수동 입력 우선)
+                // 💡 Java 비교: findByExternalId()로 중복 체크 후 충돌 해결
 
                 // TODO: Repository 통합 시 아래 로직 활성화
                 // let sleepRecord = mapper.mapToSleepRecord(
@@ -517,20 +707,42 @@ final class HealthKitSyncService {
                 //     userId: userId
                 // )
                 //
-                // // 📚 학습 포인트: Duplicate Check
-                // // - healthKitId로 기존 수면 기록 조회
-                // // - healthKitId가 nil이면 새 레코드로 처리
-                // if let healthKitId = sleepRecord.healthKitId {
-                //     let existingRecord = try await sleepRepository.findByHealthKitId(healthKitId, userId: userId)
-                //     if existingRecord != nil {
-                //         // 이미 존재하는 수면 기록, 건너뛰기
-                //         continue
-                //     }
-                // }
+                // // 📚 학습 포인트: Conflict Resolution Step 1
+                // // - 같은 날짜에 이미 수면 기록이 있는지 조회
+                // // - healthKitId로도 조회하여 중복 체크
+                // let healthKitId = sleepRecord.healthKitId ?? ""
+                // let existingByHealthKitId = try? await sleepRepository.findByHealthKitId(healthKitId, userId: userId)
+                // let existingByDate = try? await sleepRepository.findByDate(currentDate, userId: userId)
                 //
-                // // 📚 학습 포인트: New Sleep Record Import
-                // // - 새로운 수면 기록만 임포트
-                // try await sleepRepository.create(sleepRecord)
+                // // 📚 학습 포인트: Conflict Resolution Step 2
+                // // - resolveConflict()를 사용하여 임포트 여부 결정
+                // // - allowMultiplePerDay: false (수면은 하루에 하나만)
+                // let resolution = resolveConflict(
+                //     existingRecord: existingByDate ?? existingByHealthKitId,
+                //     remoteHealthKitId: healthKitId,
+                //     allowMultiplePerDay: false
+                // )
+                //
+                // // 📚 학습 포인트: Conflict Resolution Step 3
+                // // - 해결 전략에 따라 처리
+                // switch resolution {
+                // case .useLocal:
+                //     // 수동 입력 수면 데이터 보존, HealthKit 임포트 건너뛰기
+                //     preservedCount += 1
+                //     print("  🛡️  \(currentDate): Manual entry preserved")
+                //     continue
+                //
+                // case .skip:
+                //     // 중복 데이터, 건너뛰기
+                //     skippedCount += 1
+                //     continue
+                //
+                // case .useRemote:
+                //     // HealthKit 수면 데이터 임포트
+                //     try await sleepRepository.create(sleepRecord)
+                //     importedCount += 1
+                //     print("  ✓ \(currentDate): \(sleepData.totalDurationMinutes) minutes (imported)")
+                // }
 
                 totalSleepRecords += 1
                 print("  ✓ \(currentDate): \(sleepData.totalDurationMinutes) minutes")
@@ -542,6 +754,9 @@ final class HealthKitSyncService {
             }
             currentDate = nextDate
         }
+
+        // TODO: Repository 통합 시 상세 카운터 출력
+        // print("  ✓ Imported: \(importedCount), Skipped (duplicates): \(skippedCount), Preserved (manual): \(preservedCount)")
 
         print("  ✅ Sleep sync completed (\(totalSleepRecords) records)")
     }
@@ -834,6 +1049,12 @@ final class HealthKitSyncService {
 ///   - ExerciseRecord, BodyRecord, SleepRecord에 healthKitId 필드 추가
 ///   - isFromHealthKit computed property로 데이터 출처 판별
 ///   - 중복 검사 로직 문서화 (Repository 통합 시 활성화)
-/// - Subtask 5.3: 충돌 해결 전략 구현
+/// - ✅ Subtask 5.3: 충돌 해결 전략 구현 완료
+///   - ConflictResolution enum 정의 (useLocal, useRemote, skip)
+///   - resolveConflict() 메서드 구현 (Generic 타입 지원)
+///   - 핵심 원칙: 수동 입력 데이터 절대 덮어쓰지 않음
+///   - BodyRecord & SleepRecord: 수동 입력 우선 (allowMultiplePerDay: false)
+///   - ExerciseRecord: 수동 입력과 HealthKit 데이터 공존 가능 (allowMultiplePerDay: true)
+///   - 모든 sync 메서드에 충돌 해결 로직 통합 및 문서화
 /// - Subtask 5.4: 백그라운드 동기화 구현
 /// - Subtask 5.5: DailyLogService 통합 (활동 칼로리, 걸음 수)

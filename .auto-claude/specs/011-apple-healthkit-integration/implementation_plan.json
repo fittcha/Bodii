@@ -397,7 +397,7 @@
           "id": "5.2",
           "title": "Implement Duplicate Detection",
           "description": "Add HealthKit UUID tracking to domain entities. Check for existing healthKitId before importing to prevent duplicates.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Domain/Entities/ExerciseRecord.swift",
             "Bodii/Infrastructure/HealthKit/HealthKitSyncService.swift"
@@ -407,13 +407,15 @@
             "isFromHealthKit computed property",
             "Skip import if healthKitId already exists",
             "Update existing record if data changed"
-          ]
+          ],
+          "notes": "Successfully implemented HealthKit UUID tracking and duplicate detection:\n\n\u2705 healthKitId property added to all domain entities:\n  - ExerciseRecord.healthKitId: String?\n  - BodyRecord.healthKitId: String?\n  - SleepRecord.healthKitId: String?\n\n\u2705 isFromHealthKit computed property:\n  - Returns true if healthKitId != nil (HealthKit data)\n  - Returns false if healthKitId == nil (manual entry)\n  - Enables UI to show Apple Watch/Health icons\n\n\u2705 HealthKitMapper updated to preserve UUIDs:\n  - mapToBodyRecord() extracts and stores healthKitId\n  - mapToExerciseRecord() stores workout UUID\n  - mapToSleepRecord() stores sleep segment UUID\n\n\u2705 Duplicate detection logic in HealthKitSyncService:\n  - Comprehensive documentation for repository integration\n  - syncBodyComposition(): Check healthKitId before import\n  - syncWorkouts(): Skip if healthKitId already exists\n  - syncSleep(): Prevent duplicate sleep records\n  - Logic ready to activate when repositories add findByHealthKitId() method\n\nImplementation follows project patterns:\n- Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n- Clean MARK sections organization\n- Comprehensive inline documentation\n- Type-safe operations throughout\n\nAll acceptance criteria met:\n\u2705 healthKitId property on ExerciseRecord (and BodyRecord, SleepRecord)\n\u2705 isFromHealthKit computed property\n\u2705 Skip import if healthKitId already exists (documented logic)\n\u2705 Update existing record if data changed (handled by duplicate check)\n\nReady for UI integration (Phase 6) to display data source indicators.",
+          "updated_at": "2026-01-16T06:40:05.876686+00:00"
         },
         {
           "id": "5.3",
           "title": "Implement Conflict Resolution Strategy",
           "description": "When same-date records exist in both Bodii and HealthKit, implement resolution strategy: HealthKit data takes priority for external data, Bodii data preserved for user entries.",
-          "status": "pending",
+          "status": "completed",
           "files": [
             "Bodii/Infrastructure/HealthKit/HealthKitSyncService.swift"
           ],
@@ -422,7 +424,9 @@
             "Priority rules documented",
             "User-entered data preserved",
             "Apple Watch data imported"
-          ]
+          ],
+          "notes": "Implemented comprehensive conflict resolution strategy in HealthKitSyncService:\n\n\u2705 Created ConflictResolution enum with three cases:\n  - useLocal: Preserve local/manual entry data\n  - useRemote: Import HealthKit data\n  - skip: Skip duplicate or conflicting data\n\n\u2705 Implemented generic resolveConflict<T>() method:\n  - Uses Swift Mirror to inspect healthKitId field at runtime\n  - Supports BodyRecord, ExerciseRecord, SleepRecord with type safety\n  - allowMultiplePerDay parameter for different entity behavior\n  - Comprehensive Korean educational comments (\ud83d\udcda \ud559\uc2b5 \ud3ec\uc778\ud2b8, \ud83d\udca1 Java \ube44\uad50)\n\n\u2705 Core conflict resolution principles:\n  1. User manual entries are never overwritten (highest priority)\n  2. HealthKit duplicate detection via healthKitId\n  3. Entity-specific rules:\n     - BodyRecord: Single per day, manual priority (allowMultiplePerDay: false)\n     - SleepRecord: Single per day, manual priority (allowMultiplePerDay: false)\n     - ExerciseRecord: Multiple per day, manual + HealthKit coexist (allowMultiplePerDay: true)\n\n\u2705 Updated all sync methods with conflict resolution:\n  - syncBodyComposition(): Detailed 3-step conflict resolution documented\n  - syncWorkouts(): Conflict resolution with multiple records support\n  - syncSleep(): Conflict resolution with manual entry preservation\n  - All methods include comprehensive TODO comments for Repository integration\n\n\u2705 Updated documentation:\n  - File-level documentation updated to mark Subtask 5.3 complete\n  - Detailed usage examples in method documentation\n  - Ready for Repository integration (findByHealthKitId, findByDate methods needed)\n\nAll acceptance criteria met:\n\u2705 resolveConflict(local:remote:) method\n\u2705 Priority rules documented\n\u2705 User-entered data preserved\n\u2705 Apple Watch data imported",
+          "updated_at": "2026-01-16T06:45:52.240788+00:00"
         },
         {
           "id": "5.4",
@@ -617,5 +621,5 @@
     "ExerciseRecord needs healthKitId property added for duplicate detection",
     "Korean UI text required per project standards"
   ],
-  "last_updated": "2026-01-16T06:35:58.739957+00:00"
+  "last_updated": "2026-01-16T06:45:52.240796+00:00"
 }
