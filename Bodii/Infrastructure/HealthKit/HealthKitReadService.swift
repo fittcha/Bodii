@@ -659,6 +659,158 @@ extension HealthKitReadService {
     }
 }
 
+// MARK: - Active Calories & Steps Reading
+
+extension HealthKitReadService {
+
+    /// 활동 칼로리 조회 (일일 합계)
+    ///
+    /// 📚 학습 포인트: Active Energy Burned
+    /// - HKQuantityType.activeEnergyBurned 사용
+    /// - HKStatisticsQuery로 하루 동안의 활동 칼로리 합계 계산
+    /// - 여러 소스(Apple Watch, iPhone, 다른 앱)의 데이터 자동 집계
+    /// 💡 Java 비교: SUM(calories) WHERE date = ?와 유사
+    ///
+    /// - Parameter date: 조회할 날짜
+    ///
+    /// - Returns: 해당 날짜의 활동 칼로리 합계 (kcal), 데이터 없으면 nil
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 활동 칼로리 타입 생성 실패
+    ///   - queryExecutionFailed: 쿼리 실행 실패
+    ///
+    /// - Note:
+    ///   - activeEnergyBurned는 기초대사량을 제외한 활동으로 소모된 칼로리
+    ///   - basalEnergyBurned(기초대사량)와는 별개
+    ///   - 여러 소스의 중복 데이터는 HealthKit이 자동으로 처리
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 오늘의 활동 칼로리 조회
+    /// if let calories = try await service.fetchActiveCalories(for: Date()) {
+    ///     print("오늘 활동 칼로리: \(calories) kcal")
+    /// } else {
+    ///     print("활동 칼로리 데이터가 없습니다")
+    /// }
+    ///
+    /// // 특정 날짜의 활동 칼로리 조회
+    /// let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+    /// if let calories = try await service.fetchActiveCalories(for: yesterday) {
+    ///     print("어제 활동 칼로리: \(calories) kcal")
+    /// }
+    /// ```
+    func fetchActiveCalories(for date: Date) async throws -> Decimal? {
+        // 📚 학습 포인트: Type Safety with Optional Unwrapping
+        // HealthKitDataTypes를 사용해 타입 안전하게 활동 칼로리 타입 가져오기
+        // 💡 Java 비교: Optional.orElseThrow()와 유사
+        guard let caloriesType = HealthKitDataTypes.QuantityType.activeEnergyBurned.type else {
+            throw HealthKitError.invalidSampleType(
+                identifier: HealthKitDataTypes.QuantityType.activeEnergyBurned.identifier.rawValue
+            )
+        }
+
+        // 📚 학습 포인트: Date Range for Daily Data
+        // 특정 날짜의 00:00:00 ~ 23:59:59 범위 계산
+        let (startOfDay, endOfDay) = getDateBounds(for: date)
+
+        // 📚 학습 포인트: HKStatisticsQuery with cumulativeSum
+        // - cumulativeSum: 누적 합계 계산 (활동 칼로리, 걸음 수 등)
+        // - 여러 소스의 데이터를 HealthKit이 자동으로 집계
+        // - 중복 데이터는 HealthKit의 알고리즘이 제거
+        // 💡 Java 비교: GROUP BY date와 SUM() 집계 함수
+        let statistics = try await fetchStatistics(
+            quantityType: caloriesType,
+            from: startOfDay,
+            to: endOfDay,
+            options: .cumulativeSum
+        )
+
+        // 📚 학습 포인트: Optional Chaining
+        // sumQuantity()가 nil이면 전체가 nil 반환
+        // 💡 Java 비교: Optional.map()과 유사
+        guard let sum = statistics.sumQuantity() else {
+            return nil
+        }
+
+        // kcal 단위로 변환하여 Decimal로 반환
+        let kcal = sum.doubleValue(for: .kilocalorie())
+        return Decimal(kcal)
+    }
+
+    /// 걸음 수 조회 (일일 합계)
+    ///
+    /// 📚 학습 포인트: Step Count
+    /// - HKQuantityType.stepCount 사용
+    /// - HKStatisticsQuery로 하루 동안의 걸음 수 합계 계산
+    /// - iPhone과 Apple Watch의 걸음 수 자동 통합
+    /// 💡 Java 비교: SUM(steps) WHERE date = ?와 유사
+    ///
+    /// - Parameter date: 조회할 날짜
+    ///
+    /// - Returns: 해당 날짜의 걸음 수 합계, 데이터 없으면 nil
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 걸음 수 타입 생성 실패
+    ///   - queryExecutionFailed: 쿼리 실행 실패
+    ///
+    /// - Note:
+    ///   - iPhone과 Apple Watch가 동시에 걸음을 측정하면 HealthKit이 중복 제거
+    ///   - 일반적으로 Apple Watch 착용 시 Watch 데이터 우선
+    ///   - 착용하지 않은 시간은 iPhone 데이터 사용
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 오늘의 걸음 수 조회
+    /// if let steps = try await service.fetchSteps(for: Date()) {
+    ///     print("오늘 걸음 수: \(steps)걸음")
+    /// } else {
+    ///     print("걸음 수 데이터가 없습니다")
+    /// }
+    ///
+    /// // 최근 7일 걸음 수 조회
+    /// let calendar = Calendar.current
+    /// for dayOffset in 0..<7 {
+    ///     let date = calendar.date(byAdding: .day, value: -dayOffset, to: Date())!
+    ///     if let steps = try await service.fetchSteps(for: date) {
+    ///         print("\(date): \(steps)걸음")
+    ///     }
+    /// }
+    /// ```
+    func fetchSteps(for date: Date) async throws -> Decimal? {
+        // 걸음 수 타입 가져오기
+        guard let stepsType = HealthKitDataTypes.QuantityType.stepCount.type else {
+            throw HealthKitError.invalidSampleType(
+                identifier: HealthKitDataTypes.QuantityType.stepCount.identifier.rawValue
+            )
+        }
+
+        // 특정 날짜의 시작/종료 시간 계산
+        let (startOfDay, endOfDay) = getDateBounds(for: date)
+
+        // 📚 학습 포인트: cumulativeSum for Step Count
+        // 걸음 수는 누적 합계로 집계
+        // iPhone과 Apple Watch의 데이터를 HealthKit이 자동으로 통합
+        // 💡 Java 비교: SUM(steps) GROUP BY date
+        let statistics = try await fetchStatistics(
+            quantityType: stepsType,
+            from: startOfDay,
+            to: endOfDay,
+            options: .cumulativeSum
+        )
+
+        // 합계 값 추출
+        guard let sum = statistics.sumQuantity() else {
+            return nil
+        }
+
+        // 📚 학습 포인트: Count Unit
+        // 걸음 수는 HKUnit.count() 단위 사용
+        // 💡 Java 비교: Integer 타입이지만 Decimal로 변환
+        let count = sum.doubleValue(for: .count())
+        return Decimal(count)
+    }
+}
+
 // MARK: - HKQuantity Conversion Helpers
 
 extension HealthKitReadService {
