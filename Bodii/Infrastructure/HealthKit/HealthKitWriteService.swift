@@ -634,6 +634,179 @@ extension HealthKitWriteService {
     }
 }
 
+// MARK: - Workout Write Methods
+
+extension HealthKitWriteService {
+
+    /// HealthKit에 운동 데이터 저장
+    ///
+    /// 📚 학습 포인트: HKWorkout Creation
+    /// - 사용자가 입력한 운동 기록을 HealthKit에 저장
+    /// - HKWorkout으로 변환하여 저장
+    /// - ExerciseType을 HKWorkoutActivityType으로 매핑
+    /// - Bodii 출처 메타데이터 포함
+    /// 💡 Java 비교: Repository의 save() 메서드와 유사
+    ///
+    /// - Parameters:
+    ///   - exerciseType: 운동 종류 (ExerciseType enum)
+    ///   - duration: 운동 시간 (분 단위)
+    ///   - caloriesBurned: 소모 칼로리 (kcal)
+    ///   - intensity: 운동 강도 (저/중/고)
+    ///   - startDate: 운동 시작 일시
+    ///   - metadata: 추가 메타데이터 (선택)
+    ///
+    /// - Throws: HealthKitError
+    ///   - unsupportedWorkoutType: 지원하지 않는 운동 종류
+    ///   - dataTypeNotAuthorized: 운동 쓰기 권한 없음
+    ///   - writeFailed: 저장 실패
+    ///
+    /// - Note: ExerciseRecord 저장 후 HealthKit 동기화에 사용
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 사용자가 운동을 기록한 후
+    /// let exerciseRecord = ExerciseRecord(
+    ///     exerciseType: .running,
+    ///     duration: 30,
+    ///     intensity: .high,
+    ///     caloriesBurned: 350
+    /// )
+    /// try await exerciseRepository.save(exerciseRecord)
+    ///
+    /// // HealthKit에 동기화
+    /// try await healthKitWriteService.saveWorkout(
+    ///     exerciseType: exerciseRecord.exerciseType,
+    ///     duration: exerciseRecord.duration,
+    ///     caloriesBurned: exerciseRecord.caloriesBurned,
+    ///     intensity: exerciseRecord.intensity,
+    ///     startDate: exerciseRecord.date
+    /// )
+    /// ```
+    func saveWorkout(
+        exerciseType: ExerciseType,
+        duration: Int32,
+        caloriesBurned: Int32,
+        intensity: Intensity,
+        startDate: Date,
+        metadata: [String: Any]? = nil
+    ) async throws {
+        // 📚 학습 포인트: ExerciseType to HKWorkoutActivityType 매핑
+        // 앱의 운동 종류를 HealthKit의 운동 종류로 변환
+        // 💡 Java 비교: Enum Mapping
+        let activityType = mapExerciseTypeToWorkoutActivityType(exerciseType)
+
+        // 📚 학습 포인트: Duration Conversion
+        // 분 단위 → 초 단위 (TimeInterval)
+        // HKWorkout.duration은 TimeInterval (초 단위)
+        // 💡 Java 비교: Duration.ofMinutes().toSeconds()와 유사
+        let durationInSeconds = TimeInterval(duration * 60)
+
+        // 📚 학습 포인트: Date Range Calculation
+        // 운동 시작 시간과 종료 시간 계산
+        // 💡 Java 비교: LocalDateTime.plusMinutes()와 유사
+        let endDate = startDate.addingTimeInterval(durationInSeconds)
+
+        // 📚 학습 포인트: HKQuantity for Calories
+        // 소모 칼로리를 HKQuantity로 변환
+        // 💡 Java 비교: Value Object 생성
+        let caloriesQuantity = HKQuantity(
+            unit: .kilocalorie(),
+            doubleValue: Double(caloriesBurned)
+        )
+
+        // 📚 학습 포인트: Metadata 생성
+        // Bodii 출처 정보와 운동 강도를 포함한 메타데이터 생성
+        // 💡 Java 비교: @CreatedBy Auditing
+        var workoutMetadata = createMetadata(
+            source: "manual_entry",
+            additionalMetadata: metadata
+        )
+
+        // 운동 강도 정보를 메타데이터에 추가 (HealthKit에는 강도 필드가 없음)
+        // 추후 읽기 시 강도 정보를 복원하기 위해 저장
+        workoutMetadata["BodiiIntensity"] = intensity.rawValue
+
+        // 📚 학습 포인트: HKWorkout 생성
+        // 운동 객체 생성 (타입, 시작/종료 시간, 시간, 칼로리, 메타데이터)
+        // 💡 Java 비교: Entity 객체 생성
+        let workout = HKWorkout(
+            activityType: activityType,
+            start: startDate,
+            end: endDate,
+            duration: durationInSeconds,
+            totalEnergyBurned: caloriesQuantity,
+            totalDistance: nil,  // 거리 데이터는 별도 처리 (추후 확장 가능)
+            metadata: workoutMetadata
+        )
+
+        // 📚 학습 포인트: Generic Save 메서드 재사용
+        // 이미 구현된 save(sample:)를 사용하여 코드 중복 방지
+        // 💡 Java 비교: Template Method Pattern
+        try await save(sample: workout)
+    }
+
+    /// ExerciseType을 HKWorkoutActivityType으로 변환
+    ///
+    /// 📚 학습 포인트: Reverse Exercise Type Mapping
+    /// - 앱의 8가지 운동 종류를 HealthKit의 운동 종류로 매핑
+    /// - HealthKitReadService의 mapWorkoutActivityType과 반대 방향 매핑
+    /// 💡 Java 비교: Enum to Enum Mapping Utility
+    ///
+    /// - Parameter exerciseType: 앱의 운동 종류
+    ///
+    /// - Returns: HealthKit 운동 종류
+    ///
+    /// - Note: 매핑 규칙
+    ///   - .walking -> .walking
+    ///   - .running -> .running
+    ///   - .cycling -> .cycling
+    ///   - .swimming -> .swimming
+    ///   - .weight -> .traditionalStrengthTraining
+    ///   - .crossfit -> .crossTraining
+    ///   - .yoga -> .yoga
+    ///   - .other -> .other
+    ///
+    /// - Example:
+    /// ```swift
+    /// let activityType1 = mapExerciseTypeToWorkoutActivityType(.running)
+    /// // HKWorkoutActivityType.running
+    ///
+    /// let activityType2 = mapExerciseTypeToWorkoutActivityType(.weight)
+    /// // HKWorkoutActivityType.traditionalStrengthTraining
+    /// ```
+    private func mapExerciseTypeToWorkoutActivityType(
+        _ exerciseType: ExerciseType
+    ) -> HKWorkoutActivityType {
+        // 📚 학습 포인트: Exercise Type to HealthKit Mapping
+        // 앱의 운동 카테고리를 HealthKit의 대표 운동 종류로 매핑
+        // 💡 Java 비교: switch-case mapping과 유사
+        switch exerciseType {
+        case .walking:
+            return .walking
+        case .running:
+            return .running
+        case .cycling:
+            return .cycling
+        case .swimming:
+            return .swimming
+        case .weight:
+            // 📚 학습 포인트: Strength Training Mapping
+            // 웨이트 운동은 HealthKit의 traditionalStrengthTraining으로 매핑
+            // 💡 Java 비교: Specific Type Selection
+            return .traditionalStrengthTraining
+        case .crossfit:
+            // 📚 학습 포인트: Cross Training Mapping
+            // 크로스핏은 HealthKit의 crossTraining으로 매핑
+            // 💡 Java 비교: Specific Type Selection
+            return .crossTraining
+        case .yoga:
+            return .yoga
+        case .other:
+            return .other
+        }
+    }
+}
+
 // MARK: - Metadata Helper
 
 extension HealthKitWriteService {
