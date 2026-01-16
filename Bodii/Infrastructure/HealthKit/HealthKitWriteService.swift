@@ -357,6 +357,283 @@ extension HealthKitWriteService {
     }
 }
 
+// MARK: - Body Composition Write Methods
+
+extension HealthKitWriteService {
+
+    /// HealthKit에 체중 데이터 저장
+    ///
+    /// 📚 학습 포인트: Weight Sample Creation
+    /// - 사용자가 입력한 체중을 HealthKit에 저장
+    /// - HKQuantitySample로 변환하여 저장
+    /// - Bodii 출처 메타데이터 포함
+    /// 💡 Java 비교: Repository의 save() 메서드와 유사
+    ///
+    /// - Parameters:
+    ///   - kg: 체중 (킬로그램 단위)
+    ///   - date: 측정 일시 (기본값: 현재 시각)
+    ///   - metadata: 추가 메타데이터 (선택)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 체중 타입 생성 실패
+    ///   - dataTypeNotAuthorized: 체중 쓰기 권한 없음
+    ///   - writeFailed: 저장 실패
+    ///
+    /// - Note: BodyRecord 저장 후 HealthKit 동기화에 사용
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 사용자가 체중을 입력한 후
+    /// let bodyRecord = BodyRecord(weight: 70.5, ...)
+    /// try await bodyRepository.save(bodyRecord)
+    ///
+    /// // HealthKit에 동기화
+    /// try await healthKitWriteService.saveWeight(
+    ///     kg: bodyRecord.weight,
+    ///     date: bodyRecord.date
+    /// )
+    /// ```
+    func saveWeight(
+        kg weight: Decimal,
+        date: Date = Date(),
+        metadata: [String: Any]? = nil
+    ) async throws {
+        // 📚 학습 포인트: HKQuantityType 가져오기
+        // HealthKitDataTypes를 사용한 타입 안전한 접근
+        // 💡 Java 비교: Enum-based Type Access
+        guard let weightType = HealthKitDataTypes.QuantityType.weight.type else {
+            throw HealthKitError.invalidSampleType(identifier: "bodyMass")
+        }
+
+        // 📚 학습 포인트: Decimal to Double 변환
+        // Swift의 Decimal을 HKQuantity가 요구하는 Double로 변환
+        // 💡 Java 비교: BigDecimal.doubleValue()와 유사
+        let weightValue = NSDecimalNumber(decimal: weight).doubleValue
+
+        // 📚 학습 포인트: HKQuantity 생성
+        // 체중 수치와 단위(kg)를 조합하여 HealthKit 수량 객체 생성
+        // 💡 Java 비교: Value Object 생성
+        let quantity = HKQuantity(
+            unit: HealthKitDataTypes.QuantityType.weight.unit, // kg
+            doubleValue: weightValue
+        )
+
+        // 📚 학습 포인트: Metadata 생성
+        // Bodii 출처 정보를 포함한 메타데이터 생성
+        // 💡 Java 비교: @CreatedBy Auditing
+        let sampleMetadata = createMetadata(
+            source: "manual_entry",
+            additionalMetadata: metadata
+        )
+
+        // 📚 학습 포인트: HKQuantitySample 생성
+        // 체중 샘플 객체 생성 (타입, 수량, 시간, 메타데이터)
+        // 💡 Java 비교: Entity 객체 생성
+        let sample = HKQuantitySample(
+            type: weightType,
+            quantity: quantity,
+            start: date,
+            end: date,
+            metadata: sampleMetadata
+        )
+
+        // 📚 학습 포인트: Generic Save 메서드 재사용
+        // 이미 구현된 save(sample:)를 사용하여 코드 중복 방지
+        // 💡 Java 비교: Template Method Pattern
+        try await save(sample: sample)
+    }
+
+    /// HealthKit에 체지방률 데이터 저장
+    ///
+    /// 📚 학습 포인트: Body Fat Percentage Sample Creation
+    /// - 사용자가 입력한 체지방률을 HealthKit에 저장
+    /// - HKQuantitySample로 변환하여 저장
+    /// - Bodii 출처 메타데이터 포함
+    /// 💡 Java 비교: Repository의 save() 메서드와 유사
+    ///
+    /// - Parameters:
+    ///   - percent: 체지방률 (0-100 범위의 퍼센트)
+    ///   - date: 측정 일시 (기본값: 현재 시각)
+    ///   - metadata: 추가 메타데이터 (선택)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 체지방률 타입 생성 실패
+    ///   - dataTypeNotAuthorized: 체지방률 쓰기 권한 없음
+    ///   - writeFailed: 저장 실패
+    ///
+    /// - Note:
+    ///   - HealthKit은 체지방률을 0-1 범위로 저장 (0.185 = 18.5%)
+    ///   - Bodii는 0-100 범위로 관리하므로 변환 필요
+    ///   - BodyRecord 저장 후 HealthKit 동기화에 사용
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 사용자가 체지방률을 입력한 후
+    /// let bodyRecord = BodyRecord(weight: 70.5, bodyFatPercent: 18.5, ...)
+    /// try await bodyRepository.save(bodyRecord)
+    ///
+    /// // HealthKit에 동기화
+    /// if let bodyFatPercent = bodyRecord.bodyFatPercent {
+    ///     try await healthKitWriteService.saveBodyFatPercentage(
+    ///         percent: bodyFatPercent,
+    ///         date: bodyRecord.date
+    ///     )
+    /// }
+    /// ```
+    func saveBodyFatPercentage(
+        percent: Decimal,
+        date: Date = Date(),
+        metadata: [String: Any]? = nil
+    ) async throws {
+        // 📚 학습 포인트: HKQuantityType 가져오기
+        // HealthKitDataTypes를 사용한 타입 안전한 접근
+        // 💡 Java 비교: Enum-based Type Access
+        guard let bodyFatType = HealthKitDataTypes.QuantityType.bodyFatPercentage.type else {
+            throw HealthKitError.invalidSampleType(identifier: "bodyFatPercentage")
+        }
+
+        // 📚 학습 포인트: Percentage 단위 변환
+        // Bodii: 0-100 범위 (18.5% = 18.5)
+        // HealthKit: 0-1 범위 (18.5% = 0.185)
+        // 💡 Java 비교: Unit Conversion
+        let percentValue = NSDecimalNumber(decimal: percent).doubleValue / 100.0
+
+        // 📚 학습 포인트: HKQuantity 생성
+        // 체지방률 수치와 단위(percent)를 조합하여 HealthKit 수량 객체 생성
+        // 💡 Java 비교: Value Object 생성
+        let quantity = HKQuantity(
+            unit: HealthKitDataTypes.QuantityType.bodyFatPercentage.unit, // percent
+            doubleValue: percentValue
+        )
+
+        // 📚 학습 포인트: Metadata 생성
+        // Bodii 출처 정보를 포함한 메타데이터 생성
+        // 💡 Java 비교: @CreatedBy Auditing
+        let sampleMetadata = createMetadata(
+            source: "manual_entry",
+            additionalMetadata: metadata
+        )
+
+        // 📚 학습 포인트: HKQuantitySample 생성
+        // 체지방률 샘플 객체 생성 (타입, 수량, 시간, 메타데이터)
+        // 💡 Java 비교: Entity 객체 생성
+        let sample = HKQuantitySample(
+            type: bodyFatType,
+            quantity: quantity,
+            start: date,
+            end: date,
+            metadata: sampleMetadata
+        )
+
+        // 📚 학습 포인트: Generic Save 메서드 재사용
+        // 이미 구현된 save(sample:)를 사용하여 코드 중복 방지
+        // 💡 Java 비교: Template Method Pattern
+        try await save(sample: sample)
+    }
+
+    /// HealthKit에 체중과 체지방률을 동시에 저장
+    ///
+    /// 📚 학습 포인트: Batch Body Composition Save
+    /// - 체중과 체지방률을 한 번에 저장하여 성능 향상
+    /// - 같은 시간에 측정된 데이터로 저장
+    /// - 트랜잭션 단위로 처리되어 전체 성공 또는 전체 실패
+    /// 💡 Java 비교: Batch Insert Operation
+    ///
+    /// - Parameters:
+    ///   - kg: 체중 (킬로그램 단위)
+    ///   - percent: 체지방률 (0-100 범위의 퍼센트, 선택)
+    ///   - date: 측정 일시 (기본값: 현재 시각)
+    ///   - metadata: 추가 메타데이터 (선택)
+    ///
+    /// - Throws: HealthKitError
+    ///   - invalidSampleType: 타입 생성 실패
+    ///   - dataTypeNotAuthorized: 쓰기 권한 없음
+    ///   - writeFailed: 저장 실패
+    ///
+    /// - Note:
+    ///   - 체중은 필수, 체지방률은 선택 (nil 가능)
+    ///   - 배치 저장으로 네트워크 호출 최소화
+    ///   - BodyRecord 저장 후 HealthKit 동기화에 사용
+    ///
+    /// - Example:
+    /// ```swift
+    /// // 사용자가 체성분을 입력한 후
+    /// let bodyRecord = BodyRecord(weight: 70.5, bodyFatPercent: 18.5, ...)
+    /// try await bodyRepository.save(bodyRecord)
+    ///
+    /// // HealthKit에 동시 저장
+    /// try await healthKitWriteService.saveBodyComposition(
+    ///     kg: bodyRecord.weight,
+    ///     percent: bodyRecord.bodyFatPercent,
+    ///     date: bodyRecord.date
+    /// )
+    /// ```
+    func saveBodyComposition(
+        kg weight: Decimal,
+        percent bodyFatPercent: Decimal? = nil,
+        date: Date = Date(),
+        metadata: [String: Any]? = nil
+    ) async throws {
+        var samples: [HKObject] = []
+
+        // 📚 학습 포인트: Weight Sample 생성
+        // 체중 샘플은 필수이므로 항상 생성
+        // 💡 Java 비교: Required Field
+        guard let weightType = HealthKitDataTypes.QuantityType.weight.type else {
+            throw HealthKitError.invalidSampleType(identifier: "bodyMass")
+        }
+
+        let weightValue = NSDecimalNumber(decimal: weight).doubleValue
+        let weightQuantity = HKQuantity(
+            unit: HealthKitDataTypes.QuantityType.weight.unit,
+            doubleValue: weightValue
+        )
+
+        let sampleMetadata = createMetadata(
+            source: "manual_entry",
+            additionalMetadata: metadata
+        )
+
+        let weightSample = HKQuantitySample(
+            type: weightType,
+            quantity: weightQuantity,
+            start: date,
+            end: date,
+            metadata: sampleMetadata
+        )
+        samples.append(weightSample)
+
+        // 📚 학습 포인트: Optional Body Fat Sample 생성
+        // 체지방률은 선택 사항이므로 nil 체크 후 생성
+        // 💡 Java 비교: Optional Field Processing
+        if let bodyFatPercent = bodyFatPercent {
+            guard let bodyFatType = HealthKitDataTypes.QuantityType.bodyFatPercentage.type else {
+                throw HealthKitError.invalidSampleType(identifier: "bodyFatPercentage")
+            }
+
+            let percentValue = NSDecimalNumber(decimal: bodyFatPercent).doubleValue / 100.0
+            let bodyFatQuantity = HKQuantity(
+                unit: HealthKitDataTypes.QuantityType.bodyFatPercentage.unit,
+                doubleValue: percentValue
+            )
+
+            let bodyFatSample = HKQuantitySample(
+                type: bodyFatType,
+                quantity: bodyFatQuantity,
+                start: date,
+                end: date,
+                metadata: sampleMetadata
+            )
+            samples.append(bodyFatSample)
+        }
+
+        // 📚 학습 포인트: Batch Save
+        // 여러 샘플을 한 번에 저장하여 성능 향상
+        // 💡 Java 비교: saveAll() 메서드
+        try await save(samples: samples)
+    }
+}
+
 // MARK: - Metadata Helper
 
 extension HealthKitWriteService {
