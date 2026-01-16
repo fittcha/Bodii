@@ -53,6 +53,9 @@ struct ExerciseSummaryCard: View {
     /// 총 운동 시간 (분)
     let exerciseMinutes: Int32
 
+    /// 운동 추가 콜백 (Empty State에서 사용)
+    var onAddExercise: (() -> Void)? = nil
+
     // MARK: - Constants
 
     /// 매크로 영양소 색상
@@ -79,37 +82,46 @@ struct ExerciseSummaryCard: View {
             // 제목 섹션
             titleSection
 
-            // 통계 카드 그리드
-            // 📚 학습 포인트: HStack with Equal Distribution
-            // spacing으로 간격 조절, 각 카드는 maxWidth: .infinity로 균등 분배
-            // 💡 Java 비교: LinearLayout with layout_weight="1"과 유사
-            HStack(spacing: 12) {
-                // 소모 칼로리 카드
-                statCard(
-                    title: "소모 칼로리",
-                    value: "\(totalCaloriesOut)",
-                    unit: "kcal",
-                    icon: "flame.fill",
-                    color: isEmpty ? .gray : caloriesColor
-                )
+            // 📚 학습 포인트: Conditional Rendering - Empty State vs Content
+            // 데이터 유무에 따라 Empty State 또는 실제 컨텐츠 표시
+            if isEmpty {
+                // Empty State: 운동 기록이 없을 때
+                ExerciseEmptyState(onAddExercise: onAddExercise)
+                    .padding(.vertical, 8)
+            } else {
+                // 실제 컨텐츠: 데이터가 있을 때
+                // 통계 카드 그리드
+                // 📚 학습 포인트: HStack with Equal Distribution
+                // spacing으로 간격 조절, 각 카드는 maxWidth: .infinity로 균등 분배
+                // 💡 Java 비교: LinearLayout with layout_weight="1"과 유사
+                HStack(spacing: 12) {
+                    // 소모 칼로리 카드
+                    statCard(
+                        title: "소모 칼로리",
+                        value: "\(totalCaloriesOut)",
+                        unit: "kcal",
+                        icon: "flame.fill",
+                        color: caloriesColor
+                    )
 
-                // 운동 횟수 카드
-                statCard(
-                    title: "운동 횟수",
-                    value: "\(exerciseCount)",
-                    unit: "회",
-                    icon: "figure.run",
-                    color: isEmpty ? .gray : countColor
-                )
+                    // 운동 횟수 카드
+                    statCard(
+                        title: "운동 횟수",
+                        value: "\(exerciseCount)",
+                        unit: "회",
+                        icon: "figure.run",
+                        color: countColor
+                    )
 
-                // 운동 시간 카드
-                statCard(
-                    title: "운동 시간",
-                    value: formattedTime,
-                    unit: "",
-                    icon: "clock.fill",
-                    color: isEmpty ? .gray : timeColor
-                )
+                    // 운동 시간 카드
+                    statCard(
+                        title: "운동 시간",
+                        value: formattedTime,
+                        unit: "",
+                        icon: "clock.fill",
+                        color: timeColor
+                    )
+                }
             }
         }
         .padding(20)

@@ -48,6 +48,9 @@ struct CalorieBalanceCard: View {
     /// 순 칼로리 (섭취 - TDEE, kcal)
     let netCalories: Int32
 
+    /// 음식 추가 콜백 (Empty State에서 사용)
+    var onAddFood: (() -> Void)? = nil
+
     // MARK: - Constants
 
     /// 원형 진행 표시기 크기
@@ -127,41 +130,51 @@ struct CalorieBalanceCard: View {
             // 제목 섹션
             titleSection
 
-            // 📚 학습 포인트: ZStack with Circular Progress
-            // ZStack으로 원형 진행 표시기와 중앙 텍스트를 겹쳐서 표시
-            // 💡 Java 비교: FrameLayout 또는 Box(contentAlignment = Alignment.Center)와 유사
-            ZStack {
-                // 배경 원 (회색)
-                Circle()
-                    .stroke(
-                        Color(.systemGray5),
-                        lineWidth: lineWidth
-                    )
-                    .frame(width: circleSize, height: circleSize)
-
-                // 진행 원 (색상)
-                Circle()
-                    .trim(from: 0, to: min(intakePercentage, 1.5)) // 최대 150%까지 표시
-                    .stroke(
-                        statusColor,
-                        style: StrokeStyle(
-                            lineWidth: lineWidth,
-                            lineCap: .round
+            // 📚 학습 포인트: Conditional Rendering - Empty State vs Content
+            // 데이터 유무에 따라 Empty State 또는 실제 컨텐츠 표시
+            // 💡 Java 비교: if-else 조건부 렌더링과 유사
+            if isEmpty {
+                // Empty State: 음식 기록이 없을 때
+                FoodEmptyState(onAddFood: onAddFood)
+                    .padding(.vertical, 8)
+            } else {
+                // 실제 컨텐츠: 데이터가 있을 때
+                // 📚 학습 포인트: ZStack with Circular Progress
+                // ZStack으로 원형 진행 표시기와 중앙 텍스트를 겹쳐서 표시
+                // 💡 Java 비교: FrameLayout 또는 Box(contentAlignment = Alignment.Center)와 유사
+                ZStack {
+                    // 배경 원 (회색)
+                    Circle()
+                        .stroke(
+                            Color(.systemGray5),
+                            lineWidth: lineWidth
                         )
-                    )
-                    .frame(width: circleSize, height: circleSize)
-                    .rotationEffect(.degrees(-90)) // 12시 방향부터 시작
+                        .frame(width: circleSize, height: circleSize)
 
-                // 중앙 정보
-                centerInfo
+                    // 진행 원 (색상)
+                    Circle()
+                        .trim(from: 0, to: min(intakePercentage, 1.5)) // 최대 150%까지 표시
+                        .stroke(
+                            statusColor,
+                            style: StrokeStyle(
+                                lineWidth: lineWidth,
+                                lineCap: .round
+                            )
+                        )
+                        .frame(width: circleSize, height: circleSize)
+                        .rotationEffect(.degrees(-90)) // 12시 방향부터 시작
+
+                    // 중앙 정보
+                    centerInfo
+                }
+                .padding(.vertical, 8)
+
+                // 통계 섹션
+                statsSection
+
+                // 상태 라벨
+                statusBadge
             }
-            .padding(.vertical, 8)
-
-            // 통계 섹션
-            statsSection
-
-            // 상태 라벨
-            statusBadge
         }
         .padding(20)
         .background(cardBackground)

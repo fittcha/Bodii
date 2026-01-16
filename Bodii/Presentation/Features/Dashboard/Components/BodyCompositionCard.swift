@@ -57,6 +57,9 @@ struct BodyCompositionCard: View {
     /// 어제의 체지방률 (%, nil이면 비교 불가)
     let previousBodyFatPct: Decimal?
 
+    /// 체성분 추가 콜백 (Empty State에서 사용)
+    var onAddBodyComposition: (() -> Void)? = nil
+
     // MARK: - Computed Properties
 
     /// 데이터가 비어있는지 여부
@@ -179,10 +182,14 @@ struct BodyCompositionCard: View {
             // 제목 섹션
             titleSection
 
+            // 📚 학습 포인트: Conditional Rendering - Empty State vs Content
+            // 데이터 유무에 따라 Empty State 또는 실제 컨텐츠 표시
             if isEmpty {
-                // 빈 상태 표시
-                emptyStateView
+                // Empty State: 체성분 기록이 없을 때
+                BodyCompositionEmptyState(onAddBodyComposition: onAddBodyComposition)
+                    .padding(.vertical, 8)
             } else {
+                // 실제 컨텐츠: 데이터가 있을 때
                 // 체성분 정보 표시
                 // 📚 학습 포인트: HStack with Equal Distribution
                 // spacing으로 간격 조절, 각 카드는 maxWidth: .infinity로 균등 분배
@@ -240,30 +247,6 @@ struct BodyCompositionCard: View {
         RoundedRectangle(cornerRadius: 16)
             .fill(Color(.systemBackground))
             .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
-    }
-
-    /// 빈 상태 뷰
-    private var emptyStateView: some View {
-        VStack(spacing: 12) {
-            // 빈 상태 아이콘
-            Image(systemName: "scalemass")
-                .font(.system(size: 60))
-                .foregroundStyle(.secondary)
-                .padding(.top, 16)
-
-            // 빈 상태 메시지
-            VStack(spacing: 4) {
-                Text("오늘 체성분 기록 없음")
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-
-                Text("체중과 체지방률을 기록해 보세요")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.bottom, 16)
-        }
-        .frame(maxWidth: .infinity)
     }
 
     /// 개별 통계 카드

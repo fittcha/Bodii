@@ -167,11 +167,13 @@ struct DashboardView: View {
     /// - 오늘의 섭취 칼로리 vs TDEE
     /// - 원형 진행 표시기로 시각화
     /// - 칼로리 수지에 따라 색상 변경 (적자/균형/과잉)
+    /// - Empty State에서 음식 추가 버튼 제공
     private var calorieBalanceCard: some View {
         CalorieBalanceCard(
             totalCaloriesIn: viewModel.totalCaloriesIn,
             tdee: viewModel.tdee,
-            netCalories: viewModel.netCalories
+            netCalories: viewModel.netCalories,
+            onAddFood: onNavigateToDiet
         )
     }
 
@@ -180,6 +182,7 @@ struct DashboardView: View {
     /// - 탄수화물/단백질/지방 섭취량과 비율
     /// - 가로 진행 바로 시각화
     /// - 각 영양소의 그램 수와 퍼센트 표시
+    /// - Empty State에서 음식 추가 버튼 제공
     private var macroBreakdownCard: some View {
         MacroBreakdownCard(
             totalCarbs: viewModel.totalCarbs,
@@ -187,7 +190,8 @@ struct DashboardView: View {
             totalFat: viewModel.totalFat,
             carbsRatio: viewModel.carbsRatio,
             proteinRatio: viewModel.proteinRatio,
-            fatRatio: viewModel.fatRatio
+            fatRatio: viewModel.fatRatio,
+            onAddFood: onNavigateToDiet
         )
     }
 
@@ -196,11 +200,13 @@ struct DashboardView: View {
     /// - 오늘의 운동 정보 요약
     /// - 총 소모 칼로리, 운동 횟수, 운동 시간
     /// - 3개의 지표를 가로로 나열하여 표시
+    /// - Empty State에서 운동 추가 버튼 제공
     private var exerciseSummaryCard: some View {
         ExerciseSummaryCard(
             totalCaloriesOut: viewModel.totalCaloriesOut,
             exerciseCount: viewModel.exerciseCount,
-            exerciseMinutes: viewModel.exerciseMinutes
+            exerciseMinutes: viewModel.exerciseMinutes,
+            onAddExercise: onNavigateToExercise
         )
     }
 
@@ -220,7 +226,7 @@ struct DashboardView: View {
     /// 📚 학습 포인트: Body Composition Component
     /// - 오늘의 체중과 체지방률
     /// - 전날 대비 변화량 표시 (TODO: 향후 구현)
-    /// - 데이터 없을 경우 안내 메시지
+    /// - Empty State에서 체성분 기록 버튼 제공
     private var bodyCompositionCard: some View {
         BodyCompositionCard(
             weight: viewModel.weight,
@@ -228,7 +234,8 @@ struct DashboardView: View {
             // TODO: 전날 데이터를 DailyLogRepository에서 조회하여 전달
             // 현재는 DailyLog에 전날 데이터가 없으므로 nil 전달
             previousWeight: nil,
-            previousBodyFatPct: nil
+            previousBodyFatPct: nil,
+            onAddBodyComposition: onNavigateToBody
         )
     }
 }

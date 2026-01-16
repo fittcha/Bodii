@@ -112,39 +112,46 @@ struct SleepQualityCard: View {
             // 제목 섹션
             titleSection
 
-            // 📚 학습 포인트: VStack Layout with Large Icon
-            // 중앙에 큰 이모지와 수면 시간을 배치하여 시각적 강조
-            // 💡 Java 비교: Column with centerHorizontalAlignment와 유사
-            VStack(spacing: 16) {
-                // 이모지 인디케이터
-                Text(statusEmoji)
-                    .font(.system(size: 80))
-                    .padding(.top, 8)
+            // 📚 학습 포인트: Conditional Rendering - Empty State vs Content
+            // 데이터 유무에 따라 Empty State 또는 실제 컨텐츠 표시
+            if isEmpty {
+                // Empty State: 수면 기록이 없을 때
+                SleepEmptyState()
+                    .padding(.vertical, 8)
+            } else {
+                // 실제 컨텐츠: 데이터가 있을 때
+                // 📚 학습 포인트: VStack Layout with Large Icon
+                // 중앙에 큰 이모지와 수면 시간을 배치하여 시각적 강조
+                // 💡 Java 비교: Column with centerHorizontalAlignment와 유사
+                VStack(spacing: 16) {
+                    // 이모지 인디케이터
+                    Text(statusEmoji)
+                        .font(.system(size: 80))
+                        .padding(.top, 8)
 
-                // 수면 시간
-                VStack(spacing: 4) {
-                    Text(formattedSleepTime)
-                        .font(.system(size: 36, weight: .bold))
-                        .foregroundStyle(isEmpty ? .secondary : .primary)
+                    // 수면 시간
+                    VStack(spacing: 4) {
+                        Text(formattedSleepTime)
+                            .font(.system(size: 36, weight: .bold))
+                            .foregroundStyle(.primary)
 
-                    // 품질 라벨 배지
-                    Text(qualityLabel)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundStyle(isEmpty ? .secondary : statusColor)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(isEmpty ? Color(.systemGray5) : statusColor.opacity(0.15))
-                        )
+                        // 품질 라벨 배지
+                        Text(qualityLabel)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundStyle(statusColor)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(statusColor.opacity(0.15))
+                            )
+                    }
                 }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
 
-            // 수면 설명 섹션 (데이터가 있을 때만)
-            if !isEmpty {
+                // 수면 설명 섹션
                 sleepInfoSection
             }
         }

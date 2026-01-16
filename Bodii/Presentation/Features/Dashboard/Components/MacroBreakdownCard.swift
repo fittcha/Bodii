@@ -60,6 +60,9 @@ struct MacroBreakdownCard: View {
     /// 지방 비율 (%)
     let fatRatio: Decimal?
 
+    /// 음식 추가 콜백 (Empty State에서 사용)
+    var onAddFood: (() -> Void)? = nil
+
     // MARK: - Constants
 
     /// 진행 바 높이
@@ -84,34 +87,43 @@ struct MacroBreakdownCard: View {
             // 제목 섹션
             titleSection
 
-            // 매크로 영양소 목록
-            VStack(spacing: 16) {
-                // 탄수화물
-                macroProgressBar(
-                    name: "탄수화물",
-                    amount: totalCarbs,
-                    ratio: carbsRatio,
-                    color: carbsColor,
-                    icon: "cube.fill"
-                )
+            // 📚 학습 포인트: Conditional Rendering - Empty State vs Content
+            // 데이터 유무에 따라 Empty State 또는 실제 컨텐츠 표시
+            if isEmpty {
+                // Empty State: 음식 기록이 없을 때
+                FoodEmptyState(onAddFood: onAddFood)
+                    .padding(.vertical, 8)
+            } else {
+                // 실제 컨텐츠: 데이터가 있을 때
+                // 매크로 영양소 목록
+                VStack(spacing: 16) {
+                    // 탄수화물
+                    macroProgressBar(
+                        name: "탄수화물",
+                        amount: totalCarbs,
+                        ratio: carbsRatio,
+                        color: carbsColor,
+                        icon: "cube.fill"
+                    )
 
-                // 단백질
-                macroProgressBar(
-                    name: "단백질",
-                    amount: totalProtein,
-                    ratio: proteinRatio,
-                    color: proteinColor,
-                    icon: "flame.fill"
-                )
+                    // 단백질
+                    macroProgressBar(
+                        name: "단백질",
+                        amount: totalProtein,
+                        ratio: proteinRatio,
+                        color: proteinColor,
+                        icon: "flame.fill"
+                    )
 
-                // 지방
-                macroProgressBar(
-                    name: "지방",
-                    amount: totalFat,
-                    ratio: fatRatio,
-                    color: fatColor,
-                    icon: "drop.fill"
-                )
+                    // 지방
+                    macroProgressBar(
+                        name: "지방",
+                        amount: totalFat,
+                        ratio: fatRatio,
+                        color: fatColor,
+                        icon: "drop.fill"
+                    )
+                }
             }
         }
         .padding(20)
