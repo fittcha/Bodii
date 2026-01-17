@@ -1,0 +1,643 @@
+//
+//  RecognitionResultsView.swift
+//  Bodii
+//
+//  Created by Auto-Claude on 2026-01-17.
+//
+
+// 📚 학습 포인트: Recognition Results View
+// AI 음식 인식 결과를 표시하고 사용자 확인/수정을 받는 화면
+// 💡 인식된 음식 목록, 선택/삭제, 추가 검색 기능 제공
+
+import SwiftUI
+
+/// 음식 인식 결과 화면
+///
+/// Vision API로 인식한 음식 목록을 표시하고 사용자가 확인/수정할 수 있는 화면입니다.
+///
+/// **주요 기능:**
+/// - 촬영한 이미지 썸네일 표시
+/// - 인식된 음식 목록 (신뢰도 순)
+/// - 체크박스로 포함/제외 선택
+/// - 스와이프하여 음식 삭제
+/// - 추가 음식 검색 버튼
+/// - 빈 상태 처리 (음식 미인식)
+/// - 에러 상태 처리 (재시도 버튼)
+///
+/// - Note: PhotoRecognitionViewModel을 사용하여 데이터를 관리합니다.
+/// - Note: 각 음식은 FoodMatchCard 컴포넌트로 표시됩니다.
+///
+/// - Example:
+/// ```swift
+/// RecognitionResultsView(
+///     viewModel: photoRecognitionViewModel,
+///     capturedImage: image,
+///     matches: foodMatches,
+///     onContinue: { selectedMatches in
+///         // 선택된 음식 처리
+///     },
+///     onAddMoreFoods: {
+///         // 음식 추가 검색 열기
+///     },
+///     onRetry: {
+///         // 재시도 처리
+///     }
+/// )
+/// ```
+struct RecognitionResultsView: View {
+
+    // MARK: - Properties
+
+    /// ViewModel
+    @ObservedObject var viewModel: PhotoRecognitionViewModel
+
+    /// 촬영한 이미지
+    let capturedImage: UIImage?
+
+    /// 인식된 음식 매칭 목록
+    let matches: [FoodMatch]
+
+    /// 계속하기 버튼 콜백 (선택된 음식들 전달)
+    let onContinue: ([FoodMatch]) -> Void
+
+    /// 음식 추가 검색 콜백
+    let onAddMoreFoods: () -> Void
+
+    /// 재시도 콜백
+    let onRetry: () -> Void
+
+    /// 취소 콜백
+    let onCancel: () -> Void
+
+    // MARK: - State
+
+    /// 선택된 음식 ID 목록
+    ///
+    /// 📚 학습 포인트: Set-based Selection Tracking
+    /// Set을 사용하여 선택 상태를 O(1)로 조회 가능
+    @State private var selectedMatchIds: Set<UUID> = []
+
+    /// 삭제할 음식 ID (스와이프 삭제용)
+    @State private var matchesToDelete: Set<UUID> = []
+
+    // MARK: - Lifecycle
+
+    var body: some View {
+        ZStack {
+            // 배경색
+            Color(.systemGroupedBackground)
+                .ignoresSafeArea()
+
+            // 메인 컨텐츠
+            if viewModel.hasError {
+                // 에러 상태
+                errorStateView
+            } else if filteredMatches.isEmpty && !viewModel.isLoading {
+                // 빈 상태 (음식 미인식)
+                emptyStateView
+            } else {
+                // 결과 표시
+                resultsContentView
+            }
+        }
+        .navigationTitle("인식 결과")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("취소") {
+                    onCancel()
+                }
+            }
+        }
+        .onAppear {
+            // 초기 상태: 모든 음식 선택
+            selectedMatchIds = Set(matches.map { $0.id })
+        }
+    }
+
+    // MARK: - Subviews
+
+    /// 결과 표시 뷰
+    private var resultsContentView: some View {
+        VStack(spacing: 0) {
+            // 스크롤 가능한 컨텐츠
+            ScrollView {
+                VStack(spacing: 16) {
+                    // 이미지 썸네일
+                    if let image = capturedImage {
+                        imageThumbnailSection(image)
+                    }
+
+                    // 인식 결과 요약
+                    resultsSummarySection
+
+                    // 음식 목록
+                    foodMatchesSection
+                }
+                .padding(.vertical)
+            }
+
+            // 하단 액션 버튼
+            bottomActionButtons
+                .padding()
+                .background(Color(.systemBackground))
+        }
+    }
+
+    /// 이미지 썸네일 섹션
+    ///
+    /// 촬영한 이미지를 작은 썸네일로 표시합니다.
+    ///
+    /// - Parameter image: 표시할 이미지
+    private func imageThumbnailSection(_ image: UIImage) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("촬영한 사진")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .padding(.horizontal)
+
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(height: 200)
+                .clipped()
+                .cornerRadius(12)
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                .padding(.horizontal)
+        }
+    }
+
+    /// 인식 결과 요약 섹션
+    ///
+    /// 인식된 음식 개수와 선택된 음식 개수를 표시합니다.
+    private var resultsSummarySection: some View {
+        HStack(spacing: 12) {
+            // 인식 완료 아이콘
+            Image(systemName: "checkmark.circle.fill")
+                .font(.title2)
+                .foregroundColor(.green)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("음식 인식 완료")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Text("\(filteredMatches.count)개 음식 인식됨 · \(selectedCount)개 선택됨")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+        )
+        .padding(.horizontal)
+    }
+
+    /// 음식 매칭 목록 섹션
+    ///
+    /// 인식된 음식들을 카드 형태로 표시합니다.
+    private var foodMatchesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // 섹션 헤더
+            HStack {
+                Text("인식된 음식")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Spacer()
+
+                // 전체 선택/해제 버튼
+                Button(action: toggleAllSelection) {
+                    Text(isAllSelected ? "전체 해제" : "전체 선택")
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                }
+            }
+            .padding(.horizontal)
+
+            // 음식 카드 목록
+            ForEach(filteredMatches) { match in
+                FoodMatchCard(
+                    match: match,
+                    isSelected: selectedMatchIds.contains(match.id),
+                    onToggleSelection: { isSelected in
+                        toggleSelection(for: match, isSelected: isSelected)
+                    },
+                    onTap: {
+                        // TODO: 상세 편집 화면으로 이동 (4.3에서 구현)
+                        print("Edit match: \(match.food.name)")
+                    }
+                )
+                .padding(.horizontal)
+                .transition(.opacity)
+                // 스와이프하여 삭제
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button(role: .destructive) {
+                        deleteMatch(match)
+                    } label: {
+                        Label("삭제", systemImage: "trash")
+                    }
+                }
+            }
+
+            // 음식 추가 버튼
+            addMoreFoodsButton
+                .padding(.horizontal)
+                .padding(.top, 8)
+        }
+    }
+
+    /// 음식 추가 버튼
+    private var addMoreFoodsButton: some View {
+        Button(action: onAddMoreFoods) {
+            HStack {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title3)
+
+                Text("다른 음식 추가")
+                    .font(.headline)
+            }
+            .foregroundColor(.blue)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemBackground))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.blue, lineWidth: 1.5)
+            )
+        }
+    }
+
+    /// 하단 액션 버튼들
+    private var bottomActionButtons: some View {
+        VStack(spacing: 12) {
+            // 선택 요약
+            if selectedCount > 0 {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.blue)
+
+                    Text("\(selectedCount)개 음식 선택됨")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+                }
+                .padding(.horizontal, 4)
+            }
+
+            // 계속하기 버튼
+            Button(action: handleContinue) {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title3)
+
+                    Text("선택한 음식 추가")
+                        .font(.headline)
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(selectedCount > 0 ? Color.blue : Color.gray)
+                .cornerRadius(12)
+            }
+            .disabled(selectedCount == 0)
+        }
+    }
+
+    /// 빈 상태 뷰
+    ///
+    /// 음식이 인식되지 않았을 때 표시되는 안내 메시지입니다.
+    private var emptyStateView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            // 안내 아이콘
+            Image(systemName: "magnifyingglass.circle")
+                .font(.system(size: 60))
+                .foregroundColor(.secondary)
+
+            // 안내 텍스트
+            VStack(spacing: 8) {
+                Text("음식을 인식하지 못했습니다")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Text("다른 각도에서 다시 촬영하거나\n수동으로 음식을 추가해보세요")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+
+            Spacer()
+
+            // 액션 버튼들
+            VStack(spacing: 12) {
+                // 재시도 버튼
+                Button(action: onRetry) {
+                    HStack {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.title3)
+
+                        Text("다시 촬영")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(12)
+                }
+
+                // 수동 추가 버튼
+                Button(action: onAddMoreFoods) {
+                    HStack {
+                        Image(systemName: "plus.circle")
+                            .font(.title3)
+
+                        Text("수동으로 음식 추가")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.blue)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.blue, lineWidth: 2)
+                    )
+                    .cornerRadius(12)
+                }
+            }
+            .padding()
+        }
+    }
+
+    /// 에러 상태 뷰
+    ///
+    /// 인식 실패 시 표시되는 에러 메시지와 재시도 버튼입니다.
+    private var errorStateView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            // 에러 아이콘
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 60))
+                .foregroundColor(.orange)
+
+            // 에러 메시지
+            VStack(spacing: 8) {
+                Text("인식 중 오류가 발생했습니다")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+            }
+
+            Spacer()
+
+            // 재시도 버튼
+            VStack(spacing: 12) {
+                Button(action: {
+                    Task {
+                        try? await viewModel.retry()
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.title3)
+
+                        Text("다시 시도")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(12)
+                }
+
+                Button(action: onCancel) {
+                    Text("취소")
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                }
+            }
+            .padding()
+        }
+    }
+
+    // MARK: - Actions
+
+    /// 선택 토글
+    ///
+    /// 특정 음식의 선택 상태를 변경합니다.
+    ///
+    /// - Parameters:
+    ///   - match: 음식 매칭
+    ///   - isSelected: 선택 여부
+    private func toggleSelection(for match: FoodMatch, isSelected: Bool) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if isSelected {
+                selectedMatchIds.insert(match.id)
+            } else {
+                selectedMatchIds.remove(match.id)
+            }
+        }
+    }
+
+    /// 전체 선택/해제 토글
+    private func toggleAllSelection() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if isAllSelected {
+                selectedMatchIds.removeAll()
+            } else {
+                selectedMatchIds = Set(filteredMatches.map { $0.id })
+            }
+        }
+    }
+
+    /// 음식 매칭 삭제
+    ///
+    /// 📚 학습 포인트: Swipe to Delete
+    /// 스와이프 제스처로 목록에서 항목 제거
+    ///
+    /// - Parameter match: 삭제할 음식 매칭
+    private func deleteMatch(_ match: FoodMatch) {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            matchesToDelete.insert(match.id)
+            selectedMatchIds.remove(match.id)
+        }
+    }
+
+    /// 계속하기 버튼 처리
+    ///
+    /// 선택된 음식들을 콜백으로 전달합니다.
+    private func handleContinue() {
+        let selectedMatches = filteredMatches.filter { selectedMatchIds.contains($0.id) }
+
+        guard !selectedMatches.isEmpty else {
+            return
+        }
+
+        onContinue(selectedMatches)
+    }
+
+    // MARK: - Computed Properties
+
+    /// 삭제되지 않은 음식 매칭 목록
+    ///
+    /// 📚 학습 포인트: Filtered List
+    /// 삭제 표시된 항목을 제외한 목록 반환
+    private var filteredMatches: [FoodMatch] {
+        matches.filter { !matchesToDelete.contains($0.id) }
+    }
+
+    /// 선택된 음식 개수
+    private var selectedCount: Int {
+        selectedMatchIds.count
+    }
+
+    /// 전체 선택 여부
+    private var isAllSelected: Bool {
+        !filteredMatches.isEmpty && selectedMatchIds.count == filteredMatches.count
+    }
+}
+
+// MARK: - Preview
+
+#Preview("Results with Matches") {
+    #if DEBUG
+    // Mock 데이터
+    let mockMatches = [
+        FoodMatch(
+            label: "Pizza",
+            originalLabel: VisionLabel(description: "Pizza", score: 0.95, topicality: 0.95),
+            confidence: 0.95,
+            food: Food(
+                id: UUID(),
+                name: "페퍼로니 피자",
+                calories: 285,
+                carbohydrates: 36,
+                protein: 12,
+                fat: 10,
+                sodium: 640,
+                fiber: 2,
+                sugar: 4,
+                servingSize: 100,
+                servingUnit: "1조각",
+                source: .usda,
+                apiCode: "U000123",
+                createdByUserId: nil,
+                createdAt: Date()
+            ),
+            alternatives: [],
+            translatedKeyword: "피자"
+        ),
+        FoodMatch(
+            label: "Salad",
+            originalLabel: VisionLabel(description: "Salad", score: 0.72, topicality: 0.72),
+            confidence: 0.72,
+            food: Food(
+                id: UUID(),
+                name: "시저 샐러드",
+                calories: 180,
+                carbohydrates: 8,
+                protein: 6,
+                fat: 14,
+                sodium: 350,
+                fiber: 2,
+                sugar: 2,
+                servingSize: 150,
+                servingUnit: "1인분",
+                source: .usda,
+                apiCode: "U000456",
+                createdByUserId: nil,
+                createdAt: Date()
+            ),
+            alternatives: [],
+            translatedKeyword: "샐러드"
+        )
+    ]
+
+    let mockViewModel = MockPhotoRecognitionViewModel()
+    mockViewModel.state = .results(mockMatches)
+    mockViewModel.foodMatches = mockMatches
+
+    let mockImage = UIImage(systemName: "photo")!
+
+    return NavigationView {
+        RecognitionResultsView(
+            viewModel: mockViewModel,
+            capturedImage: mockImage,
+            matches: mockMatches,
+            onContinue: { selectedMatches in
+                print("Continue with \(selectedMatches.count) matches")
+            },
+            onAddMoreFoods: {
+                print("Add more foods")
+            },
+            onRetry: {
+                print("Retry")
+            },
+            onCancel: {
+                print("Cancel")
+            }
+        )
+    }
+    #endif
+}
+
+#Preview("Empty State") {
+    #if DEBUG
+    let mockViewModel = MockPhotoRecognitionViewModel()
+    mockViewModel.state = .results([])
+
+    return NavigationView {
+        RecognitionResultsView(
+            viewModel: mockViewModel,
+            capturedImage: nil,
+            matches: [],
+            onContinue: { _ in },
+            onAddMoreFoods: { },
+            onRetry: { },
+            onCancel: { }
+        )
+    }
+    #endif
+}
+
+#Preview("Error State") {
+    #if DEBUG
+    let mockViewModel = MockPhotoRecognitionViewModel()
+    mockViewModel.state = .error("네트워크 연결을 확인해주세요")
+    mockViewModel.errorMessage = "네트워크 연결을 확인해주세요"
+
+    return NavigationView {
+        RecognitionResultsView(
+            viewModel: mockViewModel,
+            capturedImage: nil,
+            matches: [],
+            onContinue: { _ in },
+            onAddMoreFoods: { },
+            onRetry: { },
+            onCancel: { }
+        )
+    }
+    #endif
+}
