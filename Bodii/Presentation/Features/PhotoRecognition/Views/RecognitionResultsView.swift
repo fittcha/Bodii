@@ -89,7 +89,10 @@ struct RecognitionResultsView: View {
                 .ignoresSafeArea()
 
             // 메인 컨텐츠
-            if viewModel.hasError {
+            if viewModel.isOffline {
+                // 오프라인 상태
+                offlineStateView
+            } else if viewModel.hasError {
                 // 에러 상태
                 errorStateView
             } else if filteredMatches.isEmpty && !viewModel.isLoading {
@@ -391,6 +394,22 @@ struct RecognitionResultsView: View {
             }
             .padding()
         }
+    }
+
+    /// 오프라인 상태 뷰
+    ///
+    /// 네트워크 연결이 없을 때 표시되는 뷰입니다.
+    private var offlineStateView: some View {
+        PhotoRecognitionOfflineView(
+            onRetry: {
+                Task {
+                    try? await viewModel.retry()
+                }
+            },
+            onManualEntry: {
+                onAddMoreFoods()
+            }
+        )
     }
 
     /// 에러 상태 뷰

@@ -35,6 +35,9 @@ enum PhotoRecognitionState: Equatable {
     /// 분석 결과 표시
     case results([FoodMatch])
 
+    /// 오프라인 상태 (네트워크 연결 없음)
+    case offline
+
     /// 에러 발생
     case error(String)
 }
@@ -387,6 +390,16 @@ final class PhotoRecognitionViewModel: ObservableObject {
 
         // 에러 메시지 설정
         if let visionError = error as? VisionAPIError {
+            // 네트워크 에러 확인
+            if case .networkError(let networkError) = visionError {
+                if case .networkUnavailable = networkError {
+                    // 오프라인 상태로 전환
+                    state = .offline
+                    errorMessage = "네트워크 연결을 확인해주세요"
+                    return
+                }
+            }
+
             errorMessage = visionError.localizedDescription
 
             // 할당량 초과 시 특별 처리
@@ -394,6 +407,14 @@ final class PhotoRecognitionViewModel: ObservableObject {
                 updateQuotaInfo()
             }
         } else if let networkError = error as? NetworkError {
+            // 네트워크 에러 직접 처리
+            if case .networkUnavailable = networkError {
+                // 오프라인 상태로 전환
+                state = .offline
+                errorMessage = "네트워크 연결을 확인해주세요"
+                return
+            }
+
             errorMessage = networkError.localizedDescription
         } else if let serviceError = error as? ServiceError {
             errorMessage = serviceError.localizedDescription
@@ -431,6 +452,14 @@ extension PhotoRecognitionViewModel {
             return true
         }
         return errorMessage != nil
+    }
+
+    /// 오프라인 상태인지 여부
+    var isOffline: Bool {
+        if case .offline = state {
+            return true
+        }
+        return false
     }
 
     /// 사진이 선택되었는지 여부
@@ -550,6 +579,11 @@ final class MockPhotoRecognitionViewModel: ObservableObject {
 
     var isQuotaExceeded: Bool {
         return remainingQuota <= 0
+    }
+
+    var isOffline: Bool {
+        if case .offline = state { return true }
+        return false
     }
 }
 #endif
