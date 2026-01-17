@@ -31,6 +31,12 @@ protocol APIConfigProtocol {
     /// USDA API 키
     var usdaAPIKey: String { get }
 
+    /// Google Cloud Vision API 기본 URL
+    var visionAPIBaseURL: String { get }
+
+    /// Google Cloud Vision API 키
+    var visionAPIKey: String { get }
+
     /// 현재 환경 (개발/프로덕션)
     var environment: APIEnvironment { get }
 }
@@ -209,6 +215,57 @@ final class APIConfig: APIConfigProtocol {
         return ""
     }
 
+    // MARK: - Google Cloud Vision API Configuration
+
+    /// Google Cloud Vision API 기본 URL
+    ///
+    /// Google Cloud Vision API v1 - 이미지 분석 및 라벨 감지
+    ///
+    /// - API 문서: https://cloud.google.com/vision/docs/reference/rest
+    /// - API 키 관리: https://console.cloud.google.com/apis/credentials
+    ///
+    /// 📚 학습 포인트: Google Cloud API Integration
+    /// Vision API를 사용해 음식 사진에서 라벨 추출
+    /// 💡 Java 비교: Google Cloud Client Libraries와 유사
+    var visionAPIBaseURL: String {
+        // Google Cloud Vision API v1
+        return "https://vision.googleapis.com/v1"
+    }
+
+    /// Google Cloud Vision API 키
+    ///
+    /// 📚 학습 포인트: Secure API Key Management
+    /// Info.plist에서 API 키를 안전하게 읽어옴
+    /// 💡 Java 비교: BuildConfig.VISION_API_KEY와 유사
+    ///
+    /// - Returns: API 키 문자열 (없으면 "DEMO_KEY" 반환)
+    ///
+    /// - Important: Vision API는 무료 티어에서 월 1,000 requests 제한
+    ///
+    /// - Warning: Info.plist에 VISION_API_KEY가 없으면 DEMO_KEY 사용 (실제 동작 안 함)
+    var visionAPIKey: String {
+        // Info.plist에서 키 읽기
+        if let apiKey = Bundle.main.object(forInfoDictionaryKey: "VISION_API_KEY") as? String,
+           !apiKey.isEmpty {
+            return apiKey
+        }
+
+        // 프로세스 환경 변수에서 키 읽기 (CI/CD용)
+        if let envKey = ProcessInfo.processInfo.environment["VISION_API_KEY"],
+           !envKey.isEmpty {
+            return envKey
+        }
+
+        // 개발 환경에서는 DEMO_KEY 허용
+        if environment == .development {
+            return "DEMO_KEY"
+        }
+
+        // 프로덕션에서 키가 없으면 경고
+        assertionFailure("⚠️ Vision API 키가 Info.plist 또는 환경 변수에 설정되지 않았습니다!")
+        return ""
+    }
+
     // MARK: - API Endpoints
 
     /// 식약처 API 엔드포인트
@@ -328,6 +385,42 @@ final class APIConfig: APIConfigProtocol {
             }
         }
     }
+
+    /// Google Cloud Vision API 엔드포인트
+    enum VisionEndpoint {
+        /// 이미지 분석 (Label Detection)
+        ///
+        /// - Returns: API 경로
+        ///
+        /// - Example:
+        /// ```swift
+        /// let path = VisionEndpoint.annotate
+        /// let url = "\(APIConfig.shared.visionAPIBaseURL)\(path)"
+        /// ```
+        ///
+        /// - Note: 요청 body에 이미지 데이터와 feature 타입 포함
+        case annotate
+
+        /// API 경로 생성
+        var path: String {
+            switch self {
+            case .annotate:
+                return "/images:annotate"
+            }
+        }
+
+        /// HTTP 메서드
+        ///
+        /// 📚 학습 포인트: REST API Method Types
+        /// Vision API는 POST 메서드로 이미지 데이터 전송
+        /// 💡 Java 비교: @POST 어노테이션과 유사
+        var method: String {
+            switch self {
+            case .annotate:
+                return "POST"
+            }
+        }
+    }
 }
 
 // MARK: - URL Builder Helper
@@ -391,6 +484,33 @@ extension APIConfig {
 
         return components?.url
     }
+
+    /// Vision API URL 생성 헬퍼
+    ///
+    /// 📚 학습 포인트: Vision API URL Construction
+    /// Vision API는 API 키를 쿼리 파라미터로 전달
+    /// 💡 Java 비교: Retrofit의 @Query 어노테이션과 유사
+    ///
+    /// - Parameter endpoint: Vision 엔드포인트
+    ///
+    /// - Returns: 완성된 URL (API 키 포함)
+    ///
+    /// - Example:
+    /// ```swift
+    /// let url = APIConfig.shared.buildVisionURL(
+    ///     endpoint: .annotate
+    /// )
+    /// ```
+    func buildVisionURL(endpoint: VisionEndpoint) -> URL? {
+        var components = URLComponents(string: visionAPIBaseURL + endpoint.path)
+
+        // API 키를 쿼리 파라미터로 추가
+        components?.queryItems = [
+            URLQueryItem(name: "key", value: visionAPIKey)
+        ]
+
+        return components?.url
+    }
 }
 
 // MARK: - Testing Support
@@ -406,6 +526,8 @@ final class MockAPIConfig: APIConfigProtocol {
     var kfdaAPIKey: String
     var usdaBaseURL: String
     var usdaAPIKey: String
+    var visionAPIBaseURL: String
+    var visionAPIKey: String
     var environment: APIEnvironment
 
     init(
@@ -413,12 +535,16 @@ final class MockAPIConfig: APIConfigProtocol {
         kfdaAPIKey: String = "MOCK_KFDA_KEY",
         usdaBaseURL: String = "https://mock.usda.api",
         usdaAPIKey: String = "MOCK_USDA_KEY",
+        visionAPIBaseURL: String = "https://mock.vision.api",
+        visionAPIKey: String = "MOCK_VISION_KEY",
         environment: APIEnvironment = .development
     ) {
         self.kfdaBaseURL = kfdaBaseURL
         self.kfdaAPIKey = kfdaAPIKey
         self.usdaBaseURL = usdaBaseURL
         self.usdaAPIKey = usdaAPIKey
+        self.visionAPIBaseURL = visionAPIBaseURL
+        self.visionAPIKey = visionAPIKey
         self.environment = environment
     }
 }
