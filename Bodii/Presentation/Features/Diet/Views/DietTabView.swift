@@ -306,23 +306,11 @@ struct DietTabView: View {
                         capturedImage: photoRecognitionViewModel.capturedImage,
                         matches: matches,
                         onContinue: { selectedMatches in
-                            // 선택된 음식들을 저장
-                            Task {
-                                do {
-                                    try await photoRecognitionViewModel.saveFoodRecords(selectedMatches)
-
-                                    // 저장 완료 시 모든 시트 닫기 및 데이터 새로고침
-                                    await MainActor.run {
-                                        showingPhotoRecognition = false
-                                        showingFoodSearch = false
-                                        dailyMealViewModel.loadData(userId: userId, bmr: bmr, tdee: tdee)
-                                    }
-                                } catch {
-                                    #if DEBUG
-                                    print("❌ Failed to save food records: \(error)")
-                                    #endif
-                                }
-                            }
+                            // 저장 완료 후 처리 (저장은 RecognitionConfirmView에서 이미 완료됨)
+                            // 모든 시트 닫기 및 데이터 새로고침
+                            showingPhotoRecognition = false
+                            showingFoodSearch = false
+                            dailyMealViewModel.loadData(userId: userId, bmr: bmr, tdee: tdee)
                         },
                         onAddMoreFoods: {
                             // 추가 음식 검색 (음식 검색 화면 열기)

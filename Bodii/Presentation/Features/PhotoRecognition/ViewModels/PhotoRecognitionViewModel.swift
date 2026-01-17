@@ -289,18 +289,18 @@ final class PhotoRecognitionViewModel: ObservableObject {
         }
     }
 
-    /// 선택된 음식 매칭을 식단 기록으로 저장합니다.
+    /// 편집된 음식 항목을 식단 기록으로 저장합니다.
     ///
-    /// 📚 학습 포인트: Batch Operation
-    /// 여러 음식을 한 번에 저장하는 배치 작업
+    /// 📚 학습 포인트: Batch Operation with User Quantities
+    /// 사용자가 편집한 수량/단위 정보를 포함하여 여러 음식을 한 번에 저장하는 배치 작업
     /// 💡 Java 비교: @Transactional batch insert
     ///
-    /// - Parameter matches: 저장할 음식 매칭 목록
+    /// - Parameter editedItems: 저장할 편집된 음식 항목 목록
     ///
     /// - Throws: FoodRecordService 에러
     ///
-    /// - Note: 각 음식은 기본 1인분으로 저장됩니다.
-    func saveFoodRecords(_ matches: [FoodMatch]) async throws {
+    /// - Note: 각 음식은 사용자가 편집한 수량과 단위로 저장됩니다.
+    func saveFoodRecords(_ editedItems: [EditedFoodItem]) async throws {
         guard let userId = currentUserId,
               let date = currentDate else {
             throw ServiceError.invalidQuantity
@@ -309,22 +309,25 @@ final class PhotoRecognitionViewModel: ObservableObject {
         state = .analyzing(progress: "저장 중...")
 
         do {
-            // 각 음식 매칭을 식단 기록으로 저장
-            for match in matches {
+            // 각 편집된 음식 항목을 식단 기록으로 저장
+            for item in editedItems {
                 _ = try await foodRecordService.addFoodRecord(
                     userId: userId,
-                    foodId: match.food.id,
+                    foodId: item.match.food.id,
                     date: date,
                     mealType: currentMealType,
-                    quantity: 1.0,  // 기본 1인분
-                    quantityUnit: .serving,
+                    quantity: item.quantity,  // 사용자가 편집한 수량
+                    quantityUnit: item.unit,  // 사용자가 선택한 단위
                     bmr: currentBMR,
                     tdee: currentTDEE
                 )
             }
 
             #if DEBUG
-            print("✅ \(matches.count)개 음식 기록 저장 완료")
+            print("✅ \(editedItems.count)개 음식 기록 저장 완료")
+            editedItems.forEach { item in
+                print("   - \(item.match.food.name): \(item.quantity) \(item.unit)")
+            }
             #endif
 
             // 성공 시 초기 상태로 리셋
@@ -536,7 +539,7 @@ final class MockPhotoRecognitionViewModel: ObservableObject {
         state = .results(foodMatches)
     }
 
-    func saveFoodRecords(_ matches: [FoodMatch]) async throws {
+    func saveFoodRecords(_ editedItems: [EditedFoodItem]) async throws {
         saveFoodRecordsCallCount += 1
         state = .idle
     }

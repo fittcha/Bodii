@@ -192,7 +192,7 @@ final class PhotoRecognitionFlowTests: XCTestCase {
         XCTAssertEqual(photoRecognitionViewModel.foodMatches.first?.food.name, "치즈 피자")
 
         // When: Save food records
-        try await photoRecognitionViewModel.saveFoodRecords([pizzaMatch])
+        try await photoRecognitionViewModel.saveFoodRecords([EditedFoodItem(match: pizzaMatch, quantity: 1.0, unit: .serving)])
 
         // Then: Should save to repository
         XCTAssertTrue(mockFoodRecordRepository.saveCalled, "Should call save on repository")
@@ -253,7 +253,10 @@ final class PhotoRecognitionFlowTests: XCTestCase {
 
         // When: Save both food records
         mockFoodRepository.foodToReturn = pizzaFood
-        try await photoRecognitionViewModel.saveFoodRecords([pizzaMatch, chickenMatch])
+        try await photoRecognitionViewModel.saveFoodRecords([
+            EditedFoodItem(match: pizzaMatch, quantity: 1.0, unit: .serving),
+            EditedFoodItem(match: chickenMatch, quantity: 1.0, unit: .serving)
+        ])
 
         // Then: Should save both records
         // Note: saveCalled will be true after first save, but we can verify the flow completed
@@ -293,7 +296,7 @@ final class PhotoRecognitionFlowTests: XCTestCase {
 
         // When: Analyze and save
         try await photoRecognitionViewModel.analyzeImage(testImage)
-        try await photoRecognitionViewModel.saveFoodRecords([pizzaMatch])
+        try await photoRecognitionViewModel.saveFoodRecords([EditedFoodItem(match: pizzaMatch, quantity: 1.0, unit: .serving)])
 
         // Given: Update mocks with saved data
         let savedRecord = FoodRecord(
@@ -665,7 +668,7 @@ final class PhotoRecognitionFlowTests: XCTestCase {
 
         // When: Analyze and save
         try await photoRecognitionViewModel.analyzeImage(testImage)
-        try await photoRecognitionViewModel.saveFoodRecords([pizzaMatch])
+        try await photoRecognitionViewModel.saveFoodRecords([EditedFoodItem(match: pizzaMatch, quantity: 1.0, unit: .serving)])
 
         // Then: Should save to repository
         XCTAssertTrue(mockFoodRecordRepository.saveCalled, "Should call save")
@@ -717,7 +720,10 @@ final class PhotoRecognitionFlowTests: XCTestCase {
         mockFoodRepository.foodToReturn = pizzaFood
 
         // When: Save both matches
-        try await photoRecognitionViewModel.saveFoodRecords([pizzaMatch, chickenMatch])
+        try await photoRecognitionViewModel.saveFoodRecords([
+            EditedFoodItem(match: pizzaMatch, quantity: 1.0, unit: .serving),
+            EditedFoodItem(match: chickenMatch, quantity: 1.0, unit: .serving)
+        ])
 
         // Then: Should save both records
         XCTAssertTrue(mockFoodRecordRepository.saveCalled, "Should save records")
@@ -754,7 +760,7 @@ final class PhotoRecognitionFlowTests: XCTestCase {
         mockFoodRepository.foodToReturn = pizzaFood
 
         // When: Save food record
-        try await photoRecognitionViewModel.saveFoodRecords([pizzaMatch])
+        try await photoRecognitionViewModel.saveFoodRecords([EditedFoodItem(match: pizzaMatch, quantity: 1.0, unit: .serving)])
 
         // Then: Should save with correct context
         // Note: In a real integration test, we'd verify the actual saved record

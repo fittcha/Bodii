@@ -80,6 +80,18 @@ struct RecognitionResultsView: View {
     /// 삭제할 음식 ID (스와이프 삭제용)
     @State private var matchesToDelete: Set<UUID> = []
 
+    /// 편집 중인 음식 매칭 (편집 화면으로 이동)
+    @State private var editingMatch: FoodMatch?
+
+    /// 편집된 음식 항목들 (수량/단위 정보 포함)
+    ///
+    /// 📚 학습 포인트: Edited Items Dictionary
+    /// 사용자가 편집한 수량/단위 정보를 UUID로 매핑하여 관리
+    @State private var editedItems: [UUID: EditedFoodItem] = [:]
+
+    /// 확인 화면으로 이동 여부
+    @State private var showingConfirmView: Bool = false
+
     // MARK: - Lifecycle
 
     var body: some View {
@@ -111,6 +123,56 @@ struct RecognitionResultsView: View {
                     onCancel()
                 }
             }
+        }
+        .navigationDestination(item: $editingMatch) { match in
+            // 음식 편집 화면
+            FoodMatchEditorView(
+                match: match,
+                onSave: { updatedMatch, quantity, unit, mealType in
+                    // 편집된 항목 저장
+                    editedItems[updatedMatch.id] = EditedFoodItem(
+                        match: updatedMatch,
+                        quantity: quantity,
+                        unit: unit
+                    )
+                    // 편집 화면 닫기
+                    editingMatch = nil
+                },
+                onDelete: {
+                    // 항목 삭제
+                    deleteMatch(match)
+                    editingMatch = nil
+                },
+                onSearchAlternative: { currentMatch in
+                    // 다른 음식 검색
+                    // TODO: 음식 검색 화면 열기
+                    #if DEBUG
+                    print("ℹ️ Search alternative for: \(currentMatch.food.name)")
+                    #endif
+                },
+                onCancel: {
+                    // 취소 - 편집 화면 닫기
+                    editingMatch = nil
+                }
+            )
+        }
+        .navigationDestination(isPresented: $showingConfirmView) {
+            // 최종 확인 화면
+            RecognitionConfirmView(
+                viewModel: viewModel,
+                selectedItems: getEditedItemsForSave(),
+                onSave: {
+                    // 저장 완료 후 처리 (RecognitionConfirmView에서 실제 저장 수행)
+                    showingConfirmView = false
+                    // DietTabView에서 데이터 새로고침하도록 더미 호출
+                    // (실제 저장은 RecognitionConfirmView에서 이미 완료됨)
+                    onContinue([])
+                },
+                onCancel: {
+                    // 확인 화면 닫기
+                    showingConfirmView = false
+                }
+            )
         }
         .onAppear {
             // 초기 상태: 모든 음식 선택
@@ -244,8 +306,8 @@ struct RecognitionResultsView: View {
                         toggleSelection(for: match, isSelected: isSelected)
                     },
                     onTap: {
-                        // TODO: 상세 편집 화면으로 이동 (4.3에서 구현)
-                        print("Edit match: \(match.food.name)")
+                        // 음식 편집 화면으로 이동
+                        editingMatch = match
                     }
                 )
                 .padding(.horizontal)
@@ -519,7 +581,8 @@ struct RecognitionResultsView: View {
 
     /// 계속하기 버튼 처리
     ///
-    /// 선택된 음식들을 콜백으로 전달합니다.
+    /// 📚 학습 포인트: Navigate to Confirmation
+    /// 선택된 음식들을 확인 화면으로 이동합니다.
     private func handleContinue() {
         let selectedMatches = filteredMatches.filter { selectedMatchIds.contains($0.id) }
 
@@ -527,7 +590,32 @@ struct RecognitionResultsView: View {
             return
         }
 
-        onContinue(selectedMatches)
+        // 확인 화면으로 이동
+        showingConfirmView = true
+    }
+
+    /// 저장할 편집된 음식 항목 목록 생성
+    ///
+    /// 📚 학습 포인트: Edited Items Assembly
+    /// 선택된 음식에 대해 사용자가 편집한 수량 정보를 포함한 EditedFoodItem 생성
+    /// 편집하지 않은 음식은 기본값(1.0 serving)으로 생성
+    ///
+    /// - Returns: 저장할 EditedFoodItem 배열
+    private func getEditedItemsForSave() -> [EditedFoodItem] {
+        let selectedMatches = filteredMatches.filter { selectedMatchIds.contains($0.id) }
+
+        return selectedMatches.map { match in
+            // 편집된 항목이 있으면 사용, 없으면 기본값으로 생성
+            if let editedItem = editedItems[match.id] {
+                return editedItem
+            } else {
+                return EditedFoodItem(
+                    match: match,
+                    quantity: 1.0,
+                    unit: .serving
+                )
+            }
+        }
     }
 
     // MARK: - Computed Properties
