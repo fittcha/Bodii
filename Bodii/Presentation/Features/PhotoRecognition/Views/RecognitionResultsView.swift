@@ -120,6 +120,19 @@ struct RecognitionResultsView: View {
     /// 결과 표시 뷰
     private var resultsContentView: some View {
         VStack(spacing: 0) {
+            // 할당량 경고 배너
+            if viewModel.showQuotaWarning && !viewModel.isQuotaExceeded {
+                QuotaWarningView(
+                    showWarning: viewModel.showQuotaWarning,
+                    remainingQuota: viewModel.remainingQuota,
+                    daysUntilReset: viewModel.daysUntilReset,
+                    isQuotaExceeded: viewModel.isQuotaExceeded,
+                    onManualEntryTapped: {
+                        onAddMoreFoods()
+                    }
+                )
+            }
+
             // 스크롤 가능한 컨텐츠
             ScrollView {
                 VStack(spacing: 16) {

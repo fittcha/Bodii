@@ -257,6 +257,7 @@ struct DietTabView: View {
     private var photoRecognitionSheet: some View {
         NavigationStack {
             PhotoCaptureSheetView(
+                viewModel: photoRecognitionViewModel,
                 photoCaptureService: PhotoCaptureService.shared,
                 onImageSelected: { image in
                     // 이미지 선택 완료 후 분석 시작
@@ -285,6 +286,11 @@ struct DietTabView: View {
                 onCancel: {
                     // 사진 촬영 취소
                     showingPhotoRecognition = false
+                },
+                onManualEntry: {
+                    // 할당량 초과 시 수동 음식 입력으로 전환
+                    showingPhotoRecognition = false
+                    // FoodSearchView로 자동 전환 (이미 NavigationStack 내부)
                 }
             )
             // 📚 학습 포인트: Navigation Destination Based on ViewModel State

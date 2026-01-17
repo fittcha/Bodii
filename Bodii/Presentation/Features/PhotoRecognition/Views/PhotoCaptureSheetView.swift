@@ -30,18 +30,25 @@ import PhotosUI
 /// - Example:
 /// ```swift
 /// PhotoCaptureSheetView(
+///     viewModel: photoRecognitionViewModel,
 ///     photoCaptureService: PhotoCaptureService.shared,
 ///     onImageSelected: { image in
 ///         // 선택된 이미지 처리
 ///     },
 ///     onCancel: {
 ///         // 취소 처리
+///     },
+///     onManualEntry: {
+///         // 수동 입력으로 전환
 ///     }
 /// )
 /// ```
 struct PhotoCaptureSheetView: View {
 
     // MARK: - Properties
+
+    /// ViewModel (할당량 정보를 위해)
+    @ObservedObject var viewModel: PhotoRecognitionViewModel
 
     /// 사진 캡처 서비스
     let photoCaptureService: PhotoCaptureServiceProtocol
@@ -51,6 +58,9 @@ struct PhotoCaptureSheetView: View {
 
     /// 취소 콜백
     let onCancel: () -> Void
+
+    /// 수동 입력 콜백 (할당량 초과 시)
+    let onManualEntry: () -> Void
 
     // MARK: - State
 
@@ -93,14 +103,43 @@ struct PhotoCaptureSheetView: View {
                 Color(.systemGroupedBackground)
                     .ignoresSafeArea()
 
-                // 메인 컨텐츠
-                switch viewState {
-                case .selection:
-                    sourceSelectionView
-                case .preview:
-                    imagePreviewView
-                case .loading:
-                    loadingView
+                // 할당량 초과 시 전체 화면 차단
+                if viewModel.isQuotaExceeded {
+                    QuotaWarningView(
+                        showWarning: viewModel.showQuotaWarning,
+                        remainingQuota: viewModel.remainingQuota,
+                        daysUntilReset: viewModel.daysUntilReset,
+                        isQuotaExceeded: viewModel.isQuotaExceeded,
+                        onManualEntryTapped: {
+                            onManualEntry()
+                        }
+                    )
+                } else {
+                    // 메인 컨텐츠
+                    VStack(spacing: 0) {
+                        // 할당량 경고 배너
+                        if viewModel.showQuotaWarning {
+                            QuotaWarningView(
+                                showWarning: viewModel.showQuotaWarning,
+                                remainingQuota: viewModel.remainingQuota,
+                                daysUntilReset: viewModel.daysUntilReset,
+                                isQuotaExceeded: viewModel.isQuotaExceeded,
+                                onManualEntryTapped: {
+                                    onManualEntry()
+                                }
+                            )
+                        }
+
+                        // 메인 컨텐츠
+                        switch viewState {
+                        case .selection:
+                            sourceSelectionView
+                        case .preview:
+                            imagePreviewView
+                        case .loading:
+                            loadingView
+                        }
+                    }
                 }
             }
             .navigationTitle("사진 추가")
@@ -484,26 +523,68 @@ private enum ViewState {
 // MARK: - Preview
 
 #Preview("Photo Capture Sheet") {
-    PhotoCaptureSheetView(
+    #if DEBUG
+    let mockViewModel = MockPhotoRecognitionViewModel()
+    mockViewModel.showQuotaWarning = false
+    mockViewModel.remainingQuota = 850
+
+    return PhotoCaptureSheetView(
+        viewModel: mockViewModel,
         photoCaptureService: PhotoCaptureService.shared,
         onImageSelected: { image in
             print("Image selected: \(image.size)")
         },
         onCancel: {
             print("Cancelled")
+        },
+        onManualEntry: {
+            print("Manual entry")
         }
     )
+    #endif
 }
 
-#Preview("With Mock Service") {
+#Preview("With Quota Warning") {
     #if DEBUG
-    PhotoCaptureSheetView(
+    let mockViewModel = MockPhotoRecognitionViewModel()
+    mockViewModel.showQuotaWarning = true
+    mockViewModel.remainingQuota = 85
+    mockViewModel.daysUntilReset = 5
+
+    return PhotoCaptureSheetView(
+        viewModel: mockViewModel,
         photoCaptureService: MockPhotoCaptureService(),
         onImageSelected: { image in
             print("Image selected: \(image.size)")
         },
         onCancel: {
             print("Cancelled")
+        },
+        onManualEntry: {
+            print("Manual entry")
+        }
+    )
+    #endif
+}
+
+#Preview("Quota Exceeded") {
+    #if DEBUG
+    let mockViewModel = MockPhotoRecognitionViewModel()
+    mockViewModel.showQuotaWarning = false
+    mockViewModel.remainingQuota = 0
+    mockViewModel.daysUntilReset = 12
+
+    return PhotoCaptureSheetView(
+        viewModel: mockViewModel,
+        photoCaptureService: MockPhotoCaptureService(),
+        onImageSelected: { image in
+            print("Image selected: \(image.size)")
+        },
+        onCancel: {
+            print("Cancelled")
+        },
+        onManualEntry: {
+            print("Manual entry")
         }
     )
     #endif
