@@ -53,6 +53,9 @@ struct DietTabView: View {
     /// 음식 검색 ViewModel
     @StateObject private var foodSearchViewModel: FoodSearchViewModel
 
+    /// 사진 인식 ViewModel
+    @StateObject private var photoRecognitionViewModel: PhotoRecognitionViewModel
+
     // MARK: - State
 
     /// 음식 검색 시트 표시 여부
@@ -66,6 +69,9 @@ struct DietTabView: View {
 
     /// 수동 입력 시트 표시 여부
     @State private var showingManualEntry = false
+
+    /// 사진 인식 시트 표시 여부
+    @State private var showingPhotoRecognition = false
 
     // MARK: - Initialization
 
@@ -110,6 +116,28 @@ struct DietTabView: View {
             foodSearchService: localFoodSearchService,
             recentFoodsService: recentFoodsService
         ))
+
+        // 📚 학습 포인트: Photo Recognition Services 초기화
+        // AI 사진 인식에 필요한 서비스들을 초기화합니다
+        let apiConfig = APIConfig.shared
+        let networkManager = NetworkManager(apiConfig: apiConfig)
+
+        let visionAPIService = VisionAPIService(
+            networkManager: networkManager,
+            apiConfig: apiConfig,
+            usageTracker: VisionAPIUsageTracker.shared
+        )
+
+        let foodLabelMatcher = FoodLabelMatcherService(
+            foodSearchService: localFoodSearchService
+        )
+
+        _photoRecognitionViewModel = StateObject(wrappedValue: PhotoRecognitionViewModel(
+            visionAPIService: visionAPIService,
+            foodLabelMatcher: foodLabelMatcher,
+            foodRecordService: foodRecordService,
+            usageTracker: VisionAPIUsageTracker.shared
+        ))
     }
 
     // MARK: - Body
@@ -132,6 +160,10 @@ struct DietTabView: View {
                 // 음식 검색 화면 (시트로 표시)
                 foodSearchSheet
             }
+            .sheet(isPresented: $showingPhotoRecognition) {
+                // 사진 인식 화면 (시트로 표시)
+                photoRecognitionSheet
+            }
         }
     }
 
@@ -153,6 +185,10 @@ struct DietTabView: View {
                 onManualEntry: {
                     // 수동 입력 버튼 클릭 시
                     showingManualEntry = true
+                },
+                onPhotoRecognition: {
+                    // 사진 인식 버튼 클릭 시
+                    showingPhotoRecognition = true
                 }
             )
             .navigationDestination(isPresented: Binding(
@@ -213,6 +249,96 @@ struct DietTabView: View {
                 dailyMealViewModel.loadData(userId: userId, bmr: bmr, tdee: tdee)
             }
         )
+    }
+
+    /// 사진 인식 시트
+    ///
+    /// 사진으로 음식을 인식하고 자동으로 추가합니다.
+    private var photoRecognitionSheet: some View {
+        NavigationStack {
+            PhotoCaptureSheetView(
+                photoCaptureService: PhotoCaptureService.shared,
+                onImageSelected: { image in
+                    // 이미지 선택 완료 후 분석 시작
+                    Task {
+                        do {
+                            // ViewModel 초기화 (현재 날짜와 선택된 끼니 타입)
+                            photoRecognitionViewModel.onAppear(
+                                userId: userId,
+                                date: dailyMealViewModel.selectedDate,
+                                mealType: selectedMealType,
+                                bmr: bmr,
+                                tdee: tdee
+                            )
+
+                            // 이미지 분석 시작
+                            try await photoRecognitionViewModel.analyzeImage(image)
+
+                        } catch {
+                            // 에러는 ViewModel에서 처리됨
+                            #if DEBUG
+                            print("❌ Photo recognition error: \(error)")
+                            #endif
+                        }
+                    }
+                },
+                onCancel: {
+                    // 사진 촬영 취소
+                    showingPhotoRecognition = false
+                }
+            )
+            // 📚 학습 포인트: Navigation Destination Based on ViewModel State
+            // ViewModel의 상태에 따라 자동으로 결과 화면으로 전환
+            .navigationDestination(isPresented: Binding(
+                get: { photoRecognitionViewModel.hasResults },
+                set: { if !$0 { photoRecognitionViewModel.resetState() } }
+            )) {
+                // 분석 결과 화면
+                if case .results(let matches) = photoRecognitionViewModel.state {
+                    RecognitionResultsView(
+                        viewModel: photoRecognitionViewModel,
+                        capturedImage: photoRecognitionViewModel.capturedImage,
+                        matches: matches,
+                        onContinue: { selectedMatches in
+                            // 선택된 음식들을 저장
+                            Task {
+                                do {
+                                    try await photoRecognitionViewModel.saveFoodRecords(selectedMatches)
+
+                                    // 저장 완료 시 모든 시트 닫기 및 데이터 새로고침
+                                    await MainActor.run {
+                                        showingPhotoRecognition = false
+                                        showingFoodSearch = false
+                                        dailyMealViewModel.loadData(userId: userId, bmr: bmr, tdee: tdee)
+                                    }
+                                } catch {
+                                    #if DEBUG
+                                    print("❌ Failed to save food records: \(error)")
+                                    #endif
+                                }
+                            }
+                        },
+                        onAddMoreFoods: {
+                            // 추가 음식 검색 (음식 검색 화면 열기)
+                            // TODO: 구현 필요 - 현재는 단순히 닫기
+                            #if DEBUG
+                            print("ℹ️ Add more foods requested")
+                            #endif
+                        },
+                        onRetry: {
+                            // 재시도 - 다시 사진 촬영으로 돌아가기
+                            Task {
+                                try? await photoRecognitionViewModel.retry()
+                            }
+                        },
+                        onCancel: {
+                            // 취소 - 시트 닫기
+                            showingPhotoRecognition = false
+                        }
+                    )
+                }
+            }
+        }
     }
 
     /// 수동 입력 시트
