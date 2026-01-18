@@ -204,6 +204,23 @@ struct GoalProgressView: View {
                 // 선택된 목표의 상세 진행 상황
                 selectedGoalProgressCard
 
+                // 목표 진행 차트
+                if let chartDataPoints = getChartDataPoints(for: selectedTab) {
+                    GoalProgressChart(
+                        dataPoints: chartDataPoints,
+                        metric: selectedTab.chartMetric,
+                        achievedMilestones: viewModel.achievedMilestones,
+                        isInteractive: true,
+                        height: 250
+                    )
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.systemBackground))
+                    )
+                    .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+                }
+
                 // 마일스톤 진행 바
                 milestonesProgressCard
 
@@ -521,115 +538,11 @@ struct GoalProgressView: View {
     /// 마일스톤 진행 카드
     @ViewBuilder
     private var milestonesProgressCard: some View {
-        VStack(spacing: 16) {
-            // 헤더
-            HStack {
-                Image(systemName: "rosette")
-                    .font(.title3)
-                    .foregroundStyle(.purple)
-
-                Text("마일스톤")
-                    .font(.headline)
-
-                Spacer()
-            }
-
-            // 📚 학습 포인트: Milestone Progress Bar
-            // 25%, 50%, 75%, 100% 마일스톤을 시각적으로 표시
-            VStack(spacing: 12) {
-                // 프로그레스 바 with 마일스톤 마커
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        // 배경 바
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(height: 16)
-
-                        // 진행률 바
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                LinearGradient(
-                                    colors: [.blue, .purple],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(
-                                width: geometry.size.width * CGFloat(min(Double(truncating: viewModel.overallProgress as NSNumber) / 100.0, 1.0)),
-                                height: 16
-                            )
-                            .animation(.easeInOut, value: viewModel.overallProgress)
-
-                        // 마일스톤 마커
-                        HStack(spacing: 0) {
-                            ForEach([Milestone.quarter, .half, .threeQuarters, .complete], id: \.self) { milestone in
-                                Spacer()
-
-                                VStack(spacing: 0) {
-                                    // 마커
-                                    Circle()
-                                        .fill(viewModel.achievedMilestones.contains(milestone) ? Color.purple : Color.gray.opacity(0.5))
-                                        .frame(width: 24, height: 24)
-                                        .overlay(
-                                            Image(systemName: viewModel.achievedMilestones.contains(milestone) ? "checkmark" : "")
-                                                .font(.caption2)
-                                                .fontWeight(.bold)
-                                                .foregroundStyle(.white)
-                                        )
-                                }
-                                .offset(y: -4)
-
-                                if milestone != .complete {
-                                    Spacer()
-                                }
-                            }
-                        }
-                    }
-                }
-                .frame(height: 24)
-
-                // 마일스톤 레이블
-                HStack(spacing: 0) {
-                    ForEach([Milestone.quarter, .half, .threeQuarters, .complete], id: \.self) { milestone in
-                        Spacer()
-
-                        Text(milestone.displayName)
-                            .font(.caption2)
-                            .foregroundStyle(viewModel.achievedMilestones.contains(milestone) ? .purple : .secondary)
-                            .fontWeight(viewModel.achievedMilestones.contains(milestone) ? .semibold : .regular)
-
-                        if milestone != .complete {
-                            Spacer()
-                        }
-                    }
-                }
-            }
-
-            // 달성한 마일스톤 목록
-            if !viewModel.achievedMilestones.isEmpty {
-                HStack {
-                    Image(systemName: "star.fill")
-                        .foregroundStyle(.yellow)
-                        .font(.caption)
-
-                    Text("달성한 마일스톤: ")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    Text(viewModel.achievedMilestones.map { $0.displayName }.joined(separator: ", "))
-                        .font(.caption)
-                        .fontWeight(.semibold)
-
-                    Spacer()
-                }
-            }
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
+        MilestoneProgressBar(
+            progress: viewModel.overallProgress,
+            achievedMilestones: viewModel.achievedMilestones,
+            showAchievementList: true
         )
-        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
 
     /// 예상 달성일 카드
@@ -816,56 +729,12 @@ struct GoalProgressView: View {
     /// 축하 뷰
     @ViewBuilder
     private var celebrationView: some View {
-        VStack(spacing: 24) {
-            // 축하 아이콘
-            Image(systemName: "party.popper.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(.yellow)
-
-            // 제목
-            Text("축하합니다! 🎉")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-
-            // 달성한 마일스톤 표시
-            if !viewModel.newMilestones.isEmpty {
-                VStack(spacing: 8) {
-                    Text("새로운 마일스톤 달성")
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
-
-                    ForEach(viewModel.newMilestones, id: \.self) { milestone in
-                        Text(milestone.displayName)
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.purple)
-                    }
-                }
-            }
-
-            // 격려 메시지
-            Text("계속 노력하고 있군요! 멋집니다!")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-
-            // 닫기 버튼
-            Button(action: {
+        MilestoneCelebrationView(
+            milestones: viewModel.newMilestones,
+            onDismiss: {
                 viewModel.clearCelebration()
-            }) {
-                Text("확인")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.purple)
-                    )
             }
-            .padding(.horizontal, 32)
-        }
-        .padding(32)
+        )
         .presentationDetents([.medium])
     }
 
@@ -880,6 +749,71 @@ struct GoalProgressView: View {
         ].filter { $0 }.count
 
         return activeGoalsCount > 1
+    }
+
+    /// 차트 데이터 포인트 생성
+    ///
+    /// - Parameter tab: 선택된 목표 탭
+    /// - Returns: 차트 데이터 포인트 배열 (시작, 현재, 목표)
+    private func getChartDataPoints(for tab: GoalTab) -> [ChartDataPoint]? {
+        guard let goal = viewModel.currentGoal,
+              let body = viewModel.currentBody else {
+            return nil
+        }
+
+        switch tab {
+        case .weight:
+            guard let startWeight = goal.startWeight,
+                  let targetWeight = goal.targetWeight,
+                  let currentWeight = body.weight else {
+                return nil
+            }
+
+            let startDate = goal.createdAt
+            let currentDate = Date()
+            // 예상 달성일 또는 기본값 (90일 후)
+            let goalDate = viewModel.weightCompletionDate ?? Calendar.current.date(byAdding: .day, value: 90, to: startDate)!
+
+            return [
+                ChartDataPoint(date: startDate, value: startWeight, label: "시작"),
+                ChartDataPoint(date: currentDate, value: currentWeight, label: "현재"),
+                ChartDataPoint(date: goalDate, value: targetWeight, label: "목표")
+            ]
+
+        case .bodyFat:
+            guard let startBodyFat = goal.startBodyFatPct,
+                  let targetBodyFat = goal.targetBodyFatPct,
+                  let currentBodyFat = body.bodyFatPercent else {
+                return nil
+            }
+
+            let startDate = goal.createdAt
+            let currentDate = Date()
+            let goalDate = viewModel.bodyFatCompletionDate ?? Calendar.current.date(byAdding: .day, value: 90, to: startDate)!
+
+            return [
+                ChartDataPoint(date: startDate, value: startBodyFat, label: "시작"),
+                ChartDataPoint(date: currentDate, value: currentBodyFat, label: "현재"),
+                ChartDataPoint(date: goalDate, value: targetBodyFat, label: "목표")
+            ]
+
+        case .muscle:
+            guard let startMuscle = goal.startMuscleMass,
+                  let targetMuscle = goal.targetMuscleMass,
+                  let currentMuscle = body.muscleMass else {
+                return nil
+            }
+
+            let startDate = goal.createdAt
+            let currentDate = Date()
+            let goalDate = viewModel.muscleCompletionDate ?? Calendar.current.date(byAdding: .day, value: 90, to: startDate)!
+
+            return [
+                ChartDataPoint(date: startDate, value: startMuscle, label: "시작"),
+                ChartDataPoint(date: currentDate, value: currentMuscle, label: "현재"),
+                ChartDataPoint(date: goalDate, value: targetMuscle, label: "목표")
+            ]
+        }
     }
 
     /// 진행률에 따른 색상 반환
@@ -959,6 +893,15 @@ enum GoalTab {
 
     /// 근육량 목표
     case muscle
+
+    /// 차트 지표 타입 매핑
+    var chartMetric: GoalProgressChart.GoalMetric {
+        switch self {
+        case .weight: return .weight
+        case .bodyFat: return .bodyFat
+        case .muscle: return .muscle
+        }
+    }
 }
 
 // MARK: - Preview
