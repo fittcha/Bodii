@@ -2,314 +2,410 @@
 //  Formatters.swift
 //  Bodii
 //
-//  Created by Auto-Claude on 2026-01-11.
+//  Created by Auto-Claude on 2026-01-12.
 //
-
-// 📚 학습 포인트: Centralized Formatters for Performance
-// DateFormatter와 NumberFormatter는 생성 비용이 높으므로 재사용 필수
-// 💡 Java 비교: DateTimeFormatter와 NumberFormat의 재사용 패턴과 동일
 
 import Foundation
 
-// MARK: - Formatters
-
-/// 중앙 집중식 포매터 관리
-/// - 성능 최적화를 위해 포매터 인스턴스를 재사용
-/// - 루프나 반복 작업에서 포매터 생성 금지
+/// Utility for consistent display formatting throughout the app
 ///
-/// ## 성능 최적화
-/// DateFormatter와 NumberFormatter는 생성 비용이 높음:
-/// - 인스턴스 생성마다 수백 마이크로초 소요
-/// - 반복문에서 매번 생성하면 성능 저하 발생
-/// - static lazy로 한 번만 생성하여 재사용
-///
-/// ## 사용 예시
-/// ```swift
-/// // ❌ 나쁜 예: 반복문에서 매번 생성
-/// for record in records {
-///     let formatter = NumberFormatter()
-///     formatter.numberStyle = .decimal
-///     formatter.minimumFractionDigits = 1
-///     let text = formatter.string(from: record.weight)
-/// }
-///
-/// // ✅ 좋은 예: 공유 인스턴스 재사용
-/// for record in records {
-///     let text = Formatters.weight.string(from: record.weight)
-/// }
-/// ```
+/// 앱 전체에서 일관된 표시 포맷을 제공하는 유틸리티
 enum Formatters {
 
-    // MARK: - Number Formatters
+    // MARK: - Calorie Formatting
 
-    /// 체중용 포매터 (소수점 1자리, 단위 구분 없음)
-    /// - 예: "67.5", "70.0"
+    /// Formats calories as integer with thousands separator and kcal unit
     ///
-    /// ## 사용 예시
+    /// 칼로리를 천 단위 구분자와 kcal 단위로 포맷합니다.
+    ///
+    /// - Parameter calories: Calorie value (can be Int, Int32, Decimal, or Double)
+    /// - Returns: Formatted string (e.g., "1,234 kcal")
+    ///
+    /// Example:
     /// ```swift
-    /// let weight = 67.5
-    /// let text = Formatters.weight.string(from: NSNumber(value: weight)) // "67.5"
-    /// weightLabel.text = "\(text ?? "0")kg"
+    /// let calories1 = Formatters.calories(1234)
+    /// // Returns: "1,234 kcal"
+    ///
+    /// let calories2 = Formatters.calories(Decimal(1845.7))
+    /// // Returns: "1,846 kcal"
+    ///
+    /// let calories3 = Formatters.calories(0)
+    /// // Returns: "0 kcal"
     /// ```
-    static let weight: NumberFormatter = {
+    static func calories(_ value: Int) -> String {
+        "\(numberWithCommas(value)) kcal"
+    }
+
+    /// Formats calories from Int32 value
+    ///
+    /// Int32 칼로리 값을 포맷합니다.
+    ///
+    /// - Parameter value: Calorie value (Int32)
+    /// - Returns: Formatted string (e.g., "1,234 kcal")
+    ///
+    /// Example:
+    /// ```swift
+    /// let totalCalories: Int32 = 2150
+    /// let formatted = Formatters.calories(totalCalories)
+    /// // Returns: "2,150 kcal"
+    /// ```
+    static func calories(_ value: Int32) -> String {
+        calories(Int(value))
+    }
+
+    /// Formats calories from Decimal value (rounds to nearest integer)
+    ///
+    /// Decimal 칼로리 값을 포맷합니다 (가장 가까운 정수로 반올림).
+    ///
+    /// - Parameter value: Calorie value (Decimal)
+    /// - Returns: Formatted string (e.g., "1,234 kcal")
+    ///
+    /// Example:
+    /// ```swift
+    /// let calculatedCalories = Decimal(1845.7)
+    /// let formatted = Formatters.calories(calculatedCalories)
+    /// // Returns: "1,846 kcal"
+    /// ```
+    static func calories(_ value: Decimal) -> String {
+        calories(value.toInt())
+    }
+
+    /// Formats calories from Double value (rounds to nearest integer)
+    ///
+    /// Double 칼로리 값을 포맷합니다 (가장 가까운 정수로 반올림).
+    ///
+    /// - Parameter value: Calorie value (Double)
+    /// - Returns: Formatted string (e.g., "1,234 kcal")
+    ///
+    /// Example:
+    /// ```swift
+    /// let caloriesBurned = 345.8
+    /// let formatted = Formatters.calories(caloriesBurned)
+    /// // Returns: "346 kcal"
+    /// ```
+    static func calories(_ value: Double) -> String {
+        calories(Int(value.rounded()))
+    }
+
+    // MARK: - Weight Formatting
+
+    /// Formats weight with 1 decimal place and kg unit
+    ///
+    /// 체중을 소수점 1자리와 kg 단위로 포맷합니다.
+    ///
+    /// - Parameter weight: Weight in kilograms
+    /// - Returns: Formatted string (e.g., "72.5 kg")
+    ///
+    /// Example:
+    /// ```swift
+    /// let weight = Decimal(72.456)
+    /// let formatted = Formatters.weight(weight)
+    /// // Returns: "72.5 kg"
+    /// ```
+    static func weight(_ value: Decimal) -> String {
+        "\(value.formatted1) kg"
+    }
+
+    /// Formats weight from Double value
+    ///
+    /// Double 체중 값을 포맷합니다.
+    ///
+    /// - Parameter value: Weight in kilograms
+    /// - Returns: Formatted string (e.g., "72.5 kg")
+    ///
+    /// Example:
+    /// ```swift
+    /// let weight = 72.456
+    /// let formatted = Formatters.weight(weight)
+    /// // Returns: "72.5 kg"
+    /// ```
+    static func weight(_ value: Double) -> String {
+        weight(Decimal(value))
+    }
+
+    // MARK: - Height Formatting
+
+    /// Formats height with 1 decimal place and cm unit
+    ///
+    /// 키를 소수점 1자리와 cm 단위로 포맷합니다.
+    ///
+    /// - Parameter height: Height in centimeters
+    /// - Returns: Formatted string (e.g., "175.5 cm")
+    ///
+    /// Example:
+    /// ```swift
+    /// let height = Decimal(175.456)
+    /// let formatted = Formatters.height(height)
+    /// // Returns: "175.5 cm"
+    /// ```
+    static func height(_ value: Decimal) -> String {
+        "\(value.formatted1) cm"
+    }
+
+    /// Formats height from Double value
+    ///
+    /// Double 키 값을 포맷합니다.
+    ///
+    /// - Parameter value: Height in centimeters
+    /// - Returns: Formatted string (e.g., "175.5 cm")
+    ///
+    /// Example:
+    /// ```swift
+    /// let height = 175.456
+    /// let formatted = Formatters.height(height)
+    /// // Returns: "175.5 cm"
+    /// ```
+    static func height(_ value: Double) -> String {
+        height(Decimal(value))
+    }
+
+    // MARK: - Percentage Formatting
+
+    /// Formats percentage with 1 decimal place and % symbol
+    ///
+    /// 퍼센트를 소수점 1자리와 % 기호로 포맷합니다.
+    ///
+    /// - Parameter percentage: Percentage value (0-100)
+    /// - Returns: Formatted string (e.g., "18.5%")
+    ///
+    /// Example:
+    /// ```swift
+    /// let bodyFat = Decimal(18.456)
+    /// let formatted = Formatters.percentage(bodyFat)
+    /// // Returns: "18.5%"
+    ///
+    /// let ratio = Decimal(25.0)
+    /// let formatted2 = Formatters.percentage(ratio)
+    /// // Returns: "25.0%"
+    /// ```
+    static func percentage(_ value: Decimal) -> String {
+        value.formattedPercent
+    }
+
+    /// Formats percentage from Double value
+    ///
+    /// Double 퍼센트 값을 포맷합니다.
+    ///
+    /// - Parameter value: Percentage value (0-100)
+    /// - Returns: Formatted string (e.g., "18.5%")
+    ///
+    /// Example:
+    /// ```swift
+    /// let bodyFat = 18.456
+    /// let formatted = Formatters.percentage(bodyFat)
+    /// // Returns: "18.5%"
+    /// ```
+    static func percentage(_ value: Double) -> String {
+        percentage(Decimal(value))
+    }
+
+    /// Formats optional percentage, returns "-" if nil
+    ///
+    /// 선택적 퍼센트를 포맷하며, nil이면 "-"를 반환합니다.
+    ///
+    /// - Parameter value: Optional percentage value
+    /// - Returns: Formatted string or "-" if nil
+    ///
+    /// Example:
+    /// ```swift
+    /// let carbsRatio: Decimal? = 45.5
+    /// let formatted1 = Formatters.percentageOptional(carbsRatio)
+    /// // Returns: "45.5%"
+    ///
+    /// let fatRatio: Decimal? = nil
+    /// let formatted2 = Formatters.percentageOptional(fatRatio)
+    /// // Returns: "-"
+    /// ```
+    static func percentageOptional(_ value: Decimal?) -> String {
+        guard let value = value else { return "-" }
+        return percentage(value)
+    }
+
+    // MARK: - Macronutrient Formatting
+
+    /// Formats macronutrient (carbs, protein, fat) with 1 decimal place and g unit
+    ///
+    /// 다량영양소(탄수화물, 단백질, 지방)를 소수점 1자리와 g 단위로 포맷합니다.
+    ///
+    /// - Parameter grams: Macronutrient value in grams
+    /// - Returns: Formatted string (e.g., "50.5 g")
+    ///
+    /// Example:
+    /// ```swift
+    /// let protein = Decimal(45.678)
+    /// let formatted = Formatters.macronutrient(protein)
+    /// // Returns: "45.7 g"
+    /// ```
+    static func macronutrient(_ value: Decimal) -> String {
+        "\(value.formatted1) g"
+    }
+
+    /// Formats macronutrient from Double value
+    ///
+    /// Double 다량영양소 값을 포맷합니다.
+    ///
+    /// - Parameter value: Macronutrient value in grams
+    /// - Returns: Formatted string (e.g., "50.5 g")
+    ///
+    /// Example:
+    /// ```swift
+    /// let carbs = 125.456
+    /// let formatted = Formatters.macronutrient(carbs)
+    /// // Returns: "125.5 g"
+    /// ```
+    static func macronutrient(_ value: Double) -> String {
+        macronutrient(Decimal(value))
+    }
+
+    // MARK: - Sodium Formatting
+
+    /// Formats sodium with 0 decimal places and mg unit (for values < 1000mg)
+    ///
+    /// 나트륨을 mg 단위로 포맷합니다 (1000mg 미만).
+    ///
+    /// - Parameter milligrams: Sodium value in milligrams
+    /// - Returns: Formatted string (e.g., "234 mg" or "1,234 mg")
+    ///
+    /// Example:
+    /// ```swift
+    /// let sodium = Decimal(234.5)
+    /// let formatted = Formatters.sodium(sodium)
+    /// // Returns: "235 mg"
+    ///
+    /// let highSodium = Decimal(2345.8)
+    /// let formatted2 = Formatters.sodium(highSodium)
+    /// // Returns: "2,346 mg"
+    /// ```
+    static func sodium(_ value: Decimal) -> String {
+        let rounded = value.toInt()
+        return "\(numberWithCommas(rounded)) mg"
+    }
+
+    /// Formats sodium from Double value
+    ///
+    /// Double 나트륨 값을 포맷합니다.
+    ///
+    /// - Parameter value: Sodium value in milligrams
+    /// - Returns: Formatted string (e.g., "234 mg")
+    ///
+    /// Example:
+    /// ```swift
+    /// let sodium = 234.5
+    /// let formatted = Formatters.sodium(sodium)
+    /// // Returns: "235 mg"
+    /// ```
+    static func sodium(_ value: Double) -> String {
+        sodium(Decimal(value))
+    }
+
+    // MARK: - Serving Size Formatting
+
+    /// Formats serving size with appropriate precision
+    ///
+    /// 제공량을 적절한 정밀도로 포맷합니다.
+    ///
+    /// - Parameter servings: Serving size value
+    /// - Returns: Formatted string (e.g., "1.5", "2", "0.5")
+    ///
+    /// Example:
+    /// ```swift
+    /// let serving1 = Decimal(1.5)
+    /// let formatted1 = Formatters.servingSize(serving1)
+    /// // Returns: "1.5"
+    ///
+    /// let serving2 = Decimal(2.0)
+    /// let formatted2 = Formatters.servingSize(serving2)
+    /// // Returns: "2"
+    /// ```
+    static func servingSize(_ value: Decimal) -> String {
+        // If it's a whole number, format with 0 decimals
+        if value.truncatingRemainder(dividingBy: 1) == 0 {
+            return value.formatted0
+        }
+        // Otherwise, format with 1 decimal
+        return value.formatted1
+    }
+
+    /// Formats serving size with unit (인분 or g)
+    ///
+    /// 제공량을 단위와 함께 포맷합니다 (인분 또는 g).
+    ///
+    /// - Parameters:
+    ///   - value: Serving size value
+    ///   - unit: Quantity unit (serving or grams)
+    /// - Returns: Formatted string (e.g., "1.5 인분", "150 g")
+    ///
+    /// Example:
+    /// ```swift
+    /// let serving = Decimal(1.5)
+    /// let formatted1 = Formatters.servingWithUnit(serving, unit: .serving)
+    /// // Returns: "1.5 인분"
+    ///
+    /// let grams = Decimal(150.0)
+    /// let formatted2 = Formatters.servingWithUnit(grams, unit: .grams)
+    /// // Returns: "150 g"
+    /// ```
+    static func servingWithUnit(_ value: Decimal, unit: QuantityUnit) -> String {
+        let formatted = servingSize(value)
+        return "\(formatted) \(unit.displayName)"
+    }
+
+    // MARK: - Number Formatting Helper
+
+    /// Formats integer with thousands separator
+    ///
+    /// 정수를 천 단위 구분자로 포맷합니다.
+    ///
+    /// - Parameter value: Integer value
+    /// - Returns: Formatted string (e.g., "1,234")
+    ///
+    /// Example:
+    /// ```swift
+    /// let number = 1234567
+    /// let formatted = Formatters.numberWithCommas(number)
+    /// // Returns: "1,234,567"
+    /// ```
+    static func numberWithCommas(_ value: Int) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.minimumFractionDigits = 1
-        formatter.maximumFractionDigits = 1
-        formatter.groupingSeparator = "" // 천 단위 구분 기호 없음
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter
-    }()
-
-    /// 체지방률용 포매터 (소수점 1자리)
-    /// - 예: "18.3", "15.0"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let bodyFat = 18.3
-    /// let text = Formatters.bodyFat.string(from: NSNumber(value: bodyFat)) // "18.3"
-    /// bodyFatLabel.text = "\(text ?? "0")%"
-    /// ```
-    static let bodyFat: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.minimumFractionDigits = 1
-        formatter.maximumFractionDigits = 1
-        formatter.groupingSeparator = ""
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter
-    }()
-
-    /// 칼로리용 포매터 (정수, 천 단위 구분)
-    /// - 예: "2,150", "350"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let calories = 2150
-    /// let text = Formatters.calories.string(from: NSNumber(value: calories)) // "2,150"
-    /// caloriesLabel.text = "\(text ?? "0")kcal"
-    /// ```
-    static let calories: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.minimumFractionDigits = 0
-        formatter.maximumFractionDigits = 0
         formatter.groupingSeparator = ","
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter
-    }()
-
-    /// 영양소(탄수화물/단백질/지방)용 포매터 (정수)
-    /// - 예: "250", "80"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let carbs = 250
-    /// let text = Formatters.macros.string(from: NSNumber(value: carbs)) // "250"
-    /// carbsLabel.text = "\(text ?? "0")g"
-    /// ```
-    static let macros: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.minimumFractionDigits = 0
-        formatter.maximumFractionDigits = 0
-        formatter.groupingSeparator = "" // 영양소는 천 단위 구분 불필요
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter
-    }()
-
-    /// 퍼센트용 포매터 (소수점 1자리, % 기호 포함)
-    /// - 예: "25.5%", "100.0%"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// // 탄수화물 비율: 0.255 (25.5%)
-    /// let carbRatio = 0.255
-    /// let text = Formatters.percentage.string(from: NSNumber(value: carbRatio)) // "25.5%"
-    /// ratioLabel.text = text
-    /// ```
-    static let percentage: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .percent
-        formatter.minimumFractionDigits = 1
-        formatter.maximumFractionDigits = 1
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter
-    }()
-
-    /// 범용 소수용 포매터 (소수점 2자리)
-    /// - 예: "1.25", "3.50"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let multiplier = 1.375
-    /// let text = Formatters.decimal.string(from: NSNumber(value: multiplier)) // "1.38"
-    /// ```
-    static let decimal: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.minimumFractionDigits = 2
-        formatter.maximumFractionDigits = 2
-        formatter.groupingSeparator = ""
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter
-    }()
-
-    // MARK: - Date Formatters
-
-    /// 전체 날짜 포매터 (yyyy년 MM월 dd일)
-    /// - 예: "2024년 01월 15일"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let date = Date()
-    /// let text = Formatters.fullDate.string(from: date) // "2024년 01월 15일"
-    /// dateLabel.text = text
-    /// ```
-    static let fullDate: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월 dd일"
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone.current
-        return formatter
-    }()
-
-    /// 짧은 날짜 포매터 (M월 d일)
-    /// - 예: "1월 15일"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let date = Date()
-    /// let text = Formatters.shortDate.string(from: date) // "1월 15일"
-    /// chartLabel.text = text
-    /// ```
-    static let shortDate: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "M월 d일"
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone.current
-        return formatter
-    }()
-
-    /// 요일 포함 날짜 포매터 (M월 d일 (E))
-    /// - 예: "1월 15일 (월)"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let date = Date()
-    /// let text = Formatters.dateWithWeekday.string(from: date) // "1월 15일 (월)"
-    /// headerLabel.text = text
-    /// ```
-    static let dateWithWeekday: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "M월 d일 (E)"
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone.current
-        return formatter
-    }()
-
-    /// 시간 포매터 (HH:mm)
-    /// - 예: "14:30", "09:05"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let date = Date()
-    /// let text = Formatters.time.string(from: date) // "14:30"
-    /// timeLabel.text = text
-    /// ```
-    static let time: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone.current
-        return formatter
-    }()
-
-    /// 날짜+시간 포매터 (M월 d일 HH:mm)
-    /// - 예: "1월 15일 14:30"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let date = Date()
-    /// let text = Formatters.dateTime.string(from: date) // "1월 15일 14:30"
-    /// timestampLabel.text = text
-    /// ```
-    static let dateTime: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "M월 d일 HH:mm"
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone.current
-        return formatter
-    }()
-
-    /// ISO 8601 날짜 포매터 (API 통신용)
-    /// - 예: "2024-01-15T14:30:00Z"
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let date = Date()
-    /// let text = Formatters.iso8601.string(from: date) // "2024-01-15T14:30:00Z"
-    /// apiRequest.timestamp = text
-    /// ```
-    static let iso8601: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(identifier: "UTC")
-        return formatter
-    }()
-
-    // MARK: - Convenience Methods
-
-    /// Decimal을 체중 형식으로 포매팅
-    /// - Parameter value: Decimal 값
-    /// - Returns: "67.5" 형식의 문자열
-    ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let weight: Decimal = 67.5
-    /// let text = Formatters.formatWeight(weight) // "67.5"
-    /// ```
-    static func formatWeight(_ value: Decimal) -> String {
-        weight.string(from: NSDecimalNumber(decimal: value)) ?? "0.0"
+        formatter.groupingSize = 3
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }
 
-    /// Decimal을 체지방률 형식으로 포매팅
-    /// - Parameter value: Decimal 값
-    /// - Returns: "18.3" 형식의 문자열
+    // MARK: - BMI Formatting
+
+    /// Formats BMI with 1 decimal place
     ///
-    /// ## 사용 예시
+    /// BMI를 소수점 1자리로 포맷합니다.
+    ///
+    /// - Parameter bmi: BMI value
+    /// - Returns: Formatted string (e.g., "23.5")
+    ///
+    /// Example:
     /// ```swift
-    /// let bodyFat: Decimal = 18.3
-    /// let text = Formatters.formatBodyFat(bodyFat) // "18.3"
+    /// let bmi = Decimal(23.456)
+    /// let formatted = Formatters.bmi(bmi)
+    /// // Returns: "23.5"
     /// ```
-    static func formatBodyFat(_ value: Decimal) -> String {
-        bodyFat.string(from: NSDecimalNumber(decimal: value)) ?? "0.0"
+    static func bmi(_ value: Decimal) -> String {
+        value.formatted1
     }
 
-    /// Decimal을 칼로리 형식으로 포매팅
-    /// - Parameter value: Decimal 값
-    /// - Returns: "2,150" 형식의 문자열
+    /// Formats BMI from Double value
     ///
-    /// ## 사용 예시
-    /// ```swift
-    /// let cal: Decimal = 2150
-    /// let text = Formatters.formatCalories(cal) // "2,150"
-    /// ```
-    static func formatCalories(_ value: Decimal) -> String {
-        calories.string(from: NSDecimalNumber(decimal: value)) ?? "0"
-    }
-
-    /// Decimal을 영양소(그램) 형식으로 포매팅
-    /// - Parameter value: Decimal 값
-    /// - Returns: "250" 형식의 문자열
+    /// Double BMI 값을 포맷합니다.
     ///
-    /// ## 사용 예시
+    /// - Parameter value: BMI value
+    /// - Returns: Formatted string (e.g., "23.5")
+    ///
+    /// Example:
     /// ```swift
-    /// let carbs: Decimal = 250
-    /// let text = Formatters.formatMacros(carbs) // "250"
+    /// let bmi = 23.456
+    /// let formatted = Formatters.bmi(bmi)
+    /// // Returns: "23.5"
     /// ```
-    static func formatMacros(_ value: Decimal) -> String {
-        macros.string(from: NSDecimalNumber(decimal: value)) ?? "0"
+    static func bmi(_ value: Double) -> String {
+        bmi(Decimal(value))
     }
 }
