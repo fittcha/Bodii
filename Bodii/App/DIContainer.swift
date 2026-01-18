@@ -10,7 +10,6 @@
 // 💡 Java 비교: Dagger/Hilt의 Component와 유사한 역할
 
 import Foundation
-import HealthKit
 
 // MARK: - DI Container
 
@@ -46,225 +45,121 @@ final class DIContainer {
     /// Persistence Controller (Core Data)
     /// ⚠️ 주의: PersistenceController는 별도로 shared 인스턴스 관리
 
-    /// 네트워크 매니저 (싱글톤)
-    /// 📚 학습 포인트: Singleton Dependency
-    /// 모든 네트워크 요청에 공유되는 매니저
-    /// 💡 Java 비교: OkHttpClient를 싱글톤으로 관리하는 패턴
-    lazy var networkManager: NetworkManager = {
-        NetworkManager()
-    }()
-
     // MARK: - Data Sources
 
-    /// 식약처 API 서비스
-    /// 📚 학습 포인트: API Service
-    /// 한국 식품 영양 데이터베이스 API 호출 서비스
-    /// 💡 Java 비교: Retrofit Service 인스턴스
-    lazy var kfdaFoodAPIService: KFDAFoodAPIService = {
-        KFDAFoodAPIService(networkManager: self.networkManager)
-    }()
-
-    /// USDA API 서비스
-    /// 📚 학습 포인트: API Service
-    /// 미국 농무부 식품 데이터베이스 API 호출 서비스
-    /// 💡 Java 비교: Retrofit Service 인스턴스
-    lazy var usdaFoodAPIService: USDAFoodAPIService = {
-        USDAFoodAPIService(networkManager: self.networkManager)
-    }()
-
-    /// 통합 식품 검색 서비스
-    /// 📚 학습 포인트: Unified Service
-    /// 여러 API를 통합하여 최적의 검색 결과 제공
-    /// 한국 음식은 식약처 우선, 외국 음식은 USDA 우선
-    /// 💡 Java 비교: Facade Pattern의 구현체
-    lazy var unifiedFoodSearchService: UnifiedFoodSearchService = {
-        UnifiedFoodSearchService(
-            kfdaService: self.kfdaFoodAPIService,
-            usdaService: self.usdaFoodAPIService
-        )
-    }()
-
-    /// 식품 로컬 데이터 소스
-    /// 📚 학습 포인트: Local Data Source
-    /// Core Data를 사용한 식품 캐싱 및 오프라인 지원
-    /// 💡 Java 비교: Room Database의 DAO와 유사
-    lazy var foodLocalDataSource: FoodLocalDataSource = {
-        FoodLocalDataSourceImpl()
-    }()
-
-    /// 운동 기록 로컬 데이터 소스
-    /// 📚 학습 포인트: lazy var
-    /// 처음 접근할 때만 초기화되며, 이후에는 캐시된 인스턴스 반환
-    lazy var exerciseRecordLocalDataSource: ExerciseRecordLocalDataSource = {
-        ExerciseRecordLocalDataSource(context: PersistenceController.shared.viewContext)
-    }()
-
-    /// 일일 기록 로컬 데이터 소스
-    lazy var dailyLogLocalDataSource: DailyLogLocalDataSource = {
-        DailyLogLocalDataSource(context: PersistenceController.shared.viewContext)
+    /// Body composition 로컬 데이터 소스
+    /// 📚 학습 포인트: Lazy Initialization
+    /// 첫 접근 시 한 번만 생성되어 재사용됨
+    /// 💡 Java 비교: @Lazy + @Autowired와 유사
+    lazy var bodyLocalDataSource: BodyLocalDataSource = {
+        return BodyLocalDataSource(persistenceController: .shared)
     }()
 
     // TODO: Phase 2에서 추가 예정
+    // - NetworkManager
+    // - HealthKitManager
+    // - FoodAPIDataSource
     // - GeminiAPIDataSource
-
-    // MARK: - HealthKit
-
-    /// HealthKit Store
-    ///
-    /// 📚 학습 포인트: Shared HKHealthStore Instance
-    /// - HealthKit의 진입점이 되는 HKHealthStore 인스턴스
-    /// - 모든 HealthKit 서비스에서 공유하여 사용
-    /// - lazy initialization으로 필요할 때만 생성
-    /// 💡 Java 비교: HealthConnectClient와 유사한 역할
-    lazy var healthStore: HKHealthStore = {
-        return HKHealthStore()
-    }()
-
-    /// HealthKit 권한 서비스
-    ///
-    /// 📚 학습 포인트: Authorization Service
-    /// - HealthKit 권한 요청 및 상태 확인
-    /// - 설정 화면에서 사용
-    /// - 모든 HealthKit 작업 전에 권한 확인 필요
-    /// 💡 Java 비교: PermissionManager와 유사
-    lazy var healthKitAuthorizationService: HealthKitAuthorizationService = {
-        return HealthKitAuthorizationService(healthStore: healthStore)
-    }()
-
-    /// HealthKit 읽기 서비스
-    ///
-    /// 📚 학습 포인트: Read Service
-    /// - HealthKit에서 데이터 읽기 (체중, 체지방, 활동 칼로리, 걸음 수, 수면, 운동)
-    /// - DailyLogService에서 걸음 수 동기화에 사용
-    /// - HealthKitSyncService에서 전체 데이터 동기화에 사용
-    /// 💡 Java 비교: Repository의 read 메서드와 유사
-    lazy var healthKitReadService: HealthKitReadService = {
-        return HealthKitReadService(healthStore: healthStore)
-    }()
-
-    /// HealthKit 쓰기 서비스
-    ///
-    /// 📚 학습 포인트: Write Service
-    /// - Bodii 데이터를 HealthKit에 저장 (체중, 체지방, 운동, 섭취 칼로리)
-    /// - 양방향 동기화의 Export 방향 담당
-    /// 💡 Java 비교: Repository의 save 메서드와 유사
-    lazy var healthKitWriteService: HealthKitWriteService = {
-        return HealthKitWriteService(healthStore: healthStore)
-    }()
-
-    /// HealthKit 동기화 서비스
-    ///
-    /// 📚 학습 포인트: Sync Orchestration Service
-    /// - HealthKit ↔ Bodii 양방향 동기화 조정
-    /// - 읽기/쓰기/권한 서비스를 조합하여 전체 동기화 수행
-    /// - 마지막 동기화 시각 추적 (증분 동기화)
-    /// 💡 Java 비교: Service Layer에서 여러 Repository 조정하는 역할
-    lazy var healthKitSyncService: HealthKitSyncService = {
-        return HealthKitSyncService(
-            readService: healthKitReadService,
-            writeService: healthKitWriteService,
-            authService: healthKitAuthorizationService
-        )
-    }()
-
-    /// HealthKit 백그라운드 동기화
-    ///
-    /// 📚 학습 포인트: Background Sync with HKObserverQuery
-    /// - HealthKit 데이터 변경 시 백그라운드에서 자동 동기화
-    /// - HKObserverQuery로 데이터 변경 감지
-    /// - 앱이 닫혀 있어도 동기화 가능
-    /// 💡 Java 비교: WorkManager + Observer Pattern 조합
-    lazy var healthKitBackgroundSync: HealthKitBackgroundSync = {
-        return HealthKitBackgroundSync(
-            healthStore: healthStore,
-            authService: healthKitAuthorizationService,
-            syncService: healthKitSyncService
-        )
-    }()
 
     // MARK: - Repositories
 
-    /// 식품 검색 저장소
-    /// 📚 학습 포인트: Repository Pattern
-    /// 다중 데이터 소스(API + 로컬)를 추상화한 단일 인터페이스
-    /// 💡 Java 비교: Spring Data Repository
-    lazy var foodSearchRepository: FoodSearchRepository = {
-        FoodSearchRepositoryImpl(
-            searchService: self.unifiedFoodSearchService,
-            localDataSource: self.foodLocalDataSource
-        )
+    /// Body composition 리포지토리
+    /// 📚 학습 포인트: Dependency Injection Chain
+    /// bodyLocalDataSource를 주입받아 생성
+    /// 💡 Java 비교: @Autowired Repository와 유사
+    lazy var bodyRepository: BodyRepositoryProtocol = {
+        return BodyRepository(localDataSource: bodyLocalDataSource)
     }()
 
-    /// 운동 기록 저장소
-    /// 📚 학습 포인트: Protocol을 타입으로 사용
-    /// 테스트 시 Mock으로 교체 가능하도록 프로토콜 타입 사용
-    /// 💡 Java 비교: Interface 타입으로 필드 선언하는 것과 동일
-    lazy var exerciseRecordRepository: ExerciseRecordRepository = {
-        ExerciseRecordRepositoryImpl(localDataSource: exerciseRecordLocalDataSource)
+    /// Food Repository
+    /// 📚 학습 포인트: Protocol Type
+    /// 프로토콜 타입으로 선언하여 구현 교체 가능 (테스트용 Mock 등)
+    /// 💡 Java 비교: Interface 타입 필드와 동일
+    lazy var foodRepository: FoodRepositoryProtocol = {
+        FoodRepository(context: PersistenceController.shared.viewContext)
     }()
 
-    /// 일일 기록 저장소
-    lazy var dailyLogRepository: DailyLogRepository = {
-        DailyLogRepositoryImpl(localDataSource: dailyLogLocalDataSource)
+    /// FoodRecord Repository
+    lazy var foodRecordRepository: FoodRecordRepositoryProtocol = {
+        FoodRecordRepository(context: PersistenceController.shared.viewContext)
+    }()
+
+    /// DailyLog Repository
+    lazy var dailyLogRepository: DailyLogRepositoryProtocol = {
+        DailyLogRepository(context: PersistenceController.shared.viewContext)
     }()
 
     // TODO: Phase 3에서 추가 예정
     // - UserRepository
-    // - BodyRepository
+    // - ExerciseRepository
     // - SleepRepository
     // - GoalRepository
 
-    // MARK: - Services
+    // MARK: - Domain Services
 
-    /// 일일 기록 관리 서비스
+    /// FoodRecord Service
     /// 📚 학습 포인트: Service Layer
-    /// Repository를 조합하여 복잡한 비즈니스 로직 처리
-    lazy var dailyLogService: DailyLogService = {
-        DailyLogService(repository: dailyLogRepository)
+    /// 여러 Repository를 조합하여 비즈니스 로직을 처리
+    /// 💡 Java 비교: @Service 어노테이션이 붙은 서비스 클래스와 유사
+    lazy var foodRecordService: FoodRecordServiceProtocol = {
+        FoodRecordService(
+            foodRecordRepository: foodRecordRepository,
+            dailyLogRepository: dailyLogRepository,
+            foodRepository: foodRepository
+        )
     }()
 
-    // 📚 학습 포인트: ExerciseCalcService는 enum이므로 등록 불필요
-    // static 메서드만 있어서 인스턴스화할 필요 없음
-    // 💡 Java 비교: Utility 클래스의 static 메서드와 유사
+    /// Food Search Service
+    lazy var foodSearchService: FoodSearchServiceProtocol = {
+        LocalFoodSearchService(foodRepository: foodRepository)
+    }()
+
+    /// Recent Foods Service
+    lazy var recentFoodsService: RecentFoodsServiceProtocol = {
+        RecentFoodsService(
+            foodRepository: foodRepository,
+            maxRecentFoods: 10,
+            maxFrequentFoods: 10,
+            maxQuickAddFoods: 15
+        )
+    }()
 
     // MARK: - Use Cases
 
-    /// 운동 기록 추가 유스케이스
-    /// 📚 학습 포인트: Use Case Pattern
-    /// 단일 책임 원칙 - 하나의 Use Case는 하나의 비즈니스 액션만 담당
-    lazy var addExerciseRecordUseCase: AddExerciseRecordUseCase = {
-        AddExerciseRecordUseCase(
-            exerciseRepository: exerciseRecordRepository,
-            dailyLogService: dailyLogService
+    /// BMR 계산 Use Case
+    /// 📚 학습 포인트: Stateless Use Case
+    /// struct이므로 매번 새로 생성해도 무방하지만 lazy로 재사용
+    /// 💡 Java 비교: @Service 싱글톤 빈과 유사
+    lazy var calculateBMRUseCase = CalculateBMRUseCase()
+
+    /// TDEE 계산 Use Case
+    /// 📚 학습 포인트: Stateless Use Case
+    /// struct이므로 매번 새로 생성해도 무방하지만 lazy로 재사용
+    /// 💡 Java 비교: @Service 싱글톤 빈과 유사
+    lazy var calculateTDEEUseCase = CalculateTDEEUseCase()
+
+    /// Body composition 기록 Use Case
+    /// 📚 학습 포인트: Orchestration Use Case with Dependencies
+    /// 여러 Use Case와 Repository를 조합하여 복잡한 비즈니스 로직 구현
+    /// 💡 Java 비교: @Service with @Autowired dependencies
+    lazy var recordBodyCompositionUseCase: RecordBodyCompositionUseCase = {
+        return RecordBodyCompositionUseCase(
+            calculateBMRUseCase: calculateBMRUseCase,
+            calculateTDEEUseCase: calculateTDEEUseCase,
+            bodyRepository: bodyRepository
         )
     }()
 
-    /// 운동 기록 수정 유스케이스
-    lazy var updateExerciseRecordUseCase: UpdateExerciseRecordUseCase = {
-        UpdateExerciseRecordUseCase(
-            exerciseRepository: exerciseRecordRepository,
-            dailyLogService: dailyLogService
-        )
-    }()
-
-    /// 운동 기록 삭제 유스케이스
-    lazy var deleteExerciseRecordUseCase: DeleteExerciseRecordUseCase = {
-        DeleteExerciseRecordUseCase(
-            exerciseRepository: exerciseRecordRepository,
-            dailyLogService: dailyLogService
-        )
-    }()
-
-    /// 운동 기록 조회 유스케이스
-    lazy var getExerciseRecordsUseCase: GetExerciseRecordsUseCase = {
-        GetExerciseRecordsUseCase(exerciseRepository: exerciseRecordRepository)
+    /// Body trends 조회 Use Case
+    /// 📚 학습 포인트: Query Use Case
+    /// 차트 표시를 위한 데이터 조회 및 변환
+    /// 💡 Java 비교: @Service with read-only operations
+    lazy var fetchBodyTrendsUseCase: FetchBodyTrendsUseCase = {
+        return FetchBodyTrendsUseCase(bodyRepository: bodyRepository)
     }()
 
     // TODO: Phase 4에서 추가 예정
-    // - CalculateBMRUseCase
-    // - CalculateTDEEUseCase
-    // - RecordBodyUseCase
-    // - SearchFoodUseCase
+    // - LogExerciseUseCase
     // - etc.
 }
 
@@ -275,120 +170,113 @@ extension DIContainer {
     // 📚 학습 포인트: Factory Pattern
     // 의존성 생성 로직을 캡슐화
     // 테스트 시 Mock 객체로 교체 가능
-    // 💡 Java 비교: @Bean 메서드와 유사
 
-    // MARK: - Food Search
+    // MARK: - Body Composition ViewModels
 
-    /// FoodSearchViewModel 생성
-    /// 📚 학습 포인트: ViewModel Factory
-    /// ViewModel 생성 시 필요한 모든 의존성을 주입
-    /// 💡 Java 비교: ViewModelProvider.Factory
-    ///
-    /// - Returns: FoodSearchViewModel 인스턴스
-    /// - Note: Phase 9에서 FoodSearchViewModel 구현 시 활성화
-    // func makeFoodSearchViewModel() -> FoodSearchViewModel {
-    //     FoodSearchViewModel(repository: foodSearchRepository)
-    // }
-
-    // MARK: - Exercise ViewModels
-
-    /// 운동 목록 ViewModel 생성
-    ///
+    /// BodyCompositionViewModel 생성
     /// 📚 학습 포인트: Factory Method Pattern
-    /// ViewModel 생성 시 필요한 모든 의존성을 주입
-    /// 테스트 시 이 메서드만 오버라이드하면 Mock ViewModel 제공 가능
-    ///
-    /// - Parameter userId: 사용자 ID
-    /// - Returns: 의존성이 주입된 ExerciseListViewModel
-    ///
-    /// - Example:
-    /// ```swift
-    /// let viewModel = DIContainer.shared.makeExerciseListViewModel(userId: user.id)
-    /// ExerciseListView(viewModel: viewModel)
-    /// ```
-    func makeExerciseListViewModel(userId: UUID) -> ExerciseListViewModel {
-        ExerciseListViewModel(
-            getExerciseRecordsUseCase: getExerciseRecordsUseCase,
-            deleteExerciseRecordUseCase: deleteExerciseRecordUseCase,
-            dailyLogRepository: dailyLogRepository,
-            userId: userId
-        )
-    }
-
-    /// 운동 입력 ViewModel 생성
-    ///
-    /// 📚 학습 포인트: 외부 파라미터가 많은 Factory Method
-    /// ViewModel이 사용자별 데이터(체중, BMR, TDEE)를 필요로 할 때
-    /// Factory Method로 깔끔하게 주입
-    ///
-    /// - Parameters:
-    ///   - userId: 사용자 ID
-    ///   - userWeight: 사용자 체중 (kg) - 칼로리 계산에 필요
-    ///   - userBMR: 사용자 기초대사량 (kcal)
-    ///   - userTDEE: 사용자 활동대사량 (kcal)
-    ///   - editingExercise: 편집할 운동 기록 (편집 모드일 때만 제공)
-    /// - Returns: 의존성이 주입된 ExerciseInputViewModel
-    ///
-    /// - Example:
-    /// ```swift
-    /// // 추가 모드
-    /// let viewModel = DIContainer.shared.makeExerciseInputViewModel(
-    ///     userId: user.id,
-    ///     userWeight: user.currentWeight ?? 70.0,
-    ///     userBMR: user.currentBMR ?? 1650,
-    ///     userTDEE: user.currentTDEE ?? 2310
-    /// )
-    ///
-    /// // 편집 모드
-    /// let viewModel = DIContainer.shared.makeExerciseInputViewModel(
-    ///     userId: user.id,
-    ///     userWeight: 70.0,
-    ///     userBMR: 1650,
-    ///     userTDEE: 2310,
-    ///     editingExercise: exercise
-    /// )
-    /// ```
-    func makeExerciseInputViewModel(
-        userId: UUID,
-        userWeight: Decimal,
-        userBMR: Int32,
-        userTDEE: Int32,
-        editingExercise: ExerciseRecord? = nil
-    ) -> ExerciseInputViewModel {
-        ExerciseInputViewModel(
-            addExerciseRecordUseCase: addExerciseRecordUseCase,
-            updateExerciseRecordUseCase: editingExercise != nil ? updateExerciseRecordUseCase : nil,
-            userId: userId,
-            userWeight: userWeight,
-            userBMR: userBMR,
-            userTDEE: userTDEE,
-            editingExercise: editingExercise
-        )
-    }
-
-    // MARK: - HealthKit ViewModels
-
-    /// HealthKitSettingsViewModel 생성
-    ///
-    /// 📚 학습 포인트: Factory Method for Settings ViewModel
-    /// - HealthKit 설정 화면용 ViewModel 생성
-    /// - 권한 서비스와 동기화 서비스를 주입
-    /// - 테스트 시 Mock 서비스로 교체 가능
+    /// - ViewModel 생성 로직을 중앙화
+    /// - 의존성 주입을 한 곳에서 관리
+    /// - 테스트 시 mock 주입이 쉬워짐
     /// 💡 Java 비교: @Bean 메서드와 유사
     ///
-    /// - Returns: 새로운 HealthKitSettingsViewModel 인스턴스
-    func makeHealthKitSettingsViewModel() -> HealthKitSettingsViewModel {
-        return HealthKitSettingsViewModel(
-            authService: healthKitAuthorizationService,
-            syncService: healthKitSyncService
+    /// - Parameters:
+    ///   - userProfile: 사용자 프로필 (BMR/TDEE 계산에 필요)
+    /// - Returns: 새로운 BodyCompositionViewModel 인스턴스
+    func makeBodyCompositionViewModel(userProfile: UserProfile) -> BodyCompositionViewModel {
+        return BodyCompositionViewModel(
+            recordBodyCompositionUseCase: recordBodyCompositionUseCase,
+            fetchBodyTrendsUseCase: fetchBodyTrendsUseCase,
+            bodyRepository: bodyRepository,
+            userProfile: userProfile
+        )
+    }
+
+    /// BodyTrendsViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 차트 표시를 위한 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Returns: 새로운 BodyTrendsViewModel 인스턴스
+    func makeBodyTrendsViewModel() -> BodyTrendsViewModel {
+        return BodyTrendsViewModel(
+            fetchBodyTrendsUseCase: fetchBodyTrendsUseCase,
+            bodyRepository: bodyRepository
+        )
+    }
+
+    /// MetabolismViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 대시보드용 BMR/TDEE 표시 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Returns: 새로운 MetabolismViewModel 인스턴스
+    func makeMetabolismViewModel() -> MetabolismViewModel {
+        return MetabolismViewModel(bodyRepository: bodyRepository)
+    }
+
+    // MARK: - Diet/Food ViewModels
+
+    /// DailyMealViewModel 생성
+    /// - Returns: DailyMealViewModel 인스턴스
+    func makeDailyMealViewModel() -> DailyMealViewModel {
+        DailyMealViewModel(
+            foodRecordService: foodRecordService,
+            dailyLogRepository: dailyLogRepository
+        )
+    }
+
+    /// FoodSearchViewModel 생성
+    /// - Returns: FoodSearchViewModel 인스턴스
+    func makeFoodSearchViewModel() -> FoodSearchViewModel {
+        FoodSearchViewModel(
+            foodSearchService: foodSearchService,
+            recentFoodsService: recentFoodsService
+        )
+    }
+
+    /// FoodDetailViewModel 생성
+    /// - Parameters:
+    ///   - foodId: 음식 ID
+    ///   - selectedDate: 선택된 날짜
+    ///   - selectedMealType: 선택된 식사 유형
+    /// - Returns: FoodDetailViewModel 인스턴스
+    func makeFoodDetailViewModel(
+        foodId: UUID,
+        selectedDate: Date,
+        selectedMealType: MealType
+    ) -> FoodDetailViewModel {
+        FoodDetailViewModel(
+            foodId: foodId,
+            selectedDate: selectedDate,
+            selectedMealType: selectedMealType,
+            foodRepository: foodRepository,
+            foodRecordService: foodRecordService
+        )
+    }
+
+    /// ManualFoodEntryViewModel 생성
+    /// - Parameters:
+    ///   - selectedDate: 선택된 날짜
+    ///   - selectedMealType: 선택된 식사 유형
+    /// - Returns: ManualFoodEntryViewModel 인스턴스
+    func makeManualFoodEntryViewModel(
+        selectedDate: Date,
+        selectedMealType: MealType
+    ) -> ManualFoodEntryViewModel {
+        ManualFoodEntryViewModel(
+            selectedDate: selectedDate,
+            selectedMealType: selectedMealType,
+            foodRepository: foodRepository,
+            foodRecordService: foodRecordService
         )
     }
 
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel
     // func makeDashboardViewModel() -> DashboardViewModel
-    // func makeBodyViewModel() -> BodyViewModel
-    // func makeFoodRecordViewModel() -> FoodRecordViewModel
 }
 
 // MARK: - Testing Support

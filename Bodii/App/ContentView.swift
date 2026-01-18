@@ -10,7 +10,6 @@
 // 💡 Java 비교: Android의 BottomNavigationView와 유사
 
 import SwiftUI
-import HealthKit
 
 // MARK: - Content View
 
@@ -23,10 +22,6 @@ struct ContentView: View {
     // View 내부에서 변경 가능한 상태를 관리
     // 탭 선택 상태를 추적하여 현재 활성 탭을 기억
     @State private var selectedTab: Tab = .dashboard
-
-    // TODO: 실제 사용자 인증 구현 후 AuthenticationService에서 가져오기
-    // 현재는 개발용 임시 사용자 ID 사용
-    private let userId = UUID()
 
     // MARK: - Body
 
@@ -47,18 +42,15 @@ struct ContentView: View {
     // MARK: - Tab Views
 
     private var dashboardTab: some View {
-        // 📚 학습 포인트: tabItem modifier with HealthKit Integration
+        // 📚 학습 포인트: tabItem modifier
         // 탭 바에 표시될 아이콘과 텍스트 정의
-        // 📚 학습 포인트: DIContainer Dependency Injection
-        // DIContainer를 통해 ViewModel 생성 - 테스트 가능하고 유지보수 용이
-        // 💡 Java 비교: @Inject로 주입받는 패턴과 유사
-        let container = DIContainer.shared
-        let metabolismViewModel = container.makeMetabolismViewModel()
-        let healthKitViewModel = container.makeHealthKitSettingsViewModel()
+        // TODO: Phase 6 (6.1, 6.2) - DIContainer에서 ViewModel 주입받도록 변경
+        // 현재는 임시로 직접 생성하여 사용
+        let bodyRepository = BodyRepository()
+        let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
 
         return DashboardView(
             metabolismViewModel: metabolismViewModel,
-            healthKitViewModel: healthKitViewModel,
             onNavigateToBody: {
                 // 📚 학습 포인트: Tab Navigation
                 // 대사율 카드 탭 시 체성분 탭으로 이동
@@ -88,7 +80,7 @@ struct ContentView: View {
     }
 
     private var dietTab: some View {
-        PlaceholderView(title: "식단", systemImage: "fork.knife")
+        DietTabView()
             .tabItem {
                 Label("식단", systemImage: "fork.knife")
             }
@@ -96,16 +88,11 @@ struct ContentView: View {
     }
 
     private var exerciseTab: some View {
-        // 📚 학습 포인트: DIContainer를 통한 의존성 주입
-        // Factory Method 패턴으로 복잡한 의존성 그래프 캡슐화
-        // 💡 Java 비교: Dagger/Hilt의 @Inject와 유사한 개념
-        ExerciseListView(
-            viewModel: DIContainer.shared.makeExerciseListViewModel(userId: userId)
-        )
-        .tabItem {
-            Label("운동", systemImage: "figure.run")
-        }
-        .tag(Tab.exercise)
+        PlaceholderView(title: "운동", systemImage: "figure.run")
+            .tabItem {
+                Label("운동", systemImage: "figure.run")
+            }
+            .tag(Tab.exercise)
     }
 
     private var sleepTab: some View {
@@ -117,20 +104,11 @@ struct ContentView: View {
     }
 
     private var settingsTab: some View {
-        // 📚 학습 포인트: Settings View with HealthKit Integration
-        // 📚 학습 포인트: DIContainer Service Injection
-        // DIContainer를 통해 HealthKit 서비스 주입 - 단일 인스턴스 재사용
-        // 💡 Java 비교: @Autowired Service와 유사
-        let container = DIContainer.shared
-
-        return SettingsView(
-            authService: container.healthKitAuthorizationService,
-            syncService: container.healthKitSyncService
-        )
-        .tabItem {
-            Label("설정", systemImage: "gearshape.fill")
-        }
-        .tag(Tab.settings)
+        PlaceholderView(title: "설정", systemImage: "gearshape.fill")
+            .tabItem {
+                Label("설정", systemImage: "gearshape.fill")
+            }
+            .tag(Tab.settings)
     }
 }
 

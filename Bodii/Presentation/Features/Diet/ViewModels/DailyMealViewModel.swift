@@ -45,15 +45,6 @@ final class DailyMealViewModel: ObservableObject {
     /// 에러 메시지
     @Published var errorMessage: String?
 
-    /// AI 코멘트 ViewModel (Optional)
-    @Published var dietCommentViewModel: DietCommentViewModel?
-
-    /// AI 코멘트 Sheet 표시 상태
-    @Published var showAICommentSheet: Bool = false
-
-    /// AI 코멘트 생성 중인 끼니 타입
-    @Published var selectedMealTypeForComment: MealType?
-
     // MARK: - Private Properties
 
     /// 식단 기록 서비스
@@ -74,12 +65,6 @@ final class DailyMealViewModel: ObservableObject {
     /// 현재 TDEE (활동대사량)
     private var currentTDEE: Int32 = 0
 
-    /// 현재 목표 타입 (감량/유지/증량)
-    private var currentGoalType: GoalType = .maintain
-
-    /// DI Container (AI comment ViewModel 생성용)
-    private let diContainer: DIContainer
-
     // MARK: - Initialization
 
     /// DailyMealViewModel을 초기화합니다.
@@ -88,17 +73,14 @@ final class DailyMealViewModel: ObservableObject {
     ///   - foodRecordService: 식단 기록 서비스
     ///   - dailyLogRepository: 일일 집계 Repository
     ///   - foodRepository: 음식 Repository
-    ///   - diContainer: DI Container (AI comment ViewModel 생성용, 기본값: shared)
     init(
         foodRecordService: FoodRecordServiceProtocol,
         dailyLogRepository: DailyLogRepositoryProtocol,
-        foodRepository: FoodRepositoryProtocol,
-        diContainer: DIContainer = .shared
+        foodRepository: FoodRepositoryProtocol
     ) {
         self.foodRecordService = foodRecordService
         self.dailyLogRepository = dailyLogRepository
         self.foodRepository = foodRepository
-        self.diContainer = diContainer
     }
 
     // MARK: - Public Methods
@@ -111,12 +93,10 @@ final class DailyMealViewModel: ObservableObject {
     ///   - userId: 사용자 ID
     ///   - bmr: 기초대사량 (kcal)
     ///   - tdee: 활동대사량 (kcal)
-    ///   - goalType: 목표 타입 (감량/유지/증량, 기본값: maintain)
-    func onAppear(userId: UUID, bmr: Int32, tdee: Int32, goalType: GoalType = .maintain) {
+    func onAppear(userId: UUID, bmr: Int32, tdee: Int32) {
         self.currentUserId = userId
         self.currentBMR = bmr
         self.currentTDEE = tdee
-        self.currentGoalType = goalType
 
         loadData()
     }
@@ -171,28 +151,6 @@ final class DailyMealViewModel: ObservableObject {
     /// 데이터를 새로고침합니다.
     func refresh() {
         loadData()
-    }
-
-    /// AI 코멘트를 표시합니다.
-    ///
-    /// DietCommentViewModel을 생성하고 Sheet를 표시합니다.
-    ///
-    /// - Parameter mealType: 평가할 끼니 타입 (nil이면 전체 식단)
-    func showAIComment(for mealType: MealType?) {
-        guard let userId = currentUserId else { return }
-
-        // DietCommentViewModel 생성
-        dietCommentViewModel = diContainer.makeDietCommentViewModel(
-            userId: userId,
-            goalType: currentGoalType,
-            tdee: Int(currentTDEE)
-        )
-
-        // 선택된 끼니 타입 저장
-        selectedMealTypeForComment = mealType
-
-        // Sheet 표시
-        showAICommentSheet = true
     }
 
     // MARK: - Private Methods

@@ -131,31 +131,6 @@ struct BodyRecordDetailView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            // HealthKit 출처 표시
-            if entry.isFromHealthKit {
-                HStack(spacing: 6) {
-                    Image(systemName: "applewatch")
-                        .font(.caption)
-                    Text("Apple Health에서 동기화됨")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                }
-                .foregroundStyle(.white)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(
-                    Capsule()
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.green, Color.teal],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                )
-                .shadow(color: .green.opacity(0.3), radius: 3, x: 0, y: 2)
-            }
-
             // 기록 ID (디버깅용, 작은 글씨)
             Text("ID: \(entry.id.uuidString.prefix(8))...")
                 .font(.caption2)

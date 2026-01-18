@@ -88,6 +88,14 @@ enum Constants {
         /// Hours 00:00-01:59 belong to previous day
         static let boundaryHour: Int = 2
 
+        /// Morning prompt hour (06:00)
+        /// Show sleep recording prompt at 6 AM or later
+        /// 📚 학습 포인트: Separation of Concerns
+        /// - boundaryHour: Date assignment logic (when sleep belongs to previous day)
+        /// - promptHour: User notification timing (when to show prompt)
+        /// 💡 Java 비교: Different constants for different business rules
+        static let promptHour: Int = 6
+
         /// Maximum sleep popup retry count
         static let maxPopupRetries: Int = 3
 
@@ -144,65 +152,33 @@ enum Constants {
     // MARK: - API Limits
 
     enum API {
-        /// Google Gemini API rate limits
+        /// KFDA (식약처) API configuration
+        enum KFDA {
+            static let timeout: TimeInterval = 30
+            static let maxRetries: Int = 2
+            static let defaultPageSize: Int = 10
+            static let maxPageSize: Int = 100
+        }
+
+        /// USDA FoodData Central API configuration
+        enum USDA {
+            static let timeout: TimeInterval = 30
+            static let maxRetries: Int = 2
+            static let defaultPageSize: Int = 25
+            static let maxPageSize: Int = 200
+        }
+
+        /// Google Gemini API configuration
         enum Gemini {
             static let requestsPerMinute: Int = 15
+            static let timeout: TimeInterval = 60
+            static let maxRetries: Int = 2
+            static let rateLimitWindow: TimeInterval = 60 // 1 minute in seconds
         }
 
         /// Google Cloud Vision API limits
         enum Vision {
             static let monthlyFreeRequests: Int = 1000
-        }
-
-        /// 식약처(KFDA) API 설정
-        enum KFDA {
-            /// 기본 페이지 크기
-            static let defaultPageSize: Int = 10
-
-            /// 최대 페이지 크기
-            static let maxPageSize: Int = 100
-
-            /// API 타임아웃 (초)
-            static let timeout: TimeInterval = 30
-
-            /// 최대 재시도 횟수
-            static let maxRetries: Int = 2
-        }
-
-        /// USDA FoodData Central API 설정
-        enum USDA {
-            /// 기본 페이지 크기
-            static let defaultPageSize: Int = 25
-
-            /// 최대 페이지 크기
-            static let maxPageSize: Int = 200
-
-            /// API 타임아웃 (초)
-            static let timeout: TimeInterval = 30
-
-            /// 최대 재시도 횟수
-            static let maxRetries: Int = 2
-
-            /// DEMO_KEY rate limits
-            enum DemoKeyLimits {
-                /// 시간당 요청 제한
-                static let requestsPerHour: Int = 30
-
-                /// 일일 요청 제한
-                static let requestsPerDay: Int = 50
-            }
-        }
-
-        /// 식품 검색 캐시 설정
-        enum FoodCache {
-            /// 캐시 최대 크기 (개수)
-            static let maxCachedFoods: Int = 500
-
-            /// 캐시 유효 기간 (일)
-            static let cacheExpirationDays: Int = 30
-
-            /// 최근 검색 식품 표시 개수
-            static let recentFoodsCount: Int = 10
         }
     }
 

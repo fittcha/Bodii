@@ -57,21 +57,21 @@ enum DateUtils {
 
     /// Checks if the current time is within the sleep recording window
     ///
-    /// 현재 시간이 수면 기록 시간대인지 확인합니다 (02:00 이후).
+    /// 현재 시간이 수면 기록 시간대인지 확인합니다 (06:00 이후).
     ///
-    /// - Returns: True if current time is >= 02:00 (sleep recording window)
+    /// - Returns: True if current time is >= 06:00 (sleep recording window)
     ///
     /// Example:
     /// ```swift
-    /// // At 01:30 AM
+    /// // At 05:59 AM
     /// let shouldShow1 = DateUtils.shouldShowSleepPopup() // false
     ///
-    /// // At 02:00 AM or later
+    /// // At 06:00 AM or later
     /// let shouldShow2 = DateUtils.shouldShowSleepPopup() // true
     /// ```
     static func shouldShowSleepPopup() -> Bool {
         let hour = Calendar.current.component(.hour, from: Date())
-        return hour >= Constants.Sleep.boundaryHour
+        return hour >= Constants.Sleep.promptHour
     }
 
     /// Returns the sleep date for a given date/time

@@ -10,7 +10,6 @@
 // 💡 Java 비교: Android의 Dashboard Fragment와 유사
 
 import SwiftUI
-import HealthKit
 
 // MARK: - DashboardView
 
@@ -30,13 +29,6 @@ struct DashboardView: View {
     /// - Dashboard에서 대사율 데이터 관리
     /// 💡 Java 비교: Android ViewModel과 유사
     @StateObject private var metabolismViewModel: MetabolismViewModel
-
-    /// HealthKit Settings ViewModel (Optional) - HealthKit 동기화 관리
-    /// 📚 학습 포인트: Optional ViewModel for Feature Integration
-    /// - HealthKit 연동이 활성화된 경우에만 동기화 수행
-    /// - nil이면 HealthKit 기능 비활성화
-    /// 💡 Java 비교: Optional<ViewModel> 패턴
-    @StateObject private var healthKitViewModel: HealthKitSettingsViewModel?
 
     /// 체성분 탭으로 이동하는 콜백
     /// 📚 학습 포인트: Closure-based Navigation
@@ -59,21 +51,12 @@ struct DashboardView: View {
     ///
     /// - Parameters:
     ///   - metabolismViewModel: 대사율 ViewModel
-    ///   - healthKitViewModel: HealthKit 설정 ViewModel (옵션)
     ///   - onNavigateToBody: 체성분 탭으로 이동하는 콜백
     init(
         metabolismViewModel: MetabolismViewModel,
-        healthKitViewModel: HealthKitSettingsViewModel? = nil,
         onNavigateToBody: (() -> Void)? = nil
     ) {
         self._metabolismViewModel = StateObject(wrappedValue: metabolismViewModel)
-        // 📚 학습 포인트: Optional StateObject Initialization
-        // wrappedValue가 nil일 수 있는 경우 처리
-        if let healthKitViewModel {
-            self._healthKitViewModel = StateObject(wrappedValue: healthKitViewModel)
-        } else {
-            self._healthKitViewModel = StateObject(wrappedValue: nil)
-        }
         self.onNavigateToBody = onNavigateToBody
     }
 
@@ -85,11 +68,6 @@ struct DashboardView: View {
                 VStack(spacing: 20) {
                     // 환영 헤더
                     welcomeHeader
-
-                    // HealthKit 동기화 상태 (활성화된 경우에만 표시)
-                    if let healthKitViewModel = healthKitViewModel, healthKitViewModel.isEnabled {
-                        healthKitSyncStatus
-                    }
 
                     // 대사율 카드 (BMR/TDEE)
                     metabolismCard
@@ -115,11 +93,6 @@ struct DashboardView: View {
                 // View가 나타날 때 비동기 작업 실행
                 // 💡 Java 비교: onResume()에서 데이터 로드와 유사
                 await metabolismViewModel.loadCurrentMetabolism()
-
-                // HealthKit 상태 업데이트
-                if let healthKitViewModel = healthKitViewModel {
-                    await healthKitViewModel.refreshState()
-                }
             }
             .alert("오류", isPresented: .constant(metabolismViewModel.errorMessage != nil)) {
                 Button("확인") {
@@ -167,90 +140,6 @@ struct DashboardView: View {
                 }
             }
             .padding(.horizontal, 4)
-        }
-    }
-
-    /// HealthKit 동기화 상태 표시
-    /// 📚 학습 포인트: Sync Status Banner
-    /// - 마지막 동기화 시각 표시
-    /// - 동기화 진행 중일 때 ProgressView 표시
-    /// - 수동 동기화 버튼 제공
-    @ViewBuilder
-    private var healthKitSyncStatus: some View {
-        if let healthKitViewModel = healthKitViewModel {
-            HStack(spacing: 12) {
-                // Apple Health 아이콘
-                Image(systemName: "heart.circle.fill")
-                    .font(.title3)
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.red, .pink],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Apple Health")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.primary)
-
-                    // 📚 학습 포인트: Last Sync Time Display
-                    // RelativeDateTimeFormatter로 상대 시간 표시
-                    if healthKitViewModel.isSyncing {
-                        HStack(spacing: 4) {
-                            ProgressView()
-                                .scaleEffect(0.7)
-                            Text("동기화 중...")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    } else if let lastSyncDate = healthKitViewModel.lastSyncDate {
-                        Text("마지막 동기화: \(lastSyncDate, style: .relative)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text("동기화 기록 없음")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                Spacer()
-
-                // 📚 학습 포인트: Manual Sync Button
-                // 수동 동기화 트리거
-                if !healthKitViewModel.isSyncing {
-                    Button(action: {
-                        Task {
-                            await healthKitViewModel.syncNow()
-                        }
-                    }) {
-                        Image(systemName: "arrow.clockwise.circle.fill")
-                            .font(.title2)
-                            .foregroundStyle(.blue)
-                    }
-                    .disabled(!healthKitViewModel.canSync)
-                }
-            }
-            .padding(12)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(
-                        LinearGradient(
-                            colors: [.red.opacity(0.3), .pink.opacity(0.3)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-            )
         }
     }
 
@@ -405,33 +294,12 @@ struct DashboardView: View {
     // MARK: - Helper Methods
 
     /// 데이터 새로고침
-    /// 📚 학습 포인트: Pull-to-Refresh with HealthKit Sync
+    /// 📚 학습 포인트: Pull-to-Refresh
     /// - 사용자가 아래로 당길 때 실행
-    /// - HealthKit이 활성화된 경우 자동으로 동기화 수행
-    /// 💡 Java 비교: SwipeRefreshLayout의 onRefresh와 유사
     private func refreshData() async {
         isRefreshing = true
-
-        // 📚 학습 포인트: Parallel Async Tasks
-        // 여러 ViewModel을 동시에 새로고침하여 성능 최적화
-        await withTaskGroup(of: Void.self) { group in
-            // Metabolism ViewModel 새로고침
-            group.addTask {
-                await metabolismViewModel.refresh()
-            }
-
-            // HealthKit 동기화 (활성화된 경우)
-            if let healthKitViewModel = healthKitViewModel,
-               healthKitViewModel.isEnabled,
-               healthKitViewModel.canSync {
-                group.addTask {
-                    await healthKitViewModel.syncNow()
-                }
-            }
-
-            // TODO: 다른 ViewModel들도 새로고침
-        }
-
+        await metabolismViewModel.refresh()
+        // TODO: 다른 ViewModel들도 새로고침
         isRefreshing = false
     }
 
@@ -522,7 +390,6 @@ struct DashboardView: View {
 ///         TabView(selection: $selectedTab) {
 ///             DashboardView(
 ///                 metabolismViewModel: container.makeMetabolismViewModel(),
-///                 healthKitViewModel: container.makeHealthKitSettingsViewModel(),
 ///                 onNavigateToBody: {
 ///                     selectedTab = .body
 ///                 }
@@ -540,9 +407,8 @@ struct DashboardView: View {
 ///
 /// 주요 기능:
 /// - 대사율 카드: BMR/TDEE 표시, 탭하면 체성분 탭으로 이동
-/// - HealthKit 동기화: 마지막 동기화 시각 표시, 수동 동기화 버튼, 동기화 진행 상태
 /// - 시간대별 인사말: 현재 시간에 따라 다른 메시지
-/// - Pull-to-refresh: 데이터 새로고침 (HealthKit 자동 동기화 포함)
+/// - Pull-to-refresh: 데이터 새로고침
 /// - 플레이스홀더 카드: 향후 구현할 기능 표시
 ///
 /// 화면 구성:

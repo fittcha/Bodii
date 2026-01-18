@@ -56,17 +56,6 @@ struct BodyCompositionEntry: Codable, Identifiable, Equatable {
     /// - 과거 데이터의 일관성 유지 (나중에 계산식이 바뀌어도 과거 값은 그대로)
     let bodyFatMass: Decimal
 
-    /// HealthKit UUID (외부 데이터 추적용)
-    /// 📚 학습 포인트: External ID Tracking
-    /// - Apple Health에서 가져온 체성분 기록의 경우 원본 UUID 보존
-    /// - 수동 입력 체성분은 nil
-    /// 💡 Java 비교: externalId 필드와 유사
-    ///
-    /// - Note: UI에서 데이터 출처 표시에 활용
-    ///   - healthKitId가 있으면 → Apple Health에서 가져온 데이터 (Apple Watch 아이콘 표시)
-    ///   - healthKitId가 nil이면 → 사용자가 수동 입력한 데이터
-    let healthKitId: String?
-
     // MARK: - Initialization
 
     /// BodyCompositionEntry 생성자
@@ -79,22 +68,19 @@ struct BodyCompositionEntry: Codable, Identifiable, Equatable {
     /// - Parameter bodyFatPercent: 체지방률 (%)
     /// - Parameter muscleMass: 근육량 (kg)
     /// - Parameter bodyFatMass: 체지방량 (kg, 선택적 - 미제공시 자동 계산)
-    /// - Parameter healthKitId: HealthKit UUID (Apple Health에서 가져온 경우)
     init(
         id: UUID = UUID(),
         date: Date = Date(),
         weight: Decimal,
         bodyFatPercent: Decimal,
         muscleMass: Decimal,
-        bodyFatMass: Decimal? = nil,
-        healthKitId: String? = nil
+        bodyFatMass: Decimal? = nil
     ) {
         self.id = id
         self.date = date
         self.weight = weight
         self.bodyFatPercent = bodyFatPercent
         self.muscleMass = muscleMass
-        self.healthKitId = healthKitId
 
         // 📚 학습 포인트: Nil Coalescing Operator (??)
         // bodyFatMass가 제공되지 않으면 자동으로 계산
@@ -106,25 +92,6 @@ struct BodyCompositionEntry: Codable, Identifiable, Equatable {
     }
 
     // MARK: - Computed Properties
-
-    /// HealthKit에서 가져온 데이터인지 여부
-    /// 📚 학습 포인트: Computed Property
-    /// - healthKitId의 존재 여부로 데이터 출처 판별
-    /// - UI에서 데이터 출처 표시에 활용
-    /// 💡 Java 비교: isExternal() getter 메서드와 유사
-    ///
-    /// - Returns: HealthKit에서 가져온 데이터이면 true, 수동 입력이면 false
-    ///
-    /// - Example:
-    /// ```swift
-    /// if entry.isFromHealthKit {
-    ///     // Apple Health 출처 표시
-    ///     Image(systemName: "applewatch")
-    /// }
-    /// ```
-    var isFromHealthKit: Bool {
-        return healthKitId != nil
-    }
 
     /// 제지방량 (Lean Body Mass) (kg)
     /// 📚 학습 포인트: Computed Property
