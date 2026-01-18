@@ -152,9 +152,28 @@ enum Constants {
     // MARK: - API Limits
 
     enum API {
-        /// Google Gemini API rate limits
+        /// KFDA (식약처) API configuration
+        enum KFDA {
+            static let timeout: TimeInterval = 30
+            static let maxRetries: Int = 2
+            static let defaultPageSize: Int = 10
+            static let maxPageSize: Int = 100
+        }
+
+        /// USDA FoodData Central API configuration
+        enum USDA {
+            static let timeout: TimeInterval = 30
+            static let maxRetries: Int = 2
+            static let defaultPageSize: Int = 25
+            static let maxPageSize: Int = 200
+        }
+
+        /// Google Gemini API configuration
         enum Gemini {
             static let requestsPerMinute: Int = 15
+            static let timeout: TimeInterval = 60
+            static let maxRetries: Int = 2
+            static let rateLimitWindow: TimeInterval = 60 // 1 minute in seconds
         }
 
         /// Google Cloud Vision API limits

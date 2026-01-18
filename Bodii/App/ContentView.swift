@@ -107,10 +107,13 @@ struct ContentView: View {
         let bodyRepository = BodyRepository()
         let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
         let sleepRepository = DIContainer.shared.sleepRepository
+        let goalProgressViewModel = DIContainer.shared.makeGoalProgressViewModel()
 
         return DashboardView(
             metabolismViewModel: metabolismViewModel,
             sleepRepository: sleepRepository,
+            goalProgressViewModel: goalProgressViewModel,
+            userId: UserProfile.sample.id,
             onNavigateToBody: {
                 // 📚 학습 포인트: Tab Navigation
                 // 대사율 카드 탭 시 체성분 탭으로 이동

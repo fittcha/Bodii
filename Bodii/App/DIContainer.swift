@@ -63,6 +63,14 @@ final class DIContainer {
         return SleepLocalDataSource(persistenceController: .shared)
     }()
 
+    /// Goal 로컬 데이터 소스
+    /// 📚 학습 포인트: Lazy Initialization
+    /// 첫 접근 시 한 번만 생성되어 재사용됨
+    /// 💡 Java 비교: @Lazy + @Autowired와 유사
+    lazy var goalLocalDataSource: GoalLocalDataSource = {
+        return GoalLocalDataSource(persistenceController: .shared)
+    }()
+
     // TODO: Phase 2에서 추가 예정
     // - NetworkManager
     // - HealthKitManager
@@ -87,11 +95,18 @@ final class DIContainer {
         return SleepRepository(localDataSource: sleepLocalDataSource)
     }()
 
+    /// Goal 리포지토리
+    /// 📚 학습 포인트: Dependency Injection Chain
+    /// goalLocalDataSource를 주입받아 생성
+    /// 💡 Java 비교: @Autowired Repository와 유사
+    lazy var goalRepository: GoalRepositoryProtocol = {
+        return GoalRepository(localDataSource: goalLocalDataSource)
+    }()
+
     // TODO: Phase 3에서 추가 예정
     // - UserRepository
     // - FoodRepository
     // - ExerciseRepository
-    // - GoalRepository
 
     // MARK: - Use Cases
 
@@ -149,6 +164,38 @@ final class DIContainer {
     /// 💡 Java 비교: @Service with analytics logic
     lazy var fetchSleepStatsUseCase: FetchSleepStatsUseCase = {
         return FetchSleepStatsUseCase(sleepRepository: sleepRepository)
+    }()
+
+    // MARK: - Goal Use Cases
+
+    /// Goal 설정 Use Case
+    /// 📚 학습 포인트: Orchestration Use Case with Dependencies
+    /// 여러 Repository를 조합하여 목표 설정 로직 구현
+    /// 💡 Java 비교: @Service with @Autowired dependencies
+    lazy var setGoalUseCase: SetGoalUseCase = {
+        return SetGoalUseCase(
+            bodyRepository: bodyRepository,
+            goalRepository: goalRepository
+        )
+    }()
+
+    /// Goal 진행상황 조회 Use Case
+    /// 📚 학습 포인트: Query Use Case
+    /// 목표 진행률, 마일스톤, 트렌드 분석 데이터 조회
+    /// 💡 Java 비교: @Service with read-only operations
+    lazy var getGoalProgressUseCase: GetGoalProgressUseCase = {
+        return GetGoalProgressUseCase(
+            goalRepository: goalRepository,
+            bodyRepository: bodyRepository
+        )
+    }()
+
+    /// Goal 업데이트 Use Case
+    /// 📚 학습 포인트: Update Use Case
+    /// 기존 목표 수정 (히스토리 보존)
+    /// 💡 Java 비교: @Service with update operations
+    lazy var updateGoalUseCase: UpdateGoalUseCase = {
+        return UpdateGoalUseCase(goalRepository: goalRepository)
     }()
 
     // TODO: Phase 4에서 추가 예정
@@ -270,6 +317,34 @@ extension DIContainer {
             fetchSleepStatsUseCase: fetchSleepStatsUseCase,
             sleepRepository: sleepRepository
         )
+    }
+
+    // MARK: - Goal ViewModels
+
+    /// GoalSettingViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 목표 설정 화면용 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Parameter userId: 사용자 ID (목표 소유자)
+    /// - Returns: 새로운 GoalSettingViewModel 인스턴스
+    func makeGoalSettingViewModel(userId: UUID) -> GoalSettingViewModel {
+        return GoalSettingViewModel(
+            setGoalUseCase: setGoalUseCase,
+            userId: userId
+        )
+    }
+
+    /// GoalProgressViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 목표 진행상황 화면용 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Returns: 새로운 GoalProgressViewModel 인스턴스
+    func makeGoalProgressViewModel() -> GoalProgressViewModel {
+        return GoalProgressViewModel(getGoalProgressUseCase: getGoalProgressUseCase)
     }
 
     // MARK: - Managers

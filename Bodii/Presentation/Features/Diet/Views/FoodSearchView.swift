@@ -50,6 +50,9 @@ struct FoodSearchView: View {
     /// 수동 입력 콜백
     let onManualEntry: () -> Void
 
+    /// 사진 인식 콜백 (옵션)
+    let onPhotoRecognition: (() -> Void)?
+
     // MARK: - State
 
     /// 검색 필드에 포커스 여부
@@ -121,6 +124,19 @@ struct FoodSearchView: View {
         }
         .navigationTitle("음식 검색")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            // 📚 학습 포인트: Optional Toolbar Item
+            // 사진 인식 기능이 활성화된 경우에만 카메라 버튼 표시
+            if let onPhotoRecognition = onPhotoRecognition {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: onPhotoRecognition) {
+                        Image(systemName: "camera.fill")
+                            .accessibilityLabel("사진으로 음식 추가")
+                            .accessibilityHint("카메라로 음식을 촬영하여 자동으로 인식합니다")
+                    }
+                }
+            }
+        }
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
             Button("확인") {
                 viewModel.errorMessage = nil
@@ -350,6 +366,9 @@ struct FoodSearchView: View {
             },
             onManualEntry: {
                 print("Manual entry tapped")
+            },
+            onPhotoRecognition: {
+                print("Photo recognition tapped")
             }
         )
     }

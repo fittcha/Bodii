@@ -62,6 +62,21 @@ struct BodyRecord {
     /// 골격근량 (kg)
     var muscleMass: Decimal?
 
+    // MARK: - HealthKit Integration
+
+    /// HealthKit UUID (외부 데이터 추적용)
+    ///
+    /// 📚 학습 포인트: External ID Tracking
+    /// - Apple Health에서 가져온 체성분 기록의 경우 원본 UUID 보존
+    /// - 중복 임포트 방지: 같은 healthKitId가 이미 존재하면 건너뛰기
+    /// - 수동 입력 체성분은 nil
+    /// 💡 Java 비교: externalId 필드와 유사
+    ///
+    /// - Note: 양방향 동기화 시 충돌 해결에 활용
+    ///   - healthKitId가 있으면 → Apple Health에서 가져온 데이터
+    ///   - healthKitId가 nil이면 → 사용자가 수동 입력한 데이터
+    var healthKitId: String?
+
     // MARK: - Metadata
 
     /// 생성일시
@@ -85,5 +100,29 @@ extension BodyRecord: Equatable {
 extension BodyRecord: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+// MARK: - HealthKit Integration
+
+extension BodyRecord {
+    /// HealthKit에서 가져온 데이터인지 여부
+    ///
+    /// 📚 학습 포인트: Computed Property
+    /// - healthKitId의 존재 여부로 데이터 출처 판별
+    /// - UI에서 데이터 출처 표시에 활용
+    /// 💡 Java 비교: isExternal() getter 메서드와 유사
+    ///
+    /// - Returns: HealthKit에서 가져온 데이터이면 true, 수동 입력이면 false
+    ///
+    /// - Example:
+    /// ```swift
+    /// if bodyRecord.isFromHealthKit {
+    ///     // Apple Health 출처 표시
+    ///     Text("Apple Health에서 동기화됨")
+    /// }
+    /// ```
+    var isFromHealthKit: Bool {
+        return healthKitId != nil
     }
 }

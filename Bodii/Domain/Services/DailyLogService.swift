@@ -16,20 +16,27 @@ import Foundation
 /// - 운동 추가 시 DailyLog 업데이트
 /// - 운동 수정 시 DailyLog 업데이트
 /// - 운동 삭제 시 DailyLog 업데이트
+/// - HealthKit 데이터 동기화 (걸음 수)
 ///
 /// ## 의존성
 /// - DailyLogRepository: DailyLog 데이터 영속성
+/// - HealthKitReadService: HealthKit 데이터 읽기 (optional)
 ///
 /// ## 사용 시나리오
 /// 1. **운동 추가**: AddExerciseRecordUseCase에서 운동 기록 생성 후 `addExercise` 호출
 /// 2. **운동 수정**: UpdateExerciseRecordUseCase에서 운동 기록 수정 후 `updateExercise` 호출
 /// 3. **운동 삭제**: DeleteExerciseRecordUseCase에서 운동 기록 삭제 후 `removeExercise` 호출
+/// 4. **HealthKit 동기화**: getOrCreate() 호출 시 자동으로 HealthKit 걸음 수 동기화
 ///
 /// - Example:
 /// ```swift
-/// let service = DailyLogService(repository: dailyLogRepository)
+/// let service = DailyLogService(
+///     repository: dailyLogRepository,
+///     healthKitReadService: healthKitReadService
+/// )
 ///
 /// // DailyLog 생성 또는 조회 (User의 현재 BMR/TDEE 사용)
+/// // HealthKit 걸음 수가 자동으로 동기화됩니다
 /// let dailyLog = try await service.getOrCreate(
 ///     for: Date(),
 ///     userId: userId,
@@ -54,13 +61,27 @@ final class DailyLogService {
     /// DailyLog 저장소
     private let repository: DailyLogRepository
 
+    /// HealthKit 읽기 서비스 (optional)
+    ///
+    /// 📚 학습 포인트: Optional Dependency
+    /// - HealthKit이 없거나 권한이 없어도 앱이 동작해야 함
+    /// - nil이면 HealthKit 동기화를 건너뜀
+    /// 💡 Java 비교: @Autowired(required = false)와 유사
+    private let healthKitReadService: HealthKitReadService?
+
     // MARK: - Initialization
 
     /// DailyLogService 초기화
     ///
-    /// - Parameter repository: DailyLog 저장소
-    init(repository: DailyLogRepository) {
+    /// - Parameters:
+    ///   - repository: DailyLog 저장소
+    ///   - healthKitReadService: HealthKit 읽기 서비스 (optional, 기본값: nil)
+    init(
+        repository: DailyLogRepository,
+        healthKitReadService: HealthKitReadService? = nil
+    ) {
         self.repository = repository
+        self.healthKitReadService = healthKitReadService
     }
 
     // MARK: - Public Methods
@@ -68,6 +89,13 @@ final class DailyLogService {
     /// 특정 날짜의 DailyLog를 조회하거나 없으면 생성합니다.
     ///
     /// DailyLog가 없을 경우, 사용자의 현재 BMR/TDEE 값으로 새로 생성합니다.
+    /// HealthKit이 설정되어 있으면, 백그라운드에서 걸음 수를 자동으로 동기화합니다.
+    ///
+    /// 📚 학습 포인트: Non-blocking HealthKit Sync
+    /// - DailyLog 생성/조회는 즉시 반환 (빠른 응답)
+    /// - HealthKit 데이터는 백그라운드에서 비동기로 업데이트
+    /// - HealthKit 실패해도 DailyLog 작업은 성공
+    /// 💡 Java 비교: @Async 메서드와 유사
     ///
     /// - Parameters:
     ///   - date: 조회할 날짜
@@ -79,6 +107,7 @@ final class DailyLogService {
     ///
     /// - Note: userBMR과 userTDEE는 User.currentBMR, User.currentTDEE에서 가져와야 합니다.
     ///         값이 없는 경우 기본값(BMR: 1650, TDEE: 2310)을 사용하세요.
+    /// - Note: HealthKit 걸음 수는 백그라운드에서 동기화되며, 실패해도 메서드는 성공합니다.
     func getOrCreate(
         for date: Date,
         userId: UUID,
@@ -89,12 +118,23 @@ final class DailyLogService {
         let bmr = Int32(truncating: userBMR as NSNumber)
         let tdee = Int32(truncating: userTDEE as NSNumber)
 
-        return try await repository.getOrCreate(
+        // DailyLog 조회 또는 생성
+        let dailyLog = try await repository.getOrCreate(
             for: date,
             userId: userId,
             bmr: bmr,
             tdee: tdee
         )
+
+        // 📚 학습 포인트: Detached Task for Background Work
+        // Task.detached로 백그라운드에서 HealthKit 동기화 실행
+        // 메인 스레드를 블로킹하지 않고 즉시 반환
+        // 💡 Java 비교: CompletableFuture.runAsync()와 유사
+        Task.detached { [weak self] in
+            await self?.syncHealthKitData(for: date, userId: userId)
+        }
+
+        return dailyLog
     }
 
     /// 운동 추가 시 DailyLog를 업데이트합니다.
@@ -233,6 +273,74 @@ final class DailyLogService {
             oldDuration: oldDuration,
             newDuration: newDuration
         )
+    }
+
+    // MARK: - Private Methods - HealthKit Sync
+
+    /// HealthKit 데이터 동기화
+    ///
+    /// 📚 학습 포인트: Background HealthKit Sync
+    /// - 백그라운드에서 실행되어 메인 스레드를 블로킹하지 않음
+    /// - 에러가 발생해도 조용히 실패 (silent failure)
+    /// - 로그만 남기고 앱 실행에는 영향 없음
+    /// 💡 Java 비교: @Async void 메서드와 유사
+    ///
+    /// - Parameters:
+    ///   - date: 동기화할 날짜
+    ///   - userId: 사용자 ID
+    ///
+    /// - Note: 이 메서드는 절대 throw하지 않으며, 에러 발생 시 조용히 실패합니다.
+    ///
+    /// - Example:
+    /// ```swift
+    /// // Task.detached로 백그라운드 실행
+    /// Task.detached {
+    ///     await service.syncHealthKitData(for: Date(), userId: userId)
+    /// }
+    /// ```
+    private func syncHealthKitData(for date: Date, userId: UUID) async {
+        // 📚 학습 포인트: Early Return Guard
+        // HealthKit 서비스가 없으면 조기 반환
+        // 💡 Java 비교: if (service == null) return; 패턴
+        guard let healthKitService = healthKitReadService else {
+            return
+        }
+
+        do {
+            // 📚 학습 포인트: Parallel HealthKit Queries
+            // 걸음 수를 HealthKit에서 조회
+            // 💡 Java 비교: Optional.ofNullable()와 유사
+            let steps = try await healthKitService.fetchSteps(for: date)
+
+            // steps가 있으면 DailyLog 업데이트
+            if let stepsValue = steps {
+                // 📚 학습 포인트: Fetch-Update Pattern
+                // 1. 현재 DailyLog 조회
+                // 2. steps 필드 업데이트
+                // 3. Repository에 저장
+                // 💡 Java 비교: JPA의 find() + save() 패턴
+                if var dailyLog = try await repository.fetch(for: date, userId: userId) {
+                    // Int32로 변환 (DailyLog.steps의 타입)
+                    dailyLog.steps = Int32(truncating: stepsValue as NSNumber)
+
+                    // 업데이트된 DailyLog 저장
+                    _ = try await repository.update(dailyLog)
+                }
+            }
+
+            // 📚 학습 포인트: Silent Failure
+            // 백그라운드 작업은 에러가 발생해도 사용자에게 알리지 않음
+            // 단, 로그는 남겨서 디버깅 가능하게 함
+            // 💡 Java 비교: try-catch with logging only
+        } catch {
+            // HealthKit 권한이 없거나 데이터가 없는 경우 조용히 실패
+            // 앱의 핵심 기능에는 영향을 주지 않음
+
+            // 개발 중에는 디버그 로그 출력
+            #if DEBUG
+            print("[DailyLogService] HealthKit sync failed: \(error.localizedDescription)")
+            #endif
+        }
     }
 }
 

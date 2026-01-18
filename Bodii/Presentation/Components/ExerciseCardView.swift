@@ -76,6 +76,13 @@ struct ExerciseCardView: View {
         .padding()
         .background(cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        // 📚 학습 포인트: Badge Overlay for Data Source
+        // HealthKit에서 가져온 데이터인 경우 Apple Watch 아이콘 표시
+        .overlay(alignment: .topTrailing) {
+            if exercise.isFromHealthKit {
+                healthKitBadge
+            }
+        }
         // 📚 학습 포인트: swipeActions modifier (iOS 15+)
         // 스와이프 제스처로 액션 버튼 표시
         // 💡 Java 비교: RecyclerView의 ItemTouchHelper와 유사
@@ -158,6 +165,39 @@ struct ExerciseCardView: View {
             .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
 
+    /// HealthKit 데이터 출처 뱃지
+    /// 📚 학습 포인트: Data Source Indicator
+    /// - Apple Health/Apple Watch에서 가져온 데이터임을 시각적으로 표시
+    /// - 사용자가 수동 입력한 데이터와 구분
+    /// 💡 Java 비교: Badge view pattern과 유사
+    private var healthKitBadge: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "applewatch")
+                .font(.caption2)
+                .fontWeight(.medium)
+
+            Text("동기화")
+                .font(.caption2)
+                .fontWeight(.medium)
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(
+            Capsule()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.green, Color.teal],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+        )
+        .shadow(color: .green.opacity(0.3), radius: 2, x: 0, y: 1)
+        .offset(x: -8, y: 8)
+        .help("Apple Health에서 동기화된 데이터")
+    }
+
     // MARK: - Computed Properties
 
     /// 강도별 색상
@@ -235,6 +275,7 @@ extension ExerciseType {
         // 📚 학습 포인트: Preview with Sample Data
         // 개발 중 빠른 피드백을 위한 샘플 데이터 프리뷰
 
+        // 수동 입력 운동 기록
         ExerciseCardView(
             exercise: ExerciseRecord(
                 id: UUID(),
@@ -248,6 +289,7 @@ extension ExerciseType {
             )
         )
 
+        // HealthKit에서 동기화된 운동 기록
         ExerciseCardView(
             exercise: ExerciseRecord(
                 id: UUID(),
@@ -257,6 +299,7 @@ extension ExerciseType {
                 duration: 45,
                 intensity: .low,
                 caloriesBurned: 120,
+                healthKitId: "AB12CD34-5678-90EF-GHIJ-KLMNOPQRSTUV",
                 createdAt: Date()
             )
         )
