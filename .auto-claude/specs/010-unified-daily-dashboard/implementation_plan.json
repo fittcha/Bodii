@@ -2,9 +2,9 @@
   "feature": "Unified Daily Dashboard",
   "description": "Central dashboard showing all daily health metrics: calorie balance (intake vs. TDEE), macro breakdown, exercise summary, sleep quality, and body composition status. Pre-calculated values from DailyLog for fast loading (<0.5s).",
   "created_at": "2026-01-14T09:02:15.645Z",
-  "updated_at": "2026-01-18T08:09:13.580Z",
-  "status": "done",
-  "planStatus": "completed",
+  "updated_at": "2026-01-16T04:58:35.598Z",
+  "status": "in_progress",
+  "planStatus": "in_progress",
   "totalEstimatedHours": 25,
   "phases": [
     {
@@ -54,7 +54,7 @@
           "dependencies": [
             "1.2"
           ],
-          "notes": "Added dailyLogLocalDataSource and dailyLogRepository to DIContainer with proper lazy initialization. Created makeDashboardViewModel(userId:) factory method that injects DailyLogRepository dependency. Follows existing patterns with educational Korean comments and Java comparisons. All dependencies properly chained: PersistenceController → DailyLogLocalDataSource → DailyLogRepositoryImpl → DashboardViewModel.",
+          "notes": "Added dailyLogLocalDataSource and dailyLogRepository to DIContainer with proper lazy initialization. Created makeDashboardViewModel(userId:) factory method that injects DailyLogRepository dependency. Follows existing patterns with educational Korean comments and Java comparisons. All dependencies properly chained: PersistenceController \u2192 DailyLogLocalDataSource \u2192 DailyLogRepositoryImpl \u2192 DashboardViewModel.",
           "updated_at": "2026-01-15T08:10:54.911644+00:00"
         }
       ]
@@ -106,13 +106,13 @@
           "dependencies": [
             "1.2"
           ],
-          "notes": "Created ExerciseSummaryCard component showing today's exercise summary with three key metrics: total calories burned (totalCaloriesOut), exercise count (exerciseCount), and exercise minutes (exerciseMinutes). Displays stats in three equal-width cards with color-coded icons (orange for calories, green for count, blue for time). Includes time formatting helper (e.g., \"1시간 30분\"), empty state handling (gray tone when no exercise data), and comprehensive previews for various scenarios. Follows patterns from CalorieBalanceCard and MacroBreakdownCard.",
+          "notes": "Created ExerciseSummaryCard component showing today's exercise summary with three key metrics: total calories burned (totalCaloriesOut), exercise count (exerciseCount), and exercise minutes (exerciseMinutes). Displays stats in three equal-width cards with color-coded icons (orange for calories, green for count, blue for time). Includes time formatting helper (e.g., \"1\uc2dc\uac04 30\ubd84\"), empty state handling (gray tone when no exercise data), and comprehensive previews for various scenarios. Follows patterns from CalorieBalanceCard and MacroBreakdownCard.",
           "updated_at": "2026-01-15T08:19:29.028800+00:00"
         },
         {
           "id": "2.4",
           "title": "Create SleepQualityCard",
-          "description": "Card displaying previous night's sleep with emoji indicator (🔵/🟢/🟡/🔴/🟠), duration in hours:minutes format, and quality label. Uses sleepDuration, sleepStatus from DailyLog.",
+          "description": "Card displaying previous night's sleep with emoji indicator (\ud83d\udd35/\ud83d\udfe2/\ud83d\udfe1/\ud83d\udd34/\ud83d\udfe0), duration in hours:minutes format, and quality label. Uses sleepDuration, sleepStatus from DailyLog.",
           "status": "completed",
           "estimatedHours": 1.5,
           "files": [
@@ -121,7 +121,7 @@
           "dependencies": [
             "1.2"
           ],
-          "notes": "Created SleepQualityCard component showing sleep duration and quality with emoji indicator (🔵/🟢/🟡/🔴/🟠) based on SleepStatus. Displays duration in hours:minutes format and includes quality label with informational messages. Handles empty state properly. Follows existing card patterns with comprehensive previews for all sleep states.",
+          "notes": "Created SleepQualityCard component showing sleep duration and quality with emoji indicator (\ud83d\udd35/\ud83d\udfe2/\ud83d\udfe1/\ud83d\udd34/\ud83d\udfe0) based on SleepStatus. Displays duration in hours:minutes format and includes quality label with informational messages. Handles empty state properly. Follows existing card patterns with comprehensive previews for all sleep states.",
           "updated_at": "2026-01-15T08:22:22.458057+00:00"
         },
         {
@@ -149,14 +149,14 @@
         {
           "id": "3.1",
           "title": "Create DateNavigationHeader",
-          "description": "Reusable header component with left/right arrows to navigate dates, centered date display (오늘, 어제, or formatted date), and 'today' button to return to current date.",
+          "description": "Reusable header component with left/right arrows to navigate dates, centered date display (\uc624\ub298, \uc5b4\uc81c, or formatted date), and 'today' button to return to current date.",
           "status": "completed",
           "estimatedHours": 1.5,
           "files": [
             "Bodii/Presentation/Features/Dashboard/Components/DateNavigationHeader.swift"
           ],
           "dependencies": [],
-          "notes": "Created DateNavigationHeader component with left/right arrow navigation, centered date display (오늘, 어제, or formatted date), and 'today' button to return to current date. Follows existing patterns from CalorieBalanceCard and SleepQualityCard with comprehensive Korean documentation. Includes accessibility support and multiple preview configurations for various date states.",
+          "notes": "Created DateNavigationHeader component with left/right arrow navigation, centered date display (\uc624\ub298, \uc5b4\uc81c, or formatted date), and 'today' button to return to current date. Follows existing patterns from CalorieBalanceCard and SleepQualityCard with comprehensive Korean documentation. Includes accessibility support and multiple preview configurations for various date states.",
           "updated_at": "2026-01-16T02:24:41.777419+00:00"
         },
         {
@@ -228,7 +228,7 @@
           "dependencies": [
             "4.1"
           ],
-          "notes": "Successfully implemented navigation callbacks from quick-add buttons. Updated ContentView to provide all three navigation callbacks (onNavigateToDiet, onNavigateToExercise, onNavigateToBody) to DashboardView. Each callback switches the TabView's selectedTab to the appropriate tab. Updated ContentView to use DIContainer.shared.makeDashboardViewModel(userId:) for proper dependency injection. All callbacks are properly wired through DashboardView → QuickAddButtons → ContentView. Committed as: df75e80",
+          "notes": "Successfully implemented navigation callbacks from quick-add buttons. Updated ContentView to provide all three navigation callbacks (onNavigateToDiet, onNavigateToExercise, onNavigateToBody) to DashboardView. Each callback switches the TabView's selectedTab to the appropriate tab. Updated ContentView to use DIContainer.shared.makeDashboardViewModel(userId:) for proper dependency injection. All callbacks are properly wired through DashboardView \u2192 QuickAddButtons \u2192 ContentView. Committed as: df75e80",
           "updated_at": "2026-01-16T02:36:06.551371+00:00"
         },
         {
@@ -321,7 +321,7 @@
           "dependencies": [
             "1.2"
           ],
-          "notes": "Created comprehensive unit tests for DashboardViewModel (748 lines). Tests cover: loadDailyLog success/failure scenarios, date navigation (previous/next/today/selectDate), refresh behavior, state transitions (loading → success/error), computed properties, date formatting (오늘/어제/formatted date), error handling and clearError. Created MockDailyLogRepository for dependency isolation. All tests follow Given-When-Then pattern with @MainActor for proper async/await testing. Committed as: 7972b20",
+          "notes": "Created comprehensive unit tests for DashboardViewModel (748 lines). Tests cover: loadDailyLog success/failure scenarios, date navigation (previous/next/today/selectDate), refresh behavior, state transitions (loading \u2192 success/error), computed properties, date formatting (\uc624\ub298/\uc5b4\uc81c/formatted date), error handling and clearError. Created MockDailyLogRepository for dependency isolation. All tests follow Given-When-Then pattern with @MainActor for proper async/await testing. Committed as: 7972b20",
           "updated_at": "2026-01-16T02:55:22.885584+00:00"
         },
         {
@@ -339,7 +339,7 @@
             "5.1",
             "5.2"
           ],
-          "notes": "✅ Comprehensive SwiftUI previews already exist for all dashboard components, created during earlier implementation phases:\n\n**DashboardView** - 7 preview configurations:\n- \"대시보드 - 데이터 있음\" (with data)\n- \"대시보드 - 빈 상태\" (empty state)\n- \"대시보드 - 로딩 중\" (loading with skeleton)\n- \"대시보드 - 에러 상태\" (error alert)\n- \"대시보드 - 칼로리 과잉\" (surplus scenario)\n- \"다크 모드 - 데이터 있음\" / \"다크 모드 - 빈 상태\"\n\n**All Card Components** - Multiple previews each:\n- CalorieBalanceCard: 5 previews (deficit, balanced, surplus, empty, various intakes)\n- MacroBreakdownCard: 6 previews (balanced, high carb, high protein, keto, empty, partial)\n- ExerciseSummaryCard: 4 previews (with exercises, empty, various times, high intensity)\n- SleepQualityCard: 7 previews (all sleep states: excellent, good, soso, bad, oversleep, empty)\n- BodyCompositionCard: 4 previews (with changes, without previous, empty, various changes)\n\n**Supporting Components**:\n- DateNavigationHeader: 4 previews (today, yesterday, other dates)\n- QuickAddButtons: 3 previews (light mode, dark mode, in context)\n\n**Empty States & Loading**:\n- DashboardEmptyStates: 7 previews (all empty state variants + dark mode)\n- DashboardSkeletonView: 3 previews (full dashboard, individual cards, headers)\n\n**DashboardViewModel Preview Helpers**:\n- makePreviewWithData() - Normal data state\n- makePreviewEmpty() - Empty state\n- makePreviewLoading() - Loading state\n- makePreviewError() - Error state\n- makePreviewSurplus() - Surplus calorie state\n\nAll required states (with data, empty, loading, error) are comprehensively covered across all components. No additional work needed.",
+          "notes": "\u2705 Comprehensive SwiftUI previews already exist for all dashboard components, created during earlier implementation phases:\n\n**DashboardView** - 7 preview configurations:\n- \"\ub300\uc2dc\ubcf4\ub4dc - \ub370\uc774\ud130 \uc788\uc74c\" (with data)\n- \"\ub300\uc2dc\ubcf4\ub4dc - \ube48 \uc0c1\ud0dc\" (empty state)\n- \"\ub300\uc2dc\ubcf4\ub4dc - \ub85c\ub529 \uc911\" (loading with skeleton)\n- \"\ub300\uc2dc\ubcf4\ub4dc - \uc5d0\ub7ec \uc0c1\ud0dc\" (error alert)\n- \"\ub300\uc2dc\ubcf4\ub4dc - \uce7c\ub85c\ub9ac \uacfc\uc789\" (surplus scenario)\n- \"\ub2e4\ud06c \ubaa8\ub4dc - \ub370\uc774\ud130 \uc788\uc74c\" / \"\ub2e4\ud06c \ubaa8\ub4dc - \ube48 \uc0c1\ud0dc\"\n\n**All Card Components** - Multiple previews each:\n- CalorieBalanceCard: 5 previews (deficit, balanced, surplus, empty, various intakes)\n- MacroBreakdownCard: 6 previews (balanced, high carb, high protein, keto, empty, partial)\n- ExerciseSummaryCard: 4 previews (with exercises, empty, various times, high intensity)\n- SleepQualityCard: 7 previews (all sleep states: excellent, good, soso, bad, oversleep, empty)\n- BodyCompositionCard: 4 previews (with changes, without previous, empty, various changes)\n\n**Supporting Components**:\n- DateNavigationHeader: 4 previews (today, yesterday, other dates)\n- QuickAddButtons: 3 previews (light mode, dark mode, in context)\n\n**Empty States & Loading**:\n- DashboardEmptyStates: 7 previews (all empty state variants + dark mode)\n- DashboardSkeletonView: 3 previews (full dashboard, individual cards, headers)\n\n**DashboardViewModel Preview Helpers**:\n- makePreviewWithData() - Normal data state\n- makePreviewEmpty() - Empty state\n- makePreviewLoading() - Loading state\n- makePreviewError() - Error state\n- makePreviewSurplus() - Surplus calorie state\n\nAll required states (with data, empty, loading, error) are comprehensively covered across all components. No additional work needed.",
           "updated_at": "2026-01-16T05:00:57.515455+00:00"
         }
       ]
@@ -416,78 +416,18 @@
   ],
   "technicalNotes": [
     "DailyLog entity already contains all pre-calculated values (totalCaloriesIn, tdee, netCalories, macros, exercise stats, sleep data)",
-    "Follow existing Clean Architecture pattern: Repository → Service → ViewModel → View",
+    "Follow existing Clean Architecture pattern: Repository \u2192 Service \u2192 ViewModel \u2192 View",
     "Use existing SleepStatus enum for sleep quality display",
     "Existing MetabolismViewModel can be kept for BMR/TDEE card, but primary data comes from DailyLog",
     "Date navigation should use DateUtils for consistent date handling (02:00 boundary)",
     "Korean localization required for all user-facing strings"
   ],
   "qaSignOff": {
-    "status": "approved",
-    "timestamp": "2026-01-16T05:15:00Z",
-    "qa_session": 3,
-    "report_file": "qa_report.md",
-    "tests_passed": {
-      "unit": "25/25",
-      "integration": "N/A",
-      "e2e": "N/A"
-    },
-    "issues_found": {
-      "critical": 0,
-      "major": 0,
-      "minor": 0
-    },
-    "verified_by": "qa_agent",
-    "acceptance_criteria_met": "8/8",
-    "accessibility_verified": true,
-    "security_verified": true,
-    "pattern_compliance_verified": true,
-    "regression_verified": true
+    "status": "pending",
+    "tests_passed": "",
+    "issues": ""
   },
   "last_updated": "2026-01-16T05:00:57.515462+00:00",
   "stagedAt": "2026-01-16T04:58:09.573Z",
-  "stagedInMainProject": true,
-  "qa_iteration_history": [
-    {
-      "iteration": 1,
-      "status": "error",
-      "timestamp": "2026-01-16T05:07:35.521009+00:00",
-      "issues": [
-        {
-          "title": "QA error",
-          "description": "QA agent did not update implementation_plan.json"
-        }
-      ]
-    },
-    {
-      "iteration": 2,
-      "status": "error",
-      "timestamp": "2026-01-16T05:12:59.822910+00:00",
-      "issues": [
-        {
-          "title": "QA error",
-          "description": "QA agent did not update implementation_plan.json"
-        }
-      ]
-    },
-    {
-      "iteration": 3,
-      "status": "error",
-      "timestamp": "2026-01-16T05:17:02.573392+00:00",
-      "issues": [
-        {
-          "title": "QA error",
-          "description": "QA agent did not update implementation_plan.json"
-        }
-      ]
-    }
-  ],
-  "qa_stats": {
-    "total_iterations": 3,
-    "last_iteration": 3,
-    "last_status": "error",
-    "issues_by_type": {
-      "unknown": 3
-    }
-  }
+  "stagedInMainProject": true
 }
