@@ -55,22 +55,6 @@ final class DIContainer {
         return BodyLocalDataSource(persistenceController: .shared)
     }()
 
-    /// Sleep tracking 로컬 데이터 소스
-    /// 📚 학습 포인트: Lazy Initialization
-    /// 첫 접근 시 한 번만 생성되어 재사용됨
-    /// 💡 Java 비교: @Lazy + @Autowired와 유사
-    lazy var sleepLocalDataSource: SleepLocalDataSource = {
-        return SleepLocalDataSource(persistenceController: .shared)
-    }()
-
-    /// Goal 로컬 데이터 소스
-    /// 📚 학습 포인트: Lazy Initialization
-    /// 첫 접근 시 한 번만 생성되어 재사용됨
-    /// 💡 Java 비교: @Lazy + @Autowired와 유사
-    lazy var goalLocalDataSource: GoalLocalDataSource = {
-        return GoalLocalDataSource(persistenceController: .shared)
-    }()
-
     // TODO: Phase 2에서 추가 예정
     // - NetworkManager
     // - HealthKitManager
@@ -87,26 +71,12 @@ final class DIContainer {
         return BodyRepository(localDataSource: bodyLocalDataSource)
     }()
 
-    /// Sleep tracking 리포지토리
-    /// 📚 학습 포인트: Dependency Injection Chain
-    /// sleepLocalDataSource를 주입받아 생성
-    /// 💡 Java 비교: @Autowired Repository와 유사
-    lazy var sleepRepository: SleepRepositoryProtocol = {
-        return SleepRepository(localDataSource: sleepLocalDataSource)
-    }()
-
-    /// Goal 리포지토리
-    /// 📚 학습 포인트: Dependency Injection Chain
-    /// goalLocalDataSource를 주입받아 생성
-    /// 💡 Java 비교: @Autowired Repository와 유사
-    lazy var goalRepository: GoalRepositoryProtocol = {
-        return GoalRepository(localDataSource: goalLocalDataSource)
-    }()
-
     // TODO: Phase 3에서 추가 예정
     // - UserRepository
     // - FoodRepository
     // - ExerciseRepository
+    // - SleepRepository
+    // - GoalRepository
 
     // MARK: - Use Cases
 
@@ -140,62 +110,6 @@ final class DIContainer {
     /// 💡 Java 비교: @Service with read-only operations
     lazy var fetchBodyTrendsUseCase: FetchBodyTrendsUseCase = {
         return FetchBodyTrendsUseCase(bodyRepository: bodyRepository)
-    }()
-
-    /// Sleep 기록 Use Case
-    /// 📚 학습 포인트: Domain Use Case with Auto Status Calculation
-    /// 수면 시간을 입력받아 상태를 자동 계산하고 저장
-    /// 💡 Java 비교: @Service with business logic
-    lazy var recordSleepUseCase: RecordSleepUseCase = {
-        return RecordSleepUseCase(sleepRepository: sleepRepository)
-    }()
-
-    /// Sleep 히스토리 조회 Use Case
-    /// 📚 학습 포인트: Query Use Case
-    /// 리스트 표시를 위한 수면 기록 조회 및 통계 계산
-    /// 💡 Java 비교: @Service with read-only operations
-    lazy var fetchSleepHistoryUseCase: FetchSleepHistoryUseCase = {
-        return FetchSleepHistoryUseCase(sleepRepository: sleepRepository)
-    }()
-
-    /// Sleep 통계 조회 Use Case
-    /// 📚 학습 포인트: Statistics Use Case
-    /// 차트 및 대시보드 표시를 위한 수면 통계 계산
-    /// 💡 Java 비교: @Service with analytics logic
-    lazy var fetchSleepStatsUseCase: FetchSleepStatsUseCase = {
-        return FetchSleepStatsUseCase(sleepRepository: sleepRepository)
-    }()
-
-    // MARK: - Goal Use Cases
-
-    /// Goal 설정 Use Case
-    /// 📚 학습 포인트: Orchestration Use Case with Dependencies
-    /// 여러 Repository를 조합하여 목표 설정 로직 구현
-    /// 💡 Java 비교: @Service with @Autowired dependencies
-    lazy var setGoalUseCase: SetGoalUseCase = {
-        return SetGoalUseCase(
-            bodyRepository: bodyRepository,
-            goalRepository: goalRepository
-        )
-    }()
-
-    /// Goal 진행상황 조회 Use Case
-    /// 📚 학습 포인트: Query Use Case
-    /// 목표 진행률, 마일스톤, 트렌드 분석 데이터 조회
-    /// 💡 Java 비교: @Service with read-only operations
-    lazy var getGoalProgressUseCase: GetGoalProgressUseCase = {
-        return GetGoalProgressUseCase(
-            goalRepository: goalRepository,
-            bodyRepository: bodyRepository
-        )
-    }()
-
-    /// Goal 업데이트 Use Case
-    /// 📚 학습 포인트: Update Use Case
-    /// 기존 목표 수정 (히스토리 보존)
-    /// 💡 Java 비교: @Service with update operations
-    lazy var updateGoalUseCase: UpdateGoalUseCase = {
-        return UpdateGoalUseCase(goalRepository: goalRepository)
     }()
 
     // TODO: Phase 4에서 추가 예정
@@ -256,112 +170,6 @@ extension DIContainer {
     /// - Returns: 새로운 MetabolismViewModel 인스턴스
     func makeMetabolismViewModel() -> MetabolismViewModel {
         return MetabolismViewModel(bodyRepository: bodyRepository)
-    }
-
-    // MARK: - Sleep ViewModels
-
-    /// SleepInputViewModel 생성
-    /// 📚 학습 포인트: Factory Method Pattern
-    /// - 수면 입력을 위한 ViewModel 생성
-    /// - 의존성 주입을 한 곳에서 관리
-    /// - 기본 수면 시간 설정 가능
-    /// 💡 Java 비교: @Bean 메서드와 유사
-    ///
-    /// - Parameters:
-    ///   - userId: 사용자 ID
-    ///   - defaultHours: 기본 수면 시간 (시간, 기본값: 7)
-    ///   - defaultMinutes: 기본 수면 시간 (분, 기본값: 0)
-    /// - Returns: 새로운 SleepInputViewModel 인스턴스
-    func makeSleepInputViewModel(
-        userId: UUID,
-        defaultHours: Int = 7,
-        defaultMinutes: Int = 0
-    ) -> SleepInputViewModel {
-        return SleepInputViewModel(
-            recordSleepUseCase: recordSleepUseCase,
-            userId: userId,
-            defaultHours: defaultHours,
-            defaultMinutes: defaultMinutes
-        )
-    }
-
-    /// SleepHistoryViewModel 생성
-    /// 📚 학습 포인트: Factory Method Pattern
-    /// - 수면 히스토리 리스트를 위한 ViewModel 생성
-    /// - 의존성 주입을 한 곳에서 관리
-    /// - 기본 조회 모드 설정 가능 (최근 30일)
-    /// 💡 Java 비교: @Bean 메서드와 유사
-    ///
-    /// - Parameter defaultMode: 기본 조회 모드 (기본값: 최근 30일)
-    /// - Returns: 새로운 SleepHistoryViewModel 인스턴스
-    func makeSleepHistoryViewModel(
-        defaultMode: FetchSleepHistoryUseCase.QueryMode = .recent(days: 30)
-    ) -> SleepHistoryViewModel {
-        return SleepHistoryViewModel(
-            fetchSleepHistoryUseCase: fetchSleepHistoryUseCase,
-            sleepRepository: sleepRepository,
-            defaultMode: defaultMode
-        )
-    }
-
-    /// SleepTrendsViewModel 생성
-    /// 📚 학습 포인트: Factory Method Pattern
-    /// - 수면 트렌드 차트를 위한 ViewModel 생성
-    /// - 의존성 주입을 한 곳에서 관리
-    /// - 차트 표시용 통계 데이터 제공
-    /// 💡 Java 비교: @Bean 메서드와 유사
-    ///
-    /// - Returns: 새로운 SleepTrendsViewModel 인스턴스
-    func makeSleepTrendsViewModel() -> SleepTrendsViewModel {
-        return SleepTrendsViewModel(
-            fetchSleepStatsUseCase: fetchSleepStatsUseCase,
-            sleepRepository: sleepRepository
-        )
-    }
-
-    // MARK: - Goal ViewModels
-
-    /// GoalSettingViewModel 생성
-    /// 📚 학습 포인트: Factory Method Pattern
-    /// - 목표 설정 화면용 ViewModel 생성
-    /// - 의존성 주입을 한 곳에서 관리
-    /// 💡 Java 비교: @Bean 메서드와 유사
-    ///
-    /// - Parameter userId: 사용자 ID (목표 소유자)
-    /// - Returns: 새로운 GoalSettingViewModel 인스턴스
-    func makeGoalSettingViewModel(userId: UUID) -> GoalSettingViewModel {
-        return GoalSettingViewModel(
-            setGoalUseCase: setGoalUseCase,
-            userId: userId
-        )
-    }
-
-    /// GoalProgressViewModel 생성
-    /// 📚 학습 포인트: Factory Method Pattern
-    /// - 목표 진행상황 화면용 ViewModel 생성
-    /// - 의존성 주입을 한 곳에서 관리
-    /// 💡 Java 비교: @Bean 메서드와 유사
-    ///
-    /// - Returns: 새로운 GoalProgressViewModel 인스턴스
-    func makeGoalProgressViewModel() -> GoalProgressViewModel {
-        return GoalProgressViewModel(getGoalProgressUseCase: getGoalProgressUseCase)
-    }
-
-    // MARK: - Managers
-
-    /// SleepPromptManager 생성
-    /// 📚 학습 포인트: Manager Factory Method
-    /// - 아침 수면 기록 프롬프트 관리자 생성
-    /// - 의존성 주입을 한 곳에서 관리
-    /// - UserDefaults는 기본값(.standard) 사용
-    /// 💡 Java 비교: @Bean 메서드와 유사
-    ///
-    /// - Returns: 새로운 SleepPromptManager 인스턴스
-    func makeSleepPromptManager() -> SleepPromptManager {
-        return SleepPromptManager(
-            sleepRepository: sleepRepository,
-            userDefaults: .standard
-        )
     }
 
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
