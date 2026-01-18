@@ -10,6 +10,7 @@
 // 💡 Java 비교: Android의 BottomNavigationView와 유사
 
 import SwiftUI
+import HealthKit
 
 // MARK: - Content View
 
@@ -46,15 +47,18 @@ struct ContentView: View {
     // MARK: - Tab Views
 
     private var dashboardTab: some View {
-        // 📚 학습 포인트: tabItem modifier
+        // 📚 학습 포인트: tabItem modifier with HealthKit Integration
         // 탭 바에 표시될 아이콘과 텍스트 정의
-        // TODO: Phase 6 (6.1, 6.2) - DIContainer에서 ViewModel 주입받도록 변경
-        // 현재는 임시로 직접 생성하여 사용
-        let bodyRepository = BodyRepository()
-        let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
+        // 📚 학습 포인트: DIContainer Dependency Injection
+        // DIContainer를 통해 ViewModel 생성 - 테스트 가능하고 유지보수 용이
+        // 💡 Java 비교: @Inject로 주입받는 패턴과 유사
+        let container = DIContainer.shared
+        let metabolismViewModel = container.makeMetabolismViewModel()
+        let healthKitViewModel = container.makeHealthKitSettingsViewModel()
 
         return DashboardView(
             metabolismViewModel: metabolismViewModel,
+            healthKitViewModel: healthKitViewModel,
             onNavigateToBody: {
                 // 📚 학습 포인트: Tab Navigation
                 // 대사율 카드 탭 시 체성분 탭으로 이동
@@ -113,11 +117,20 @@ struct ContentView: View {
     }
 
     private var settingsTab: some View {
-        PlaceholderView(title: "설정", systemImage: "gearshape.fill")
-            .tabItem {
-                Label("설정", systemImage: "gearshape.fill")
-            }
-            .tag(Tab.settings)
+        // 📚 학습 포인트: Settings View with HealthKit Integration
+        // 📚 학습 포인트: DIContainer Service Injection
+        // DIContainer를 통해 HealthKit 서비스 주입 - 단일 인스턴스 재사용
+        // 💡 Java 비교: @Autowired Service와 유사
+        let container = DIContainer.shared
+
+        return SettingsView(
+            authService: container.healthKitAuthorizationService,
+            syncService: container.healthKitSyncService
+        )
+        .tabItem {
+            Label("설정", systemImage: "gearshape.fill")
+        }
+        .tag(Tab.settings)
     }
 }
 

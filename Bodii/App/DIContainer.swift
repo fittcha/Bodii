@@ -10,6 +10,7 @@
 // 💡 Java 비교: Dagger/Hilt의 Component와 유사한 역할
 
 import Foundation
+import HealthKit
 
 // MARK: - DI Container
 
@@ -104,8 +105,82 @@ final class DIContainer {
     }()
 
     // TODO: Phase 2에서 추가 예정
-    // - HealthKitManager
     // - GeminiAPIDataSource
+
+    // MARK: - HealthKit
+
+    /// HealthKit Store
+    ///
+    /// 📚 학습 포인트: Shared HKHealthStore Instance
+    /// - HealthKit의 진입점이 되는 HKHealthStore 인스턴스
+    /// - 모든 HealthKit 서비스에서 공유하여 사용
+    /// - lazy initialization으로 필요할 때만 생성
+    /// 💡 Java 비교: HealthConnectClient와 유사한 역할
+    lazy var healthStore: HKHealthStore = {
+        return HKHealthStore()
+    }()
+
+    /// HealthKit 권한 서비스
+    ///
+    /// 📚 학습 포인트: Authorization Service
+    /// - HealthKit 권한 요청 및 상태 확인
+    /// - 설정 화면에서 사용
+    /// - 모든 HealthKit 작업 전에 권한 확인 필요
+    /// 💡 Java 비교: PermissionManager와 유사
+    lazy var healthKitAuthorizationService: HealthKitAuthorizationService = {
+        return HealthKitAuthorizationService(healthStore: healthStore)
+    }()
+
+    /// HealthKit 읽기 서비스
+    ///
+    /// 📚 학습 포인트: Read Service
+    /// - HealthKit에서 데이터 읽기 (체중, 체지방, 활동 칼로리, 걸음 수, 수면, 운동)
+    /// - DailyLogService에서 걸음 수 동기화에 사용
+    /// - HealthKitSyncService에서 전체 데이터 동기화에 사용
+    /// 💡 Java 비교: Repository의 read 메서드와 유사
+    lazy var healthKitReadService: HealthKitReadService = {
+        return HealthKitReadService(healthStore: healthStore)
+    }()
+
+    /// HealthKit 쓰기 서비스
+    ///
+    /// 📚 학습 포인트: Write Service
+    /// - Bodii 데이터를 HealthKit에 저장 (체중, 체지방, 운동, 섭취 칼로리)
+    /// - 양방향 동기화의 Export 방향 담당
+    /// 💡 Java 비교: Repository의 save 메서드와 유사
+    lazy var healthKitWriteService: HealthKitWriteService = {
+        return HealthKitWriteService(healthStore: healthStore)
+    }()
+
+    /// HealthKit 동기화 서비스
+    ///
+    /// 📚 학습 포인트: Sync Orchestration Service
+    /// - HealthKit ↔ Bodii 양방향 동기화 조정
+    /// - 읽기/쓰기/권한 서비스를 조합하여 전체 동기화 수행
+    /// - 마지막 동기화 시각 추적 (증분 동기화)
+    /// 💡 Java 비교: Service Layer에서 여러 Repository 조정하는 역할
+    lazy var healthKitSyncService: HealthKitSyncService = {
+        return HealthKitSyncService(
+            readService: healthKitReadService,
+            writeService: healthKitWriteService,
+            authService: healthKitAuthorizationService
+        )
+    }()
+
+    /// HealthKit 백그라운드 동기화
+    ///
+    /// 📚 학습 포인트: Background Sync with HKObserverQuery
+    /// - HealthKit 데이터 변경 시 백그라운드에서 자동 동기화
+    /// - HKObserverQuery로 데이터 변경 감지
+    /// - 앱이 닫혀 있어도 동기화 가능
+    /// 💡 Java 비교: WorkManager + Observer Pattern 조합
+    lazy var healthKitBackgroundSync: HealthKitBackgroundSync = {
+        return HealthKitBackgroundSync(
+            healthStore: healthStore,
+            authService: healthKitAuthorizationService,
+            syncService: healthKitSyncService
+        )
+    }()
 
     // MARK: - Repositories
 
@@ -288,6 +363,24 @@ extension DIContainer {
             userBMR: userBMR,
             userTDEE: userTDEE,
             editingExercise: editingExercise
+        )
+    }
+
+    // MARK: - HealthKit ViewModels
+
+    /// HealthKitSettingsViewModel 생성
+    ///
+    /// 📚 학습 포인트: Factory Method for Settings ViewModel
+    /// - HealthKit 설정 화면용 ViewModel 생성
+    /// - 권한 서비스와 동기화 서비스를 주입
+    /// - 테스트 시 Mock 서비스로 교체 가능
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Returns: 새로운 HealthKitSettingsViewModel 인스턴스
+    func makeHealthKitSettingsViewModel() -> HealthKitSettingsViewModel {
+        return HealthKitSettingsViewModel(
+            authService: healthKitAuthorizationService,
+            syncService: healthKitSyncService
         )
     }
 
