@@ -48,9 +48,12 @@ struct ContentView: View {
         // 현재는 임시로 직접 생성하여 사용
         let bodyRepository = BodyRepository()
         let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
+        let goalProgressViewModel = DIContainer.shared.makeGoalProgressViewModel()
 
         return DashboardView(
             metabolismViewModel: metabolismViewModel,
+            goalProgressViewModel: goalProgressViewModel,
+            userId: UserProfile.sample.id,
             onNavigateToBody: {
                 // 📚 학습 포인트: Tab Navigation
                 // 대사율 카드 탭 시 체성분 탭으로 이동
