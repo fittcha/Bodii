@@ -319,16 +319,15 @@ struct DietCommentCard: View {
     }
 
     /// 에러 뷰
-    /// 📚 학습 포인트: Error State UI with Retry
+    /// 📚 학습 포인트: Error State UI with Context-Aware Feedback
+    /// 오프라인, Rate limit, 기타 에러에 따라 다른 UI 표시
     private var errorView: some View {
         VStack(spacing: 20) {
-            // 에러 아이콘
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(.orange)
+            // 에러 아이콘 (에러 종류에 따라 다른 아이콘과 색상)
+            errorIcon
 
-            // 에러 제목
-            Text("코멘트를 불러올 수 없어요")
+            // 에러 제목 (에러 종류에 따라 다른 제목)
+            Text(errorTitle)
                 .font(.headline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
@@ -342,9 +341,9 @@ struct DietCommentCard: View {
                     .lineSpacing(2)
             }
 
-            // 재시도 버튼
-            if let onRetry = onRetry {
-                Button(action: onRetry) {
+            // 재시도 버튼 (Rate limit이 아닐 때만 표시)
+            if shouldShowRetryButton {
+                Button(action: { onRetry?() }) {
                     HStack(spacing: 8) {
                         Image(systemName: "arrow.clockwise")
                             .font(.subheadline)
@@ -368,6 +367,56 @@ struct DietCommentCard: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
         .padding(.horizontal, 20)
+    }
+
+    /// 에러 아이콘 (에러 종류에 따라 다른 아이콘과 색상)
+    private var errorIcon: some View {
+        Group {
+            if isOfflineError {
+                // 오프라인 에러 - 와이파이 slash 아이콘
+                Image(systemName: "wifi.slash")
+                    .font(.system(size: 48))
+                    .foregroundStyle(.orange)
+            } else if isRateLimitError {
+                // Rate limit 에러 - 시계 아이콘
+                Image(systemName: "clock.fill")
+                    .font(.system(size: 48))
+                    .foregroundStyle(.red)
+            } else {
+                // 기타 에러 - 경고 아이콘
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 48))
+                    .foregroundStyle(.orange)
+            }
+        }
+    }
+
+    /// 에러 타이틀 (에러 종류에 따라 다른 제목)
+    private var errorTitle: String {
+        if isOfflineError {
+            return "네트워크 연결 필요"
+        } else if isRateLimitError {
+            return "요청 한도 초과"
+        } else {
+            return "코멘트를 불러올 수 없어요"
+        }
+    }
+
+    /// 오프라인 에러인지 여부
+    private var isOfflineError: Bool {
+        errorMessage?.contains("네트워크 연결") == true ||
+        errorMessage?.contains("오프라인") == true
+    }
+
+    /// Rate limit 에러인지 여부
+    private var isRateLimitError: Bool {
+        errorMessage?.contains("요청 한도") == true ||
+        errorMessage?.contains("한도를 초과") == true
+    }
+
+    /// 재시도 버튼을 표시할지 여부 (Rate limit이 아닐 때만)
+    private var shouldShowRetryButton: Bool {
+        !isRateLimitError && onRetry != nil
     }
 
     /// 빈 상태 뷰
@@ -543,9 +592,9 @@ extension DietCommentCard {
     .background(Color(.systemGroupedBackground))
 }
 
-#Preview("Error State") {
+#Preview("Error State - Generic") {
     DietCommentCard.error(
-        message: "네트워크 연결을 확인해주세요",
+        message: "AI 응답을 처리할 수 없습니다.\n잠시 후 다시 시도해주세요.",
         onDismiss: { print("Dismiss tapped") },
         onRetry: { print("Retry tapped") }
     )
@@ -553,9 +602,19 @@ extension DietCommentCard {
     .background(Color(.systemGroupedBackground))
 }
 
-#Preview("Rate Limit Error") {
+#Preview("Error State - Offline") {
     DietCommentCard.error(
-        message: "API 요청 한도를 초과했습니다.\n5분 후에 다시 시도해주세요.",
+        message: "네트워크 연결을 확인해주세요.\n오프라인 상태에서는 AI 코멘트를 생성할 수 없습니다.",
+        onDismiss: { print("Dismiss tapped") },
+        onRetry: { print("Retry tapped") }
+    )
+    .padding()
+    .background(Color(.systemGroupedBackground))
+}
+
+#Preview("Error State - Rate Limit") {
+    DietCommentCard.error(
+        message: "요청 한도를 초과했습니다.\n약 5분 후에 다시 시도해주세요.",
         onDismiss: { print("Dismiss tapped") },
         onRetry: { print("Retry tapped") }
     )

@@ -143,7 +143,9 @@ struct DietCommentPopupView: View {
             }
         }
         // 에러 알림 (네트워크 에러, Rate limit 등)
-        .alert("오류", isPresented: .constant(viewModel.hasError && !viewModel.isLoading)) {
+        // 📚 학습 포인트: Context-Aware Alert Titles
+        // 에러 종류에 따라 다른 알림 타이틀 표시
+        .alert(alertTitle, isPresented: .constant(viewModel.hasError && !viewModel.isLoading)) {
             // 확인 버튼
             Button("확인") {
                 viewModel.clearError()
@@ -165,6 +167,28 @@ struct DietCommentPopupView: View {
     }
 
     // MARK: - Subviews
+
+    /// 알림 타이틀 (에러 종류에 따라 다른 제목)
+    ///
+    /// 에러 메시지를 분석하여 적절한 알림 제목을 반환합니다.
+    /// - 오프라인 에러: "네트워크 연결 필요"
+    /// - Rate limit 에러: "요청 한도 초과"
+    /// - 기타 에러: "오류"
+    private var alertTitle: String {
+        if isOfflineError {
+            return "네트워크 연결 필요"
+        } else if viewModel.isRateLimited {
+            return "요청 한도 초과"
+        } else {
+            return "오류"
+        }
+    }
+
+    /// 오프라인 에러인지 여부
+    private var isOfflineError: Bool {
+        viewModel.errorMessage?.contains("네트워크 연결") == true ||
+        viewModel.errorMessage?.contains("오프라인") == true
+    }
 
     /// 저장 버튼 섹션
     ///
