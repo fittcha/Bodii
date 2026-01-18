@@ -71,12 +71,58 @@ final class DIContainer {
         return BodyRepository(localDataSource: bodyLocalDataSource)
     }()
 
+    /// Food Repository
+    /// 📚 학습 포인트: Protocol Type
+    /// 프로토콜 타입으로 선언하여 구현 교체 가능 (테스트용 Mock 등)
+    /// 💡 Java 비교: Interface 타입 필드와 동일
+    lazy var foodRepository: FoodRepositoryProtocol = {
+        FoodRepository(context: PersistenceController.shared.viewContext)
+    }()
+
+    /// FoodRecord Repository
+    lazy var foodRecordRepository: FoodRecordRepositoryProtocol = {
+        FoodRecordRepository(context: PersistenceController.shared.viewContext)
+    }()
+
+    /// DailyLog Repository
+    lazy var dailyLogRepository: DailyLogRepositoryProtocol = {
+        DailyLogRepository(context: PersistenceController.shared.viewContext)
+    }()
+
     // TODO: Phase 3에서 추가 예정
     // - UserRepository
-    // - FoodRepository
     // - ExerciseRepository
     // - SleepRepository
     // - GoalRepository
+
+    // MARK: - Domain Services
+
+    /// FoodRecord Service
+    /// 📚 학습 포인트: Service Layer
+    /// 여러 Repository를 조합하여 비즈니스 로직을 처리
+    /// 💡 Java 비교: @Service 어노테이션이 붙은 서비스 클래스와 유사
+    lazy var foodRecordService: FoodRecordServiceProtocol = {
+        FoodRecordService(
+            foodRecordRepository: foodRecordRepository,
+            dailyLogRepository: dailyLogRepository,
+            foodRepository: foodRepository
+        )
+    }()
+
+    /// Food Search Service
+    lazy var foodSearchService: FoodSearchServiceProtocol = {
+        LocalFoodSearchService(foodRepository: foodRepository)
+    }()
+
+    /// Recent Foods Service
+    lazy var recentFoodsService: RecentFoodsServiceProtocol = {
+        RecentFoodsService(
+            foodRepository: foodRepository,
+            maxRecentFoods: 10,
+            maxFrequentFoods: 10,
+            maxQuickAddFoods: 15
+        )
+    }()
 
     // MARK: - Use Cases
 
@@ -113,7 +159,6 @@ final class DIContainer {
     }()
 
     // TODO: Phase 4에서 추가 예정
-    // - SearchFoodUseCase
     // - LogExerciseUseCase
     // - etc.
 }
@@ -172,10 +217,66 @@ extension DIContainer {
         return MetabolismViewModel(bodyRepository: bodyRepository)
     }
 
+    // MARK: - Diet/Food ViewModels
+
+    /// DailyMealViewModel 생성
+    /// - Returns: DailyMealViewModel 인스턴스
+    func makeDailyMealViewModel() -> DailyMealViewModel {
+        DailyMealViewModel(
+            foodRecordService: foodRecordService,
+            dailyLogRepository: dailyLogRepository
+        )
+    }
+
+    /// FoodSearchViewModel 생성
+    /// - Returns: FoodSearchViewModel 인스턴스
+    func makeFoodSearchViewModel() -> FoodSearchViewModel {
+        FoodSearchViewModel(
+            foodSearchService: foodSearchService,
+            recentFoodsService: recentFoodsService
+        )
+    }
+
+    /// FoodDetailViewModel 생성
+    /// - Parameters:
+    ///   - foodId: 음식 ID
+    ///   - selectedDate: 선택된 날짜
+    ///   - selectedMealType: 선택된 식사 유형
+    /// - Returns: FoodDetailViewModel 인스턴스
+    func makeFoodDetailViewModel(
+        foodId: UUID,
+        selectedDate: Date,
+        selectedMealType: MealType
+    ) -> FoodDetailViewModel {
+        FoodDetailViewModel(
+            foodId: foodId,
+            selectedDate: selectedDate,
+            selectedMealType: selectedMealType,
+            foodRepository: foodRepository,
+            foodRecordService: foodRecordService
+        )
+    }
+
+    /// ManualFoodEntryViewModel 생성
+    /// - Parameters:
+    ///   - selectedDate: 선택된 날짜
+    ///   - selectedMealType: 선택된 식사 유형
+    /// - Returns: ManualFoodEntryViewModel 인스턴스
+    func makeManualFoodEntryViewModel(
+        selectedDate: Date,
+        selectedMealType: MealType
+    ) -> ManualFoodEntryViewModel {
+        ManualFoodEntryViewModel(
+            selectedDate: selectedDate,
+            selectedMealType: selectedMealType,
+            foodRepository: foodRepository,
+            foodRecordService: foodRecordService
+        )
+    }
+
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel
     // func makeDashboardViewModel() -> DashboardViewModel
-    // func makeFoodLogViewModel() -> FoodLogViewModel
 }
 
 // MARK: - Testing Support

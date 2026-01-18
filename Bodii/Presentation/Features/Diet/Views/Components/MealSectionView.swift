@@ -51,9 +51,6 @@ struct MealSectionView: View {
     /// 음식 수정 액션
     let onEditFood: (UUID) -> Void
 
-    /// AI 코멘트 보기 액션 (Optional)
-    let onGetAIComment: (() -> Void)?
-
     // MARK: - Body
 
     var body: some View {
@@ -90,7 +87,7 @@ struct MealSectionView: View {
 
     /// 헤더 뷰
     ///
-    /// 끼니 이름, 총 칼로리, AI 코멘트 버튼, 음식 추가 버튼을 표시합니다.
+    /// 끼니 이름, 총 칼로리, 음식 추가 버튼을 표시합니다.
     private var headerView: some View {
         HStack {
             // 끼니 이름
@@ -105,32 +102,6 @@ struct MealSectionView: View {
                 Text("\(totalCalories) kcal")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
-            }
-
-            // AI 코멘트 버튼 (끼니에 음식이 있을 때만 표시)
-            if !meals.isEmpty, let onGetAIComment = onGetAIComment {
-                Button(action: onGetAIComment) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "sparkles")
-                            .font(.caption)
-                        Text("AI")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.purple, Color.purple.opacity(0.8)]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .cornerRadius(8)
-                }
-                .accessibilityLabel("\(mealType.displayName) AI 코멘트 보기")
-                .accessibilityHint("AI가 이 끼니의 영양 평가를 제공합니다")
             }
 
             // 음식 추가 버튼
@@ -174,8 +145,7 @@ struct MealSectionView: View {
             totalCalories: 0,
             onAddFood: { print("Add food") },
             onDeleteFood: { _ in print("Delete food") },
-            onEditFood: { _ in print("Edit food") },
-            onGetAIComment: nil
+            onEditFood: { _ in print("Edit food") }
         )
         .padding()
 
@@ -224,8 +194,7 @@ struct MealSectionView: View {
             totalCalories: 330,
             onAddFood: { print("Add food") },
             onDeleteFood: { _ in print("Delete food") },
-            onEditFood: { _ in print("Edit food") },
-            onGetAIComment: { print("Get AI comment") }
+            onEditFood: { _ in print("Edit food") }
         )
         .padding()
     }

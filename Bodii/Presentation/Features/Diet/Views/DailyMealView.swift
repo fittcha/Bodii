@@ -126,9 +126,6 @@ struct DailyMealView: View {
                                 onEditFood: { foodRecordId in
                                     // TODO: Phase 5에서 식단 수정 화면 구현
                                     print("Edit food record: \(foodRecordId)")
-                                },
-                                onGetAIComment: {
-                                    viewModel.showAIComment(for: mealType)
                                 }
                             )
                             .padding(.horizontal)
@@ -176,16 +173,6 @@ struct DailyMealView: View {
         }
         .successToast(message: $successToastMessage)
         .infoToast(message: $infoToastMessage)
-        .sheet(isPresented: $viewModel.showAICommentSheet) {
-            // AI 코멘트 팝업
-            if let dietCommentViewModel = viewModel.dietCommentViewModel {
-                DietCommentPopupView(
-                    viewModel: dietCommentViewModel,
-                    date: viewModel.selectedDate,
-                    mealType: viewModel.selectedMealTypeForComment
-                )
-            }
-        }
         .onAppear {
             viewModel.onAppear(userId: userId, bmr: bmr, tdee: tdee)
         }
