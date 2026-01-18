@@ -1,0 +1,57 @@
+{
+  "spec_id": "007-exercise-tracking-with-met-calculations",
+  "discoveries": [
+    {
+      "file_path": "Bodii/Shared/Enums/ExerciseType.swift",
+      "description": "ExerciseType enum already has baseMET values and metValue(for:) method implemented",
+      "category": "existing_implementation"
+    },
+    {
+      "file_path": "Bodii/Shared/Enums/Intensity.swift",
+      "description": "Intensity enum has metMultiplier property (0.8, 1.0, 1.2)",
+      "category": "existing_implementation"
+    },
+    {
+      "file_path": "Bodii/Domain/Entities/ExerciseRecord.swift",
+      "description": "Domain entity for exercise with all required fields including note field for custom data",
+      "category": "existing_implementation"
+    },
+    {
+      "file_path": "Bodii/Domain/Entities/DailyLog.swift",
+      "description": "DailyLog has totalCaloriesOut, exerciseMinutes, exerciseCount fields for exercise tracking",
+      "category": "existing_implementation"
+    },
+    {
+      "file_path": "Bodii/Infrastructure/Persistence/Bodii.xcdatamodeld",
+      "description": "Core Data model has ExerciseRecord entity with all attributes defined",
+      "category": "existing_implementation"
+    }
+  ],
+  "gotchas": [
+    {
+      "gotcha": "ExerciseType.metValue(for:) takes Int16 intensity value, not Intensity enum directly",
+      "context": "When using ExerciseType.metValue(), pass intensity.rawValue"
+    },
+    {
+      "gotcha": "Duration is stored as Int32 in minutes, need to convert to hours for MET calculation",
+      "context": "MET formula uses hours: calories = MET × weight × (minutes/60)"
+    },
+    {
+      "gotcha": "DailyLog updates must happen atomically with ExerciseRecord changes",
+      "context": "Use a single Core Data context transaction for both updates"
+    }
+  ],
+  "patterns": [
+    {
+      "name": "Repository Pattern",
+      "description": "Use repository classes for Core Data operations, keeping domain layer clean",
+      "example": "ExerciseRecordRepository handles NSManagedObject conversions"
+    },
+    {
+      "name": "Cascade Update Pattern",
+      "description": "Service layer triggers DailyLog updates when child records change",
+      "example": "ExerciseRecordService.addExercise() also updates DailyLog.totalCaloriesOut"
+    }
+  ],
+  "last_updated": "2026-01-13"
+}
