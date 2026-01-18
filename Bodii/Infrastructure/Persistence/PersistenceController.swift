@@ -145,7 +145,7 @@ final class PersistenceController {
             // 📚 학습 포인트: Relationship 설정
             // BodyRecord와 MetabolismSnapshot을 1:1 관계로 연결
             // Core Data의 relationship은 양방향으로 자동 설정됨
-            bodyRecord.metabolism = metabolismSnapshot
+            bodyRecord.metabolismSnapshot = metabolismSnapshot
             metabolismSnapshot.bodyRecord = bodyRecord
         }
 

@@ -76,6 +76,7 @@ struct SleepStatusBadge: View {
             case .compact: return 6
             case .default: return 8
             case .large: return 12
+            }
         }
 
         /// 아이콘과 텍스트 간격

@@ -37,8 +37,29 @@ protocol APIConfigProtocol {
     /// Google Gemini API 키
     var geminiAPIKey: String { get }
 
+    /// Google Cloud Vision API 기본 URL
+    var visionBaseURL: String { get }
+
+    /// Google Cloud Vision API 키
+    var visionAPIKey: String { get }
+
     /// 현재 환경 (개발/프로덕션)
     var environment: APIEnvironment { get }
+
+    /// Vision API URL 생성
+    func buildVisionURL(endpoint: VisionEndpoint) -> URL?
+}
+
+/// Vision API 엔드포인트
+enum VisionEndpoint {
+    case annotate
+
+    var path: String {
+        switch self {
+        case .annotate:
+            return "/images:annotate"
+        }
+    }
 }
 
 // MARK: - API Environment
@@ -264,6 +285,42 @@ final class APIConfig: APIConfigProtocol {
         // 개발 환경에서도 Gemini는 실제 키 필요 (DEMO_KEY 미제공)
         if environment == .development {
             assertionFailure("⚠️ Gemini API 키가 Info.plist 또는 환경 변수에 설정되지 않았습니다!")
+        }
+
+        return ""
+    }
+
+    // MARK: - Vision API Configuration
+
+    /// Google Cloud Vision API 기본 URL
+    ///
+    /// Google Cloud Vision API
+    ///
+    /// - API 문서: https://cloud.google.com/vision/docs/reference/rest
+    /// - Free Tier: 1,000 requests/month
+    var visionBaseURL: String {
+        return "https://vision.googleapis.com/v1"
+    }
+
+    /// Google Cloud Vision API 키
+    ///
+    /// - Returns: API 키 문자열 (없으면 빈 문자열)
+    var visionAPIKey: String {
+        // Info.plist에서 키 읽기
+        if let apiKey = Bundle.main.object(forInfoDictionaryKey: "VISION_API_KEY") as? String,
+           !apiKey.isEmpty {
+            return apiKey
+        }
+
+        // 프로세스 환경 변수에서 키 읽기 (CI/CD용)
+        if let envKey = ProcessInfo.processInfo.environment["VISION_API_KEY"],
+           !envKey.isEmpty {
+            return envKey
+        }
+
+        // 개발 환경에서도 Vision API는 실제 키 필요
+        if environment == .development {
+            assertionFailure("⚠️ Vision API 키가 Info.plist 또는 환경 변수에 설정되지 않았습니다!")
         }
 
         return ""
@@ -521,6 +578,25 @@ extension APIConfig {
 
         return components?.url
     }
+
+    /// Vision API URL 생성 헬퍼
+    ///
+    /// 📚 학습 포인트: Vision API URL Building
+    /// Google Cloud Vision API는 API 키를 쿼리 파라미터로 전달
+    ///
+    /// - Parameter endpoint: Vision 엔드포인트
+    ///
+    /// - Returns: 완성된 URL (API 키 포함)
+    func buildVisionURL(endpoint: VisionEndpoint) -> URL? {
+        var components = URLComponents(string: visionBaseURL + endpoint.path)
+
+        // API 키 추가 (Vision API는 쿼리 파라미터로 키 전달)
+        components?.queryItems = [
+            URLQueryItem(name: "key", value: visionAPIKey)
+        ]
+
+        return components?.url
+    }
 }
 
 // MARK: - Testing Support
@@ -538,6 +614,8 @@ final class MockAPIConfig: APIConfigProtocol {
     var usdaAPIKey: String
     var geminiBaseURL: String
     var geminiAPIKey: String
+    var visionBaseURL: String
+    var visionAPIKey: String
     var environment: APIEnvironment
 
     init(
@@ -547,6 +625,8 @@ final class MockAPIConfig: APIConfigProtocol {
         usdaAPIKey: String = "MOCK_USDA_KEY",
         geminiBaseURL: String = "https://mock.gemini.api",
         geminiAPIKey: String = "MOCK_GEMINI_KEY",
+        visionBaseURL: String = "https://mock.vision.api",
+        visionAPIKey: String = "MOCK_VISION_KEY",
         environment: APIEnvironment = .development
     ) {
         self.kfdaBaseURL = kfdaBaseURL
@@ -555,7 +635,17 @@ final class MockAPIConfig: APIConfigProtocol {
         self.usdaAPIKey = usdaAPIKey
         self.geminiBaseURL = geminiBaseURL
         self.geminiAPIKey = geminiAPIKey
+        self.visionBaseURL = visionBaseURL
+        self.visionAPIKey = visionAPIKey
         self.environment = environment
+    }
+
+    func buildVisionURL(endpoint: VisionEndpoint) -> URL? {
+        var components = URLComponents(string: visionBaseURL + endpoint.path)
+        components?.queryItems = [
+            URLQueryItem(name: "key", value: visionAPIKey)
+        ]
+        return components?.url
     }
 }
 #endif

@@ -342,7 +342,7 @@ struct BodyRecordDetailView: View {
                 Spacer()
 
                 // 활동 계수 표시
-                Text("\(String(format: "%.2f", metabolism.activityLevel.multiplier))x")
+                Text("\(String(format: "%.2f", metabolism.activityLevel.tdeeMultiplier))x")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundStyle(.purple)
@@ -734,7 +734,7 @@ struct BodyRecordDetailView: View {
     ///
     /// - Parameter change: 변화량
     /// - Returns: 뱃지 뷰
-    private func changeB adge(change: Decimal) -> some View {
+    private func changeBadge(change: Decimal) -> some View {
         HStack(spacing: 4) {
             Image(systemName: change > 0 ? "arrow.up" : (change < 0 ? "arrow.down" : "minus"))
                 .font(.caption2)

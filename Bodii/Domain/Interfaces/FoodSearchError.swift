@@ -528,7 +528,7 @@ extension FoodSearchError {
     ///     throw FoodSearchError.from(networkError: error)
     /// }
     /// ```
-    public static func from(networkError: NetworkError) -> FoodSearchError {
+    static func from(networkError: NetworkError) -> FoodSearchError {
         switch networkError {
         case .invalidURL:
             return .parsingError("잘못된 URL입니다")
