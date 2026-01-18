@@ -45,6 +45,24 @@ final class DIContainer {
     /// Persistence Controller (Core Data)
     /// ⚠️ 주의: PersistenceController는 별도로 shared 인스턴스 관리
 
+    // MARK: - Infrastructure
+
+    /// 네트워크 매니저
+    /// 📚 학습 포인트: Network Layer
+    /// 모든 HTTP 요청을 처리하는 중앙화된 네트워크 레이어
+    /// 💡 Java 비교: Retrofit, OkHttp와 유사
+    lazy var networkManager: NetworkManager = {
+        return NetworkManager(timeout: 30, maxRetries: 2)
+    }()
+
+    /// API 설정
+    /// 📚 학습 포인트: Configuration Singleton
+    /// API 엔드포인트 및 인증 키 관리
+    /// 💡 Java 비교: @Configuration 클래스와 유사
+    var apiConfig: APIConfigProtocol {
+        return APIConfig.shared
+    }
+
     // MARK: - Data Sources
 
     /// Body composition 로컬 데이터 소스
@@ -71,11 +89,28 @@ final class DIContainer {
         return DailyLogLocalDataSource(context: PersistenceController.shared.viewContext)
     }()
 
+    /// 통합 음식 검색 서비스 (KFDA + USDA)
+    /// 📚 학습 포인트: Unified Search Service
+    /// 여러 데이터 소스를 통합하여 검색하는 서비스
+    /// 💡 Java 비교: Facade pattern으로 여러 API를 통합
+    lazy var unifiedFoodSearchService: UnifiedFoodSearchService = {
+        return UnifiedFoodSearchService()
+    }()
+
+    /// Vision API 서비스
+    /// 📚 학습 포인트: AI Service Integration
+    /// Google Cloud Vision API를 사용하여 음식 사진 분석
+    /// 💡 Java 비교: External API Client Service
+    lazy var visionAPIService: VisionAPIServiceProtocol = {
+        return VisionAPIService(
+            networkManager: networkManager,
+            apiConfig: apiConfig,
+            usageTracker: VisionAPIUsageTracker.shared
+        )
+    }()
+
     // TODO: Phase 2에서 추가 예정
-    // - NetworkManager
     // - HealthKitManager
-    // - FoodAPIDataSource
-    // - GeminiAPIDataSource
 
     // MARK: - Repositories
 
@@ -240,6 +275,20 @@ final class DIContainer {
     // TODO: Phase 4에서 추가 예정
     // - LogExerciseUseCase
     // - etc.
+
+    // MARK: - Domain Services
+
+    /// 음식 라벨 매칭 서비스
+    /// 📚 학습 포인트: AI Label Matching Service
+    /// Vision API 라벨을 음식 데이터베이스와 매칭하는 서비스
+    /// 💡 Java 비교: Business Logic Service with translation
+    lazy var foodLabelMatcherService: FoodLabelMatcherServiceProtocol = {
+        return FoodLabelMatcherService(
+            unifiedSearchService: unifiedFoodSearchService,
+            maxAlternatives: 3,
+            minConfidence: 0.3
+        )
+    }()
 }
 
 // MARK: - Factory Methods
@@ -469,6 +518,29 @@ extension DIContainer {
         return DashboardViewModel(
             dailyLogRepository: dailyLogRepository,
             userId: userId
+        )
+    }
+
+    // MARK: - Photo Recognition ViewModels
+
+    /// PhotoRecognitionViewModel 생성
+    /// 📚 학습 포인트: Complex ViewModel Factory
+    /// - AI 사진 인식 워크플로우를 위한 ViewModel 생성
+    /// - 여러 서비스의 의존성을 조합하여 주입
+    /// - Vision API, 음식 매칭, 식단 기록 서비스 통합
+    /// 💡 Java 비교: @Bean 메서드로 복잡한 의존성 그래프 관리
+    ///
+    /// - Parameters:
+    ///   - foodRecordService: 식단 기록 서비스 (외부에서 주입, Core Data 컨텍스트 공유를 위해)
+    /// - Returns: 새로운 PhotoRecognitionViewModel 인스턴스
+    func makePhotoRecognitionViewModel(
+        foodRecordService: FoodRecordServiceProtocol
+    ) -> PhotoRecognitionViewModel {
+        return PhotoRecognitionViewModel(
+            visionAPIService: visionAPIService,
+            foodLabelMatcher: foodLabelMatcherService,
+            foodRecordService: foodRecordService,
+            usageTracker: VisionAPIUsageTracker.shared
         )
     }
 
