@@ -99,6 +99,18 @@ final class DailyLogRepositoryImpl: DailyLogRepository {
         return try await localDataSource.fetch(for: date, userId: userId)
     }
 
+    /// 오늘 날짜의 DailyLog를 조회합니다.
+    ///
+    /// 대시보드에서 사용하는 단일 진입점으로, 오늘 날짜의 DailyLog를 반환합니다.
+    /// DailyLog에는 모든 사전 계산된 값(칼로리, 매크로, 운동, 수면 등)이 포함되어 있습니다.
+    ///
+    /// - Parameter userId: 사용자 ID
+    /// - Throws: 조회 실패 시 에러
+    /// - Returns: 조회된 DailyLog, 없으면 nil
+    func fetchCurrentDay(userId: UUID) async throws -> DailyLog? {
+        return try await localDataSource.fetchCurrentDay(userId: userId)
+    }
+
     // MARK: - Update
 
     /// DailyLog를 업데이트합니다.
