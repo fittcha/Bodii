@@ -117,8 +117,34 @@ final class DIContainer {
         return GoalLocalDataSource(persistenceController: .shared)
     }()
 
+    /// Gemini API 서비스
+    /// 📚 학습 포인트: AI API Service with Rate Limiting
+    /// Gemini AI API 호출을 담당하는 데이터 소스
+    /// 💡 Java 비교: Retrofit Service Interface와 유사
+    lazy var geminiAPIService: GeminiAPIService = {
+        return GeminiAPIService()
+    }()
+
+    /// Diet comment 캐시
+    /// 📚 학습 포인트: Actor-based In-Memory Cache
+    /// AI 코멘트를 캐싱하여 중복 API 호출 방지
+    /// 💡 Java 비교: Caffeine Cache와 유사
+    lazy var dietCommentCache: DietCommentCache = {
+        return DietCommentCache()
+    }()
+
     // TODO: Phase 2에서 추가 예정
     // - HealthKitManager
+
+    // MARK: - Services
+
+    /// Gemini AI 서비스
+    /// 📚 학습 포인트: Domain Service Layer
+    /// AI 식단 코멘트 생성을 담당하는 도메인 서비스
+    /// 💡 Java 비교: @Service 클래스와 유사
+    lazy var geminiService: GeminiServiceProtocol = {
+        return GeminiService(geminiAPIService: geminiAPIService)
+    }()
 
     // MARK: - Repositories
 
@@ -149,6 +175,18 @@ final class DIContainer {
     /// FoodRecord Repository
     lazy var foodRecordRepository: FoodRecordRepositoryProtocol = {
         FoodRecordRepository(context: PersistenceController.shared.viewContext)
+    }()
+
+    /// Diet comment 리포지토리
+    /// 📚 학습 포인트: AI Service Repository
+    /// AI 코멘트 생성 및 캐싱을 조정하는 리포지토리
+    /// 💡 Java 비교: @Repository with @Service dependencies
+    lazy var dietCommentRepository: DietCommentRepository = {
+        return DietCommentRepositoryImpl(
+            geminiService: geminiService,
+            cache: dietCommentCache,
+            foodRecordRepository: foodRecordRepository
+        )
     }()
 
     /// DailyLog Repository (for unified dashboard)
@@ -315,6 +353,18 @@ final class DIContainer {
     /// 💡 Java 비교: @Service with update operations
     lazy var updateGoalUseCase: UpdateGoalUseCase = {
         return UpdateGoalUseCase(goalRepository: goalRepository)
+    }()
+
+    /// AI 식단 코멘트 생성 Use Case
+    /// 📚 학습 포인트: Orchestration Use Case with AI Service
+    /// AI 코멘트 생성, 캐싱, 에러 처리를 조정하는 유스케이스
+    /// 💡 Java 비교: @Service with multiple repository dependencies
+    lazy var generateDietCommentUseCase: GenerateDietCommentUseCase = {
+        return GenerateDietCommentUseCase(
+            dietCommentRepository: dietCommentRepository,
+            geminiService: geminiService,
+            foodRecordRepository: foodRecordRepository
+        )
     }()
 
     // TODO: Phase 4에서 추가 예정
@@ -615,6 +665,32 @@ extension DIContainer {
     /// - Returns: 새로운 GoalProgressViewModel 인스턴스
     func makeGoalProgressViewModel() -> GoalProgressViewModel {
         return GoalProgressViewModel(getGoalProgressUseCase: getGoalProgressUseCase)
+    }
+
+    // MARK: - Diet Comment ViewModels
+
+    /// DietCommentViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - AI 식단 코멘트 표시를 위한 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - goalType: 목표 타입 (감량/유지/증량)
+    ///   - tdee: 총 일일 에너지 소비량
+    /// - Returns: 새로운 DietCommentViewModel 인스턴스
+    func makeDietCommentViewModel(
+        userId: UUID,
+        goalType: GoalType,
+        tdee: Int
+    ) -> DietCommentViewModel {
+        return DietCommentViewModel(
+            generateCommentUseCase: generateDietCommentUseCase,
+            userId: userId,
+            userGoalType: goalType,
+            userTDEE: tdee
+        )
     }
 
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
