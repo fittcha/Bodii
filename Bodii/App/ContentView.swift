@@ -23,18 +23,6 @@ struct ContentView: View {
     // 탭 선택 상태를 추적하여 현재 활성 탭을 기억
     @State private var selectedTab: Tab = .dashboard
 
-    // 📚 학습 포인트: @StateObject for Sleep Prompt Manager
-    // 수면 기록 프롬프트 관리자
-    // View의 생명주기 동안 유지되는 ObservableObject
-    // 💡 Java 비교: ViewModel과 유사한 역할
-    @StateObject private var sleepPromptManager = DIContainer.shared.makeSleepPromptManager()
-
-    // 📚 학습 포인트: @Environment(\.scenePhase)
-    // 앱의 생명주기 상태를 추적 (active, inactive, background)
-    // 앱이 포그라운드로 돌아올 때 수면 프롬프트 체크
-    // 💡 Java 비교: Android의 Lifecycle.State와 유사
-    @Environment(\.scenePhase) private var scenePhase
-
     // MARK: - Body
 
     var body: some View {
@@ -49,52 +37,6 @@ struct ContentView: View {
             sleepTab
             settingsTab
         }
-        // 📚 학습 포인트: Sheet Presentation for Sleep Prompt
-        // 아침 수면 기록 프롬프트를 모달 시트로 표시
-        // shouldShowPrompt가 true일 때 자동으로 표시됨
-        // 💡 Java 비교: BottomSheetDialog 표시와 유사
-        .sheet(isPresented: $sleepPromptManager.shouldShowPrompt) {
-            // 📚 학습 포인트: Sleep Input Sheet Integration
-            // DIContainer를 통해 ViewModel 생성하고 주입
-            // TODO: Phase 7 - UserProfile.sample 대신 실제 사용자 데이터 사용
-            let viewModel = DIContainer.shared.makeSleepInputViewModel(
-                userId: UserProfile.sample.id,
-                defaultHours: 7,
-                defaultMinutes: 0
-            )
-
-            SleepInputSheet(
-                viewModel: viewModel,
-                canSkip: !sleepPromptManager.isForceEntry,
-                onSkip: {
-                    // 📚 학습 포인트: Skip Count Management
-                    // 사용자가 건너뛰기를 선택하면 횟수 증가
-                    // 3회 건너뛰기 후 강제 입력 모드 활성화
-                    sleepPromptManager.incrementSkipCount()
-                }
-            )
-        }
-        // 📚 학습 포인트: onAppear Lifecycle Hook
-        // View가 처음 나타날 때 수면 프롬프트 체크
-        // 💡 Java 비교: onCreate() 또는 onResume()과 유사
-        .onAppear {
-            Task {
-                await sleepPromptManager.checkShouldShow()
-            }
-        }
-        // 📚 학습 포인트: Scene Phase Observer
-        // 앱이 백그라운드에서 포그라운드로 돌아올 때 체크
-        // active 상태가 되면 수면 프롬프트를 다시 확인
-        // 💡 Java 비교: onResume() 라이프사이클 콜백과 유사
-        .onChange(of: scenePhase) { oldPhase, newPhase in
-            if newPhase == .active {
-                // 📚 학습 포인트: Async Task in onChange
-                // 앱이 활성화될 때마다 프롬프트 조건 재확인
-                Task {
-                    await sleepPromptManager.checkShouldShow()
-                }
-            }
-        }
     }
 
     // MARK: - Tab Views
@@ -106,23 +48,13 @@ struct ContentView: View {
         // 현재는 임시로 직접 생성하여 사용
         let bodyRepository = BodyRepository()
         let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
-        let sleepRepository = DIContainer.shared.sleepRepository
-        let goalProgressViewModel = DIContainer.shared.makeGoalProgressViewModel()
 
         return DashboardView(
             metabolismViewModel: metabolismViewModel,
-            sleepRepository: sleepRepository,
-            goalProgressViewModel: goalProgressViewModel,
-            userId: UserProfile.sample.id,
             onNavigateToBody: {
                 // 📚 학습 포인트: Tab Navigation
                 // 대사율 카드 탭 시 체성분 탭으로 이동
                 selectedTab = .body
-            },
-            onNavigateToSleep: {
-                // 📚 학습 포인트: Tab Navigation
-                // 수면 카드 탭 시 수면 탭으로 이동
-                selectedTab = .sleep
             }
         )
         .tabItem {
@@ -164,11 +96,7 @@ struct ContentView: View {
     }
 
     private var sleepTab: some View {
-        // 📚 학습 포인트: Sleep Container View
-        // SleepTabView는 자체적으로 NavigationStack을 포함하고 있음
-        // DIContainer를 통해 ViewModel 생성 및 의존성 주입
-        // 💡 Java 비교: Android의 Fragment Container와 유사
-        SleepTabView(container: DIContainer.shared)
+        PlaceholderView(title: "수면", systemImage: "moon.zzz.fill")
             .tabItem {
                 Label("수면", systemImage: "moon.zzz.fill")
             }
