@@ -285,6 +285,31 @@ enum ValidationService {
         return .success
     }
 
+    /// Validates exercise intensity value
+    ///
+    /// 운동 강도 값을 검증합니다.
+    ///
+    /// **Validation Rule**: Must be 0 (low), 1 (medium), or 2 (high)
+    ///
+    /// - Parameter intensityRawValue: Raw value of Intensity enum (Int16)
+    /// - Returns: ValidationResult indicating success or failure with error message
+    ///
+    /// Example:
+    /// ```swift
+    /// let result1 = ValidationService.validateExerciseIntensity(1)
+    /// // Returns: .success
+    ///
+    /// let result2 = ValidationService.validateExerciseIntensity(5)
+    /// // Returns: .failure("올바른 운동 강도를 선택해주세요")
+    /// ```
+    static func validateExerciseIntensity(_ intensityRawValue: Int16) -> ValidationResult {
+        guard Intensity(rawValue: intensityRawValue) != nil else {
+            return .failure("올바른 운동 강도를 선택해주세요")
+        }
+
+        return .success
+    }
+
     /// Checks if exercise duration is excessive (requires user confirmation)
     ///
     /// 운동 시간이 과도한지 확인합니다 (사용자 확인 필요).

@@ -23,6 +23,10 @@ struct ContentView: View {
     // 탭 선택 상태를 추적하여 현재 활성 탭을 기억
     @State private var selectedTab: Tab = .dashboard
 
+    // TODO: 실제 사용자 인증 구현 후 AuthenticationService에서 가져오기
+    // 현재는 개발용 임시 사용자 ID 사용
+    private let userId = UUID()
+
     // MARK: - Body
 
     var body: some View {
@@ -88,11 +92,16 @@ struct ContentView: View {
     }
 
     private var exerciseTab: some View {
-        PlaceholderView(title: "운동", systemImage: "figure.run")
-            .tabItem {
-                Label("운동", systemImage: "figure.run")
-            }
-            .tag(Tab.exercise)
+        // 📚 학습 포인트: DIContainer를 통한 의존성 주입
+        // Factory Method 패턴으로 복잡한 의존성 그래프 캡슐화
+        // 💡 Java 비교: Dagger/Hilt의 @Inject와 유사한 개념
+        ExerciseListView(
+            viewModel: DIContainer.shared.makeExerciseListViewModel(userId: userId)
+        )
+        .tabItem {
+            Label("운동", systemImage: "figure.run")
+        }
+        .tag(Tab.exercise)
     }
 
     private var sleepTab: some View {

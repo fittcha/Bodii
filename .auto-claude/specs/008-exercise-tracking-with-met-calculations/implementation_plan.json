@@ -2,9 +2,9 @@
   "feature": "Exercise Tracking with MET Calculations",
   "description": "Exercise logging with activity type selection, duration input, and automatic calorie burn calculation using MET (Metabolic Equivalent of Task) values. Track both cardio and strength training with appropriate calculations.",
   "created_at": "2026-01-13T09:55:58.414Z",
-  "updated_at": "2026-01-14T13:54:40.808Z",
-  "status": "done",
-  "planStatus": "completed",
+  "updated_at": "2026-01-14T02:45:40.877Z",
+  "status": "in_progress",
+  "planStatus": "in_progress",
   "phases": [
     {
       "id": "phase-1",
@@ -445,51 +445,77 @@
     }
   ],
   "qa_signoff": {
-    "status": "approved",
-    "timestamp": "2026-01-14T13:45:00.000Z",
-    "qa_session": 3,
-    "report_file": "qa_report.md",
-    "tests_passed": {
-      "unit": "55+/55+ (ExerciseCalcServiceTests: 35+, DailyLogServiceTests: 20+)",
-      "integration": "All CRUD operations verified",
-      "acceptance_criteria": "5.5/6 (91.7%)"
-    },
-    "verified_by": "qa_agent",
-    "fix_commit": "6d3cbc0e996eabc0861eeb888ac70dccf98d51ee",
-    "fixes_applied": [
+    "status": "fixes_applied",
+    "timestamp": "2026-01-14T13:30:00.000Z",
+    "fix_session": 2,
+    "issues_fixed": [
       {
-        "issue": "ExerciseInputView NOT Integrated",
-        "status": "resolved",
-        "verification": "ExerciseInputView properly integrated with DIContainer factory method"
+        "title": "ExerciseInputView NOT Integrated",
+        "fix_commit": "6d3cbc0"
       },
       {
-        "issue": "Delete Functionality NOT Integrated",
-        "status": "resolved",
-        "verification": "DeleteExerciseRecordUseCase wired with loading state and confirmation dialog"
+        "title": "Delete Functionality NOT Integrated",
+        "fix_commit": "6d3cbc0"
       },
       {
-        "issue": "DeleteExerciseRecordUseCase NOT Injected",
-        "status": "resolved",
-        "verification": "Use case registered in DIContainer and injected via factory method"
+        "title": "DeleteExerciseRecordUseCase NOT Injected",
+        "fix_commit": "6d3cbc0"
       },
       {
-        "issue": "UpdateExerciseRecordUseCase NEVER Used",
-        "status": "resolved",
-        "verification": "Edit functionality implemented with tap gesture and conditional injection"
+        "title": "UpdateExerciseRecordUseCase NEVER Used",
+        "fix_commit": "6d3cbc0"
       },
       {
-        "issue": "Missing User Data Properties",
-        "status": "resolved",
-        "verification": "userWeight, userBMR, userTDEE properties added to ExerciseListView"
+        "title": "Missing User Data Properties",
+        "fix_commit": "6d3cbc0"
       },
       {
-        "issue": "No Delete Confirmation Dialog",
-        "status": "resolved",
-        "verification": "Alert dialog with cancel/delete buttons implemented"
+        "title": "No Delete Confirmation Dialog",
+        "fix_commit": "6d3cbc0"
       }
     ],
-    "production_ready": true,
-    "notes": "Feature is fully functional with complete CRUD operations, MET-based calorie calculations, and DailyLog integration. All 6 critical/major issues from QA Session 2 resolved. Minor TODO remains for User entity integration (non-blocking)."
+    "ready_for_qa_revalidation": true,
+    "fix_summary": "All 6 QA issues resolved: Integrated ExerciseInputView modal, wired delete/update use cases, added edit functionality with tap gestures, added delete confirmation dialog, and implemented loading states. Feature is now fully functional with complete CRUD operations.",
+    "previous_issues": [
+      {
+        "type": "critical",
+        "title": "ExerciseInputView NOT Integrated in ExerciseListView",
+        "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift:73-76",
+        "fix_required": "Replace placeholder Text with actual ExerciseInputView modal implementation"
+      },
+      {
+        "type": "critical",
+        "title": "Delete Functionality NOT Integrated",
+        "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift:161-164",
+        "fix_required": "Connect delete callback to DeleteExerciseRecordUseCase via ViewModel"
+      },
+      {
+        "type": "critical",
+        "title": "DeleteExerciseRecordUseCase NOT Injected in ViewModel",
+        "location": "Bodii/Presentation/Features/Exercise/ViewModels/ExerciseListViewModel.swift:94-101",
+        "fix_required": "Add deleteExerciseRecordUseCase property and inject via DIContainer"
+      },
+      {
+        "type": "critical",
+        "title": "UpdateExerciseRecordUseCase NEVER Used",
+        "location": "Bodii/Domain/UseCases/Exercise/UpdateExerciseRecordUseCase.swift",
+        "fix_required": "Implement edit functionality with tap gesture and edit modal"
+      },
+      {
+        "type": "major",
+        "title": "Missing User Data Properties in ExerciseListView",
+        "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift",
+        "fix_required": "Add user weight, BMR, TDEE state properties for ExerciseInputViewModel"
+      },
+      {
+        "type": "major",
+        "title": "No Delete Confirmation Dialog",
+        "location": "Bodii/Presentation/Features/Exercise/Views/ExerciseListView.swift",
+        "fix_required": "Add confirmation alert before deletion to prevent accidental deletions"
+      }
+    ],
+    "fix_request_file": "QA_FIX_REQUEST.md",
+    "qa_report_file": "qa_report.md"
   },
   "last_updated": "2026-01-14T03:43:26.627754+00:00",
   "recoveryNote": "Task recovered from stuck state at 2026-01-14T00:38:20.701Z",
@@ -548,41 +574,16 @@
         }
       ],
       "duration_seconds": 358.68
-    },
-    {
-      "iteration": 3,
-      "status": "approved",
-      "timestamp": "2026-01-14T13:45:00.000Z",
-      "issues": [],
-      "fixes_verified": [
-        "ExerciseInputView properly integrated",
-        "Delete functionality wired with confirmation",
-        "DeleteExerciseRecordUseCase injected",
-        "UpdateExerciseRecordUseCase used for edit mode",
-        "User data properties added",
-        "Delete confirmation dialog implemented"
-      ],
-      "acceptance_criteria_met": "5.5/6 (91.7%)",
-      "production_ready": true
-    },
-    {
-      "iteration": 3,
-      "status": "approved",
-      "timestamp": "2026-01-14T04:10:14.701110+00:00",
-      "issues": [],
-      "duration_seconds": 314.78
     }
   ],
   "qa_stats": {
-    "total_iterations": 4,
-    "last_iteration": 3,
-    "last_status": "approved",
+    "total_iterations": 2,
+    "last_iteration": 2,
+    "last_status": "rejected",
     "issues_by_type": {
       "unknown": 1,
       "critical": 4,
       "major": 2
-    },
-    "issues_resolved": 6,
-    "final_status": "approved"
+    }
   }
 }

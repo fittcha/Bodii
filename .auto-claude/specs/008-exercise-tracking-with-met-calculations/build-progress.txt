@@ -1,0 +1,309 @@
+## Build Progress: Exercise Tracking with MET Calculations
+
+### Phase 1: Core Services & Data Layer (COMPLETED)
+✅ 1.1 - ExerciseCalcService for MET-based calorie calculation
+✅ 1.2 - ExerciseRecordRepository protocol
+✅ 1.3 - ExerciseRecordLocalDataSource
+✅ 1.4 - ExerciseRecordRepositoryImpl
+✅ 1.5 - DailyLogService for exercise updates
+
+### Phase 2: Use Cases & Business Logic (COMPLETED)
+✅ 2.1 - AddExerciseRecordUseCase (Verified and marked complete - 2026-01-14)
+    - Validates exercise duration (minimum 1 minute)
+    - Calculates calories using ExerciseCalcService with MET formula
+    - Saves ExerciseRecord via exerciseRepository
+    - Updates DailyLog via dailyLogService
+    - Comprehensive documentation and error handling
+    - Implementation committed in 5cd3957
+
+✅ 2.2 - UpdateExerciseRecordUseCase (Completed - 2026-01-14)
+    - Fetches existing ExerciseRecord by ID and validates ownership
+    - Recalculates calories when type, duration, or intensity changes
+    - Updates ExerciseRecord via repository
+    - Adjusts DailyLog with difference calculation (updateExercise method)
+    - Comprehensive error handling (RecordNotFoundError, UnauthorizedError, ValidationError)
+    - Implementation committed in 7119ae7
+
+✅ 2.3 - DeleteExerciseRecordUseCase (Completed - 2026-01-14)
+    - Fetches existing ExerciseRecord by ID and validates ownership
+    - Updates DailyLog via dailyLogService.removeExercise() before deletion
+    - Deletes ExerciseRecord via exerciseRepository.delete()
+    - Decrements totalCaloriesOut, exerciseMinutes, and exerciseCount in DailyLog
+    - Comprehensive error handling (RecordNotFoundError, UnauthorizedError)
+    - Implementation committed in c19fdab
+
+✅ 2.4 - GetExerciseRecordsUseCase (Completed - 2026-01-14)
+    - Fetches records for a specific date
+    - Fetches records for a date range
+    - Returns sorted by date (newest first)
+    - Simple read UseCase pattern
+    - Implementation committed in 37da4fe
+
+### Phase 3: UI - Exercise List View (IN PROGRESS)
+✅ 3.1 - ExerciseListViewModel (Completed - 2026-01-14)
+    - Manages state for exercise records, daily summary, loading, and errors
+    - Fetches data using GetExerciseRecordsUseCase and DailyLogRepository
+    - Date navigation support (previous/next day, date selection)
+    - Concurrent data fetching with async/await for optimal performance
+    - @MainActor annotations for UI-safe updates
+    - Comprehensive documentation with Korean learning comments
+    - Implementation committed in 0ed5cca
+
+✅ 3.2 - ExerciseCardView component (Completed - 2026-01-14)
+    - Displays exercise type icon and name using SF Symbols
+    - Shows duration, intensity badge, and calories burned
+    - Color-coded intensity badges (green/orange/red)
+    - Unique accent colors per exercise type
+    - Swipe-to-delete gesture support
+    - Reusable component with clean design
+    - Implementation committed in 5403d2a
+
+✅ 3.3 - ExerciseListView (Completed - 2026-01-14)
+    - Date navigation header with previous/next day buttons
+    - Daily summary section with color-coded cards (calories, time, count)
+    - Exercise list using ExerciseCardView components
+    - Empty state with helpful messaging and add button
+    - Pull-to-refresh support using refreshable modifier
+    - Loading state with progress indicator
+    - Error handling with alert dialog
+    - Multiple preview configurations for development
+    - Implementation committed in 2dc33bc
+
+✅ 3.4 - DailySummaryCardView for exercises (Completed - 2026-01-14)
+    - Created ExerciseDailySummaryCard reusable component
+    - Three-column card layout showing total calories, time, and count
+    - Time formatting in "X시간 Y분" format
+    - Visual distinction for empty state with gray color scheme
+    - Implementation committed in fd31df7
+
+### Phase 4: UI - Exercise Input Modal (IN PROGRESS)
+✅ 4.1 - ExerciseInputViewModel (Completed - 2026-01-14)
+    - Form state management with @Observable macro
+    - Real-time calorie preview using ExerciseCalcService
+    - Form validation (minimum 1 minute duration)
+    - Save action with loading and error states
+    - Implementation committed in 6014550
+
+✅ 4.2 - ExerciseTypeGridView component (Completed - 2026-01-14)
+    - LazyVGrid layout with all 8 exercise types
+    - SF Symbols icons and Korean names
+    - Visual feedback for selected state
+    - Haptic feedback and spring animation
+    - Implementation committed in 724ff46
+
+✅ 4.3 - IntensityPickerView component (Completed - 2026-01-14)
+    - Segmented control style with 3 horizontal buttons
+    - Color-coded selection (green/orange/red)
+    - SF Symbols icons for each intensity level
+    - Optional MET multiplier info display
+    - Haptic feedback and spring animation
+    - Implementation committed in b4f5d1e
+
+✅ 4.4 - DurationInputView component (Completed - 2026-01-14)
+    - Hybrid input pattern combining quick selection and fine adjustment
+    - Quick selection buttons for common durations (15, 30, 45, 60 minutes)
+    - Fine adjustment steppers (±1 min, ±5 min) for precise control
+    - Large display with numeric text transition animation
+    - Haptic feedback on all interactions
+    - Boundary validation (1-300 minutes) with error message display
+    - Three comprehensive preview configurations
+    - Committed in 905c04c
+
+✅ 4.5 - ExerciseInputView modal (Completed - 2026-01-14)
+    - Implemented full exercise input modal combining all components
+    - Sheet modal presentation with NavigationStack
+    - Exercise type selection using ExerciseTypeGridView
+    - Duration input using DurationInputView
+    - Intensity selection using IntensityPickerView
+    - Optional note input with multi-line TextField
+    - Real-time calorie preview card with visual calculation details
+    - Large calorie display (48pt bold) with numeric transition animation
+    - Save and Cancel buttons with loading state
+    - Form validation with inline error messages
+    - Keyboard management with @FocusState
+    - Success/error handling with alerts and callbacks
+    - Section-based layout with clear visual hierarchy
+    - Three comprehensive preview configurations
+    - All acceptance criteria met with extensive documentation
+    - Committed in b8de41a
+
+### Phase 5: Integration & Testing (IN PROGRESS)
+✅ 5.1 - Register exercise services in DIContainer
+✅ 5.2 - Integrate ExerciseListView into TabView
+✅ 5.3 - Write unit tests for ExerciseCalcService (Completed - 2026-01-14)
+    - Implemented comprehensive unit tests with 35+ test methods
+    - Tested all 8 exercise types at all 3 intensity levels
+    - Verified MET formula accuracy with manual calculations
+    - Edge cases: 1 minute, marathon durations, low/high weight
+    - Rounding and Decimal weight parameter tests
+    - All acceptance criteria met
+    - Committed in 228f7b6
+✅ 5.4 - Write unit tests for DailyLog exercise updates (Completed - 2026-01-14)
+    - Implemented comprehensive unit tests with 20+ test methods for DailyLogService
+    - Add exercise tests: Verifies totals increment correctly, accumulation, high calorie burn, auto-creation of DailyLog, exerciseCount increment
+    - Remove exercise tests: Verifies totals decrement correctly, count decrementation, removal of all exercises, low value removal
+    - Update exercise tests: Tests positive/negative/zero difference, calories-only change, duration-only change, count remains unchanged
+    - GetOrCreate tests: Tests retrieval of existing log and creation of new log
+    - Mock repository implementation with call tracking and parameter capture
+    - Follows existing test patterns from ExerciseCalcServiceTests with Given-When-Then structure
+    - Korean learning comments and comprehensive documentation
+    - All 4 acceptance criteria met: ✅ Add updates totals, ✅ Remove decrements totals, ✅ Update adjusts difference, ✅ Count increments/decrements
+    - Committed in 1946dbe
+⏳ 5.5 - Add exercise validation to ValidationService
+
+---
+
+## Recent Activity
+- 2026-01-14: Completed subtask 5.4 (Write unit tests for DailyLog exercise updates)
+  - Created BodiiTests/DailyLogServiceTests.swift with comprehensive test coverage
+  - 20+ test methods covering all DailyLogService exercise update scenarios
+  - Add exercise tests (5 tests):
+    - testAddExercise_ValidData_UpdatesTotalsCorrectly: Verifies totals increment (350 kcal, 30 min)
+    - testAddExercise_MultipleExercises_AccumulatesCorrectly: Tests accumulation of multiple exercises
+    - testAddExercise_HighCalorieBurn_UpdatesCorrectly: Tests high intensity scenarios (800 kcal, 90 min)
+    - testAddExercise_NoDailyLog_CreatesAndAdds: Verifies auto-creation of DailyLog
+    - testAddExercise_IncrementsExerciseCount: Confirms exerciseCount increases
+  - Remove exercise tests (5 tests):
+    - testRemoveExercise_ValidData_DecrementsTotalsCorrectly: Verifies totals decrement (250 kcal, 30 min from 500/60)
+    - testRemoveExercise_DecrementCount_ReducesByOne: Tests count decrementation (3 → 2)
+    - testRemoveExercise_RemoveAll_LeavesZeroTotals: Verifies removal leaves zero
+    - testRemoveExercise_LowValues_RemovesCorrectly: Tests minimal values (10 kcal, 5 min)
+    - testRemoveExercise_DecrementsExerciseCount: Confirms count decreases
+  - Update exercise tests (7 tests):
+    - testUpdateExercise_IncreasedValues_AdjustsDifferenceCorrectly: Tests positive difference (350→500 kcal)
+    - testUpdateExercise_DecreasedValues_AdjustsDifferenceCorrectly: Tests negative difference (500→300 kcal)
+    - testUpdateExercise_SameValues_AdjustsZeroDifference: Tests no-change scenario
+    - testUpdateExercise_OnlyCaloriesChanged_AdjustsCorrectly: Tests calories-only change
+    - testUpdateExercise_OnlyDurationChanged_AdjustsCorrectly: Tests duration-only change
+    - testUpdateExercise_DoesNotChangeCount: Verifies count unchanged during update
+  - GetOrCreate tests (2 tests):
+    - testGetOrCreate_ExistingLog_ReturnsExisting: Tests retrieval
+    - testGetOrCreate_NoLog_CreatesNew: Tests creation with BMR/TDEE
+  - Mock repository: Full implementation with call tracking and parameter capture
+  - Test quality: Follows ExerciseCalcServiceTests patterns with Given-When-Then structure, Korean comments
+  - All 4 acceptance criteria met: ✅ Add updates totals, ✅ Remove decrements totals, ✅ Update adjusts difference, ✅ Count increments/decrements
+  - Committed in 1946dbe
+
+- 2026-01-14: Completed subtask 5.3 (Write unit tests for ExerciseCalcService)
+  - Created BodiiTests/ExerciseCalcServiceTests.swift with comprehensive test coverage
+  - 35+ test methods covering all scenarios for MET-based calorie calculations
+  - Exercise type coverage: All 8 types (walking, running, cycling, swimming, weight, crossfit, yoga, other) tested at all 3 intensity levels (low/medium/high)
+  - Formula verification: Verified MET formula (calories = MET × weight × hours) with manual calculations and linear scaling tests
+  - Edge cases thoroughly tested:
+    - Minimum duration: 1 minute (9 kcal for running at medium intensity, 70kg)
+    - Short duration: 5 minutes (47 kcal)
+    - Large duration: 180 minutes / 3 hours (1680 kcal)
+    - Marathon duration: 240 minutes / 4 hours (2240 kcal)
+    - Low weight: 45kg (180 kcal for 30min running)
+    - High weight: 120kg (480 kcal for 30min running)
+  - Rounding tests: Verified proper Int32 rounding behavior
+  - Decimal weight tests: Tested Decimal parameter overload and verified consistency with Double
+  - Test quality: Follows existing codebase patterns from ValidationServiceTests with Given-When-Then comments and Korean learning comments
+  - All 5 acceptance criteria met: ✅ Walking at all intensities, ✅ Running at all intensities, ✅ All 8 exercise types, ✅ Formula verification, ✅ Edge cases
+  - Committed in 228f7b6
+
+- 2026-01-14: Completed subtask 5.2 (Integrate ExerciseListView into TabView)
+  - Successfully integrated ExerciseListView into main TabView navigation
+  - Replaced PlaceholderView with actual ExerciseListView implementation
+  - Used DIContainer.shared.makeExerciseListViewModel(userId:) for dependency injection
+  - Added temporary userId property for development (TODO: replace with AuthenticationService)
+  - Tab configuration: icon "figure.run", label "운동"
+  - Tab order maintained: dashboard → body → diet → exercise → sleep → settings
+  - Added Korean learning comments explaining DIContainer pattern (similar to Dagger/Hilt)
+  - All acceptance criteria met: ✅ Exercise tab visible, ✅ Appropriate icon, ✅ Korean label, ✅ Correct tab order
+  - Committed in 6be4651
+
+- 2026-01-14: Completed subtask 5.1 (Register exercise services in DIContainer)
+  - Registered all exercise-related components in DIContainer
+  - Added factory methods: makeExerciseListViewModel, makeExerciseInputViewModel
+  - Committed in 11e043f
+
+- 2026-01-14: Completed subtask 4.5 (ExerciseInputView modal)
+  - Implemented full exercise input modal combining all components (ExerciseTypeGridView, DurationInputView, IntensityPickerView, TextField)
+  - Sheet modal presentation with NavigationStack and proper toolbar buttons
+  - Real-time calorie preview card with visual calculation details (exercise, duration, intensity, MET)
+  - Large calorie display (48pt bold rounded font) with numeric transition animation
+  - Section-based layout with clear visual hierarchy using sectionHeader helper
+  - Save and Cancel buttons with loading state (ProgressView + "저장 중..." text)
+  - Form validation with inline error messages (durationValidationError)
+  - Keyboard management with @FocusState for note TextField
+  - Success/error handling with alerts and onSaveSuccess callback
+  - @Observable ViewModel (ExerciseInputViewModel) integration with @Binding connections
+  - Three comprehensive preview configurations (basic, saving state, different exercise types)
+  - 80/20 design principle: combines quick selection components with real-time feedback
+  - All 8 acceptance criteria met with extensive documentation and Korean learning comments
+  - Follows existing codebase patterns with section-based view composition
+  - Ready for integration with ExerciseListView in Phase 5
+  - Committed in b8de41a
+
+- 2026-01-14: Completed subtask 4.4 (DurationInputView component)
+  - Implemented hybrid input pattern with quick selection and fine adjustment
+  - Quick selection buttons for common durations (15, 30, 45, 60 minutes)
+  - Fine adjustment steppers with ±1 min and ±5 min buttons
+  - Large display (48pt bold rounded font) showing current selected time
+  - Numeric text transition animation for smooth value changes
+  - Haptic feedback on selection and adjustment interactions
+  - Boundary validation (1-300 minutes) with clear error messaging
+  - Visual feedback showing selected quick duration button
+  - Three comprehensive preview configurations (basic, various durations, interactive demo)
+  - 80/20 rule design: quick buttons for most users, fine adjustment for precise needs
+  - All acceptance criteria met with extensive documentation and Korean learning comments
+  - Committed in 905c04c
+
+- 2026-01-14: Completed subtask 4.3 (IntensityPickerView component)
+  - Implemented segmented control style intensity picker
+  - Three intensity options: 저강도 (green), 중강도 (orange), 고강도 (red)
+  - Visual feedback with color-coded selection and SF Symbols icons
+  - Optional MET multiplier info display (showMetMultiplier parameter)
+  - Haptic feedback on selection with duplicate tap prevention
+  - Spring animation for smooth state transitions
+  - Comprehensive preview configurations including interactive demo
+  - Extension added: Intensity.accentColor for color consistency
+  - All acceptance criteria met with extensive documentation
+  - Committed in b4f5d1e
+
+- 2026-01-14: Completed subtask 4.2 (ExerciseTypeGridView component)
+  - Implemented LazyVGrid layout with all 8 exercise types
+  - SF Symbols icons and Korean names for each type
+  - Visual feedback for selected state with color-coded borders
+  - Haptic feedback and spring animation on selection
+  - Committed in 724ff46
+
+- 2026-01-14: Completed subtask 4.1 (ExerciseInputViewModel)
+  - Form state management with @Observable macro
+  - Real-time calorie preview calculation
+  - Form validation and error handling
+  - Committed in 6014550
+
+- 2026-01-14: Completed subtask 3.4 (ExerciseDailySummaryCard)
+  - Three-column summary card component
+  - Time formatting helper function
+  - Visual distinction for empty state
+  - Committed in fd31df7
+
+- 2026-01-14: Completed subtask 3.3 (ExerciseListView)
+  - Implemented main exercise list view with comprehensive UI/UX features
+  - Date navigation header with previous/next day buttons (disabled for future dates)
+  - Daily summary section with three color-coded statistics cards
+  - Exercise list using ExerciseCardView components with swipe-to-delete
+  - Empty state with encouraging messaging and prominent add button
+  - Pull-to-refresh support using SwiftUI's refreshable modifier
+  - Loading and error states with appropriate UI feedback
+  - Multiple preview configurations for rapid development
+  - Clean view composition following SwiftUI best practices
+  - All acceptance criteria met with extensive documentation
+  - Committed in 2dc33bc
+
+- 2026-01-14: Completed subtask 2.4 (GetExerciseRecordsUseCase)
+  - Simple read UseCase for fetching exercise records
+  - Supports single date and date range queries
+  - Returns sorted results (newest first)
+  - Committed in 37da4fe
+
+- 2026-01-14: Completed subtask 2.3 (DeleteExerciseRecordUseCase)
+  - Implemented use case for deleting exercise records
+  - Validates user ownership before deletion
+  - Critical execution order: DailyLog update → ExerciseRecord deletion
+  - Decrements totalCaloriesOut, exerciseMinutes, and exerciseCount in DailyLog
+  - All acceptance criteria met with comprehensive error handling
+  - Committed in c19fdab
