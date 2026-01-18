@@ -30,12 +30,36 @@ struct DashboardView: View {
     /// 💡 Java 비교: Android ViewModel과 유사
     @StateObject private var metabolismViewModel: MetabolismViewModel
 
+    /// Sleep Repository - 수면 데이터 접근
+    /// 📚 학습 포인트: Repository Dependency Injection
+    /// - Repository 패턴을 통한 데이터 접근 추상화
+    /// - 테스트 시 Mock으로 교체 가능
+    /// 💡 Java 비교: @Autowired Repository와 유사
+    private let sleepRepository: SleepRepositoryProtocol
+
+    /// 오늘의 수면 기록
+    /// 📚 학습 포인트: @State for Data
+    /// - 비동기로 로드된 수면 데이터 저장
+    /// - nil이면 데이터 없음 상태
+    /// 💡 Java 비교: LiveData와 유사
+    @State private var todaysSleep: SleepRecord?
+
+    /// 수면 데이터 로딩 상태
+    /// 📚 학습 포인트: Loading State
+    /// - 비동기 작업 진행 중 표시
+    @State private var isSleepLoading = false
+
     /// 체성분 탭으로 이동하는 콜백
     /// 📚 학습 포인트: Closure-based Navigation
     /// - 부모 View에서 탭 전환 로직을 처리
     /// - 카드 탭 시 호출되어 해당 탭으로 이동
     /// 💡 Java 비교: Callback interface와 유사
     var onNavigateToBody: (() -> Void)?
+
+    /// 수면 탭으로 이동하는 콜백
+    /// 📚 학습 포인트: Closure-based Navigation
+    /// - 수면 카드 탭 시 수면 탭으로 이동
+    var onNavigateToSleep: (() -> Void)?
 
     /// Pull-to-refresh 상태
     /// 📚 학습 포인트: Refresh State
@@ -45,19 +69,25 @@ struct DashboardView: View {
 
     /// DashboardView 초기화
     /// 📚 학습 포인트: Dependency Injection via Constructor
-    /// - ViewModel과 네비게이션 콜백을 외부에서 주입받음
-    /// - 테스트 시 Mock ViewModel 주입 가능
+    /// - ViewModel과 Repository, 네비게이션 콜백을 외부에서 주입받음
+    /// - 테스트 시 Mock 객체 주입 가능
     /// 💡 Java 비교: Constructor injection과 유사
     ///
     /// - Parameters:
     ///   - metabolismViewModel: 대사율 ViewModel
+    ///   - sleepRepository: 수면 데이터 Repository
     ///   - onNavigateToBody: 체성분 탭으로 이동하는 콜백
+    ///   - onNavigateToSleep: 수면 탭으로 이동하는 콜백
     init(
         metabolismViewModel: MetabolismViewModel,
-        onNavigateToBody: (() -> Void)? = nil
+        sleepRepository: SleepRepositoryProtocol,
+        onNavigateToBody: (() -> Void)? = nil,
+        onNavigateToSleep: (() -> Void)? = nil
     ) {
         self._metabolismViewModel = StateObject(wrappedValue: metabolismViewModel)
+        self.sleepRepository = sleepRepository
         self.onNavigateToBody = onNavigateToBody
+        self.onNavigateToSleep = onNavigateToSleep
     }
 
     // MARK: - Body
@@ -72,10 +102,12 @@ struct DashboardView: View {
                     // 대사율 카드 (BMR/TDEE)
                     metabolismCard
 
+                    // 수면 카드
+                    sleepCard
+
                     // 추가 대시보드 카드들 (향후 구현)
                     // - 오늘의 식단 요약
                     // - 오늘의 운동 요약
-                    // - 수면 요약
                     // - 주간 트렌드 차트
 
                     placeholderCards
@@ -93,6 +125,7 @@ struct DashboardView: View {
                 // View가 나타날 때 비동기 작업 실행
                 // 💡 Java 비교: onResume()에서 데이터 로드와 유사
                 await metabolismViewModel.loadCurrentMetabolism()
+                await loadTodaysSleep()
             }
             .alert("오류", isPresented: .constant(metabolismViewModel.errorMessage != nil)) {
                 Button("확인") {
@@ -167,6 +200,32 @@ struct DashboardView: View {
         }
     }
 
+    /// 수면 카드
+    /// 📚 학습 포인트: Sleep Card Component
+    /// - SleepDisplayCard 컴포넌트 사용
+    /// - 오늘의 수면 기록 표시
+    /// - 탭하면 수면 탭으로 이동
+    private var sleepCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // 섹션 헤더
+            sectionHeader(
+                title: "수면 기록",
+                subtitle: "수면 시간 및 품질"
+            )
+
+            // 수면 표시 카드
+            SleepDisplayCard(
+                sleepRecord: todaysSleep,
+                isLoading: isSleepLoading,
+                onTap: {
+                    // 📚 학습 포인트: Callback Navigation
+                    // 카드 탭 시 수면 탭으로 이동 콜백 호출
+                    onNavigateToSleep?()
+                }
+            )
+        }
+    }
+
     /// 플레이스홀더 카드들
     /// 📚 학습 포인트: Future Implementation Placeholder
     /// - 향후 구현할 카드들의 위치 표시
@@ -186,14 +245,6 @@ struct DashboardView: View {
                 subtitle: "운동 시간 및 칼로리 소비",
                 icon: "figure.run",
                 color: .green
-            )
-
-            // 수면 카드 플레이스홀더
-            placeholderCard(
-                title: "수면 기록",
-                subtitle: "수면 시간 및 품질",
-                icon: "moon.zzz.fill",
-                color: .purple
             )
         }
     }
@@ -299,8 +350,33 @@ struct DashboardView: View {
     private func refreshData() async {
         isRefreshing = true
         await metabolismViewModel.refresh()
+        await loadTodaysSleep()
         // TODO: 다른 ViewModel들도 새로고침
         isRefreshing = false
+    }
+
+    /// 오늘의 수면 기록 로드
+    /// 📚 학습 포인트: Async Data Loading
+    /// - Repository로부터 오늘의 수면 데이터를 비동기로 조회
+    /// - 02:00 경계 로직 적용 (새벽 2시 이전은 전날)
+    /// - 에러가 발생해도 앱이 멈추지 않도록 조용히 처리
+    /// 💡 Java 비교: CoroutineScope.launch + Repository 호출과 유사
+    private func loadTodaysSleep() async {
+        isSleepLoading = true
+        defer { isSleepLoading = false }
+
+        do {
+            // 📚 학습 포인트: fetch(for:) 사용
+            // Repository의 fetch(for:) 메서드는 02:00 경계 로직을 자동 적용
+            // 예: 새벽 1시에 호출하면 전날의 수면 기록을 가져옴
+            todaysSleep = try await sleepRepository.fetch(for: Date())
+        } catch {
+            // 📚 학습 포인트: Silent Error Handling
+            // 대시보드에서는 수면 데이터가 필수가 아니므로
+            // 에러 발생 시 조용히 nil로 처리 (빈 상태 표시)
+            // 만약 사용자에게 알려야 한다면 errorMessage State 사용
+            todaysSleep = nil
+        }
     }
 
     /// 인사말 메시지

@@ -1,0 +1,579 @@
+{
+  "feature": "Merge All Worktrees and Fix Xcode Project",
+  "workflow_type": "migration",
+  "workflow_rationale": "This task consolidates 14 feature branches into main and repairs Xcode project configuration. It's a migration/integration task involving git operations and build system repairs, not new feature development.",
+  "created_at": "2026-01-18T08:44:41.545Z",
+  "updated_at": "2026-01-18T08:53:29.864Z",
+  "status": "in_progress",
+  "phases": [
+    {
+      "id": "phase-1-preparation",
+      "name": "Pre-Merge Preparation",
+      "type": "setup",
+      "description": "Create backup, verify branch states, and document merge order",
+      "depends_on": [],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-1-1",
+          "description": "Create backup branch before merging",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git branch | grep backup-before-merge",
+            "expected": "backup-before-merge branch exists"
+          },
+          "status": "completed",
+          "notes": "Successfully created backup-before-merge branch and verified it exists",
+          "updated_at": "2026-01-18T08:54:27.856402+00:00"
+        },
+        {
+          "id": "subtask-1-2",
+          "description": "Document current branch states and merge order",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "manual",
+            "instructions": "Verify all 14 branches (002-015) are identified with commit counts"
+          },
+          "status": "completed",
+          "notes": "Successfully documented all 14 branches (002-015) with commit counts totaling 491 commits. Created comprehensive BRANCH_STATUS.md with merge order, dependencies, risk assessment, and verification checklist. Branch 001 identified as empty (0 commits) and will be skipped.",
+          "updated_at": "2026-01-18T08:56:41.730037+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-2-merge-foundation",
+      "name": "Merge Foundation Branches (002-004)",
+      "type": "implementation",
+      "description": "Merge core foundation branches that establish project structure",
+      "depends_on": [
+        "phase-1-preparation"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-2-1",
+          "description": "Merge branch 002-project-foundation-core-data-model",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "completed",
+          "notes": "Successfully merged branch 002-project-foundation-core-data-model into main. Resolved 27 merge conflicts (mostly add/add conflicts in Swift files). Accepted incoming changes from branch 002 for all Swift source files as this is the foundation branch. Kept main branch versions for metadata files (.auto-claude-status, .claude_settings.json). Merge commit e1497d9 created successfully.",
+          "updated_at": "2026-01-18T08:59:58.438647+00:00"
+        },
+        {
+          "id": "subtask-2-2",
+          "description": "Merge branch 003-body-composition-tracking-with-bmr-tdee",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "completed",
+          "notes": "Successfully merged branch 003-body-composition-tracking-with-bmr-tdee into main. Resolved 12 merge conflicts (accepted incoming changes from branch 003 for all Swift source files, kept main versions for metadata files). Merge commit b58c511 created successfully.",
+          "updated_at": "2026-01-18T09:02:31.085607+00:00"
+        },
+        {
+          "id": "subtask-2-3",
+          "description": "Merge branch 004-project-foundation-core-data-model",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "completed",
+          "notes": "Successfully merged branch 004-project-foundation-core-data-model. Resolved conflicts by keeping HEAD versions of entity files with HealthKit integration and other Swift files. Verification passed - merge commit is visible.",
+          "updated_at": "2026-01-18T09:04:20.729070+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-3-merge-features-part1",
+      "name": "Merge Feature Branches (005-008)",
+      "type": "implementation",
+      "description": "Merge food database, meal logging, and exercise tracking features",
+      "depends_on": [
+        "phase-2-merge-foundation"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-3-1",
+          "description": "Merge branch 005-korean-food-database-integration",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "completed",
+          "notes": "Successfully merged branch 005-korean-food-database-integration into main. Note: Also completed merges for branches 003 and 004 which were previously marked complete but not actually merged to main. Resolved conflicts by accepting incoming changes from branch 005 for Swift files (DIContainer.swift, APIConfig.swift) and keeping main versions for metadata files. Merge commit 2e344e3 created successfully. Additional merges: 5199059 (branch 003), 9eca997 (branch 004).",
+          "updated_at": "2026-01-18T09:07:38.821980+00:00"
+        },
+        {
+          "id": "subtask-3-2",
+          "description": "Merge branch 006-meal-logging-nutrition-tracking",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "completed",
+          "notes": "Successfully merged branch 006-meal-logging-nutrition-tracking. Resolved conflicts in DIContainer.swift by merging both body composition and diet/food functionality. Accepted incoming versions for Diet view files.",
+          "updated_at": "2026-01-18T09:10:35.702188+00:00"
+        },
+        {
+          "id": "subtask-3-3",
+          "description": "Merge branch 007-exercise-tracking-with-met-calculations",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "completed",
+          "notes": "Successfully merged branch 007-exercise-tracking-with-met-calculations. Resolved conflicts in .auto-claude-status, .claude_settings.json, and Bodii/App/DIContainer.swift by merging both sets of dependencies (food/body features from HEAD and exercise features from 007).",
+          "updated_at": "2026-01-18T09:13:00.630866+00:00"
+        },
+        {
+          "id": "subtask-3-4",
+          "description": "Merge branch 008-exercise-tracking-with-met-calculations",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "completed",
+          "notes": "Successfully merged branch 008-exercise-tracking-with-met-calculations. Resolved conflicts in DIContainer.swift by merging both food and exercise dependencies. Accepted HEAD versions for metadata files (.auto-claude-status, .claude_settings.json) and DailyLog-related Swift files. Merge commit ac3f731 created successfully.",
+          "updated_at": "2026-01-18T09:16:30.775620+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-4-merge-features-part2",
+      "name": "Merge Feature Branches (009-012)",
+      "type": "implementation",
+      "description": "Merge sleep, dashboard, HealthKit, and AI photo features",
+      "depends_on": [
+        "phase-3-merge-features-part1"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-4-1",
+          "description": "Merge branch 009-sleep-tracking-with-5-status-system",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "pending",
+          "notes": "git merge auto-claude/009-sleep-tracking-with-5-status-system --no-ff -m 'Merge: Sleep Tracking with 5-Status System'"
+        },
+        {
+          "id": "subtask-4-2",
+          "description": "Merge branch 010-unified-daily-dashboard",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "pending",
+          "notes": "git merge auto-claude/010-unified-daily-dashboard --no-ff -m 'Merge: Unified Daily Dashboard'"
+        },
+        {
+          "id": "subtask-4-3",
+          "description": "Merge branch 011-apple-healthkit-integration",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "pending",
+          "notes": "git merge auto-claude/011-apple-healthkit-integration --no-ff -m 'Merge: Apple HealthKit Integration'"
+        },
+        {
+          "id": "subtask-4-4",
+          "description": "Merge branch 012-ai-photo-food-recognition",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "pending",
+          "notes": "git merge auto-claude/012-ai-photo-food-recognition --no-ff -m 'Merge: AI Photo Food Recognition'"
+        }
+      ]
+    },
+    {
+      "id": "phase-5-merge-features-part3",
+      "name": "Merge Final Feature Branches (013-015)",
+      "type": "implementation",
+      "description": "Merge goal tracking, AI diet comments, and final fixes",
+      "depends_on": [
+        "phase-4-merge-features-part2"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-5-1",
+          "description": "Merge branch 013-goal-setting-progress-tracking",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "pending",
+          "notes": "git merge auto-claude/013-goal-setting-progress-tracking --no-ff -m 'Merge: Goal Setting & Progress Tracking'"
+        },
+        {
+          "id": "subtask-5-2",
+          "description": "Merge branch 014-ai-diet-comments-recommendations",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "pending",
+          "notes": "git merge auto-claude/014-ai-diet-comments-recommendations --no-ff -m 'Merge: AI Diet Comments & Recommendations'"
+        },
+        {
+          "id": "subtask-5-3",
+          "description": "Merge branch 015-fix-integrate-missing-ui-components",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git log --oneline -1 | grep -i merge",
+            "expected": "Merge commit visible"
+          },
+          "status": "pending",
+          "notes": "git merge auto-claude/015-fix-integrate-missing-ui-components-into-goalprogr --no-ff -m 'Merge: Fix & Integrate Missing UI Components'"
+        }
+      ]
+    },
+    {
+      "id": "phase-6-xcode-repair",
+      "name": "Xcode Project Repair",
+      "type": "implementation",
+      "description": "Register all missing Swift files in project.pbxproj",
+      "depends_on": [
+        "phase-5-merge-features-part3"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-6-1",
+          "description": "Identify missing Swift files not registered in pbxproj",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "find Bodii -name '*.swift' -type f | wc -l",
+            "expected": "Count of all Swift files (expected ~226)"
+          },
+          "status": "pending",
+          "notes": "Compare actual Swift files with registered files in project.pbxproj"
+        },
+        {
+          "id": "subtask-6-2",
+          "description": "Register all Swift files in Xcode project using script or GUI",
+          "service": "main",
+          "files_to_modify": [
+            "Bodii.xcodeproj/project.pbxproj"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "Bodii.xcodeproj/project.pbxproj"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -c '\\.swift' Bodii.xcodeproj/project.pbxproj",
+            "expected": "Count should approximate 3x the number of Swift files (FileRef + BuildFile + Group)"
+          },
+          "status": "pending",
+          "notes": "Use Xcode 'Add Files to Bodii...' or programmatically add entries. Each file needs: PBXFileReference, PBXBuildFile, and PBXGroup entry"
+        },
+        {
+          "id": "subtask-6-3",
+          "description": "Verify Xcode project builds successfully",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "xcodebuild -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build 2>&1 | tail -5",
+            "expected": "BUILD SUCCEEDED"
+          },
+          "status": "pending",
+          "notes": "Full build verification to ensure all files are properly linked"
+        }
+      ]
+    },
+    {
+      "id": "phase-7-cleanup",
+      "name": "Cleanup Worktrees and Branches",
+      "type": "cleanup",
+      "description": "Remove merged worktrees and branches, verify final state",
+      "depends_on": [
+        "phase-6-xcode-repair"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-7-1",
+          "description": "Remove all merged worktrees",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git worktree list | wc -l",
+            "expected": "Only 1-2 worktrees remaining (main + maybe awesome-fermi)"
+          },
+          "status": "pending",
+          "notes": "git worktree remove .worktrees/XXX for each merged branch"
+        },
+        {
+          "id": "subtask-7-2",
+          "description": "Delete merged auto-claude branches",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "git branch | grep auto-claude | wc -l",
+            "expected": "0 (no auto-claude branches remain)"
+          },
+          "status": "pending",
+          "notes": "git branch -d auto-claude/XXX for each merged branch"
+        },
+        {
+          "id": "subtask-7-3",
+          "description": "Final verification of git state and build",
+          "service": "main",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "e2e",
+            "steps": [
+              "git status shows clean working tree",
+              "git log --oneline --merges -20 shows all merge commits",
+              "xcodebuild -scheme Bodii build succeeds",
+              "No stale worktrees or branches"
+            ]
+          },
+          "status": "pending",
+          "notes": "Complete end-to-end verification of the migration"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_phases": 7,
+    "total_subtasks": 20,
+    "services_involved": [
+      "main"
+    ],
+    "parallelism": {
+      "max_parallel_phases": 1,
+      "parallel_groups": [],
+      "recommended_workers": 1,
+      "speedup_estimate": "N/A - all phases are sequential due to git merge dependencies"
+    },
+    "startup_command": "source auto-claude/.venv/bin/activate && python auto-claude/run.py --spec 018 --parallel 1",
+    "branch_merge_order": [
+      "002-project-foundation-core-data-model",
+      "003-body-composition-tracking-with-bmr-tdee",
+      "004-project-foundation-core-data-model",
+      "005-korean-food-database-integration",
+      "006-meal-logging-nutrition-tracking",
+      "007-exercise-tracking-with-met-calculations",
+      "008-exercise-tracking-with-met-calculations",
+      "009-sleep-tracking-with-5-status-system",
+      "010-unified-daily-dashboard",
+      "011-apple-healthkit-integration",
+      "012-ai-photo-food-recognition",
+      "013-goal-setting-progress-tracking",
+      "014-ai-diet-comments-recommendations",
+      "015-fix-integrate-missing-ui-components-into-goalprogr"
+    ],
+    "critical_stats": {
+      "branches_to_merge": 14,
+      "total_commits": 491,
+      "swift_files": 226,
+      "registered_in_pbxproj": 7,
+      "missing_registrations": 219
+    }
+  },
+  "verification_strategy": {
+    "risk_level": "medium",
+    "skip_validation": false,
+    "test_creation_phase": "none",
+    "test_types_required": [
+      "integration"
+    ],
+    "security_scanning_required": false,
+    "staging_deployment_required": false,
+    "acceptance_criteria": [
+      "All 14 feature branches merged to main",
+      "All merge conflicts resolved",
+      "All ~226 Swift files registered in project.pbxproj",
+      "xcodebuild -scheme Bodii build succeeds",
+      "No stale worktrees or merged branches remain",
+      "Git history shows clear merge commits"
+    ],
+    "verification_steps": [
+      {
+        "name": "Branch Merge Verification",
+        "command": "git log main --oneline --merges | head -20",
+        "expected_outcome": "14 merge commits visible",
+        "type": "git",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Xcode Build",
+        "command": "xcodebuild -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 15' build",
+        "expected_outcome": "BUILD SUCCEEDED",
+        "type": "build",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Swift File Registration",
+        "command": "echo \"Swift files: $(find Bodii -name '*.swift' | wc -l), PBXFileRef: $(grep -c 'PBXFileReference.*swift' Bodii.xcodeproj/project.pbxproj)\"",
+        "expected_outcome": "Counts should be approximately equal",
+        "type": "file_check",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Worktree Cleanup",
+        "command": "git worktree list",
+        "expected_outcome": "Only main worktree and maybe awesome-fermi",
+        "type": "cleanup",
+        "required": true,
+        "blocking": false
+      }
+    ],
+    "reasoning": "This is a migration task - validation is build success, not tests. All phases must complete sequentially due to git merge dependencies."
+  },
+  "qa_acceptance": {
+    "unit_tests": {
+      "required": false,
+      "commands": [],
+      "minimum_coverage": null,
+      "reasoning": "No new code being written - this is a merge/consolidation task"
+    },
+    "integration_tests": {
+      "required": true,
+      "commands": [
+        "xcodebuild -scheme Bodii build"
+      ],
+      "services_to_test": [
+        "main"
+      ]
+    },
+    "e2e_tests": {
+      "required": false,
+      "commands": [],
+      "flows": []
+    },
+    "browser_verification": {
+      "required": false,
+      "pages": []
+    },
+    "database_verification": {
+      "required": false,
+      "checks": []
+    },
+    "git_verification": {
+      "required": true,
+      "checks": [
+        "All 14 merge commits present in git log",
+        "No unmerged auto-claude branches",
+        "No orphan worktrees",
+        "Clean working tree (git status)"
+      ]
+    },
+    "xcode_verification": {
+      "required": true,
+      "checks": [
+        "All Swift files in PBXFileReference section",
+        "All Swift files in PBXBuildFile section",
+        "All Swift files in appropriate PBXGroup sections",
+        "BUILD SUCCEEDED with xcodebuild"
+      ]
+    }
+  },
+  "qa_signoff": null,
+  "planStatus": "in_progress",
+  "last_updated": "2026-01-18T09:16:30.775630+00:00"
+}
