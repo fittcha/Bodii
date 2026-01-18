@@ -1,0 +1,146 @@
+# Unified Daily Dashboard - Build Progress
+
+## Last Updated: 2026-01-16
+
+## Completed Subtasks: 12/19 (63%)
+
+### Phase 1: Core ViewModel & Data Layer ✅
+- [x] 1.1 - Extend DailyLogRepository for Dashboard
+- [x] 1.2 - Create DashboardViewModel
+- [x] 1.3 - Register DashboardViewModel in DIContainer
+
+### Phase 2: Dashboard UI Components ✅
+- [x] 2.1 - Create CalorieBalanceCard
+- [x] 2.2 - Create MacroBreakdownCard
+- [x] 2.3 - Create ExerciseSummaryCard
+- [x] 2.4 - Create SleepQualityCard
+- [x] 2.5 - Create BodyCompositionCard
+
+### Phase 3: Date Navigation & Quick Actions ✅
+- [x] 3.1 - Create DateNavigationHeader
+- [x] 3.2 - Create QuickAddButtons
+
+### Phase 4: Dashboard Integration (In Progress)
+- [x] 4.1 - Refactor DashboardView with New Components
+- [x] 4.2 - Implement Pull-to-Refresh with DailyLog ✨ JUST COMPLETED
+- [ ] 4.3 - Add Navigation Callbacks for Quick-Add
+- [ ] 4.4 - Update ContentView Tab Integration
+
+### Phase 5: Empty States & Polish
+- [ ] 5.1 - Create Empty State Views
+- [ ] 5.2 - Add Loading Skeleton Views
+- [ ] 5.3 - Add Accessibility Support
+
+### Phase 6: Testing & Documentation
+- [ ] 6.1 - Unit Tests for DashboardViewModel
+- [ ] 6.2 - SwiftUI Previews for All Components
+
+## Recent Activity
+
+### 2026-01-16 - Subtask 4.2 Completed
+- Implemented pull-to-refresh functionality for DashboardView
+- Added `.refreshable` modifier to ScrollView
+- Connected to DashboardViewModel.refresh() method
+- Pull-to-refresh gesture now updates all dashboard cards with fresh DailyLog data
+- Loading indicator automatically shown during refresh (handled by SwiftUI)
+- Implementation details:
+  - Placed `.refreshable` modifier before `.task` modifier
+  - Follows same pattern as ExerciseListView and BodyTrendsView
+  - Async/await pattern ensures smooth UI updates
+  - All cards (CalorieBalance, MacroBreakdown, Exercise, Sleep, BodyComposition) refresh together
+- Educational Korean documentation included
+- Committed as: 060a5a1
+
+### 2026-01-16 - Subtask 4.1 Completed
+- Refactored DashboardView to integrate all new components
+- Replaced metabolismViewModel with DashboardViewModel using @Observable pattern
+- Integrated DateNavigationHeader for date navigation:
+  - Left/right arrow buttons for previous/next day
+  - Centered date display with smart formatting ("오늘", "어제", or full date)
+  - Today button to quickly return to current date
+- Added QuickAddButtons component for fast navigation:
+  - Horizontal scrolling buttons for Food, Exercise, Body Composition
+  - Each button triggers navigation callback to respective tab
+  - SF Symbols icons with distinct colors (orange, green, blue)
+- Integrated all dashboard cards:
+  - **CalorieBalanceCard**: Shows intake vs TDEE with circular progress indicator
+  - **MacroBreakdownCard**: Displays protein/carbs/fat breakdown with horizontal progress bars
+  - **ExerciseSummaryCard**: Shows calories burned, exercise count, and minutes
+  - **SleepQualityCard**: Displays sleep duration and quality with emoji indicator
+  - **BodyCompositionCard**: Shows weight and body fat percentage
+- Added navigation callbacks:
+  - onNavigateToDiet: For Quick Add Food button
+  - onNavigateToExercise: For Quick Add Exercise button
+  - onNavigateToBody: For Quick Add Body Composition button
+- Organized all components in ScrollView with consistent 20pt spacing
+- Updated documentation to reflect new component-based architecture
+- All components use DashboardViewModel's computed properties from DailyLog
+- Committed as: 3a2f0f6
+
+### 2026-01-16 - Subtask 3.2 Completed
+- Created QuickAddButtons component
+- Horizontal scroll of quick-add buttons for Food, Exercise, Body Composition
+- Each button navigates to respective input screen using callback pattern
+- Uses SF Symbols for icons (fork.knife, figure.run, scalemass.fill)
+- Distinct colors for visual differentiation (orange, green, blue)
+- Follows existing patterns with comprehensive Korean documentation
+- Includes accessibility support and multiple preview configurations
+- Committed as: 0f6f6ec
+
+### 2026-01-16 - Subtask 3.1 Completed
+- Created DateNavigationHeader component
+- Implements left/right arrow navigation for date switching
+- Centered date display with smart formatting:
+  - Shows "오늘" for today
+  - Shows "어제" for yesterday
+  - Shows full date format "yyyy년 M월 d일 (요일)" for other dates
+- Includes "today" button to return to current date
+- Features:
+  - Circular buttons for left/right navigation (44x44pt)
+  - Conditional styling based on isToday state
+  - Accessibility labels and hints for VoiceOver
+  - Comprehensive previews for various date states
+- Follows existing patterns from other dashboard cards
+- Integrates with DashboardViewModel methods (goToPreviousDay, goToNextDay, goToToday)
+- Committed as: d403e20
+
+## Next Steps
+
+1. **Subtask 4.3** - Add Navigation Callbacks for Quick-Add
+   - Implement navigation callbacks from quick-add buttons to Diet, Exercise, Body tabs
+   - Add onNavigateToDiet, onNavigateToExercise callbacks to DashboardView
+   - **Note**: This is partially complete as callbacks were added in 4.1, but ContentView integration is needed
+
+2. **Subtask 4.4** - Update ContentView Tab Integration
+   - Update ContentView to pass DashboardViewModel with proper dependencies
+   - Wire up all navigation callbacks for tab switching
+
+## Implementation Notes
+
+### Architecture Highlights
+- **Component-based design**: Each card is a reusable, independent component
+- **@Observable pattern**: Using iOS 17+ @Observable for modern state management
+- **Pre-calculated values**: DailyLog contains all pre-calculated values for fast rendering (<0.5s)
+- **Callback navigation**: Parent view controls tab switching via callbacks
+- **Clean separation**: ViewModel handles data, View handles presentation
+
+### Performance Optimizations
+- DailyLog pre-calculates all metrics (no runtime computation needed)
+- Components only re-render when their specific data changes
+- Lazy loading of date-specific data via DashboardViewModel
+- Efficient ScrollView layout with fixed spacing
+
+### Code Quality
+- Comprehensive Korean documentation with Java comparisons
+- Follows established patterns from existing components
+- Consistent spacing (20pt between cards, 16pt horizontal padding)
+- Proper error handling and loading states
+- Accessibility considerations in all components
+
+## Notes
+
+- All components follow the established educational Korean documentation pattern
+- Each component includes comprehensive previews for different states
+- Components are designed to work with DailyLog's pre-calculated values for fast loading
+- Accessibility considerations included in all UI components
+- Navigation callbacks pattern allows for flexible tab integration

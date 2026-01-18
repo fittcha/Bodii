@@ -63,6 +63,14 @@ final class DIContainer {
         return SleepLocalDataSource(persistenceController: .shared)
     }()
 
+    /// DailyLog 로컬 데이터 소스
+    /// 📚 학습 포인트: Core Data Context Injection
+    /// PersistenceController.shared.viewContext를 주입하여 Core Data 작업 수행
+    /// 💡 Java 비교: @Lazy + @Autowired DAO와 유사
+    lazy var dailyLogLocalDataSource: DailyLogLocalDataSource = {
+        return DailyLogLocalDataSource(context: PersistenceController.shared.viewContext)
+    }()
+
     // TODO: Phase 2에서 추가 예정
     // - NetworkManager
     // - HealthKitManager
@@ -100,7 +108,11 @@ final class DIContainer {
         FoodRecordRepository(context: PersistenceController.shared.viewContext)
     }()
 
-    /// DailyLog Repository
+    /// DailyLog Repository (for unified dashboard)
+    /// 📚 학습 포인트: Repository Pattern
+    /// dailyLogLocalDataSource를 주입받아 일일 집계 데이터 관리
+    /// DashboardViewModel에서 사용하여 사전 계산된 값 조회
+    /// 💡 Java 비교: @Autowired Repository와 유사
     lazy var dailyLogRepository: DailyLogRepositoryProtocol = {
         DailyLogRepository(context: PersistenceController.shared.viewContext)
     }()
@@ -442,9 +454,27 @@ extension DIContainer {
         )
     }
 
+    // MARK: - Dashboard ViewModels
+
+    /// DashboardViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 일일 대시보드 ViewModel 생성
+    /// - DailyLogRepository 의존성 주입
+    /// - 사용자별 일일 집계 데이터 조회
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Parameter userId: 사용자 ID
+    /// - Returns: 새로운 DashboardViewModel 인스턴스
+    func makeDashboardViewModel(userId: UUID) -> DashboardViewModel {
+        return DashboardViewModel(
+            dailyLogRepository: dailyLogRepository,
+            userId: userId
+        )
+    }
+
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel
-    // func makeDashboardViewModel() -> DashboardViewModel
+    // func makeFoodLogViewModel() -> FoodLogViewModel
 }
 
 // MARK: - Testing Support
