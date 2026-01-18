@@ -419,6 +419,18 @@ struct BodyCompositionView: View {
                 Text(formatTime(entry.date))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
+
+                // HealthKit 출처 표시
+                if entry.isFromHealthKit {
+                    HStack(spacing: 2) {
+                        Image(systemName: "applewatch")
+                            .font(.system(size: 8))
+                        Text("동기화")
+                            .font(.system(size: 8))
+                    }
+                    .foregroundStyle(.green)
+                    .padding(.top, 2)
+                }
             }
             .frame(width: 60, alignment: .leading)
 

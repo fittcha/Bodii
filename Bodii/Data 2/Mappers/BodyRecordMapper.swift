@@ -1,0 +1,271 @@
+//
+//  BodyRecordMapper.swift
+//  Bodii
+//
+//  Created by Auto-Claude on 2026-01-12.
+//
+
+// 📚 학습 포인트: Mapper Pattern
+// Core Data 엔티티와 Domain 엔티티 간의 변환을 담당하는 매퍼
+// 💡 Java 비교: ModelMapper 또는 MapStruct와 유사한 역할
+
+import Foundation
+import CoreData
+
+// MARK: - BodyRecordMapper
+
+/// BodyRecord (Core Data) ↔ BodyCompositionEntry (Domain) 매퍼
+/// 데이터 레이어와 도메인 레이어 간의 경계를 명확히 구분합니다.
+/// 📚 학습 포인트: Clean Architecture - Data Layer
+/// - Core Data의 NSManagedObject를 도메인 엔티티로 변환
+/// - 도메인 레이어가 Core Data 의존성을 갖지 않도록 격리
+/// - 양방향 변환 지원 (toDomain, toEntity)
+/// 💡 Java 비교: DTO ↔ Entity 변환 매퍼와 유사
+struct BodyRecordMapper {
+
+    // MARK: - Types
+
+    /// 매핑 중 발생할 수 있는 에러
+    /// 📚 학습 포인트: Custom Error Type
+    /// Swift의 Error 프로토콜을 conform하여 throw 가능한 타입 정의
+    /// 💡 Java 비교: Custom Exception과 유사
+    enum MappingError: Error, LocalizedError {
+        /// 필수 필드 누락
+        case missingRequiredField(String)
+
+        /// 잘못된 데이터 타입
+        case invalidDataType(String)
+
+        /// 에러 설명 (사용자에게 표시할 메시지)
+        /// 📚 학습 포인트: LocalizedError Protocol
+        /// errorDescription을 구현하여 사용자 친화적인 에러 메시지 제공
+        var errorDescription: String? {
+            switch self {
+            case .missingRequiredField(let field):
+                return "필수 필드가 누락되었습니다: \(field)"
+            case .invalidDataType(let field):
+                return "잘못된 데이터 타입입니다: \(field)"
+            }
+        }
+    }
+
+    // MARK: - Initialization
+
+    /// Mapper 초기화
+    /// 📚 학습 포인트: Stateless Mapper
+    /// 이 Mapper는 상태를 갖지 않으므로 별도 초기화 불필요
+    /// 그러나 명시적으로 init을 제공하여 일관성 유지
+    init() {}
+
+    // MARK: - Core Data → Domain
+
+    /// BodyRecord (Core Data)를 BodyCompositionEntry (Domain)로 변환
+    /// 📚 학습 포인트: Optional Handling
+    /// Core Data의 optional 필드를 안전하게 처리
+    /// 💡 Java 비교: Optional.ofNullable()과 유사한 패턴
+    ///
+    /// - Parameter entity: Core Data BodyRecord 엔티티
+    /// - Returns: Domain BodyCompositionEntry
+    /// - Throws: MappingError - 필수 필드 누락 시
+    func toDomain(_ entity: BodyRecord) throws -> BodyCompositionEntry {
+        // 📚 학습 포인트: Guard Let Pattern
+        // optional을 unwrap하고 실패 시 에러를 throw
+        // 💡 Java 비교: Objects.requireNonNull()과 유사
+
+        guard let id = entity.id else {
+            throw MappingError.missingRequiredField("id")
+        }
+
+        guard let date = entity.date else {
+            throw MappingError.missingRequiredField("date")
+        }
+
+        // 📚 학습 포인트: NSDecimalNumber → Decimal Conversion
+        // Core Data의 NSDecimalNumber를 Swift의 Decimal로 변환
+        // weight는 non-optional이므로 직접 접근 가능
+        let weight = entity.weight ?? Decimal(0)
+
+        // 📚 학습 포인트: Optional Chaining with Nil Coalescing
+        // bodyFatPercent가 nil이면 기본값 0 사용
+        // 실제로는 필수값이지만 Core Data 모델에서 optional로 정의됨
+        let bodyFatPercent = entity.bodyFatPercent ?? Decimal(0)
+
+        let muscleMass = entity.muscleMass ?? Decimal(0)
+
+        // 📚 학습 포인트: Calculated vs Stored Value
+        // bodyFatMass가 저장되어 있으면 사용하고, 없으면 자동 계산
+        // 과거 데이터의 일관성을 위해 저장된 값을 우선 사용
+        let bodyFatMass = entity.bodyFatMass ?? BodyCompositionEntry.calculateBodyFatMass(
+            weight: weight,
+            bodyFatPercent: bodyFatPercent
+        )
+
+        return BodyCompositionEntry(
+            id: id,
+            date: date,
+            weight: weight,
+            bodyFatPercent: bodyFatPercent,
+            muscleMass: muscleMass,
+            bodyFatMass: bodyFatMass
+        )
+    }
+
+    /// 여러 BodyRecord를 한 번에 변환
+    /// 📚 학습 포인트: Collection Transformation
+    /// Swift의 map을 활용한 컬렉션 변환
+    /// 💡 Java 비교: Stream.map()과 유사
+    ///
+    /// - Parameter entities: Core Data BodyRecord 배열
+    /// - Returns: Domain BodyCompositionEntry 배열
+    /// - Throws: MappingError - 변환 중 에러 발생 시
+    func toDomain(_ entities: [BodyRecord]) throws -> [BodyCompositionEntry] {
+        return try entities.map { try toDomain($0) }
+    }
+
+    // MARK: - Domain → Core Data
+
+    /// BodyCompositionEntry (Domain)를 BodyRecord (Core Data)로 변환
+    /// 📚 학습 포인트: NSManagedObject Creation
+    /// Core Data 엔티티를 생성하려면 NSManagedObjectContext가 필요
+    /// 💡 Java 비교: EntityManager를 사용한 엔티티 생성과 유사
+    ///
+    /// - Parameters:
+    ///   - domainEntity: Domain BodyCompositionEntry
+    ///   - context: Core Data NSManagedObjectContext
+    /// - Returns: Core Data BodyRecord
+    func toEntity(_ domainEntity: BodyCompositionEntry, context: NSManagedObjectContext) -> BodyRecord {
+        // 📚 학습 포인트: NSManagedObject Initialization
+        // Core Data 엔티티는 context와 함께 생성되어야 함
+        // entity는 context가 관리하는 객체 설명 정보
+        let entity = BodyRecord(context: context)
+
+        // 📚 학습 포인트: Value Assignment
+        // Domain entity의 값을 Core Data entity로 복사
+        entity.id = domainEntity.id
+        entity.date = domainEntity.date
+        entity.weight = domainEntity.weight
+        entity.bodyFatPercent = domainEntity.bodyFatPercent
+        entity.muscleMass = domainEntity.muscleMass
+        entity.bodyFatMass = domainEntity.bodyFatMass
+
+        // 📚 학습 포인트: Timestamp Management
+        // createdAt은 생성 시점을 기록하는 감사(audit) 필드
+        // Core Data에서만 사용되고 Domain에는 노출되지 않음
+        entity.createdAt = Date()
+
+        // 📚 학습 포인트: Return Unsaved Entity
+        // 여기서는 context.save()를 호출하지 않음
+        // 저장은 Repository 레이어에서 담당 (단일 책임 원칙)
+        return entity
+    }
+
+    /// 기존 BodyRecord 업데이트
+    /// 📚 학습 포인트: Update vs Create
+    /// 새로운 엔티티를 생성하지 않고 기존 엔티티를 업데이트
+    /// 💡 Java 비교: JPA의 merge() 메서드와 유사
+    ///
+    /// - Parameters:
+    ///   - entity: 업데이트할 Core Data BodyRecord
+    ///   - domainEntity: 새로운 값을 가진 Domain BodyCompositionEntry
+    func updateEntity(_ entity: BodyRecord, from domainEntity: BodyCompositionEntry) {
+        // 📚 학습 포인트: Partial Update
+        // ID와 createdAt은 변경하지 않고 나머지 필드만 업데이트
+        // 불변(immutable) 필드와 가변(mutable) 필드 구분
+
+        entity.date = domainEntity.date
+        entity.weight = domainEntity.weight
+        entity.bodyFatPercent = domainEntity.bodyFatPercent
+        entity.muscleMass = domainEntity.muscleMass
+        entity.bodyFatMass = domainEntity.bodyFatMass
+
+        // 📚 학습 포인트: Audit Trail
+        // updatedAt 같은 필드가 있다면 여기서 갱신
+        // 현재 BodyRecord 모델에는 updatedAt이 없지만 향후 추가 가능
+    }
+}
+
+// MARK: - Convenience Extensions
+
+extension BodyRecordMapper {
+    /// 📚 학습 포인트: Convenience Methods
+    /// 자주 사용되는 패턴을 간편하게 호출할 수 있는 헬퍼 메서드
+
+    /// Domain 엔티티로 새 Core Data 엔티티 생성 및 즉시 저장
+    /// 📚 학습 포인트: Combined Operation
+    /// 생성과 저장을 한 번에 처리하는 편의 메서드
+    /// 💡 주의: 에러 처리를 위해 throws 사용
+    ///
+    /// - Parameters:
+    ///   - domainEntity: Domain BodyCompositionEntry
+    ///   - context: Core Data NSManagedObjectContext
+    /// - Returns: 저장된 Core Data BodyRecord
+    /// - Throws: Core Data 저장 에러
+    func createAndSave(_ domainEntity: BodyCompositionEntry, context: NSManagedObjectContext) throws -> BodyRecord {
+        let entity = toEntity(domainEntity, context: context)
+
+        // 📚 학습 포인트: Try Expression
+        // context.save()가 throw할 수 있으므로 try 키워드 필요
+        // 💡 Java 비교: checked exception 처리와 유사
+        try context.save()
+
+        return entity
+    }
+
+    /// Domain 엔티티로 기존 Core Data 엔티티 업데이트 및 즉시 저장
+    /// 📚 학습 포인트: Update and Persist
+    /// 업데이트와 저장을 한 번에 처리
+    ///
+    /// - Parameters:
+    ///   - entity: 업데이트할 Core Data BodyRecord
+    ///   - domainEntity: 새로운 값을 가진 Domain BodyCompositionEntry
+    ///   - context: Core Data NSManagedObjectContext
+    /// - Throws: Core Data 저장 에러
+    func updateAndSave(_ entity: BodyRecord, from domainEntity: BodyCompositionEntry, context: NSManagedObjectContext) throws {
+        updateEntity(entity, from: domainEntity)
+        try context.save()
+    }
+}
+
+// MARK: - Documentation
+
+/// 📚 학습 포인트: Mapper Pattern 이해
+///
+/// Mapper의 역할:
+/// - 데이터 레이어(Core Data)와 도메인 레이어(Business Logic)의 경계 정의
+/// - 각 레이어가 서로의 구현 세부사항을 알지 못하도록 격리
+/// - 테스트 가능성 향상 (도메인 로직을 Core Data 없이 테스트 가능)
+///
+/// 왜 Mapper가 필요한가?
+/// 1. 관심사의 분리 (Separation of Concerns)
+///    - Domain은 비즈니스 로직에만 집중
+///    - Data Layer는 영속성(persistence)에만 집중
+///
+/// 2. 독립성 (Independence)
+///    - Core Data를 다른 DB로 변경해도 Domain은 영향 없음
+///    - Domain 엔티티 변경 시 Core Data 모델은 영향 최소화
+///
+/// 3. 테스트 용이성 (Testability)
+///    - Domain 로직을 테스트할 때 Core Data mock 불필요
+///    - 순수한 Swift 객체로 테스트 가능
+///
+/// 4. 타입 안전성 (Type Safety)
+///    - Core Data의 optional/non-optional 불일치 해결
+///    - NSDecimalNumber ↔ Decimal 변환 일관성
+///
+/// Clean Architecture의 레이어:
+/// ```
+/// Presentation Layer (UI)
+///        ↓
+/// Domain Layer (Business Logic) ← BodyCompositionEntry
+///        ↓
+/// Data Layer (Persistence) ← BodyRecord (Core Data)
+///        ↓
+/// Mapper: 이 레이어 간의 번역기 역할
+/// ```
+///
+/// 💡 실무 팁:
+/// - Mapper는 stateless해야 함 (상태를 갖지 않음)
+/// - 단방향보다는 양방향 변환 지원이 유용
+/// - 복잡한 로직은 Mapper가 아닌 Use Case에 위치
+/// - 변환 실패 시 명확한 에러 메시지 제공
+///

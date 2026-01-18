@@ -53,24 +53,6 @@ enum ExerciseType: Int16, CaseIterable, Codable {
         }
     }
 
-    /// 운동 종류별 SF Symbol 아이콘 이름
-    ///
-    /// 각 운동 종류에 대응하는 SF Symbol 아이콘의 이름을 반환합니다.
-    ///
-    /// - Returns: SF Symbol 아이콘 이름 (String)
-    var iconName: String {
-        switch self {
-        case .walking: return "figure.walk"
-        case .running: return "figure.run"
-        case .cycling: return "bicycle"
-        case .swimming: return "figure.pool.swim"
-        case .weight: return "dumbbell.fill"
-        case .crossfit: return "figure.cross.training"
-        case .yoga: return "figure.yoga"
-        case .other: return "figure.mixed.cardio"
-        }
-    }
-
     /// 기본 MET 값 (중강도 기준)
     ///
     /// MET (Metabolic Equivalent of Task): 안정 시 산소 소비량 대비 활동 시 산소 소비량의 비율

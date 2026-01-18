@@ -100,13 +100,18 @@ struct BodyRecordMapper {
             bodyFatPercent: bodyFatPercent
         )
 
+        // 📚 학습 포인트: HealthKit Integration
+        // healthKitId를 보존하여 데이터 출처를 UI에 표시할 수 있도록 함
+        let healthKitId = entity.healthKitId
+
         return BodyCompositionEntry(
             id: id,
             date: date,
             weight: weight,
             bodyFatPercent: bodyFatPercent,
             muscleMass: muscleMass,
-            bodyFatMass: bodyFatMass
+            bodyFatMass: bodyFatMass,
+            healthKitId: healthKitId
         )
     }
 
@@ -147,6 +152,7 @@ struct BodyRecordMapper {
         entity.bodyFatPercent = domainEntity.bodyFatPercent
         entity.muscleMass = domainEntity.muscleMass
         entity.bodyFatMass = domainEntity.bodyFatMass
+        entity.healthKitId = domainEntity.healthKitId
 
         // 📚 학습 포인트: Timestamp Management
         // createdAt은 생성 시점을 기록하는 감사(audit) 필드
@@ -177,6 +183,7 @@ struct BodyRecordMapper {
         entity.bodyFatPercent = domainEntity.bodyFatPercent
         entity.muscleMass = domainEntity.muscleMass
         entity.bodyFatMass = domainEntity.bodyFatMass
+        entity.healthKitId = domainEntity.healthKitId
 
         // 📚 학습 포인트: Audit Trail
         // updatedAt 같은 필드가 있다면 여기서 갱신
