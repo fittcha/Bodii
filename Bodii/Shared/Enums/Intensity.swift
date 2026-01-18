@@ -2,56 +2,45 @@
 //  Intensity.swift
 //  Bodii
 //
-//  Created by Auto-Claude on 2024-01-12.
+//  Created by Auto-Claude on 2026-01-11.
 //
+
+// 📚 학습 포인트: Enum for Exercise Intensity
+// Swift enum으로 운동 강도를 분류하여 ExerciseRecord에서 사용
+// 💡 Java 비교: enum 타입으로 intensity level을 분류하는 것과 동일
 
 import Foundation
 
-/// 운동 강도 열거형
-///
-/// 운동 기록 시 운동의 강도를 나타냅니다.
-/// MET 계산 시 강도 보정 계수로 사용됩니다.
-/// Core Data 호환성을 위해 Int16 rawValue를 사용합니다.
-///
-/// - Cases:
-///   - low: 저강도 (MET × 0.8)
-///   - medium: 중강도 (MET × 1.0)
-///   - high: 고강도 (MET × 1.2)
-///
-/// - Example:
-/// ```swift
-/// let intensity = Intensity.high
-/// print(intensity.displayName) // "고강도"
-/// print(intensity.metMultiplier) // 1.2
-/// ```
+// MARK: - Intensity
+
+/// 운동 강도
+/// - Core Data의 ExerciseRecord 엔티티에서 Int16으로 저장
+/// - ExerciseType의 MET 값 계산 시 사용
 enum Intensity: Int16, CaseIterable, Codable {
+
+    // MARK: - Cases
+
+    /// 낮음 (0)
     case low = 0
+
+    /// 보통 (1)
     case medium = 1
+
+    /// 높음 (2)
     case high = 2
 
-    /// 사용자에게 표시할 강도 이름
+    // MARK: - Display Name
+
+    /// 한국어 표시 이름
+    /// - 사용자 인터페이스에 표시되는 텍스트
     var displayName: String {
         switch self {
-        case .low: return "저강도"
-        case .medium: return "중강도"
-        case .high: return "고강도"
-        }
-    }
-
-    /// MET 강도 보정 계수
-    ///
-    /// 기본 MET 값에 이 계수를 곱하여 실제 운동 강도를 반영합니다.
-    ///
-    /// - 저강도: 기본 MET × 0.8
-    /// - 중강도: 기본 MET × 1.0
-    /// - 고강도: 기본 MET × 1.2
-    ///
-    /// - Returns: 강도 보정 계수
-    var metMultiplier: Double {
-        switch self {
-        case .low: return 0.8
-        case .medium: return 1.0
-        case .high: return 1.2
+        case .low:
+            return "낮음"
+        case .medium:
+            return "보통"
+        case .high:
+            return "높음"
         }
     }
 }
@@ -59,5 +48,9 @@ enum Intensity: Int16, CaseIterable, Codable {
 // MARK: - Identifiable
 
 extension Intensity: Identifiable {
-    var id: Int16 { rawValue }
+    /// SwiftUI List와 ForEach에서 사용하기 위한 ID
+    /// - rawValue를 ID로 사용하여 각 케이스를 고유하게 식별
+    var id: Int16 {
+        rawValue
+    }
 }

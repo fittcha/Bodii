@@ -2,190 +2,215 @@
 //  Constants.swift
 //  Bodii
 //
-//  Created by Auto-Claude on 2026-01-12.
+//  Created by Auto-Claude on 2026-01-11.
 //
+
+// 📚 학습 포인트: App-wide Constants
+// Swift는 enum을 네임스페이스로 사용하여 상수를 그룹화
+// 💡 Java 비교: final class with private constructor와 유사하지만 Swift는 enum 사용
 
 import Foundation
 
-/// App-wide configuration constants
+// MARK: - Constants
+
+/// 앱 전역 상수
+/// - 검증 범위, 기본값, 계산 상수를 포함
+/// - enum을 네임스페이스로 사용하여 인스턴스화 방지
 enum Constants {
 
     // MARK: - Validation Ranges
 
+    /// 사용자 입력 검증을 위한 유효 범위
     enum Validation {
-        /// Height validation range (cm)
+
+        // MARK: Body Measurements
+
+        /// 키 유효 범위 (cm)
         enum Height {
-            static let min: Double = 100
-            static let max: Double = 250
+            /// 최소 키: 100cm
+            static let min: Double = 100.0
+            /// 최대 키: 250cm
+            static let max: Double = 250.0
         }
 
-        /// Weight validation range (kg)
+        /// 체중 유효 범위 (kg)
         enum Weight {
-            static let min: Double = 20
-            static let max: Double = 300
+            /// 최소 체중: 20kg
+            static let min: Double = 20.0
+            /// 최대 체중: 300kg
+            static let max: Double = 300.0
         }
 
-        /// Body fat percentage validation range (%)
-        enum BodyFatPercentage {
-            static let min: Double = 1
-            static let max: Double = 60
+        /// 체지방률 유효 범위 (%)
+        enum BodyFatPercent {
+            /// 최소 체지방률: 3%
+            static let min: Double = 3.0
+            /// 최대 체지방률: 60%
+            static let max: Double = 60.0
         }
 
-        /// Name length validation range
-        enum Name {
-            static let minLength: Int = 1
-            static let maxLength: Int = 20
+        /// 근육량 유효 범위 (kg)
+        enum MuscleMass {
+            /// 최소 근육량: 10kg
+            static let min: Double = 10.0
+            /// 최대 근육량: 60kg
+            static let max: Double = 60.0
         }
 
-        /// Birth year validation range
+        // MARK: User Profile
+
+        /// 생년 유효 범위
         enum BirthYear {
+            /// 최소 생년: 1900년
             static let min: Int = 1900
+            /// 최대 생년: 현재 연도
             static var max: Int {
                 Calendar.current.component(.year, from: Date())
             }
         }
 
-        /// Exercise duration validation (minutes)
-        enum Exercise {
-            static let minDuration: Int = 1
+        /// 이름 유효 범위
+        enum Name {
+            /// 최소 길이: 1글자
+            static let minLength: Int = 1
+            /// 최대 길이: 20글자
+            static let maxLength: Int = 20
         }
 
-        /// Food serving size validation
-        enum Serving {
+        // MARK: Exercise
+
+        /// 운동 시간 유효 범위 (분)
+        enum ExerciseDuration {
+            /// 최소 운동 시간: 1분
+            static let min: Int = 1
+            /// 최대 운동 시간: 480분 (8시간)
+            static let max: Int = 480
+        }
+
+        // MARK: Food
+
+        /// 음식 섭취량 유효 범위 (인분 단위)
+        enum ServingQuantity {
+            /// 최소 섭취량: 0.1인분
             static let min: Double = 0.1
+            /// 최대 섭취량: 100인분
+            static let max: Double = 100.0
+        }
+
+        /// 음식 섭취량 유효 범위 (그램 단위)
+        enum GramQuantity {
+            /// 최소 섭취량: 1g
+            static let min: Double = 1.0
+            /// 최대 섭취량: 10,000g (10kg)
+            static let max: Double = 10_000.0
         }
     }
 
-    // MARK: - Warning Thresholds
+    // MARK: - Sleep Boundary
 
-    enum Threshold {
-        /// Body fat percentage warning thresholds (%)
-        enum BodyFat {
-            static let extremeLow: Double = 3
-            static let extremeHigh: Double = 50
-        }
-
-        /// Weight change warning threshold (kg)
-        enum WeightChange {
-            static let rapid: Double = 3
-        }
-
-        /// Exercise duration warning threshold (minutes)
-        enum Exercise {
-            static let excessive: Int = 480 // 8 hours
-        }
-
-        /// Food serving size warning threshold
-        enum Serving {
-            static let excessive: Double = 100
-        }
-    }
-
-    // MARK: - Sleep Constants
-
+    /// 수면 경계 시간 설정
+    /// - 02:00를 기준으로 전날/당일 구분
     enum Sleep {
-        /// Sleep day boundary hour (02:00)
-        /// Hours 00:00-01:59 belong to previous day
+        /// 수면 경계 시간: 02:00
+        /// - 02:00 이전(00:00-01:59)은 전날로 간주
+        /// - 02:00 이후(02:00-23:59)는 당일로 간주
         static let boundaryHour: Int = 2
-
-        /// Morning prompt hour (06:00)
-        /// Show sleep recording prompt at 6 AM or later
-        /// 📚 학습 포인트: Separation of Concerns
-        /// - boundaryHour: Date assignment logic (when sleep belongs to previous day)
-        /// - promptHour: User notification timing (when to show prompt)
-        /// 💡 Java 비교: Different constants for different business rules
-        static let promptHour: Int = 6
-
-        /// Maximum sleep popup retry count
-        static let maxPopupRetries: Int = 3
-
-        /// Sleep duration ranges for status (minutes)
-        enum Duration {
-            static let badMax: Int = 330        // < 5h 30m
-            static let sosoMax: Int = 390       // 5h 30m - 6h 30m
-            static let goodMax: Int = 450       // 6h 30m - 7h 30m
-            static let excellentMax: Int = 540  // 7h 30m - 9h
-            // > 540 = Oversleep
-        }
     }
 
-    // MARK: - Activity Level Multipliers (TDEE)
+    // MARK: - Default Values
 
-    enum ActivityLevel {
-        static let sedentary: Double = 1.2
-        static let light: Double = 1.375
-        static let moderate: Double = 1.55
-        static let active: Double = 1.725
-        static let veryActive: Double = 1.9
+    /// 기본값
+    enum Defaults {
+
+        /// 기본 활동 수준: 보통 활동
+        static let activityLevel: Int16 = 3  // ActivityLevel.moderate
+
+        /// 기본 1인분 크기 (g)
+        static let servingSize: Double = 100.0
+
+        /// 기본 목표 타입: 유지
+        static let goalType: Int16 = 1  // GoalType.maintain
     }
 
-    // MARK: - BMR Formula Constants
+    // MARK: - BMR Calculation Constants
 
+    /// 기초대사량(BMR) 계산 상수
+    /// - Mifflin-St Jeor 방정식 사용
     enum BMR {
-        /// Katch-McArdle formula (used when body fat % is available)
-        enum KatchMcArdle {
-            static let base: Double = 370
-            static let multiplier: Double = 21.6
+
+        /// 남성 BMR 계산 상수
+        enum Male {
+            /// 체중 계수: 10
+            static let weightCoefficient: Double = 10.0
+            /// 키 계수: 6.25
+            static let heightCoefficient: Double = 6.25
+            /// 나이 계수: 5
+            static let ageCoefficient: Double = 5.0
+            /// 기본 상수: +5
+            static let baseConstant: Double = 5.0
         }
 
-        /// Mifflin-St Jeor formula (used when body fat % is unavailable)
-        enum MifflinStJeor {
-            static let weightMultiplier: Double = 10
-            static let heightMultiplier: Double = 6.25
-            static let ageMultiplier: Double = 5
-            static let maleConstant: Double = 5
-            static let femaleConstant: Double = -161
-        }
-    }
-
-    // MARK: - Diet Score Ranges
-
-    enum DietScore {
-        static let greatMin: Int = 8
-        static let greatMax: Int = 10
-        static let goodMin: Int = 5
-        static let goodMax: Int = 7
-        static let needsWorkMin: Int = 0
-        static let needsWorkMax: Int = 4
-    }
-
-    // MARK: - API Limits
-
-    enum API {
-        /// KFDA (식약처) API configuration
-        enum KFDA {
-            static let timeout: TimeInterval = 30
-            static let maxRetries: Int = 2
-            static let defaultPageSize: Int = 10
-            static let maxPageSize: Int = 100
-        }
-
-        /// USDA FoodData Central API configuration
-        enum USDA {
-            static let timeout: TimeInterval = 30
-            static let maxRetries: Int = 2
-            static let defaultPageSize: Int = 25
-            static let maxPageSize: Int = 200
-        }
-
-        /// Google Gemini API configuration
-        enum Gemini {
-            static let requestsPerMinute: Int = 15
-            static let timeout: TimeInterval = 60
-            static let maxRetries: Int = 2
-            static let rateLimitWindow: TimeInterval = 60 // 1 minute in seconds
-        }
-
-        /// Google Cloud Vision API limits
-        enum Vision {
-            static let monthlyFreeRequests: Int = 1000
+        /// 여성 BMR 계산 상수
+        enum Female {
+            /// 체중 계수: 10
+            static let weightCoefficient: Double = 10.0
+            /// 키 계수: 6.25
+            static let heightCoefficient: Double = 6.25
+            /// 나이 계수: 5
+            static let ageCoefficient: Double = 5.0
+            /// 기본 상수: -161
+            static let baseConstant: Double = -161.0
         }
     }
 
-    // MARK: - HealthKit Sync
+    // MARK: - TDEE Calculation Constants
 
-    enum HealthKit {
-        /// Default number of days to sync from HealthKit
-        static let defaultSyncDays: Int = 7
+    /// 일일 총 에너지 소비량(TDEE) 계산 상수
+    /// - TDEE = BMR × ActivityLevel.multiplier
+    /// - ActivityLevel enum에서 multiplier 제공
+    enum TDEE {
+        /// 참고: ActivityLevel enum의 multiplier 사용
+        /// - sedentary: 1.2
+        /// - light: 1.375
+        /// - moderate: 1.55
+        /// - active: 1.725
+        /// - veryActive: 1.9
+    }
+
+    // MARK: - Calorie Adjustment Constants
+
+    /// 칼로리 조정 상수
+    enum CalorieAdjustment {
+        /// 1kg 체중 변화에 필요한 칼로리: 7,700 kcal
+        static let caloriesPerKg: Double = 7_700.0
+
+        /// 주당 안전한 최대 감량: 1kg
+        static let maxWeeklyLossKg: Double = 1.0
+
+        /// 주당 안전한 최대 증량: 0.5kg
+        static let maxWeeklyGainKg: Double = 0.5
+    }
+
+    // MARK: - Macro Ratios
+
+    /// 영양소 비율
+    enum MacroRatios {
+        /// 탄수화물 칼로리당 그램: 4 kcal/g
+        static let carbCaloriesPerGram: Double = 4.0
+
+        /// 단백질 칼로리당 그램: 4 kcal/g
+        static let proteinCaloriesPerGram: Double = 4.0
+
+        /// 지방 칼로리당 그램: 9 kcal/g
+        static let fatCaloriesPerGram: Double = 9.0
+    }
+
+    // MARK: - Body Composition
+
+    /// 체성분 계산 상수
+    enum BodyComposition {
+        /// 제지방량 = 체중 × (1 - 체지방률/100)
+        /// 근육량은 제지방량의 일부
+        /// - 제지방량 ≥ 근육량 검증 필요
     }
 }

@@ -2,260 +2,246 @@
 //  DateUtils.swift
 //  Bodii
 //
-//  Created by Auto-Claude on 2026-01-12.
+//  Created by Auto-Claude on 2026-01-11.
 //
+
+// 📚 학습 포인트: Date Utilities with Sleep Boundary Logic
+// 수면 경계 시간(02:00)을 적용한 날짜 처리 유틸리티
+// 💡 Java 비교: Joda-Time/java.time.LocalDateTime의 사용자 정의 날짜 경계 로직과 유사
 
 import Foundation
 
-/// Date utility service for handling date logic including sleep boundary calculations
+// MARK: - DateUtils
+
+/// 날짜 처리 유틸리티
+/// - 02:00 수면 경계 로직을 적용한 논리적 날짜 계산
+/// - 한국 로케일 기반 날짜 포매팅
 ///
-/// 날짜 관련 유틸리티 서비스 (수면 경계 계산 포함)
+/// ## 수면 경계 로직
+/// 실제 활동은 02:00 이전까지는 전날의 연장으로 간주:
+/// - 00:00 ~ 01:59 → 전날로 간주
+/// - 02:00 ~ 23:59 → 당일로 간주
+///
+/// ## 예시
+/// ```swift
+/// // 2024년 1월 2일 01:30 → 2024년 1월 1일 (전날)
+/// let date1 = DateUtils.getLogicalDate(for: jan2_0130)
+///
+/// // 2024년 1월 2일 02:00 → 2024년 1월 2일 (당일)
+/// let date2 = DateUtils.getLogicalDate(for: jan2_0200)
+///
+/// // 새로운 날 시작 여부 확인
+/// let isNewDay = DateUtils.isNewDayForSleep(at: date)
+/// ```
 enum DateUtils {
 
     // MARK: - Sleep Boundary Logic
 
-    /// Returns the logical date for sleep tracking purposes, applying the 02:00 boundary rule
+    /// 논리적 날짜 반환 (02:00 수면 경계 적용)
+    /// - Parameter date: 실제 날짜/시간
+    /// - Returns: 논리적 날짜 (시간 정보 제거된 순수 날짜)
     ///
-    /// 수면 기록을 위한 논리적 날짜를 반환합니다 (02:00 경계 규칙 적용).
+    /// ## 로직
+    /// - 시간이 00:00 ~ 01:59 사이이면 전날 반환
+    /// - 시간이 02:00 ~ 23:59 사이이면 당일 반환
     ///
-    /// **Rule**: Hours 00:00-01:59 belong to the previous day for sleep tracking.
-    /// - 02:00 ~ 23:59 → Current day
-    /// - 00:00 ~ 01:59 → Previous day
-    ///
-    /// - Parameter date: The actual date/time to convert
-    /// - Returns: The logical date for sleep tracking
-    ///
-    /// Example:
+    /// ## 예시
     /// ```swift
-    /// // January 12, 2026 at 01:30 AM
-    /// let date1 = Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 12, hour: 1, minute: 30))!
-    /// let logicalDate1 = DateUtils.getLogicalDate(for: date1)
-    /// // Returns: January 11, 2026 (previous day)
-    ///
-    /// // January 12, 2026 at 02:00 AM
-    /// let date2 = Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 12, hour: 2, minute: 0))!
-    /// let logicalDate2 = DateUtils.getLogicalDate(for: date2)
-    /// // Returns: January 12, 2026 (current day)
-    ///
-    /// // January 12, 2026 at 02:01 AM
-    /// let date3 = Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 12, hour: 2, minute: 1))!
-    /// let logicalDate3 = DateUtils.getLogicalDate(for: date3)
-    /// // Returns: January 12, 2026 (current day)
+    /// // 2024-01-02 01:59 → 2024-01-01
+    /// // 2024-01-02 02:00 → 2024-01-02
+    /// // 2024-01-02 12:00 → 2024-01-02
     /// ```
     static func getLogicalDate(for date: Date) -> Date {
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: date)
 
+        // 02:00 이전이면 전날로 간주
         if hour < Constants.Sleep.boundaryHour {
-            // 00:00 ~ 01:59 belongs to previous day
-            return calendar.date(byAdding: .day, value: -1, to: date.startOfDay) ?? date.startOfDay
+            // 하루를 빼고 시간 정보 제거
+            guard let previousDay = calendar.date(byAdding: .day, value: -1, to: date) else {
+                return calendar.startOfDay(for: date)
+            }
+            return calendar.startOfDay(for: previousDay)
         }
 
-        // 02:00 ~ 23:59 is current day
-        return date.startOfDay
+        // 02:00 이후면 당일, 시간 정보 제거
+        return calendar.startOfDay(for: date)
     }
 
-    /// Checks if the current time is within the sleep recording window
+    /// 수면 경계를 넘어 새로운 날인지 확인
+    /// - Parameter date: 확인할 날짜/시간
+    /// - Returns: true면 새로운 날 시작 (02:00 이후), false면 아직 전날 (02:00 이전)
     ///
-    /// 현재 시간이 수면 기록 시간대인지 확인합니다 (06:00 이후).
+    /// ## 사용 예시
+    /// - 수면 기록 저장 시 새로운 날인지 확인
+    /// - DailyLog 업데이트 여부 판단
     ///
-    /// - Returns: True if current time is >= 06:00 (sleep recording window)
-    ///
-    /// Example:
+    /// ## 예시
     /// ```swift
-    /// // At 05:59 AM
-    /// let shouldShow1 = DateUtils.shouldShowSleepPopup() // false
-    ///
-    /// // At 06:00 AM or later
-    /// let shouldShow2 = DateUtils.shouldShowSleepPopup() // true
+    /// // 01:59 → false (아직 전날)
+    /// // 02:00 → true (새로운 날)
+    /// // 12:00 → true (새로운 날)
     /// ```
-    static func shouldShowSleepPopup() -> Bool {
-        let hour = Calendar.current.component(.hour, from: Date())
-        return hour >= Constants.Sleep.promptHour
-    }
-
-    /// Returns the sleep date for a given date/time
-    ///
-    /// 주어진 날짜/시간에 대한 수면 날짜를 반환합니다.
-    ///
-    /// This is an alias for `getLogicalDate(for:)` with clearer naming for sleep context.
-    ///
-    /// - Parameter date: The actual date/time
-    /// - Returns: The sleep date (logical date)
-    ///
-    /// Example:
-    /// ```swift
-    /// // At 03:00 AM on Jan 12, entering sleep data
-    /// let now = Date() // 2026-01-12 03:00:00
-    /// let sleepDate = DateUtils.getSleepDate(for: now)
-    /// // Returns: 2026-01-11 (yesterday's sleep)
-    /// ```
-    static func getSleepDate(for date: Date) -> Date {
-        getLogicalDate(for: date)
-    }
-
-    // MARK: - Date Formatting Utilities
-
-    /// Formats a date for display in Korean locale (년 월 일)
-    ///
-    /// 날짜를 한국어 형식으로 포맷합니다 (년 월 일).
-    ///
-    /// - Parameters:
-    ///   - date: The date to format
-    ///   - style: The date format style (default: .medium)
-    /// - Returns: Formatted date string
-    ///
-    /// Example:
-    /// ```swift
-    /// let date = Date() // 2026-01-12
-    /// let formatted = DateUtils.formatKorean(date)
-    /// // Returns: "2026년 1월 12일"
-    /// ```
-    static func formatKorean(_ date: Date, style: DateFormatter.Style = .medium) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = style
-        formatter.timeStyle = .none
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter.string(from: date)
-    }
-
-    /// Formats a date for display with time in Korean locale
-    ///
-    /// 날짜와 시간을 한국어 형식으로 포맷합니다.
-    ///
-    /// - Parameters:
-    ///   - date: The date to format
-    ///   - dateStyle: The date format style (default: .medium)
-    ///   - timeStyle: The time format style (default: .short)
-    /// - Returns: Formatted date and time string
-    ///
-    /// Example:
-    /// ```swift
-    /// let date = Date() // 2026-01-12 15:30:45
-    /// let formatted = DateUtils.formatKoreanWithTime(date)
-    /// // Returns: "2026년 1월 12일 오후 3:30"
-    /// ```
-    static func formatKoreanWithTime(
-        _ date: Date,
-        dateStyle: DateFormatter.Style = .medium,
-        timeStyle: DateFormatter.Style = .short
-    ) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = dateStyle
-        formatter.timeStyle = timeStyle
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter.string(from: date)
-    }
-
-    /// Returns a relative date string (오늘, 어제, 내일, or formatted date)
-    ///
-    /// 상대적 날짜 문자열을 반환합니다 (오늘, 어제, 내일, 또는 포맷된 날짜).
-    ///
-    /// - Parameter date: The date to format
-    /// - Returns: Relative date string in Korean
-    ///
-    /// Example:
-    /// ```swift
-    /// let today = Date()
-    /// let todayStr = DateUtils.relativeDate(today)
-    /// // Returns: "오늘"
-    ///
-    /// let yesterday = Date().adding(days: -1)
-    /// let yesterdayStr = DateUtils.relativeDate(yesterday)
-    /// // Returns: "어제"
-    ///
-    /// let lastWeek = Date().adding(days: -7)
-    /// let lastWeekStr = DateUtils.relativeDate(lastWeek)
-    /// // Returns: "2026년 1월 5일" (formatted)
-    /// ```
-    static func relativeDate(_ date: Date) -> String {
-        if date.isToday {
-            return "오늘"
-        } else if date.isYesterday {
-            return "어제"
-        } else if date.isTomorrow {
-            return "내일"
-        } else {
-            return formatKorean(date)
-        }
-    }
-
-    /// Formats a duration in minutes to a readable Korean string
-    ///
-    /// 분 단위 시간을 읽기 쉬운 한국어 문자열로 포맷합니다.
-    ///
-    /// - Parameter minutes: Duration in minutes
-    /// - Returns: Formatted duration string (e.g., "7시간 30분")
-    ///
-    /// Example:
-    /// ```swift
-    /// let duration1 = DateUtils.formatDuration(minutes: 450)
-    /// // Returns: "7시간 30분"
-    ///
-    /// let duration2 = DateUtils.formatDuration(minutes: 60)
-    /// // Returns: "1시간"
-    ///
-    /// let duration3 = DateUtils.formatDuration(minutes: 45)
-    /// // Returns: "45분"
-    ///
-    /// let duration4 = DateUtils.formatDuration(minutes: 0)
-    /// // Returns: "0분"
-    /// ```
-    static func formatDuration(minutes: Int) -> String {
-        let hours = minutes / 60
-        let mins = minutes % 60
-
-        if hours > 0 && mins > 0 {
-            return "\(hours)시간 \(mins)분"
-        } else if hours > 0 {
-            return "\(hours)시간"
-        } else {
-            return "\(mins)분"
-        }
-    }
-
-    /// Creates a date from year, month, and day components
-    ///
-    /// 년, 월, 일 컴포넌트로부터 날짜를 생성합니다.
-    ///
-    /// - Parameters:
-    ///   - year: Year component
-    ///   - month: Month component (1-12)
-    ///   - day: Day component
-    /// - Returns: Date if valid, nil otherwise
-    ///
-    /// Example:
-    /// ```swift
-    /// let date = DateUtils.date(year: 2026, month: 1, day: 12)
-    /// // Returns: 2026-01-12 00:00:00
-    /// ```
-    static func date(year: Int, month: Int, day: Int) -> Date? {
-        var components = DateComponents()
-        components.year = year
-        components.month = month
-        components.day = day
-        return Calendar.current.date(from: components)
-    }
-
-    /// Returns the number of days between two dates
-    ///
-    /// 두 날짜 사이의 일수를 반환합니다.
-    ///
-    /// - Parameters:
-    ///   - from: Start date
-    ///   - to: End date
-    /// - Returns: Number of days between the dates
-    ///
-    /// Example:
-    /// ```swift
-    /// let date1 = Date() // 2026-01-12
-    /// let date2 = date1.adding(days: 7) // 2026-01-19
-    /// let days = DateUtils.daysBetween(from: date1, to: date2)
-    /// // Returns: 7
-    /// ```
-    static func daysBetween(from startDate: Date, to endDate: Date) -> Int {
+    static func isNewDayForSleep(at date: Date) -> Bool {
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.day], from: startDate.startOfDay, to: endDate.startOfDay)
-        return abs(components.day ?? 0)
+        let hour = calendar.component(.hour, from: date)
+        return hour >= Constants.Sleep.boundaryHour
+    }
+
+    // MARK: - Day Boundaries
+
+    /// 특정 날짜의 시작 시간 반환 (00:00:00)
+    /// - Parameter date: 기준 날짜
+    /// - Returns: 해당 날짜의 00:00:00
+    ///
+    /// ## 예시
+    /// ```swift
+    /// // 2024-01-15 14:30:25 → 2024-01-15 00:00:00
+    /// ```
+    static func startOfDay(for date: Date) -> Date {
+        return Calendar.current.startOfDay(for: date)
+    }
+
+    /// 특정 날짜의 종료 시간 반환 (23:59:59)
+    /// - Parameter date: 기준 날짜
+    /// - Returns: 해당 날짜의 23:59:59
+    ///
+    /// ## 예시
+    /// ```swift
+    /// // 2024-01-15 14:30:25 → 2024-01-15 23:59:59
+    /// ```
+    static func endOfDay(for date: Date) -> Date {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+
+        guard let endDate = calendar.date(byAdding: components, to: startOfDay(for: date)) else {
+            return date
+        }
+        return endDate
+    }
+
+    // MARK: - Date Formatting
+
+    /// 공유 DateFormatter (한국 로케일)
+    /// - 성능 최적화를 위해 static으로 재사용
+    private static let sharedFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone.current
+        return formatter
+    }()
+
+    /// 날짜를 한국어 형식으로 포맷
+    /// - Parameters:
+    ///   - date: 포맷할 날짜
+    ///   - format: 날짜 포맷 문자열 (예: "yyyy년 MM월 dd일")
+    /// - Returns: 포맷된 날짜 문자열
+    ///
+    /// ## 예시
+    /// ```swift
+    /// DateUtils.format(date, format: "yyyy년 MM월 dd일") // "2024년 01월 15일"
+    /// DateUtils.format(date, format: "M월 d일 (E)") // "1월 15일 (월)"
+    /// DateUtils.format(date, format: "HH:mm") // "14:30"
+    /// ```
+    static func format(_ date: Date, format: String) -> String {
+        sharedFormatter.dateFormat = format
+        return sharedFormatter.string(from: date)
+    }
+
+    /// 날짜를 "yyyy년 MM월 dd일" 형식으로 포맷
+    /// - Parameter date: 포맷할 날짜
+    /// - Returns: "2024년 01월 15일" 형식의 문자열
+    static func formatFullDate(_ date: Date) -> String {
+        return format(date, format: "yyyy년 MM월 dd일")
+    }
+
+    /// 날짜를 "M월 d일" 형식으로 포맷
+    /// - Parameter date: 포맷할 날짜
+    /// - Returns: "1월 15일" 형식의 문자열
+    static func formatShortDate(_ date: Date) -> String {
+        return format(date, format: "M월 d일")
+    }
+
+    /// 날짜를 "M월 d일 (E)" 형식으로 포맷 (요일 포함)
+    /// - Parameter date: 포맷할 날짜
+    /// - Returns: "1월 15일 (월)" 형식의 문자열
+    static func formatDateWithWeekday(_ date: Date) -> String {
+        return format(date, format: "M월 d일 (E)")
+    }
+
+    /// 시간을 "HH:mm" 형식으로 포맷
+    /// - Parameter date: 포맷할 날짜/시간
+    /// - Returns: "14:30" 형식의 문자열
+    static func formatTime(_ date: Date) -> String {
+        return format(date, format: "HH:mm")
+    }
+
+    /// 날짜와 시간을 "M월 d일 HH:mm" 형식으로 포맷
+    /// - Parameter date: 포맷할 날짜/시간
+    /// - Returns: "1월 15일 14:30" 형식의 문자열
+    static func formatDateTime(_ date: Date) -> String {
+        return format(date, format: "M월 d일 HH:mm")
+    }
+
+    // MARK: - Date Comparison
+
+    /// 두 날짜가 같은 날인지 비교
+    /// - Parameters:
+    ///   - date1: 첫 번째 날짜
+    ///   - date2: 두 번째 날짜
+    /// - Returns: 같은 날이면 true
+    ///
+    /// ## 예시
+    /// ```swift
+    /// // 2024-01-15 09:00과 2024-01-15 18:00 → true
+    /// // 2024-01-15 23:00과 2024-01-16 01:00 → false
+    /// ```
+    static func isSameDay(_ date1: Date, _ date2: Date) -> Bool {
+        let calendar = Calendar.current
+        return calendar.isDate(date1, inSameDayAs: date2)
+    }
+
+    /// 날짜가 오늘인지 확인
+    /// - Parameter date: 확인할 날짜
+    /// - Returns: 오늘이면 true
+    static func isToday(_ date: Date) -> Bool {
+        return isSameDay(date, Date())
+    }
+
+    /// 두 날짜 사이의 일수 차이 계산
+    /// - Parameters:
+    ///   - startDate: 시작 날짜
+    ///   - endDate: 종료 날짜
+    /// - Returns: 일수 차이 (endDate - startDate)
+    ///
+    /// ## 예시
+    /// ```swift
+    /// // 2024-01-10부터 2024-01-15까지 → 5일
+    /// ```
+    static func daysBetween(_ startDate: Date, and endDate: Date) -> Int {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.day], from: startOfDay(for: startDate), to: startOfDay(for: endDate))
+        return components.day ?? 0
+    }
+
+    // MARK: - Age Calculation
+
+    /// 생년월일로부터 나이 계산
+    /// - Parameters:
+    ///   - birthDate: 생년월일
+    ///   - referenceDate: 기준 날짜 (기본값: 현재)
+    /// - Returns: 만 나이
+    ///
+    /// ## 예시
+    /// ```swift
+    /// // 1990-05-15 생일 → 2024-01-15 기준 33세
+    /// let age = DateUtils.age(from: birthDate)
+    /// ```
+    static func age(from birthDate: Date, referenceDate: Date = Date()) -> Int {
+        let calendar = Calendar.current
+        let ageComponents = calendar.dateComponents([.year], from: birthDate, to: referenceDate)
+        return ageComponents.year ?? 0
     }
 }

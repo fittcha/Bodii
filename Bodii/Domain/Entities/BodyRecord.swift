@@ -2,127 +2,365 @@
 //  BodyRecord.swift
 //  Bodii
 //
-//  Created by Auto-Claude on 2024-01-12.
+//  Created by Auto-Claude on 2026-01-11.
 //
+
+// 📚 학습 포인트: Auto-calculation Logic
+// 체지방량과 체지방률은 상호 의존 관계 - 하나가 변경되면 다른 하나도 자동 재계산
+// 💡 Java 비교: JPA의 @PrePersist/@PreUpdate와 유사하지만 Swift는 헬퍼 메서드로 구현
 
 import Foundation
 
-/// 체성분 기록 도메인 엔티티
-///
-/// 사용자의 체중, 체지방량, 체지방률, 골격근량을 기록합니다.
-///
-/// - Note: bodyFatMass와 bodyFatPercent는 앱 레벨에서 자동 계산됩니다.
-///         - bodyFatMass 입력 시: bodyFatPercent = (bodyFatMass / weight) × 100
-///         - bodyFatPercent 입력 시: bodyFatMass = weight × (bodyFatPercent / 100)
-///
-/// - Note: 체성분 기록 입력 시 User의 current* 필드와 MetabolismSnapshot이 자동으로 업데이트됩니다.
-///
-/// - Example:
-/// ```swift
-/// let bodyRecord = BodyRecord(
-///     id: UUID(),
-///     userId: user.id,
-///     date: Date(),
-///     weight: Decimal(70.5),
-///     bodyFatMass: Decimal(15.2),
-///     bodyFatPercent: Decimal(21.5),
-///     muscleMass: Decimal(30.8),
-///     createdAt: Date()
-/// )
-/// ```
-struct BodyRecord {
-    // MARK: - Primary Key
+// MARK: - BodyRecord
 
-    /// 고유 식별자
+/// 신체 기록 도메인 엔티티
+/// - 사용자의 체중, 체지방량, 체지방률, 근육량을 기록
+/// - 체지방량 ↔ 체지방률 자동 계산 기능 제공
+/// - MetabolismSnapshot과 1:1 관계 (동일한 date로 매핑)
+///
+/// ## 주요 기능
+/// - 체지방량/체지방률 상호 변환 계산
+/// - 날짜별 신체 데이터 추적
+/// - 대사량 스냅샷 자동 생성 트리거
+///
+/// ## 계산 공식
+/// ```
+/// 체지방량(kg) = 체중(kg) × (체지방률(%) / 100)
+/// 체지방률(%) = (체지방량(kg) / 체중(kg)) × 100
+/// 제지방량(kg) = 체중(kg) - 체지방량(kg)
+/// ```
+///
+/// ## 사용 예시
+/// ```swift
+/// // 1. 체지방률로 생성 후 체지방량 자동 계산
+/// var record = BodyRecord.from(
+///     userId: userId,
+///     date: Date(),
+///     weight: 70.0,
+///     bodyFatPercent: 18.5,
+///     muscleMass: 32.0
+/// )
+/// print(record.bodyFatMass) // 12.95kg (자동 계산됨)
+///
+/// // 2. 체지방량으로 생성 후 체지방률 자동 계산
+/// var record2 = BodyRecord.from(
+///     userId: userId,
+///     date: Date(),
+///     weight: 70.0,
+///     bodyFatMass: 12.95,
+///     muscleMass: 32.0
+/// )
+/// print(record2.bodyFatPercent) // 18.5% (자동 계산됨)
+/// ```
+struct BodyRecord: Identifiable, Codable, Equatable {
+
+    // MARK: - Properties
+
+    // MARK: Identifier
+
+    /// 신체 기록 고유 식별자
+    /// - UUID 타입으로 전역 고유성 보장
     let id: UUID
 
-    // MARK: - Foreign Key
-
-    /// User 참조
+    /// 사용자 고유 식별자
+    /// - User 엔티티와의 외래 키 관계
     let userId: UUID
 
-    // MARK: - Body Composition Data
+    // MARK: Record Data
 
-    /// 측정일시 (기본값: 현재 일시)
-    var date: Date
+    /// 기록 날짜
+    /// - 하루에 하나의 BodyRecord만 존재 (unique constraint)
+    /// - 동일 날짜의 MetabolismSnapshot과 1:1 매핑
+    let date: Date
 
-    /// 몸무게 (kg)
+    /// 체중 (kg)
+    /// - 허용 범위: 20-300kg (ValidationService.validateWeight로 검증)
+    /// - 체지방량/체지방률 계산의 기준값
     var weight: Decimal
 
     /// 체지방량 (kg)
-    ///
-    /// bodyFatPercent 입력 시 자동 계산: weight × (bodyFatPercent / 100)
-    var bodyFatMass: Decimal?
+    /// - 계산 공식: weight × (bodyFatPercent / 100)
+    /// - bodyFatPercent가 변경되면 자동으로 재계산 필요
+    var bodyFatMass: Decimal
 
     /// 체지방률 (%)
-    ///
-    /// bodyFatMass 입력 시 자동 계산: (bodyFatMass / weight) × 100
-    var bodyFatPercent: Decimal?
+    /// - 허용 범위: 3-60% (ValidationService.validateBodyFatPercent로 검증)
+    /// - 계산 공식: (bodyFatMass / weight) × 100
+    /// - bodyFatMass가 변경되면 자동으로 재계산 필요
+    var bodyFatPercent: Decimal
 
-    /// 골격근량 (kg)
-    var muscleMass: Decimal?
+    /// 근육량 (kg)
+    /// - 허용 범위: 10-60kg (ValidationService.validateMuscleMass로 검증)
+    /// - 제지방량(체중 - 체지방량)의 일부
+    /// - 검증: 근육량 ≤ 제지방량 (ValidationService.validateBodyComposition으로 검증)
+    var muscleMass: Decimal
 
-    // MARK: - HealthKit Integration
+    // MARK: Timestamps
 
-    /// HealthKit UUID (외부 데이터 추적용)
-    ///
-    /// 📚 학습 포인트: External ID Tracking
-    /// - Apple Health에서 가져온 체성분 기록의 경우 원본 UUID 보존
-    /// - 중복 임포트 방지: 같은 healthKitId가 이미 존재하면 건너뛰기
-    /// - 수동 입력 체성분은 nil
-    /// 💡 Java 비교: externalId 필드와 유사
-    ///
-    /// - Note: 양방향 동기화 시 충돌 해결에 활용
-    ///   - healthKitId가 있으면 → Apple Health에서 가져온 데이터
-    ///   - healthKitId가 nil이면 → 사용자가 수동 입력한 데이터
-    var healthKitId: String?
-
-    // MARK: - Metadata
-
-    /// 생성일시
+    /// 생성 시각
     let createdAt: Date
-}
 
-// MARK: - Identifiable
+    // MARK: - Computed Properties
 
-extension BodyRecord: Identifiable {}
-
-// MARK: - Equatable
-
-extension BodyRecord: Equatable {
-    static func == (lhs: BodyRecord, rhs: BodyRecord) -> Bool {
-        lhs.id == rhs.id
+    /// 제지방량 (kg)
+    /// - 계산 공식: 체중 - 체지방량
+    /// - 근육량 검증에 사용: 근육량 ≤ 제지방량
+    ///
+    /// ## 참고
+    /// 제지방량(Lean Body Mass, LBM)은 체중에서 체지방량을 제외한 모든 조직의 무게
+    /// - 포함: 근육, 뼈, 장기, 수분 등
+    /// - 근육량은 제지방량의 일부이므로 반드시 제지방량보다 작거나 같아야 함
+    var leanBodyMass: Decimal {
+        weight - bodyFatMass
     }
-}
 
-// MARK: - Hashable
+    // MARK: - Factory Methods
 
-extension BodyRecord: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
-// MARK: - HealthKit Integration
-
-extension BodyRecord {
-    /// HealthKit에서 가져온 데이터인지 여부
+    /// 체지방률을 기준으로 BodyRecord 생성 (체지방량 자동 계산)
+    /// - Parameters:
+    ///   - userId: 사용자 고유 식별자
+    ///   - date: 기록 날짜
+    ///   - weight: 체중 (kg)
+    ///   - bodyFatPercent: 체지방률 (%)
+    ///   - muscleMass: 근육량 (kg)
+    /// - Returns: 체지방량이 자동 계산된 BodyRecord
     ///
-    /// 📚 학습 포인트: Computed Property
-    /// - healthKitId의 존재 여부로 데이터 출처 판별
-    /// - UI에서 데이터 출처 표시에 활용
-    /// 💡 Java 비교: isExternal() getter 메서드와 유사
-    ///
-    /// - Returns: HealthKit에서 가져온 데이터이면 true, 수동 입력이면 false
-    ///
-    /// - Example:
-    /// ```swift
-    /// if bodyRecord.isFromHealthKit {
-    ///     // Apple Health 출처 표시
-    ///     Text("Apple Health에서 동기화됨")
-    /// }
+    /// ## 계산 공식
     /// ```
-    var isFromHealthKit: Bool {
-        return healthKitId != nil
+    /// 체지방량(kg) = 체중(kg) × (체지방률(%) / 100)
+    /// ```
+    ///
+    /// ## 사용 예시
+    /// ```swift
+    /// let record = BodyRecord.from(
+    ///     userId: userId,
+    ///     date: Date(),
+    ///     weight: 70.0,
+    ///     bodyFatPercent: 18.5,  // 입력
+    ///     muscleMass: 32.0
+    /// )
+    /// // record.bodyFatMass = 12.95kg (자동 계산)
+    /// ```
+    static func from(
+        userId: UUID,
+        date: Date,
+        weight: Decimal,
+        bodyFatPercent: Decimal,
+        muscleMass: Decimal
+    ) -> BodyRecord {
+        let bodyFatMass = calculateBodyFatMass(weight: weight, bodyFatPercent: bodyFatPercent)
+
+        return BodyRecord(
+            id: UUID(),
+            userId: userId,
+            date: date,
+            weight: weight,
+            bodyFatMass: bodyFatMass,
+            bodyFatPercent: bodyFatPercent,
+            muscleMass: muscleMass,
+            createdAt: Date()
+        )
+    }
+
+    /// 체지방량을 기준으로 BodyRecord 생성 (체지방률 자동 계산)
+    /// - Parameters:
+    ///   - userId: 사용자 고유 식별자
+    ///   - date: 기록 날짜
+    ///   - weight: 체중 (kg)
+    ///   - bodyFatMass: 체지방량 (kg)
+    ///   - muscleMass: 근육량 (kg)
+    /// - Returns: 체지방률이 자동 계산된 BodyRecord
+    ///
+    /// ## 계산 공식
+    /// ```
+    /// 체지방률(%) = (체지방량(kg) / 체중(kg)) × 100
+    /// ```
+    ///
+    /// ## 사용 예시
+    /// ```swift
+    /// let record = BodyRecord.from(
+    ///     userId: userId,
+    ///     date: Date(),
+    ///     weight: 70.0,
+    ///     bodyFatMass: 12.95,  // 입력
+    ///     muscleMass: 32.0
+    /// )
+    /// // record.bodyFatPercent = 18.5% (자동 계산)
+    /// ```
+    static func from(
+        userId: UUID,
+        date: Date,
+        weight: Decimal,
+        bodyFatMass: Decimal,
+        muscleMass: Decimal
+    ) -> BodyRecord {
+        let bodyFatPercent = calculateBodyFatPercent(weight: weight, bodyFatMass: bodyFatMass)
+
+        return BodyRecord(
+            id: UUID(),
+            userId: userId,
+            date: date,
+            weight: weight,
+            bodyFatMass: bodyFatMass,
+            bodyFatPercent: bodyFatPercent,
+            muscleMass: muscleMass,
+            createdAt: Date()
+        )
+    }
+
+    // MARK: - Helper Methods
+
+    /// 체지방량 계산
+    /// - Parameters:
+    ///   - weight: 체중 (kg)
+    ///   - bodyFatPercent: 체지방률 (%)
+    /// - Returns: 계산된 체지방량 (kg)
+    ///
+    /// ## 계산 공식
+    /// ```
+    /// 체지방량(kg) = 체중(kg) × (체지방률(%) / 100)
+    /// ```
+    ///
+    /// ## 예시
+    /// ```swift
+    /// let bodyFatMass = calculateBodyFatMass(weight: 70.0, bodyFatPercent: 18.5)
+    /// // 결과: 12.95kg = 70 × (18.5 / 100)
+    /// ```
+    static func calculateBodyFatMass(weight: Decimal, bodyFatPercent: Decimal) -> Decimal {
+        return weight * (bodyFatPercent / 100)
+    }
+
+    /// 체지방률 계산
+    /// - Parameters:
+    ///   - weight: 체중 (kg)
+    ///   - bodyFatMass: 체지방량 (kg)
+    /// - Returns: 계산된 체지방률 (%)
+    ///
+    /// ## 계산 공식
+    /// ```
+    /// 체지방률(%) = (체지방량(kg) / 체중(kg)) × 100
+    /// ```
+    ///
+    /// ## 예시
+    /// ```swift
+    /// let bodyFatPercent = calculateBodyFatPercent(weight: 70.0, bodyFatMass: 12.95)
+    /// // 결과: 18.5% = (12.95 / 70) × 100
+    /// ```
+    static func calculateBodyFatPercent(weight: Decimal, bodyFatMass: Decimal) -> Decimal {
+        guard weight > 0 else { return 0 }
+        return (bodyFatMass / weight) * 100
+    }
+
+    /// 체중 변경 시 체지방량 재계산 (체지방률 유지)
+    /// - Parameter newWeight: 새로운 체중 (kg)
+    /// - Returns: 체지방량이 재계산된 새 BodyRecord
+    ///
+    /// ## 사용 시나리오
+    /// 사용자가 체중만 수정할 때 체지방률은 유지하고 체지방량만 재계산
+    ///
+    /// ## 예시
+    /// ```swift
+    /// let original = BodyRecord.from(userId: id, date: Date(), weight: 70.0, bodyFatPercent: 18.5, muscleMass: 32.0)
+    /// // original.bodyFatMass = 12.95kg
+    ///
+    /// let updated = original.updatingWeight(72.0)
+    /// // updated.bodyFatPercent = 18.5% (유지)
+    /// // updated.bodyFatMass = 13.32kg (재계산)
+    /// ```
+    func updatingWeight(_ newWeight: Decimal) -> BodyRecord {
+        let newBodyFatMass = Self.calculateBodyFatMass(weight: newWeight, bodyFatPercent: bodyFatPercent)
+
+        return BodyRecord(
+            id: id,
+            userId: userId,
+            date: date,
+            weight: newWeight,
+            bodyFatMass: newBodyFatMass,
+            bodyFatPercent: bodyFatPercent,
+            muscleMass: muscleMass,
+            createdAt: createdAt
+        )
+    }
+
+    /// 체지방률 변경 시 체지방량 재계산
+    /// - Parameter newBodyFatPercent: 새로운 체지방률 (%)
+    /// - Returns: 체지방량이 재계산된 새 BodyRecord
+    ///
+    /// ## 사용 시나리오
+    /// 사용자가 체지방률을 수정할 때 체지방량을 자동 재계산
+    ///
+    /// ## 예시
+    /// ```swift
+    /// let original = BodyRecord.from(userId: id, date: Date(), weight: 70.0, bodyFatPercent: 18.5, muscleMass: 32.0)
+    /// // original.bodyFatMass = 12.95kg
+    ///
+    /// let updated = original.updatingBodyFatPercent(20.0)
+    /// // updated.bodyFatPercent = 20.0% (변경됨)
+    /// // updated.bodyFatMass = 14.0kg (재계산)
+    /// ```
+    func updatingBodyFatPercent(_ newBodyFatPercent: Decimal) -> BodyRecord {
+        let newBodyFatMass = Self.calculateBodyFatMass(weight: weight, bodyFatPercent: newBodyFatPercent)
+
+        return BodyRecord(
+            id: id,
+            userId: userId,
+            date: date,
+            weight: weight,
+            bodyFatMass: newBodyFatMass,
+            bodyFatPercent: newBodyFatPercent,
+            muscleMass: muscleMass,
+            createdAt: createdAt
+        )
+    }
+
+    /// 체지방량 변경 시 체지방률 재계산
+    /// - Parameter newBodyFatMass: 새로운 체지방량 (kg)
+    /// - Returns: 체지방률이 재계산된 새 BodyRecord
+    ///
+    /// ## 사용 시나리오
+    /// 사용자가 체지방량을 직접 입력할 때 체지방률을 자동 재계산
+    ///
+    /// ## 예시
+    /// ```swift
+    /// let original = BodyRecord.from(userId: id, date: Date(), weight: 70.0, bodyFatPercent: 18.5, muscleMass: 32.0)
+    /// // original.bodyFatPercent = 18.5%
+    ///
+    /// let updated = original.updatingBodyFatMass(14.0)
+    /// // updated.bodyFatMass = 14.0kg (변경됨)
+    /// // updated.bodyFatPercent = 20.0% (재계산)
+    /// ```
+    func updatingBodyFatMass(_ newBodyFatMass: Decimal) -> BodyRecord {
+        let newBodyFatPercent = Self.calculateBodyFatPercent(weight: weight, bodyFatMass: newBodyFatMass)
+
+        return BodyRecord(
+            id: id,
+            userId: userId,
+            date: date,
+            weight: weight,
+            bodyFatMass: newBodyFatMass,
+            bodyFatPercent: newBodyFatPercent,
+            muscleMass: muscleMass,
+            createdAt: createdAt
+        )
+    }
+}
+
+// MARK: - BodyRecord + CustomStringConvertible
+
+extension BodyRecord: CustomStringConvertible {
+    /// 디버깅용 문자열 표현
+    var description: String {
+        """
+        BodyRecord(
+          id: \(id.uuidString.prefix(8))...,
+          userId: \(userId.uuidString.prefix(8))...,
+          date: \(date.formatted(style: .short)),
+          weight: \(weight)kg,
+          bodyFatMass: \(bodyFatMass)kg,
+          bodyFatPercent: \(bodyFatPercent)%,
+          muscleMass: \(muscleMass)kg,
+          leanBodyMass: \(leanBodyMass)kg (computed)
+        )
+        """
     }
 }

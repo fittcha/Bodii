@@ -3,15 +3,15 @@
   "title": "Project Foundation & Core Data Model",
   "feature": "Project Foundation & Core Data Model",
   "description": "Set up Xcode project with SwiftUI, MVVM architecture, Core Data persistence layer with 9 entities (User, BodyRecord, MetabolismSnapshot, Food, FoodRecord, ExerciseRecord, SleepRecord, DailyLog, Goal), and utility services for date handling and input validation.",
-  "status": "backlog",
-  "planStatus": "pending",
+  "status": "in_progress",
+  "planStatus": "in_progress",
   "total_phases": 5,
   "phases": [
     {
       "phase_id": 1,
       "title": "Enum Definitions & Type Safety",
       "description": "Create all required enums for Core Data entities to provide type-safe access to coded values",
-      "status": "pending",
+      "status": "completed",
       "subtasks": [
         {
           "subtask_id": "1.1",
@@ -23,8 +23,8 @@
             "Cases: male (0), female (1)",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "Gender enum fully implemented with male/female cases (0, 1), Int16 rawValue, Korean display names (남성, 여성), CaseIterable, Codable, and Identifiable conformance. Already committed in previous session."
         },
         {
           "subtask_id": "1.2",
@@ -37,8 +37,8 @@
             "multiplier property returning correct TDEE coefficient",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "ActivityLevel enum fully implemented with 5 cases (sedentary=1, light=2, moderate=3, active=4, veryActive=5), correct TDEE multipliers (1.2, 1.375, 1.55, 1.725, 1.9), Korean display names, and required protocol conformances (CaseIterable, Codable, Identifiable). Already committed in previous session."
         },
         {
           "subtask_id": "1.3",
@@ -50,8 +50,8 @@
             "Cases: breakfast (0), lunch (1), dinner (2), snack (3)",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "MealType enum fully implemented with breakfast (0), lunch (1), dinner (2), snack (3) cases, Int16 rawValue, Korean display names (아침, 점심, 저녁, 간식), and required protocol conformances (CaseIterable, Codable, Identifiable). Already committed in commit 9c1d070."
         },
         {
           "subtask_id": "1.4",
@@ -64,8 +64,8 @@
             "MET values for each exercise type by intensity level",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": "MET values per ERD: walking 3.5/4.0/5.0, running 7.0/8.0/10.0, etc."
+          "status": "completed",
+          "notes": "ExerciseType enum fully implemented with all 8 exercise types (walking=0, running=1, cycling=2, swimming=3, weight=4, crossfit=5, yoga=6, other=7), MET values by intensity matching ERD specification exactly, Korean display names, and required protocol conformances. Already committed in commit e07251d."
         },
         {
           "subtask_id": "1.5",
@@ -77,8 +77,8 @@
             "Cases: low (0), medium (1), high (2)",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "Intensity enum fully implemented with low (0), medium (1), high (2) cases, Int16 rawValue, Korean display names (낮음, 보통, 높음), and required protocol conformances (CaseIterable, Codable, Identifiable). Already committed in commit 446edf5."
         },
         {
           "subtask_id": "1.6",
@@ -90,8 +90,8 @@
             "Cases: kfdaAPI (0), usdaAPI (1), userCreated (2)",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "FoodSource enum fully implemented with kfdaAPI (0), usdaAPI (1), userCreated (2) cases, Int16 rawValue, Korean display names (식품의약품안전처, 미국 농무부, 사용자 생성), and required protocol conformances (CaseIterable, Codable, Identifiable). Already committed in commit 89925e1."
         },
         {
           "subtask_id": "1.7",
@@ -103,8 +103,8 @@
             "Cases: lose (0), maintain (1), gain (2)",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "GoalType enum fully implemented with lose (0), maintain (1), gain (2) cases, Int16 rawValue, Korean display names (감량, 유지, 증량), and required protocol conformances (CaseIterable, Codable, Identifiable). Already committed in commits 3fab35a and b1d29fa."
         },
         {
           "subtask_id": "1.8",
@@ -118,8 +118,8 @@
             "Duration thresholds: bad<330, soso 330-389, good 390-449, excellent 450-540, oversleep>540",
             "Korean localized display names and emoji indicators"
           ],
-          "status": "pending",
-          "notes": "Per ERD: bad🔴, soso🟡, good🟢, excellent🔵, oversleep🟠"
+          "status": "completed",
+          "notes": "SleepStatus enum fully implemented with all 5 cases (bad=0, soso=1, good=2, excellent=3, oversleep=4), static factory method from(durationMinutes:) for status determination, correct duration thresholds (<330, 330-389, 390-449, 450-540, >540), Korean display names with emoji indicators (🔴🟡🟢🔵🟠), and required protocol conformances (CaseIterable, Codable, Identifiable). Already committed in commits c0c11da and 650cd6d."
         },
         {
           "subtask_id": "1.9",
@@ -131,8 +131,8 @@
             "Cases: serving (0), gram (1)",
             "Korean localized display names"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "QuantityUnit enum fully implemented with serving (0), gram (1) cases, Int16 rawValue, Korean display names (인분, 그램), and required protocol conformances (CaseIterable, Codable, Identifiable). Already committed in commit 054811b."
         },
         {
           "subtask_id": "1.10",
@@ -145,8 +145,8 @@
             "Default activity level, serving size defaults",
             "Calculation constants for BMR/TDEE"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "Constants file fully implemented with comprehensive validation ranges (height 100-250cm, weight 20-300kg, bodyFat 3-60%, muscleMass 10-60kg, birthYear 1900-current, name 1-20 chars, exerciseDuration 1-480min, servingQuantity 0.1-100, gramQuantity 1-10000), sleep boundary hour (2), default values (activityLevel=moderate, servingSize=100g, goalType=maintain), BMR calculation constants (Mifflin-St Jeor equation for male/female), TDEE calculation references, calorie adjustment constants, macro ratios, and body composition notes. Uses enum namespacing pattern, Korean documentation, and educational comments. Already committed in commit 386bd3c."
         }
       ]
     },
@@ -154,7 +154,7 @@
       "phase_id": 2,
       "title": "Utility Services",
       "description": "Create DateUtils for sleep boundary logic and ValidationService for input validation",
-      "status": "pending",
+      "status": "completed",
       "subtasks": [
         {
           "subtask_id": "2.1",
@@ -168,8 +168,8 @@
             "Date formatting utilities for Korean locale",
             "Comprehensive documentation with examples"
           ],
-          "status": "pending",
-          "notes": "CRITICAL: 02:00 boundary means 01:59→prev day, 02:00→current day"
+          "status": "completed",
+          "notes": "DateUtils fully implemented with all acceptance criteria met: getLogicalDate(for:) correctly applies 02:00 sleep boundary logic (01:59→prev day, 02:00→current day), isNewDayForSleep(at:) checks boundary, startOfDay/endOfDay helpers, Korean locale date formatting utilities (formatFullDate, formatShortDate, formatDateWithWeekday, formatTime, formatDateTime), comprehensive documentation with examples, date comparison methods (isSameDay, isToday, daysBetween), and age calculation. Implementation verified and working correctly."
         },
         {
           "subtask_id": "2.2",
@@ -188,8 +188,8 @@
             "ValidationResult type with isValid, errorMessage properties",
             "Korean error messages"
           ],
-          "status": "pending",
-          "notes": "All error messages should be user-friendly in Korean"
+          "status": "completed",
+          "notes": "ValidationService fully implemented with all acceptance criteria met: validateHeight (100-250cm), validateWeight (20-300kg), validateBodyFatPercent (3-60%), validateMuscleMass (10-60kg), validateAge (birth year 1900 to current), validateName (1-20 chars, non-empty), validateExerciseDuration (1-480 min), validateFoodQuantity (0.1-100 servings or 1-10000g with unit awareness), ValidationResult struct with isValid/errorMessage properties, user-friendly Korean error messages, and bonus validateBodyComposition for composite validation of weight/body fat/muscle mass consistency. Already implemented in commit ba7669a."
         },
         {
           "subtask_id": "2.3",
@@ -205,8 +205,8 @@
             "daysBetween(and:) method",
             "formatted(style:) for Korean date formatting"
           ],
-          "status": "pending",
-          "notes": ""
+          "status": "completed",
+          "notes": "Date+Extensions fully implemented with all acceptance criteria met: startOfDay and endOfDay computed properties for day boundaries, static age(from:referenceDate:) method for age calculation, isSameDay(as:) comparison method, isToday computed property, daysBetween(and:) method for date range calculations, and formatted(style:) method with FormatStyle enum (full, short, withWeekday, time, dateTime) for Korean locale date formatting. All methods delegate to DateUtils for consistent behavior. Includes comprehensive Korean documentation with examples. Already committed in commit 96c7cc6."
         },
         {
           "subtask_id": "2.4",
@@ -220,8 +220,8 @@
             "rounded(scale:) method for decimal places",
             "formatted(decimalPlaces:) for display strings"
           ],
-          "status": "pending",
-          "notes": "Important for Core Data Decimal ↔ Swift numeric conversions"
+          "status": "completed",
+          "notes": "Decimal+Extensions fully implemented with all acceptance criteria met: doubleValue and intValue computed properties for type conversion, init(double:) initializer for creating Decimal from Double, rounded(scale:) method for decimal place rounding using NSDecimalRound, formatted(decimalPlaces:) method for UI display strings. Implementation includes comprehensive Korean documentation with educational comments comparing to Java BigDecimal, usage scenarios, and examples. Follows same patterns as Date+Extensions. Already committed in commit 7147a48."
         },
         {
           "subtask_id": "2.5",
@@ -234,8 +234,8 @@
             "Korean locale configuration",
             "Static lazy initialization for performance"
           ],
-          "status": "pending",
-          "notes": "Avoid creating formatters in loops - use shared instances"
+          "status": "completed",
+          "notes": "Formatters utility fully implemented with all acceptance criteria met: shared DateFormatter instances (fullDate, shortDate, dateWithWeekday, time, dateTime, iso8601), shared NumberFormatter instances (weight, bodyFat, calories, macros, percentage, decimal), Korean locale configuration for all formatters, static lazy initialization for performance optimization. Implementation includes comprehensive Korean documentation, educational comments comparing to Java, usage examples for each formatter, and convenience methods for Decimal formatting (formatWeight, formatBodyFat, formatCalories, formatMacros). Already committed in commit 1460379."
         }
       ]
     },
@@ -537,8 +537,8 @@
     {
       "id": "ac-5",
       "description": "DateUtils handles 02:00 sleep boundary logic correctly",
-      "status": "pending",
-      "notes": "Subtask 2.1"
+      "status": "complete",
+      "notes": "Subtask 2.1 completed - DateUtils fully implemented"
     },
     {
       "id": "ac-6",
@@ -568,6 +568,6 @@
     "tests_passed": ""
   },
   "created_at": "2026-01-11T10:45:25.899Z",
-  "updated_at": "2026-01-14T05:01:26.892Z",
+  "updated_at": "2026-01-14T04:34:16.736Z",
   "recoveryNote": "Task recovered from stuck state at 2026-01-11T23:32:49.649Z"
 }

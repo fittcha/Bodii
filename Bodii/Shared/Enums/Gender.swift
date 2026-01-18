@@ -2,33 +2,40 @@
 //  Gender.swift
 //  Bodii
 //
-//  Created by Auto-Claude on 2024-01-12.
+//  Created by Auto-Claude on 2026-01-11.
 //
+
+// 📚 학습 포인트: Enum with RawValue
+// Swift enum은 Int16 rawValue를 가져 Core Data의 정수 저장 타입과 매핑
+// 💡 Java 비교: JPA의 @Enumerated(EnumType.ORDINAL)과 유사
 
 import Foundation
 
-/// 성별 열거형
-///
-/// 사용자의 성별을 나타냅니다. Core Data 호환성을 위해 Int16 rawValue를 사용합니다.
-///
-/// - Cases:
-///   - male: 남성
-///   - female: 여성
-///
-/// - Example:
-/// ```swift
-/// let gender = Gender.male
-/// print(gender.displayName) // "남성"
-/// ```
+// MARK: - Gender
+
+/// 사용자 성별
+/// - Core Data의 User 엔티티에서 Int16으로 저장
+/// - 기초대사량(BMR) 계산 시 사용
 enum Gender: Int16, CaseIterable, Codable {
+
+    // MARK: - Cases
+
+    /// 남성 (0)
     case male = 0
+
+    /// 여성 (1)
     case female = 1
 
-    /// 사용자에게 표시할 성별 이름
+    // MARK: - Display Name
+
+    /// 한국어 표시 이름
+    /// - 사용자 인터페이스에 표시되는 텍스트
     var displayName: String {
         switch self {
-        case .male: return "남성"
-        case .female: return "여성"
+        case .male:
+            return "남성"
+        case .female:
+            return "여성"
         }
     }
 }
@@ -36,5 +43,9 @@ enum Gender: Int16, CaseIterable, Codable {
 // MARK: - Identifiable
 
 extension Gender: Identifiable {
-    var id: Int16 { rawValue }
+    /// SwiftUI List와 ForEach에서 사용하기 위한 ID
+    /// - rawValue를 ID로 사용하여 각 케이스를 고유하게 식별
+    var id: Int16 {
+        rawValue
+    }
 }

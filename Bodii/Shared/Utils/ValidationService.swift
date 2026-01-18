@@ -2,353 +2,328 @@
 //  ValidationService.swift
 //  Bodii
 //
-//  Created by Auto-Claude on 2026-01-12.
+//  Created by Auto-Claude on 2026-01-11.
 //
+
+// 📚 학습 포인트: Input Validation Service
+// Swift의 Result 패턴과 유사하게 ValidationResult 구조체로 성공/실패 반환
+// 💡 Java 비교: Bean Validation과 유사하지만 Swift는 타입 안전성이 더 강함
 
 import Foundation
 
-/// Validation service for user input validation
+// MARK: - ValidationResult
+
+/// 검증 결과를 담는 구조체
+/// - isValid: 검증 통과 여부
+/// - errorMessage: 실패 시 사용자에게 표시할 한국어 오류 메시지
 ///
-/// 사용자 입력 검증 서비스
-enum ValidationService {
+/// ## 예시
+/// ```swift
+/// let result = ValidationService.validateHeight(180)
+/// if result.isValid {
+///     print("유효한 키입니다")
+/// } else {
+///     print(result.errorMessage ?? "")
+/// }
+/// ```
+struct ValidationResult {
+    /// 검증 통과 여부
+    let isValid: Bool
 
-    // MARK: - Validation Result
+    /// 오류 메시지 (실패 시에만 존재)
+    let errorMessage: String?
 
-    /// Result type for validation operations
-    ///
-    /// 검증 작업의 결과 타입
-    enum ValidationResult {
-        case success
-        case failure(String)
-
-        var isValid: Bool {
-            if case .success = self {
-                return true
-            }
-            return false
-        }
-
-        var errorMessage: String? {
-            if case .failure(let message) = self {
-                return message
-            }
-            return nil
-        }
+    /// 성공 결과 생성
+    static var success: ValidationResult {
+        ValidationResult(isValid: true, errorMessage: nil)
     }
 
-    // MARK: - Name Validation
+    /// 실패 결과 생성
+    /// - Parameter message: 한국어 오류 메시지
+    /// - Returns: 실패 결과
+    static func failure(_ message: String) -> ValidationResult {
+        ValidationResult(isValid: false, errorMessage: message)
+    }
+}
 
-    /// Validates user name length
+// MARK: - ValidationService
+
+/// 사용자 입력 검증 서비스
+/// - 모든 입력값의 유효 범위 검증
+/// - Constants.Validation에 정의된 범위 사용
+/// - 한국어 오류 메시지 제공
+///
+/// ## 검증 항목
+/// - 신체 정보: 키, 체중, 체지방률, 근육량
+/// - 사용자 정보: 이름, 생년
+/// - 운동 정보: 운동 시간
+/// - 음식 정보: 섭취량 (인분/그램)
+///
+/// ## 예시
+/// ```swift
+/// // 키 검증
+/// let heightResult = ValidationService.validateHeight(175.5)
+/// if !heightResult.isValid {
+///     showError(heightResult.errorMessage ?? "")
+/// }
+///
+/// // 체중 검증
+/// let weightResult = ValidationService.validateWeight(70.0)
+///
+/// // 이름 검증
+/// let nameResult = ValidationService.validateName("홍길동")
+/// ```
+enum ValidationService {
+
+    // MARK: - Body Measurements
+
+    /// 키 검증 (100-250cm)
+    /// - Parameter height: 검증할 키 값 (cm)
+    /// - Returns: 검증 결과
     ///
-    /// 사용자 이름 길이를 검증합니다.
+    /// ## 유효 범위
+    /// - 최소: 100cm
+    /// - 최대: 250cm
     ///
-    /// **Validation Rule**: 1~20 characters
-    ///
-    /// - Parameter name: The name to validate
-    /// - Returns: ValidationResult indicating success or failure with error message
-    ///
-    /// Example:
+    /// ## 예시
     /// ```swift
-    /// let result1 = ValidationService.validateName("홍길동")
-    /// // Returns: .success
+    /// ValidationService.validateHeight(99)   // 실패: "키는 100cm에서 250cm 사이여야 합니다"
+    /// ValidationService.validateHeight(175)  // 성공
+    /// ValidationService.validateHeight(251)  // 실패
+    /// ```
+    static func validateHeight(_ height: Double) -> ValidationResult {
+        guard height >= Constants.Validation.Height.min,
+              height <= Constants.Validation.Height.max else {
+            return .failure("키는 \(Int(Constants.Validation.Height.min))cm에서 \(Int(Constants.Validation.Height.max))cm 사이여야 합니다")
+        }
+        return .success
+    }
+
+    /// 체중 검증 (20-300kg)
+    /// - Parameter weight: 검증할 체중 값 (kg)
+    /// - Returns: 검증 결과
     ///
-    /// let result2 = ValidationService.validateName("")
-    /// // Returns: .failure("이름을 입력해주세요")
+    /// ## 유효 범위
+    /// - 최소: 20kg
+    /// - 최대: 300kg
     ///
-    /// let result3 = ValidationService.validateName("매우긴이름입니다스물자가넘어요")
-    /// // Returns: .failure("이름을 입력해주세요")
+    /// ## 예시
+    /// ```swift
+    /// ValidationService.validateWeight(19)   // 실패: "체중은 20kg에서 300kg 사이여야 합니다"
+    /// ValidationService.validateWeight(70)   // 성공
+    /// ValidationService.validateWeight(301)  // 실패
+    /// ```
+    static func validateWeight(_ weight: Double) -> ValidationResult {
+        guard weight >= Constants.Validation.Weight.min,
+              weight <= Constants.Validation.Weight.max else {
+            return .failure("체중은 \(Int(Constants.Validation.Weight.min))kg에서 \(Int(Constants.Validation.Weight.max))kg 사이여야 합니다")
+        }
+        return .success
+    }
+
+    /// 체지방률 검증 (3-60%)
+    /// - Parameter bodyFatPercent: 검증할 체지방률 값 (%)
+    /// - Returns: 검증 결과
+    ///
+    /// ## 유효 범위
+    /// - 최소: 3%
+    /// - 최대: 60%
+    ///
+    /// ## 예시
+    /// ```swift
+    /// ValidationService.validateBodyFatPercent(2)   // 실패: "체지방률은 3%에서 60% 사이여야 합니다"
+    /// ValidationService.validateBodyFatPercent(15)  // 성공
+    /// ValidationService.validateBodyFatPercent(61)  // 실패
+    /// ```
+    static func validateBodyFatPercent(_ bodyFatPercent: Double) -> ValidationResult {
+        guard bodyFatPercent >= Constants.Validation.BodyFatPercent.min,
+              bodyFatPercent <= Constants.Validation.BodyFatPercent.max else {
+            return .failure("체지방률은 \(Int(Constants.Validation.BodyFatPercent.min))%에서 \(Int(Constants.Validation.BodyFatPercent.max))% 사이여야 합니다")
+        }
+        return .success
+    }
+
+    /// 근육량 검증 (10-60kg)
+    /// - Parameter muscleMass: 검증할 근육량 값 (kg)
+    /// - Returns: 검증 결과
+    ///
+    /// ## 유효 범위
+    /// - 최소: 10kg
+    /// - 최대: 60kg
+    ///
+    /// ## 예시
+    /// ```swift
+    /// ValidationService.validateMuscleMass(9)   // 실패: "근육량은 10kg에서 60kg 사이여야 합니다"
+    /// ValidationService.validateMuscleMass(30)  // 성공
+    /// ValidationService.validateMuscleMass(61)  // 실패
+    /// ```
+    static func validateMuscleMass(_ muscleMass: Double) -> ValidationResult {
+        guard muscleMass >= Constants.Validation.MuscleMass.min,
+              muscleMass <= Constants.Validation.MuscleMass.max else {
+            return .failure("근육량은 \(Int(Constants.Validation.MuscleMass.min))kg에서 \(Int(Constants.Validation.MuscleMass.max))kg 사이여야 합니다")
+        }
+        return .success
+    }
+
+    // MARK: - User Profile
+
+    /// 나이 검증 (생년 기준: 1900년 ~ 현재 연도)
+    /// - Parameter birthYear: 검증할 출생 연도
+    /// - Returns: 검증 결과
+    ///
+    /// ## 유효 범위
+    /// - 최소: 1900년
+    /// - 최대: 현재 연도
+    ///
+    /// ## 예시
+    /// ```swift
+    /// ValidationService.validateAge(1899)  // 실패: "출생 연도는 1900년에서 2026년 사이여야 합니다"
+    /// ValidationService.validateAge(1990)  // 성공
+    /// ValidationService.validateAge(2027)  // 실패
+    /// ```
+    static func validateAge(_ birthYear: Int) -> ValidationResult {
+        let currentYear = Constants.Validation.BirthYear.max
+        guard birthYear >= Constants.Validation.BirthYear.min,
+              birthYear <= currentYear else {
+            return .failure("출생 연도는 \(Constants.Validation.BirthYear.min)년에서 \(currentYear)년 사이여야 합니다")
+        }
+        return .success
+    }
+
+    /// 이름 검증 (1-20자, 공백 불가)
+    /// - Parameter name: 검증할 이름
+    /// - Returns: 검증 결과
+    ///
+    /// ## 유효 조건
+    /// - 길이: 1-20자
+    /// - 공백 제거 후 비어있지 않음
+    ///
+    /// ## 예시
+    /// ```swift
+    /// ValidationService.validateName("")            // 실패: "이름을 입력해주세요"
+    /// ValidationService.validateName("   ")         // 실패: "이름을 입력해주세요"
+    /// ValidationService.validateName("홍길동")      // 성공
+    /// ValidationService.validateName("a")           // 성공
+    /// ValidationService.validateName("매우긴이름123456789012") // 실패: "이름은 1자에서 20자 사이여야 합니다"
     /// ```
     static func validateName(_ name: String) -> ValidationResult {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let length = trimmedName.count
 
-        guard length >= Constants.Validation.Name.minLength &&
-              length <= Constants.Validation.Name.maxLength else {
+        // 빈 문자열 검사
+        guard !trimmedName.isEmpty else {
             return .failure("이름을 입력해주세요")
         }
 
-        return .success
-    }
-
-    // MARK: - Birth Date Validation
-
-    /// Validates birth date range
-    ///
-    /// 생년월일 범위를 검증합니다.
-    ///
-    /// **Validation Rule**: Year must be between 1900 and current year
-    ///
-    /// - Parameter birthDate: The birth date to validate
-    /// - Returns: ValidationResult indicating success or failure with error message
-    ///
-    /// Example:
-    /// ```swift
-    /// let validDate = DateUtils.date(year: 1994, month: 3, day: 15)!
-    /// let result1 = ValidationService.validateBirthDate(validDate)
-    /// // Returns: .success
-    ///
-    /// let futureDate = Date().adding(years: 1)
-    /// let result2 = ValidationService.validateBirthDate(futureDate)
-    /// // Returns: .failure("올바른 생년월일을 선택해주세요")
-    ///
-    /// let oldDate = DateUtils.date(year: 1899, month: 1, day: 1)!
-    /// let result3 = ValidationService.validateBirthDate(oldDate)
-    /// // Returns: .failure("올바른 생년월일을 선택해주세요")
-    /// ```
-    static func validateBirthDate(_ birthDate: Date) -> ValidationResult {
-        let birthYear = birthDate.year
-
-        guard birthYear >= Constants.Validation.BirthYear.min &&
-              birthYear <= Constants.Validation.BirthYear.max else {
-            return .failure("올바른 생년월일을 선택해주세요")
-        }
-
-        // Birth date cannot be in the future
-        guard birthDate <= Date() else {
-            return .failure("올바른 생년월일을 선택해주세요")
+        // 길이 검사
+        guard trimmedName.count >= Constants.Validation.Name.minLength,
+              trimmedName.count <= Constants.Validation.Name.maxLength else {
+            return .failure("이름은 \(Constants.Validation.Name.minLength)자에서 \(Constants.Validation.Name.maxLength)자 사이여야 합니다")
         }
 
         return .success
     }
 
-    // MARK: - Height Validation
+    // MARK: - Exercise
 
-    /// Validates height in centimeters
+    /// 운동 시간 검증 (1-480분)
+    /// - Parameter duration: 검증할 운동 시간 (분)
+    /// - Returns: 검증 결과
     ///
-    /// 키(cm)를 검증합니다.
+    /// ## 유효 범위
+    /// - 최소: 1분
+    /// - 최대: 480분 (8시간)
     ///
-    /// **Validation Rule**: 100~250 cm
-    ///
-    /// - Parameter height: Height in centimeters
-    /// - Returns: ValidationResult indicating success or failure with error message
-    ///
-    /// Example:
+    /// ## 예시
     /// ```swift
-    /// let result1 = ValidationService.validateHeight(175.5)
-    /// // Returns: .success
-    ///
-    /// let result2 = ValidationService.validateHeight(99.9)
-    /// // Returns: .failure("키는 100~250cm 사이로 입력해주세요")
-    ///
-    /// let result3 = ValidationService.validateHeight(250.1)
-    /// // Returns: .failure("키는 100~250cm 사이로 입력해주세요")
+    /// ValidationService.validateExerciseDuration(0)    // 실패: "운동 시간은 1분에서 480분 사이여야 합니다"
+    /// ValidationService.validateExerciseDuration(30)   // 성공
+    /// ValidationService.validateExerciseDuration(481)  // 실패
     /// ```
-    static func validateHeight(_ height: Double) -> ValidationResult {
-        guard height >= Constants.Validation.Height.min &&
-              height <= Constants.Validation.Height.max else {
-            return .failure("키는 100~250cm 사이로 입력해주세요")
+    static func validateExerciseDuration(_ duration: Int) -> ValidationResult {
+        guard duration >= Constants.Validation.ExerciseDuration.min,
+              duration <= Constants.Validation.ExerciseDuration.max else {
+            return .failure("운동 시간은 \(Constants.Validation.ExerciseDuration.min)분에서 \(Constants.Validation.ExerciseDuration.max)분 사이여야 합니다")
         }
-
         return .success
     }
 
-    // MARK: - Weight Validation
+    // MARK: - Food
 
-    /// Validates weight in kilograms
-    ///
-    /// 몸무게(kg)를 검증합니다.
-    ///
-    /// **Validation Rule**: 20~300 kg
-    ///
-    /// - Parameter weight: Weight in kilograms
-    /// - Returns: ValidationResult indicating success or failure with error message
-    ///
-    /// Example:
-    /// ```swift
-    /// let result1 = ValidationService.validateWeight(72.5)
-    /// // Returns: .success
-    ///
-    /// let result2 = ValidationService.validateWeight(19.9)
-    /// // Returns: .failure("몸무게는 20~300kg 사이로 입력해주세요")
-    ///
-    /// let result3 = ValidationService.validateWeight(300.1)
-    /// // Returns: .failure("몸무게는 20~300kg 사이로 입력해주세요")
-    /// ```
-    static func validateWeight(_ weight: Double) -> ValidationResult {
-        guard weight >= Constants.Validation.Weight.min &&
-              weight <= Constants.Validation.Weight.max else {
-            return .failure("몸무게는 20~300kg 사이로 입력해주세요")
-        }
-
-        return .success
-    }
-
-    // MARK: - Body Fat Percentage Validation
-
-    /// Validates body fat percentage
-    ///
-    /// 체지방률(%)을 검증합니다.
-    ///
-    /// **Validation Rule**: 1~60%
-    ///
-    /// - Parameter bodyFatPercentage: Body fat percentage (1-60)
-    /// - Returns: ValidationResult indicating success or failure with error message
-    ///
-    /// Example:
-    /// ```swift
-    /// let result1 = ValidationService.validateBodyFatPercentage(18.2)
-    /// // Returns: .success
-    ///
-    /// let result2 = ValidationService.validateBodyFatPercentage(0.9)
-    /// // Returns: .failure("체지방률은 1~60% 사이로 입력해주세요")
-    ///
-    /// let result3 = ValidationService.validateBodyFatPercentage(60.1)
-    /// // Returns: .failure("체지방률은 1~60% 사이로 입력해주세요")
-    /// ```
-    static func validateBodyFatPercentage(_ bodyFatPercentage: Double) -> ValidationResult {
-        guard bodyFatPercentage >= Constants.Validation.BodyFatPercentage.min &&
-              bodyFatPercentage <= Constants.Validation.BodyFatPercentage.max else {
-            return .failure("체지방률은 1~60% 사이로 입력해주세요")
-        }
-
-        return .success
-    }
-
-    // MARK: - Warning Checks
-
-    /// Checks if body fat percentage is in extreme range (requires user confirmation)
-    ///
-    /// 체지방률이 극단적 범위인지 확인합니다 (사용자 확인 필요).
-    ///
-    /// **Warning Range**: < 3% or > 50%
-    ///
-    /// - Parameter bodyFatPercentage: Body fat percentage to check
-    /// - Returns: True if in extreme range, false otherwise
-    ///
-    /// Example:
-    /// ```swift
-    /// let needsWarning1 = ValidationService.isExtremeBodyFat(2.5)
-    /// // Returns: true
-    ///
-    /// let needsWarning2 = ValidationService.isExtremeBodyFat(55.0)
-    /// // Returns: true
-    ///
-    /// let needsWarning3 = ValidationService.isExtremeBodyFat(18.0)
-    /// // Returns: false
-    /// ```
-    static func isExtremeBodyFat(_ bodyFatPercentage: Double) -> Bool {
-        return bodyFatPercentage < Constants.Threshold.BodyFat.extremeLow ||
-               bodyFatPercentage > Constants.Threshold.BodyFat.extremeHigh
-    }
-
-    /// Checks if weight change is rapid (requires user confirmation)
-    ///
-    /// 체중 변화가 급격한지 확인합니다 (사용자 확인 필요).
-    ///
-    /// **Warning Threshold**: ±3 kg or more
-    ///
+    /// 음식 섭취량 검증 (단위에 따라 다른 범위 적용)
     /// - Parameters:
-    ///   - previousWeight: Previous weight in kg
-    ///   - currentWeight: Current weight in kg
-    /// - Returns: True if change is ±3kg or more, false otherwise
+    ///   - quantity: 검증할 섭취량
+    ///   - unit: 섭취량 단위 (serving: 0.1-100, gram: 1-10000)
+    /// - Returns: 검증 결과
     ///
-    /// Example:
+    /// ## 유효 범위
+    /// - 인분(serving): 0.1 ~ 100인분
+    /// - 그램(gram): 1 ~ 10,000g
+    ///
+    /// ## 예시
     /// ```swift
-    /// let needsWarning1 = ValidationService.isRapidWeightChange(previous: 70.0, current: 73.5)
-    /// // Returns: true (3.5 kg gain)
+    /// // 인분 단위
+    /// ValidationService.validateFoodQuantity(0.05, unit: .serving)  // 실패: "섭취량은 0.1인분에서 100인분 사이여야 합니다"
+    /// ValidationService.validateFoodQuantity(1.5, unit: .serving)   // 성공
+    /// ValidationService.validateFoodQuantity(101, unit: .serving)   // 실패
     ///
-    /// let needsWarning2 = ValidationService.isRapidWeightChange(previous: 70.0, current: 66.5)
-    /// // Returns: true (3.5 kg loss)
-    ///
-    /// let needsWarning3 = ValidationService.isRapidWeightChange(previous: 70.0, current: 71.5)
-    /// // Returns: false (1.5 kg change)
+    /// // 그램 단위
+    /// ValidationService.validateFoodQuantity(0.5, unit: .gram)      // 실패: "섭취량은 1g에서 10000g 사이여야 합니다"
+    /// ValidationService.validateFoodQuantity(200, unit: .gram)      // 성공
+    /// ValidationService.validateFoodQuantity(10001, unit: .gram)    // 실패
     /// ```
-    static func isRapidWeightChange(previous previousWeight: Double, current currentWeight: Double) -> Bool {
-        let change = abs(currentWeight - previousWeight)
-        return change >= Constants.Threshold.WeightChange.rapid
+    static func validateFoodQuantity(_ quantity: Double, unit: QuantityUnit) -> ValidationResult {
+        switch unit {
+        case .serving:
+            guard quantity >= Constants.Validation.ServingQuantity.min,
+                  quantity <= Constants.Validation.ServingQuantity.max else {
+                // 인분은 소수점이 있으므로 Double로 표시
+                return .failure("섭취량은 \(Constants.Validation.ServingQuantity.min)인분에서 \(Int(Constants.Validation.ServingQuantity.max))인분 사이여야 합니다")
+            }
+            return .success
+
+        case .gram:
+            guard quantity >= Constants.Validation.GramQuantity.min,
+                  quantity <= Constants.Validation.GramQuantity.max else {
+                return .failure("섭취량은 \(Int(Constants.Validation.GramQuantity.min))g에서 \(Int(Constants.Validation.GramQuantity.max))g 사이여야 합니다")
+            }
+            return .success
+        }
     }
 
-    // MARK: - Exercise & Food Validation
+    // MARK: - Composite Validations
 
-    /// Validates exercise duration in minutes
+    /// 체성분 일관성 검증
+    /// - Parameters:
+    ///   - weight: 체중 (kg)
+    ///   - bodyFatPercent: 체지방률 (%)
+    ///   - muscleMass: 근육량 (kg)
+    /// - Returns: 검증 결과
     ///
-    /// 운동 시간(분)을 검증합니다.
+    /// ## 검증 로직
+    /// 1. 제지방량 = 체중 × (1 - 체지방률/100)
+    /// 2. 제지방량 ≥ 근육량 검증
     ///
-    /// **Validation Rule**: Minimum 1 minute
-    ///
-    /// - Parameter minutes: Exercise duration in minutes
-    /// - Returns: ValidationResult indicating success or failure with error message
-    ///
-    /// Example:
+    /// ## 예시
     /// ```swift
-    /// let result1 = ValidationService.validateExerciseDuration(30)
-    /// // Returns: .success
+    /// // 체중 70kg, 체지방률 15%, 근육량 50kg
+    /// // 제지방량 = 70 × (1 - 0.15) = 59.5kg
+    /// // 59.5kg ≥ 50kg → 성공
+    /// ValidationService.validateBodyComposition(weight: 70, bodyFatPercent: 15, muscleMass: 50)
     ///
-    /// let result2 = ValidationService.validateExerciseDuration(0)
-    /// // Returns: .failure("최소 1분 이상 입력해주세요")
+    /// // 체중 70kg, 체지방률 15%, 근육량 65kg
+    /// // 제지방량 = 59.5kg
+    /// // 59.5kg < 65kg → 실패
+    /// ValidationService.validateBodyComposition(weight: 70, bodyFatPercent: 15, muscleMass: 65)
     /// ```
-    static func validateExerciseDuration(_ minutes: Int) -> ValidationResult {
-        guard minutes >= Constants.Validation.Exercise.minDuration else {
-            return .failure("최소 1분 이상 입력해주세요")
+    static func validateBodyComposition(weight: Double, bodyFatPercent: Double, muscleMass: Double) -> ValidationResult {
+        // 제지방량 계산
+        let leanBodyMass = weight * (1.0 - bodyFatPercent / 100.0)
+
+        // 근육량은 제지방량을 초과할 수 없음
+        guard muscleMass <= leanBodyMass else {
+            return .failure("근육량은 제지방량(\(String(format: "%.1f", leanBodyMass))kg)을 초과할 수 없습니다")
         }
 
         return .success
-    }
-
-    /// Checks if exercise duration is excessive (requires user confirmation)
-    ///
-    /// 운동 시간이 과도한지 확인합니다 (사용자 확인 필요).
-    ///
-    /// **Warning Threshold**: 480 minutes (8 hours) or more
-    ///
-    /// - Parameter minutes: Exercise duration in minutes
-    /// - Returns: True if duration is excessive, false otherwise
-    ///
-    /// Example:
-    /// ```swift
-    /// let needsWarning1 = ValidationService.isExcessiveExerciseDuration(480)
-    /// // Returns: true
-    ///
-    /// let needsWarning2 = ValidationService.isExcessiveExerciseDuration(60)
-    /// // Returns: false
-    /// ```
-    static func isExcessiveExerciseDuration(_ minutes: Int) -> Bool {
-        return minutes >= Constants.Threshold.Exercise.excessive
-    }
-
-    /// Validates food serving size
-    ///
-    /// 음식 섭취량을 검증합니다.
-    ///
-    /// **Validation Rule**: Minimum 0.1 (servings or grams)
-    ///
-    /// - Parameter servingSize: Serving size
-    /// - Returns: ValidationResult indicating success or failure with error message
-    ///
-    /// Example:
-    /// ```swift
-    /// let result1 = ValidationService.validateServingSize(1.5)
-    /// // Returns: .success
-    ///
-    /// let result2 = ValidationService.validateServingSize(0.0)
-    /// // Returns: .failure("최소 0.1 이상 입력해주세요")
-    /// ```
-    static func validateServingSize(_ servingSize: Double) -> ValidationResult {
-        guard servingSize >= Constants.Validation.Serving.min else {
-            return .failure("최소 0.1 이상 입력해주세요")
-        }
-
-        return .success
-    }
-
-    /// Checks if serving size is excessive (requires user confirmation)
-    ///
-    /// 섭취량이 과도한지 확인합니다 (사용자 확인 필요).
-    ///
-    /// **Warning Threshold**: 100 servings or more
-    ///
-    /// - Parameter servingSize: Serving size
-    /// - Returns: True if serving size is excessive, false otherwise
-    ///
-    /// Example:
-    /// ```swift
-    /// let needsWarning1 = ValidationService.isExcessiveServingSize(100)
-    /// // Returns: true
-    ///
-    /// let needsWarning2 = ValidationService.isExcessiveServingSize(2.5)
-    /// // Returns: false
-    /// ```
-    static func isExcessiveServingSize(_ servingSize: Double) -> Bool {
-        return servingSize >= Constants.Threshold.Serving.excessive
     }
 }
