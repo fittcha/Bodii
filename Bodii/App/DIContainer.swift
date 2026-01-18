@@ -241,20 +241,18 @@ extension DIContainer {
     ///   - goalType: 목표 타입 (감량/유지/증량)
     ///   - tdee: 총 일일 에너지 소비량
     /// - Returns: 새로운 DietCommentViewModel 인스턴스
-    ///
-    /// ⚠️ TODO: Phase 4에서 DietCommentViewModel 생성 후 구현
-    // func makeDietCommentViewModel(
-    //     userId: UUID,
-    //     goalType: GoalType,
-    //     tdee: Int
-    // ) -> DietCommentViewModel {
-    //     return DietCommentViewModel(
-    //         generateDietCommentUseCase: generateDietCommentUseCase,
-    //         userId: userId,
-    //         goalType: goalType,
-    //         tdee: tdee
-    //     )
-    // }
+    func makeDietCommentViewModel(
+        userId: UUID,
+        goalType: GoalType,
+        tdee: Int
+    ) -> DietCommentViewModel {
+        return DietCommentViewModel(
+            generateCommentUseCase: generateDietCommentUseCase,
+            userId: userId,
+            userGoalType: goalType,
+            userTDEE: tdee
+        )
+    }
 
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel
