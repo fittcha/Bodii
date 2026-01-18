@@ -31,12 +31,6 @@ protocol APIConfigProtocol {
     /// USDA API 키
     var usdaAPIKey: String { get }
 
-    /// Google Gemini API 기본 URL
-    var geminiBaseURL: String { get }
-
-    /// Google Gemini API 키
-    var geminiAPIKey: String { get }
-
     /// 현재 환경 (개발/프로덕션)
     var environment: APIEnvironment { get }
 }
@@ -81,8 +75,6 @@ enum APIEnvironment: String {
 /// <string>your-kfda-api-key</string>
 /// <key>USDA_API_KEY</key>
 /// <string>your-usda-api-key</string>
-/// <key>GEMINI_API_KEY</key>
-/// <string>your-gemini-api-key</string>
 /// ```
 ///
 /// **사용 예시:**
@@ -217,58 +209,6 @@ final class APIConfig: APIConfigProtocol {
         return ""
     }
 
-    // MARK: - Gemini API Configuration
-
-    /// Google Gemini API 기본 URL
-    ///
-    /// Google의 Gemini AI 모델 API
-    ///
-    /// - API 문서: https://ai.google.dev/api/rest
-    /// - 모델: gemini-1.5-flash (빠른 응답, 무료 티어)
-    /// - Rate Limit: 15 requests/minute (무료 티어)
-    ///
-    /// 📚 학습 포인트: AI API Integration
-    /// 생성형 AI API를 통한 개인화된 식단 코멘트 제공
-    /// 💡 Java 비교: REST API 호출과 동일하지만 AI 응답 처리 필요
-    var geminiBaseURL: String {
-        // Gemini API v1 기본 URL
-        return "https://generativelanguage.googleapis.com/v1beta"
-    }
-
-    /// Google Gemini API 키
-    ///
-    /// 📚 학습 포인트: Secure API Key Management
-    /// Info.plist 또는 환경 변수에서 API 키 읽기
-    /// 💡 Java 비교: BuildConfig.API_KEY와 유사
-    ///
-    /// - Returns: API 키 문자열 (없으면 빈 문자열)
-    ///
-    /// - Important: 프로덕션 빌드에서는 반드시 실제 API 키 설정 필요
-    ///
-    /// - Note: API 키 신청: https://makersuite.google.com/app/apikey
-    ///
-    /// - Warning: 무료 티어는 15 RPM (requests per minute) 제한
-    var geminiAPIKey: String {
-        // Info.plist에서 키 읽기
-        if let apiKey = Bundle.main.object(forInfoDictionaryKey: "GEMINI_API_KEY") as? String,
-           !apiKey.isEmpty {
-            return apiKey
-        }
-
-        // 프로세스 환경 변수에서 키 읽기 (CI/CD용)
-        if let envKey = ProcessInfo.processInfo.environment["GEMINI_API_KEY"],
-           !envKey.isEmpty {
-            return envKey
-        }
-
-        // 개발 환경에서도 Gemini는 실제 키 필요 (DEMO_KEY 미제공)
-        if environment == .development {
-            assertionFailure("⚠️ Gemini API 키가 Info.plist 또는 환경 변수에 설정되지 않았습니다!")
-        }
-
-        return ""
-    }
-
     // MARK: - API Endpoints
 
     /// 식약처 API 엔드포인트
@@ -388,45 +328,6 @@ final class APIConfig: APIConfigProtocol {
             }
         }
     }
-
-    /// Google Gemini API 엔드포인트
-    enum GeminiEndpoint {
-        /// 텍스트 생성 (Diet Comment 생성용)
-        ///
-        /// - Parameter model: 사용할 Gemini 모델 (기본: gemini-1.5-flash)
-        ///
-        /// - Returns: API 경로
-        ///
-        /// - Example:
-        /// ```swift
-        /// let endpoint = GeminiEndpoint.generateContent(model: "gemini-1.5-flash")
-        /// let url = APIConfig.shared.buildGeminiURL(endpoint: endpoint)
-        /// ```
-        ///
-        /// - Note: gemini-1.5-flash는 빠른 응답과 무료 티어 제공
-        case generateContent(model: String = "gemini-1.5-flash")
-
-        /// API 경로 생성
-        var path: String {
-            switch self {
-            case .generateContent(let model):
-                return "/models/\(model):generateContent"
-            }
-        }
-
-        /// 쿼리 파라미터 생성
-        ///
-        /// 📚 학습 포인트: API Key in Query Parameter
-        /// Gemini API는 API 키를 쿼리 파라미터로 전달
-        /// 💡 Java 비교: HttpUrl.Builder.addQueryParameter()와 유사
-        var queryItems: [URLQueryItem] {
-            switch self {
-            case .generateContent:
-                // API 키는 buildGeminiURL에서 추가됨
-                return []
-            }
-        }
-    }
 }
 
 // MARK: - URL Builder Helper
@@ -490,37 +391,6 @@ extension APIConfig {
 
         return components?.url
     }
-
-    /// Gemini API URL 생성 헬퍼
-    ///
-    /// 📚 학습 포인트: AI API URL Building
-    /// Gemini API는 API 키를 쿼리 파라미터로 전달
-    /// 💡 Java 비교: UriComponentsBuilder와 유사
-    ///
-    /// - Parameter endpoint: Gemini 엔드포인트
-    ///
-    /// - Returns: 완성된 URL (API 키 포함)
-    ///
-    /// - Example:
-    /// ```swift
-    /// let url = APIConfig.shared.buildGeminiURL(
-    ///     endpoint: .generateContent(model: "gemini-1.5-flash")
-    /// )
-    /// ```
-    ///
-    /// - Note: POST 요청으로 사용, 요청 본문은 GeminiRequestDTO로 전달
-    func buildGeminiURL(endpoint: GeminiEndpoint) -> URL? {
-        var components = URLComponents(string: geminiBaseURL + endpoint.path)
-
-        // 쿼리 파라미터 추가
-        var queryItems = endpoint.queryItems
-        // API 키 추가 (Gemini API는 쿼리 파라미터로 키 전달)
-        queryItems.append(URLQueryItem(name: "key", value: geminiAPIKey))
-
-        components?.queryItems = queryItems
-
-        return components?.url
-    }
 }
 
 // MARK: - Testing Support
@@ -536,8 +406,6 @@ final class MockAPIConfig: APIConfigProtocol {
     var kfdaAPIKey: String
     var usdaBaseURL: String
     var usdaAPIKey: String
-    var geminiBaseURL: String
-    var geminiAPIKey: String
     var environment: APIEnvironment
 
     init(
@@ -545,16 +413,12 @@ final class MockAPIConfig: APIConfigProtocol {
         kfdaAPIKey: String = "MOCK_KFDA_KEY",
         usdaBaseURL: String = "https://mock.usda.api",
         usdaAPIKey: String = "MOCK_USDA_KEY",
-        geminiBaseURL: String = "https://mock.gemini.api",
-        geminiAPIKey: String = "MOCK_GEMINI_KEY",
         environment: APIEnvironment = .development
     ) {
         self.kfdaBaseURL = kfdaBaseURL
         self.kfdaAPIKey = kfdaAPIKey
         self.usdaBaseURL = usdaBaseURL
         self.usdaAPIKey = usdaAPIKey
-        self.geminiBaseURL = geminiBaseURL
-        self.geminiAPIKey = geminiAPIKey
         self.environment = environment
     }
 }

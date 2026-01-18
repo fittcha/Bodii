@@ -45,76 +45,91 @@ final class DIContainer {
     /// Persistence Controller (Core Data)
     /// ⚠️ 주의: PersistenceController는 별도로 shared 인스턴스 관리
 
+    /// 네트워크 매니저 (싱글톤)
+    /// 📚 학습 포인트: Singleton Dependency
+    /// 모든 네트워크 요청에 공유되는 매니저
+    /// 💡 Java 비교: OkHttpClient를 싱글톤으로 관리하는 패턴
+    lazy var networkManager: NetworkManager = {
+        NetworkManager()
+    }()
+
     // MARK: - Data Sources
 
-    /// Body composition 로컬 데이터 소스
-    /// 📚 학습 포인트: Lazy Initialization
-    /// 첫 접근 시 한 번만 생성되어 재사용됨
-    /// 💡 Java 비교: @Lazy + @Autowired와 유사
-    lazy var bodyLocalDataSource: BodyLocalDataSource = {
-        return BodyLocalDataSource(persistenceController: .shared)
+    /// 식약처 API 서비스
+    /// 📚 학습 포인트: API Service
+    /// 한국 식품 영양 데이터베이스 API 호출 서비스
+    /// 💡 Java 비교: Retrofit Service 인스턴스
+    lazy var kfdaFoodAPIService: KFDAFoodAPIService = {
+        KFDAFoodAPIService(networkManager: self.networkManager)
+    }()
+
+    /// USDA API 서비스
+    /// 📚 학습 포인트: API Service
+    /// 미국 농무부 식품 데이터베이스 API 호출 서비스
+    /// 💡 Java 비교: Retrofit Service 인스턴스
+    lazy var usdaFoodAPIService: USDAFoodAPIService = {
+        USDAFoodAPIService(networkManager: self.networkManager)
+    }()
+
+    /// 통합 식품 검색 서비스
+    /// 📚 학습 포인트: Unified Service
+    /// 여러 API를 통합하여 최적의 검색 결과 제공
+    /// 한국 음식은 식약처 우선, 외국 음식은 USDA 우선
+    /// 💡 Java 비교: Facade Pattern의 구현체
+    lazy var unifiedFoodSearchService: UnifiedFoodSearchService = {
+        UnifiedFoodSearchService(
+            kfdaService: self.kfdaFoodAPIService,
+            usdaService: self.usdaFoodAPIService
+        )
+    }()
+
+    /// 식품 로컬 데이터 소스
+    /// 📚 학습 포인트: Local Data Source
+    /// Core Data를 사용한 식품 캐싱 및 오프라인 지원
+    /// 💡 Java 비교: Room Database의 DAO와 유사
+    lazy var foodLocalDataSource: FoodLocalDataSource = {
+        FoodLocalDataSourceImpl()
     }()
 
     // TODO: Phase 2에서 추가 예정
-    // - NetworkManager
     // - HealthKitManager
-    // - FoodAPIDataSource
     // - GeminiAPIDataSource
 
     // MARK: - Repositories
 
-    /// Body composition 리포지토리
-    /// 📚 학습 포인트: Dependency Injection Chain
-    /// bodyLocalDataSource를 주입받아 생성
-    /// 💡 Java 비교: @Autowired Repository와 유사
-    lazy var bodyRepository: BodyRepositoryProtocol = {
-        return BodyRepository(localDataSource: bodyLocalDataSource)
+    /// 식품 검색 저장소
+    /// 📚 학습 포인트: Repository Pattern
+    /// 다중 데이터 소스(API + 로컬)를 추상화한 단일 인터페이스
+    /// 💡 Java 비교: Spring Data Repository
+    lazy var foodSearchRepository: FoodSearchRepository = {
+        FoodSearchRepositoryImpl(
+            searchService: self.unifiedFoodSearchService,
+            localDataSource: self.foodLocalDataSource
+        )
     }()
 
     // TODO: Phase 3에서 추가 예정
     // - UserRepository
-    // - FoodRepository
+    // - BodyRepository
     // - ExerciseRepository
     // - SleepRepository
     // - GoalRepository
 
     // MARK: - Use Cases
 
-    /// BMR 계산 Use Case
-    /// 📚 학습 포인트: Stateless Use Case
-    /// struct이므로 매번 새로 생성해도 무방하지만 lazy로 재사용
-    /// 💡 Java 비교: @Service 싱글톤 빈과 유사
-    lazy var calculateBMRUseCase = CalculateBMRUseCase()
-
-    /// TDEE 계산 Use Case
-    /// 📚 학습 포인트: Stateless Use Case
-    /// struct이므로 매번 새로 생성해도 무방하지만 lazy로 재사용
-    /// 💡 Java 비교: @Service 싱글톤 빈과 유사
-    lazy var calculateTDEEUseCase = CalculateTDEEUseCase()
-
-    /// Body composition 기록 Use Case
-    /// 📚 학습 포인트: Orchestration Use Case with Dependencies
-    /// 여러 Use Case와 Repository를 조합하여 복잡한 비즈니스 로직 구현
-    /// 💡 Java 비교: @Service with @Autowired dependencies
-    lazy var recordBodyCompositionUseCase: RecordBodyCompositionUseCase = {
-        return RecordBodyCompositionUseCase(
-            calculateBMRUseCase: calculateBMRUseCase,
-            calculateTDEEUseCase: calculateTDEEUseCase,
-            bodyRepository: bodyRepository
-        )
-    }()
-
-    /// Body trends 조회 Use Case
-    /// 📚 학습 포인트: Query Use Case
-    /// 차트 표시를 위한 데이터 조회 및 변환
-    /// 💡 Java 비교: @Service with read-only operations
-    lazy var fetchBodyTrendsUseCase: FetchBodyTrendsUseCase = {
-        return FetchBodyTrendsUseCase(bodyRepository: bodyRepository)
-    }()
-
     // TODO: Phase 4에서 추가 예정
+    // - CalculateBMRUseCase
+    // - CalculateTDEEUseCase
+    // - RecordBodyUseCase
     // - SearchFoodUseCase
-    // - LogExerciseUseCase
+    // - etc.
+
+    // MARK: - View Models
+
+    // TODO: Phase 5에서 추가 예정
+    // - OnboardingViewModel
+    // - DashboardViewModel
+    // - BodyViewModel
     // - etc.
 }
 
@@ -125,57 +140,26 @@ extension DIContainer {
     // 📚 학습 포인트: Factory Pattern
     // 의존성 생성 로직을 캡슐화
     // 테스트 시 Mock 객체로 교체 가능
+    // 💡 Java 비교: @Bean 메서드와 유사
 
-    // MARK: - Body Composition ViewModels
+    // MARK: - Food Search
 
-    /// BodyCompositionViewModel 생성
-    /// 📚 학습 포인트: Factory Method Pattern
-    /// - ViewModel 생성 로직을 중앙화
-    /// - 의존성 주입을 한 곳에서 관리
-    /// - 테스트 시 mock 주입이 쉬워짐
-    /// 💡 Java 비교: @Bean 메서드와 유사
+    /// FoodSearchViewModel 생성
+    /// 📚 학습 포인트: ViewModel Factory
+    /// ViewModel 생성 시 필요한 모든 의존성을 주입
+    /// 💡 Java 비교: ViewModelProvider.Factory
     ///
-    /// - Parameters:
-    ///   - userProfile: 사용자 프로필 (BMR/TDEE 계산에 필요)
-    /// - Returns: 새로운 BodyCompositionViewModel 인스턴스
-    func makeBodyCompositionViewModel(userProfile: UserProfile) -> BodyCompositionViewModel {
-        return BodyCompositionViewModel(
-            recordBodyCompositionUseCase: recordBodyCompositionUseCase,
-            fetchBodyTrendsUseCase: fetchBodyTrendsUseCase,
-            bodyRepository: bodyRepository,
-            userProfile: userProfile
-        )
-    }
-
-    /// BodyTrendsViewModel 생성
-    /// 📚 학습 포인트: Factory Method Pattern
-    /// - 차트 표시를 위한 ViewModel 생성
-    /// - 의존성 주입을 한 곳에서 관리
-    /// 💡 Java 비교: @Bean 메서드와 유사
-    ///
-    /// - Returns: 새로운 BodyTrendsViewModel 인스턴스
-    func makeBodyTrendsViewModel() -> BodyTrendsViewModel {
-        return BodyTrendsViewModel(
-            fetchBodyTrendsUseCase: fetchBodyTrendsUseCase,
-            bodyRepository: bodyRepository
-        )
-    }
-
-    /// MetabolismViewModel 생성
-    /// 📚 학습 포인트: Factory Method Pattern
-    /// - 대시보드용 BMR/TDEE 표시 ViewModel 생성
-    /// - 의존성 주입을 한 곳에서 관리
-    /// 💡 Java 비교: @Bean 메서드와 유사
-    ///
-    /// - Returns: 새로운 MetabolismViewModel 인스턴스
-    func makeMetabolismViewModel() -> MetabolismViewModel {
-        return MetabolismViewModel(bodyRepository: bodyRepository)
-    }
+    /// - Returns: FoodSearchViewModel 인스턴스
+    /// - Note: Phase 9에서 FoodSearchViewModel 구현 시 활성화
+    // func makeFoodSearchViewModel() -> FoodSearchViewModel {
+    //     FoodSearchViewModel(repository: foodSearchRepository)
+    // }
 
     // TODO: 각 Feature 구현 시 Factory 메서드 추가
     // func makeOnboardingViewModel() -> OnboardingViewModel
     // func makeDashboardViewModel() -> DashboardViewModel
-    // func makeFoodLogViewModel() -> FoodLogViewModel
+    // func makeBodyViewModel() -> BodyViewModel
+    // func makeFoodRecordViewModel() -> FoodRecordViewModel
 }
 
 // MARK: - Testing Support
