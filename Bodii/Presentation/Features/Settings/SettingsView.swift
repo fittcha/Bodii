@@ -82,7 +82,7 @@ struct SettingsView: View {
             // 권한 거부 안내 화면
             .sheet(isPresented: $viewModel.showDeniedView) {
                 HealthKitDeniedView(
-                    onSettingsOpened: {
+                    onOpenSettings: {
                         // 📚 학습 포인트: ViewModel Callback
                         // ViewModel의 메서드 호출
                         viewModel.onSettingsReturned()

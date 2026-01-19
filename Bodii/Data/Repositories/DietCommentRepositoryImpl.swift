@@ -307,10 +307,7 @@ final class DietCommentRepositoryImpl: DietCommentRepository {
         case .invalidRequest(let message):
             return .apiError("잘못된 요청: \(message)")
 
-        case .serverError(let statusCode):
-            return .apiError("서버 오류 (코드: \(statusCode))")
-
-        case .unknownError(let message):
+        case .unknown(let message):
             return .apiError(message)
 
         case .contentFiltered:
@@ -321,6 +318,9 @@ final class DietCommentRepositoryImpl: DietCommentRepository {
 
         case .noCandidates:
             return .invalidResponse
+
+        case .parsingError(let message):
+            return .apiError("응답 파싱 오류: \(message)")
         }
     }
 }

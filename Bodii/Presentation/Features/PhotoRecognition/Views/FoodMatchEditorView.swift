@@ -155,7 +155,7 @@ struct FoodMatchEditorView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // 음식 이름과 신뢰도
                     HStack(spacing: 8) {
-                        Text(match.food.name)
+                        Text(match.food.name ?? "알 수 없는 음식")
                             .font(.title3)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
@@ -193,9 +193,9 @@ struct FoodMatchEditorView: View {
                     // 기본 영양 정보 (1회 제공량 기준)
                     HStack(spacing: 16) {
                         nutritionBadge("칼로리", value: "\(match.food.calories)", unit: "kcal", color: .orange)
-                        nutritionBadge("탄수화물", value: formattedDecimal(match.food.carbohydrates), unit: "g", color: .blue)
-                        nutritionBadge("단백질", value: formattedDecimal(match.food.protein), unit: "g", color: .green)
-                        nutritionBadge("지방", value: formattedDecimal(match.food.fat), unit: "g", color: .purple)
+                        nutritionBadge("탄수화물", value: formattedDecimal(match.food.carbohydrates?.decimalValue ?? Decimal(0)), unit: "g", color: .blue)
+                        nutritionBadge("단백질", value: formattedDecimal(match.food.protein?.decimalValue ?? Decimal(0)), unit: "g", color: .green)
+                        nutritionBadge("지방", value: formattedDecimal(match.food.fat?.decimalValue ?? Decimal(0)), unit: "g", color: .purple)
                     }
                 }
                 .padding()
@@ -617,7 +617,8 @@ struct FoodMatchEditorView: View {
 
     /// 1회 제공량 텍스트
     private var servingSizeText: String {
-        let sizeString = formattedDecimal(match.food.servingSize)
+        let sizeDecimal = match.food.servingSize?.decimalValue ?? Decimal(100)
+        let sizeString = formattedDecimal(sizeDecimal)
 
         if let unit = match.food.servingUnit {
             return "\(unit) (\(sizeString)g)"
@@ -636,29 +637,33 @@ struct FoodMatchEditorView: View {
     /// 📚 학습 포인트: Real-time Calculation
     /// 수량 변경 시 실시간으로 칼로리 재계산
     private var calculatedCalories: String {
-        let multiplier = quantityUnit == .serving ? quantity : quantity / match.food.servingSize
+        let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
+        let multiplier = quantityUnit == .serving ? quantity : (servingSize > 0 ? quantity / servingSize : quantity)
         let calories = Decimal(match.food.calories) * multiplier
         return formattedDecimal(calories)
     }
 
     /// 계산된 탄수화물
     private var calculatedCarbohydrates: String {
-        let multiplier = quantityUnit == .serving ? quantity : quantity / match.food.servingSize
-        let carbs = match.food.carbohydrates * multiplier
+        let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
+        let multiplier = quantityUnit == .serving ? quantity : (servingSize > 0 ? quantity / servingSize : quantity)
+        let carbs = (match.food.carbohydrates?.decimalValue ?? Decimal(0)) * multiplier
         return formattedDecimal(carbs)
     }
 
     /// 계산된 단백질
     private var calculatedProtein: String {
-        let multiplier = quantityUnit == .serving ? quantity : quantity / match.food.servingSize
-        let protein = match.food.protein * multiplier
+        let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
+        let multiplier = quantityUnit == .serving ? quantity : (servingSize > 0 ? quantity / servingSize : quantity)
+        let protein = (match.food.protein?.decimalValue ?? Decimal(0)) * multiplier
         return formattedDecimal(protein)
     }
 
     /// 계산된 지방
     private var calculatedFat: String {
-        let multiplier = quantityUnit == .serving ? quantity : quantity / match.food.servingSize
-        let fat = match.food.fat * multiplier
+        let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
+        let multiplier = quantityUnit == .serving ? quantity : (servingSize > 0 ? quantity / servingSize : quantity)
+        let fat = (match.food.fat?.decimalValue ?? Decimal(0)) * multiplier
         return formattedDecimal(fat)
     }
 
@@ -727,48 +732,13 @@ struct FoodMatchEditorView: View {
 
 // MARK: - Preview
 
-#Preview("Food Match Editor") {
-    #if DEBUG
-    // Mock 데이터
-    let mockMatch = FoodMatch(
-        label: "Pizza",
-        originalLabel: VisionLabel(description: "Pizza", score: 0.95, topicality: 0.95),
-        confidence: 0.95,
-        food: Food(
-            id: UUID(),
-            name: "페퍼로니 피자",
-            calories: 285,
-            carbohydrates: 36,
-            protein: 12,
-            fat: 10,
-            sodium: 640,
-            fiber: 2,
-            sugar: 4,
-            servingSize: 100,
-            servingUnit: "1조각",
-            source: .usda,
-            apiCode: "U000123",
-            createdByUserId: nil,
-            createdAt: Date()
-        ),
-        alternatives: [],
-        translatedKeyword: "피자"
-    )
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// FoodMatch는 Core Data Food 엔티티를 참조하므로 직접 초기화 불가
+// VisionLabel도 mid 파라미터가 필요
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-    return FoodMatchEditorView(
-        match: mockMatch,
-        onSave: { match, quantity, unit, mealType in
-            print("Saved: \(match.food.name), \(quantity) \(unit.displayName), \(mealType.displayName)")
-        },
-        onDelete: {
-            print("Deleted")
-        },
-        onSearchAlternative: { match in
-            print("Search alternative for: \(match.food.name)")
-        },
-        onCancel: {
-            print("Cancelled")
-        }
-    )
-    #endif
+#Preview("Placeholder") {
+    Text("FoodMatchEditorView Preview")
+        .font(.headline)
+        .padding()
 }

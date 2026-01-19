@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import CoreData
 @testable import Bodii
 
 /// Unit tests for UnifiedFoodSearchService
@@ -26,18 +27,32 @@ final class UnifiedFoodSearchServiceTests: XCTestCase {
     var service: UnifiedFoodSearchService!
     var mockKFDAService: MockKFDAFoodAPIService!
     var mockUSDAService: MockUSDAFoodAPIService!
+    var testContext: NSManagedObjectContext!
 
     // MARK: - Setup & Teardown
 
     override func setUp() {
         super.setUp()
 
+        // Create in-memory Core Data context for testing
+        let container = NSPersistentContainer(name: "Bodii")
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        container.persistentStoreDescriptions = [description]
+        container.loadPersistentStores { _, error in
+            if let error = error {
+                fatalError("Failed to load in-memory store: \(error)")
+            }
+        }
+        testContext = container.viewContext
+
         // Initialize mock services
         mockKFDAService = MockKFDAFoodAPIService()
         mockUSDAService = MockUSDAFoodAPIService()
 
-        // Initialize service with mocks
+        // Initialize service with mocks and test context
         service = UnifiedFoodSearchService(
+            context: testContext,
             kfdaService: mockKFDAService,
             usdaService: mockUSDAService
         )
@@ -47,6 +62,7 @@ final class UnifiedFoodSearchServiceTests: XCTestCase {
         service = nil
         mockKFDAService = nil
         mockUSDAService = nil
+        testContext = nil
         super.tearDown()
     }
 
@@ -73,7 +89,7 @@ final class UnifiedFoodSearchServiceTests: XCTestCase {
 
         // Verify all results are from KFDA
         for food in results {
-            XCTAssertEqual(food.source, .governmentAPI, "All foods should be from governmentAPI")
+            XCTAssertEqual(food.source, FoodSource.governmentAPI.rawValue, "All foods should be from governmentAPI")
         }
     }
 

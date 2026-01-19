@@ -130,7 +130,7 @@ final class UpdateExerciseRecordUseCase {
         }
 
         // 2. 권한 확인
-        guard existingRecord.userId == userId else {
+        guard existingRecord.user?.id == userId else {
             throw UnauthorizedError.notOwner("해당 운동 기록을 수정할 권한이 없습니다.")
         }
 
@@ -159,29 +159,25 @@ final class UpdateExerciseRecordUseCase {
             newCalories = existingRecord.caloriesBurned
         }
 
-        // 5. ExerciseRecord 업데이트
-        let updatedRecord = ExerciseRecord(
-            id: existingRecord.id,
-            userId: existingRecord.userId,
-            date: existingRecord.date,
-            exerciseType: exerciseType,
-            duration: duration,
-            intensity: intensity,
-            caloriesBurned: newCalories,
-            createdAt: existingRecord.createdAt
-        )
+        // 5. ExerciseRecord 업데이트 (Core Data entity 직접 수정)
+        existingRecord.exerciseType = exerciseType.rawValue
+        existingRecord.duration = duration
+        existingRecord.intensity = intensity.rawValue
+        existingRecord.caloriesBurned = newCalories
 
-        let savedRecord = try await exerciseRepository.update(updatedRecord)
+        let savedRecord = try await exerciseRepository.update(existingRecord)
 
         // 6. DailyLog 업데이트 (차이값만큼 조정)
-        try await dailyLogService.updateExercise(
-            date: savedRecord.date,
-            userId: userId,
-            oldCalories: existingRecord.caloriesBurned,
-            newCalories: savedRecord.caloriesBurned,
-            oldDuration: existingRecord.duration,
-            newDuration: savedRecord.duration
-        )
+        if let recordDate = savedRecord.date {
+            try await dailyLogService.updateExercise(
+                date: recordDate,
+                userId: userId,
+                oldCalories: existingRecord.caloriesBurned,
+                newCalories: savedRecord.caloriesBurned,
+                oldDuration: existingRecord.duration,
+                newDuration: savedRecord.duration
+            )
+        }
 
         return savedRecord
     }
@@ -218,9 +214,9 @@ final class UpdateExerciseRecordUseCase {
         newDuration: Int32,
         newIntensity: Intensity
     ) -> Bool {
-        return existingRecord.exerciseType != newType ||
+        return existingRecord.exerciseType != newType.rawValue ||
                existingRecord.duration != newDuration ||
-               existingRecord.intensity != newIntensity
+               existingRecord.intensity != newIntensity.rawValue
     }
 }
 

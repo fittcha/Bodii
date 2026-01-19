@@ -522,70 +522,12 @@ private enum ViewState {
 
 // MARK: - Preview
 
-#Preview("Photo Capture Sheet") {
-    #if DEBUG
-    let mockViewModel = MockPhotoRecognitionViewModel()
-    mockViewModel.showQuotaWarning = false
-    mockViewModel.remainingQuota = 850
+// 📚 학습 포인트: Core Data 의존성 Preview 제한
+// MockPhotoRecognitionViewModel은 PhotoRecognitionViewModel 프로토콜을 구현해야 함
+// TODO: Phase 7에서 Preview용 Mock 구현 완성
 
-    return PhotoCaptureSheetView(
-        viewModel: mockViewModel,
-        photoCaptureService: PhotoCaptureService.shared,
-        onImageSelected: { image in
-            print("Image selected: \(image.size)")
-        },
-        onCancel: {
-            print("Cancelled")
-        },
-        onManualEntry: {
-            print("Manual entry")
-        }
-    )
-    #endif
-}
-
-#Preview("With Quota Warning") {
-    #if DEBUG
-    let mockViewModel = MockPhotoRecognitionViewModel()
-    mockViewModel.showQuotaWarning = true
-    mockViewModel.remainingQuota = 85
-    mockViewModel.daysUntilReset = 5
-
-    return PhotoCaptureSheetView(
-        viewModel: mockViewModel,
-        photoCaptureService: MockPhotoCaptureService(),
-        onImageSelected: { image in
-            print("Image selected: \(image.size)")
-        },
-        onCancel: {
-            print("Cancelled")
-        },
-        onManualEntry: {
-            print("Manual entry")
-        }
-    )
-    #endif
-}
-
-#Preview("Quota Exceeded") {
-    #if DEBUG
-    let mockViewModel = MockPhotoRecognitionViewModel()
-    mockViewModel.showQuotaWarning = false
-    mockViewModel.remainingQuota = 0
-    mockViewModel.daysUntilReset = 12
-
-    return PhotoCaptureSheetView(
-        viewModel: mockViewModel,
-        photoCaptureService: MockPhotoCaptureService(),
-        onImageSelected: { image in
-            print("Image selected: \(image.size)")
-        },
-        onCancel: {
-            print("Cancelled")
-        },
-        onManualEntry: {
-            print("Manual entry")
-        }
-    )
-    #endif
+#Preview("Placeholder") {
+    Text("PhotoCaptureSheetView Preview")
+        .font(.headline)
+        .padding()
 }

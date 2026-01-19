@@ -178,7 +178,8 @@ enum GoalValidationService {
     /// ```
     private static func validateWeeklyRates(goal: Goal) throws {
         // 체중 변화율 검증
-        if let rate = goal.weeklyWeightRate {
+        if let rateNS = goal.weeklyWeightRate {
+            let rate = rateNS.decimalValue
             if !recommendedWeightRateRange.contains(rate) {
                 throw GoalValidationError.unrealisticRate(
                     "체중 변화율(주당 \(rate)kg)이 권장 범위를 벗어났습니다. " +
@@ -189,7 +190,8 @@ enum GoalValidationService {
         }
 
         // 체지방률 변화율 검증
-        if let rate = goal.weeklyFatPctRate {
+        if let rateNS = goal.weeklyFatPctRate {
+            let rate = rateNS.decimalValue
             if !recommendedFatPctRateRange.contains(rate) {
                 throw GoalValidationError.unrealisticRate(
                     "체지방률 변화율(주당 \(rate)%)이 권장 범위를 벗어났습니다. " +
@@ -200,7 +202,8 @@ enum GoalValidationService {
         }
 
         // 근육량 변화율 검증
-        if let rate = goal.weeklyMuscleRate {
+        if let rateNS = goal.weeklyMuscleRate {
+            let rate = rateNS.decimalValue
             if !recommendedMuscleRateRange.contains(rate) {
                 throw GoalValidationError.unrealisticRate(
                     "근육량 변화율(주당 \(rate)kg)이 권장 범위를 벗어났습니다. " +
@@ -228,7 +231,12 @@ enum GoalValidationService {
     /// // ❌ throws .inconsistentGoalType("감량 목표이지만 체중이 증가합니다")
     /// ```
     private static func validateGoalTypeConsistency(goal: Goal) throws {
-        switch goal.goalType {
+        // goalType은 Int16이므로 GoalType enum으로 변환
+        guard let goalType = GoalType(rawValue: goal.goalType) else {
+            return // 알 수 없는 타입은 검증 생략
+        }
+
+        switch goalType {
         case .lose:
             try validateLoseGoal(goal: goal)
         case .maintain:
@@ -246,8 +254,10 @@ enum GoalValidationService {
     /// - 근육량은 감소하거나 유지되어야 함 (증가 가능하지만 일반적이지 않음)
     private static func validateLoseGoal(goal: Goal) throws {
         // 체중 검증
-        if let targetWeight = goal.targetWeight,
-           let startWeight = goal.startWeight {
+        if let targetWeightNS = goal.targetWeight,
+           let startWeightNS = goal.startWeight {
+            let targetWeight = targetWeightNS.decimalValue
+            let startWeight = startWeightNS.decimalValue
             if targetWeight >= startWeight {
                 throw GoalValidationError.inconsistentGoalType(
                     "감량 목표이지만 체중이 감소하지 않습니다. " +
@@ -257,8 +267,10 @@ enum GoalValidationService {
         }
 
         // 체지방률 검증 (선택적 - 체지방률은 증가할 수도 있음)
-        if let targetFat = goal.targetBodyFatPct,
-           let startFat = goal.startBodyFatPct {
+        if let targetFatNS = goal.targetBodyFatPct,
+           let startFatNS = goal.startBodyFatPct {
+            let targetFat = targetFatNS.decimalValue
+            let startFat = startFatNS.decimalValue
             if targetFat > startFat {
                 // 경고만 하고 에러는 throw하지 않음 (근육 감량 시 체지방률 증가 가능)
             }
@@ -270,8 +282,10 @@ enum GoalValidationService {
     /// 유지 목표는 모든 값이 시작값의 ±5% 이내여야 함
     private static func validateMaintainGoal(goal: Goal) throws {
         // 체중 검증
-        if let targetWeight = goal.targetWeight,
-           let startWeight = goal.startWeight {
+        if let targetWeightNS = goal.targetWeight,
+           let startWeightNS = goal.startWeight {
+            let targetWeight = targetWeightNS.decimalValue
+            let startWeight = startWeightNS.decimalValue
             let tolerance = startWeight * (maintainTolerancePct / 100)
             let range = (startWeight - tolerance)...(startWeight + tolerance)
 
@@ -284,8 +298,10 @@ enum GoalValidationService {
         }
 
         // 체지방률 검증
-        if let targetFat = goal.targetBodyFatPct,
-           let startFat = goal.startBodyFatPct {
+        if let targetFatNS = goal.targetBodyFatPct,
+           let startFatNS = goal.startBodyFatPct {
+            let targetFat = targetFatNS.decimalValue
+            let startFat = startFatNS.decimalValue
             let tolerance = startFat * (maintainTolerancePct / 100)
             let range = (startFat - tolerance)...(startFat + tolerance)
 
@@ -305,8 +321,10 @@ enum GoalValidationService {
     /// - 근육량이 증가하거나 유지되어야 함
     private static func validateGainGoal(goal: Goal) throws {
         // 체중 검증
-        if let targetWeight = goal.targetWeight,
-           let startWeight = goal.startWeight {
+        if let targetWeightNS = goal.targetWeight,
+           let startWeightNS = goal.startWeight {
+            let targetWeight = targetWeightNS.decimalValue
+            let startWeight = startWeightNS.decimalValue
             if targetWeight <= startWeight {
                 throw GoalValidationError.inconsistentGoalType(
                     "증량 목표이지만 체중이 증가하지 않습니다. " +
@@ -316,8 +334,10 @@ enum GoalValidationService {
         }
 
         // 근육량 검증 (선택적)
-        if let targetMuscle = goal.targetMuscleMass,
-           let startMuscle = goal.startMuscleMass {
+        if let targetMuscleNS = goal.targetMuscleMass,
+           let startMuscleNS = goal.startMuscleMass {
+            let targetMuscle = targetMuscleNS.decimalValue
+            let startMuscle = startMuscleNS.decimalValue
             if targetMuscle < startMuscle {
                 // 증량하면서 근육이 감소하는 것은 비정상적
                 throw GoalValidationError.inconsistentGoalType(
@@ -359,12 +379,16 @@ enum GoalValidationService {
     /// // ❌ throws .physicallyImpossible("제지방량(43.46kg)보다 근육량이 많을 수 없습니다")
     /// ```
     private static func validatePhysicalConsistency(goal: Goal) throws {
-        guard let targetWeight = goal.targetWeight,
-              let targetBodyFatPct = goal.targetBodyFatPct,
-              let targetMuscleMass = goal.targetMuscleMass else {
+        guard let targetWeightNS = goal.targetWeight,
+              let targetBodyFatPctNS = goal.targetBodyFatPct,
+              let targetMuscleMassNS = goal.targetMuscleMass else {
             // 3개 값이 모두 있을 때만 검증
             return
         }
+
+        let targetWeight = targetWeightNS.decimalValue
+        let targetBodyFatPct = targetBodyFatPctNS.decimalValue
+        let targetMuscleMass = targetMuscleMassNS.decimalValue
 
         // 1. 체지방량 계산
         let bodyFatMass = targetWeight * (targetBodyFatPct / 100)
@@ -375,7 +399,7 @@ enum GoalValidationService {
         // 3. 근육량이 제지방량을 초과하는지 확인
         if targetMuscleMass > leanBodyMass {
             throw GoalValidationError.physicallyImpossible(
-                "제지방량(\(leanBodyMass.rounded(2))kg)보다 근육량(\(targetMuscleMass)kg)이 많을 수 없습니다. " +
+                "제지방량(\(leanBodyMass.rounded(to: 2))kg)보다 근육량(\(targetMuscleMass)kg)이 많을 수 없습니다. " +
                 "근육은 제지방량의 일부입니다."
             )
         }
@@ -408,9 +432,13 @@ enum GoalValidationService {
     /// ```
     private static func validateTargetDate(goal: Goal) throws {
         // 체중 목표가 있는 경우 기간 검증
-        if let targetWeight = goal.targetWeight,
-           let weeklyRate = goal.weeklyWeightRate,
-           let startWeight = goal.startWeight {
+        if let targetWeightNS = goal.targetWeight,
+           let weeklyRateNS = goal.weeklyWeightRate,
+           let startWeightNS = goal.startWeight {
+
+            let targetWeight = targetWeightNS.decimalValue
+            let weeklyRate = weeklyRateNS.decimalValue
+            let startWeight = startWeightNS.decimalValue
 
             guard weeklyRate != 0 else {
                 throw GoalValidationError.invalidTargetDate(
@@ -433,14 +461,14 @@ enum GoalValidationService {
             // 기간 범위 검증
             if weeksToGoal < Decimal(minimumWeeksForGoal) {
                 throw GoalValidationError.invalidTargetDate(
-                    "목표 달성 기간이 너무 짧습니다 (\(weeksToGoal.rounded(1))주). " +
+                    "목표 달성 기간이 너무 짧습니다 (\(weeksToGoal.rounded(to: 1))주). " +
                     "최소 \(minimumWeeksForGoal)주 이상의 기간을 설정하세요."
                 )
             }
 
             if weeksToGoal > Decimal(maximumWeeksForGoal) {
                 throw GoalValidationError.invalidTargetDate(
-                    "목표 달성 기간이 너무 깁니다 (\(weeksToGoal.rounded(1))주). " +
+                    "목표 달성 기간이 너무 깁니다 (\(weeksToGoal.rounded(to: 1))주). " +
                     "최대 \(maximumWeeksForGoal)주 이내의 기간을 설정하세요."
                 )
             }

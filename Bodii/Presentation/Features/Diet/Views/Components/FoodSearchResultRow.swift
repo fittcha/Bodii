@@ -35,7 +35,7 @@ struct FoodSearchResultRow: View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
                 // 음식 이름
-                Text(food.name)
+                Text(food.name ?? "알 수 없는 음식")
                     .font(.body)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
@@ -47,9 +47,9 @@ struct FoodSearchResultRow: View {
 
                 // 매크로 미리보기 (P/C/F)
                 HStack(spacing: 8) {
-                    macroPreview("P", value: food.protein, color: .orange)
-                    macroPreview("C", value: food.carbohydrates, color: .blue)
-                    macroPreview("F", value: food.fat, color: .purple)
+                    macroPreview("P", value: food.protein?.decimalValue ?? Decimal(0), color: .orange)
+                    macroPreview("C", value: food.carbohydrates?.decimalValue ?? Decimal(0), color: .blue)
+                    macroPreview("F", value: food.fat?.decimalValue ?? Decimal(0), color: .purple)
                 }
             }
 
@@ -84,7 +84,7 @@ struct FoodSearchResultRow: View {
     ///
     /// - Returns: 포맷팅된 제공량 문자열 (예: "1인분 (210g)", "100g")
     private var servingSizeText: String {
-        let sizeString = formattedDecimal(food.servingSize)
+        let sizeString = formattedDecimal(food.servingSize?.decimalValue ?? Decimal(0))
 
         if let unit = food.servingUnit {
             return "\(unit) (\(sizeString)g)"
@@ -136,97 +136,12 @@ struct FoodSearchResultRow: View {
 
 // MARK: - Preview
 
-#Preview {
-    VStack(spacing: 0) {
-        // 한국 음식 예시 (백미밥)
-        FoodSearchResultRow(
-            food: Food(
-                id: UUID(),
-                name: "백미밥",
-                calories: 330,
-                carbohydrates: 70,
-                protein: 7,
-                fat: 1,
-                sodium: 0,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 210,
-                servingUnit: "1공기",
-                source: .governmentAPI,
-                apiCode: "D000001",
-                createdByUserId: nil,
-                createdAt: Date()
-            )
-        )
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// Food는 Core Data 엔티티이므로 직접 초기화 불가
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-        Divider()
-
-        // 단백질 음식 예시 (닭가슴살)
-        FoodSearchResultRow(
-            food: Food(
-                id: UUID(),
-                name: "닭가슴살",
-                calories: 165,
-                carbohydrates: 0,
-                protein: 31,
-                fat: 3.6,
-                sodium: 74,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 100,
-                servingUnit: "100g",
-                source: .governmentAPI,
-                apiCode: "D000002",
-                createdByUserId: nil,
-                createdAt: Date()
-            )
-        )
-
-        Divider()
-
-        // 고지방 음식 예시 (아보카도)
-        FoodSearchResultRow(
-            food: Food(
-                id: UUID(),
-                name: "아보카도",
-                calories: 160,
-                carbohydrates: 9,
-                protein: 2,
-                fat: 15,
-                sodium: 7,
-                fiber: 7,
-                sugar: 0.7,
-                servingSize: 100,
-                servingUnit: "100g",
-                source: .usda,
-                apiCode: "U000001",
-                createdByUserId: nil,
-                createdAt: Date()
-            )
-        )
-
-        Divider()
-
-        // 사용자 정의 음식 예시 (제공 단위 없음)
-        FoodSearchResultRow(
-            food: Food(
-                id: UUID(),
-                name: "집밥 김치찌개",
-                calories: 150,
-                carbohydrates: 10,
-                protein: 12,
-                fat: 8,
-                sodium: 800,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 200,
-                servingUnit: nil,
-                source: .userDefined,
-                apiCode: nil,
-                createdByUserId: UUID(),
-                createdAt: Date()
-            )
-        )
-    }
-    .background(Color(.systemGroupedBackground))
+#Preview("Placeholder") {
+    Text("FoodSearchResultRow Preview")
+        .font(.headline)
+        .padding()
 }

@@ -28,7 +28,28 @@ protocol SleepRepositoryProtocol {
 
     // MARK: - Create
 
-    /// 새로운 수면 기록을 저장합니다.
+    /// 새로운 수면 기록을 생성합니다.
+    /// 📚 학습 포인트: Factory Method in Repository
+    /// - Core Data 엔티티는 context 없이 생성 불가
+    /// - Repository가 Core Data context를 통해 엔티티 생성
+    /// - UseCase는 데이터만 전달하고 생성은 Repository에서 처리
+    /// 💡 Java 비교: DAO.create() 패턴과 유사
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - date: 수면 날짜 (02:00 경계 적용)
+    ///   - duration: 수면 시간 (분)
+    ///   - status: 수면 상태
+    /// - Returns: 생성된 수면 기록
+    /// - Throws: RepositoryError - 생성 실패 시
+    func create(
+        userId: UUID,
+        date: Date,
+        duration: Int32,
+        status: SleepStatus
+    ) async throws -> SleepRecord
+
+    /// 기존 수면 기록을 저장합니다.
     /// 📚 학습 포인트: Async/Await
     /// - Swift 5.5+의 동시성 모델
     /// - 비동기 작업을 동기 코드처럼 작성 가능

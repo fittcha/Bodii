@@ -367,11 +367,11 @@ enum TrendProjectionService {
     private static func getTargetValue(from goal: Goal, for metric: GoalMetric) -> Decimal? {
         switch metric {
         case .weight:
-            return goal.targetWeight
+            return goal.targetWeight?.decimalValue
         case .bodyFat:
-            return goal.targetBodyFatPct
+            return goal.targetBodyFatPct?.decimalValue
         case .muscle:
-            return goal.targetMuscleMass
+            return goal.targetMuscleMass?.decimalValue
         }
     }
 
@@ -385,11 +385,11 @@ enum TrendProjectionService {
     private static func getPlannedWeeklyRate(from goal: Goal, for metric: GoalMetric) -> Decimal? {
         switch metric {
         case .weight:
-            return goal.weeklyWeightRate
+            return goal.weeklyWeightRate?.decimalValue
         case .bodyFat:
-            return goal.weeklyFatPctRate
+            return goal.weeklyFatPctRate?.decimalValue
         case .muscle:
-            return goal.weeklyMuscleRate
+            return goal.weeklyMuscleRate?.decimalValue
         }
     }
 }

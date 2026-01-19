@@ -10,6 +10,7 @@
 // 💡 Java 비교: Dagger/Hilt의 Component와 유사한 역할
 
 import Foundation
+import HealthKit
 
 // MARK: - DI Container
 
@@ -71,11 +72,59 @@ final class DIContainer {
         return GoalLocalDataSource(persistenceController: .shared)
     }()
 
-    // TODO: Phase 2에서 추가 예정
-    // - NetworkManager
-    // - HealthKitManager
-    // - FoodAPIDataSource
-    // - GeminiAPIDataSource
+    // MARK: - HealthKit Infrastructure
+
+    /// HealthKit 데이터 저장소
+    /// 📚 학습 포인트: Lazy Initialization
+    /// - HealthKit 사용 가능 여부와 무관하게 생성
+    /// - 실제 사용 시 availabilty 체크 필요
+    lazy var healthStore: HKHealthStore = {
+        return HKHealthStore()
+    }()
+
+    /// HealthKit 권한 서비스
+    /// 📚 학습 포인트: Authorization Service
+    /// - HealthKit 권한 요청 및 상태 확인 담당
+    lazy var healthKitAuthService: HealthKitAuthorizationService = {
+        return HealthKitAuthorizationService(healthStore: healthStore)
+    }()
+
+    /// HealthKit 읽기 서비스
+    /// 📚 학습 포인트: Read Service
+    /// - HealthKit에서 데이터를 읽어오는 서비스
+    lazy var healthKitReadService: HealthKitReadService = {
+        return HealthKitReadService(healthStore: healthStore)
+    }()
+
+    /// HealthKit 쓰기 서비스
+    /// 📚 학습 포인트: Write Service
+    /// - HealthKit에 데이터를 저장하는 서비스
+    lazy var healthKitWriteService: HealthKitWriteService = {
+        return HealthKitWriteService(healthStore: healthStore)
+    }()
+
+    /// HealthKit 동기화 서비스
+    /// 📚 학습 포인트: Sync Service
+    /// - HealthKit과 Bodii 데이터 양방향 동기화
+    lazy var healthKitSyncService: HealthKitSyncService = {
+        return HealthKitSyncService(
+            readService: healthKitReadService,
+            writeService: healthKitWriteService,
+            authService: healthKitAuthService
+        )
+    }()
+
+    /// HealthKit 백그라운드 동기화 서비스
+    /// 📚 학습 포인트: Background Sync
+    /// - 앱이 종료된 상태에서도 HealthKit 데이터 변경 감지 및 동기화
+    @MainActor
+    lazy var healthKitBackgroundSync: HealthKitBackgroundSync = {
+        return HealthKitBackgroundSync(
+            healthStore: healthStore,
+            syncService: healthKitSyncService,
+            authService: healthKitAuthService
+        )
+    }()
 
     // MARK: - Repositories
 

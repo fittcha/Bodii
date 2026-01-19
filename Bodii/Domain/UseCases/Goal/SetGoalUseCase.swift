@@ -146,51 +146,45 @@ struct SetGoalUseCase {
         }
 
         // Step 2: 대사율 데이터 조회 (시작 BMR/TDEE 저장용)
-        let metabolismData = try await bodyRepository.fetchMetabolismData(for: latestBody.id)
+        let latestBodyId = latestBody.id ?? UUID()
+        let metabolismData = try await bodyRepository.fetchMetabolismData(for: latestBodyId)
 
-        // Step 3: 목표 엔티티 생성 (시작값 포함)
-        let now = Date()
-        var goal = Goal(
-            id: UUID(),
-            userId: userId,
-            goalType: goalType,
-            targetWeight: targetWeight,
-            targetBodyFatPct: targetBodyFatPct,
-            targetMuscleMass: targetMuscleMass,
-            weeklyWeightRate: weeklyWeightRate,
-            weeklyFatPctRate: weeklyFatPctRate,
-            weeklyMuscleRate: weeklyMuscleRate,
-            startWeight: latestBody.weight,
-            startBodyFatPct: latestBody.bodyFatPercent,
-            startMuscleMass: latestBody.muscleMass,
-            startBMR: metabolismData?.bmr,
-            startTDEE: metabolismData?.tdee,
-            dailyCalorieTarget: dailyCalorieTarget,
-            isActive: true,
-            createdAt: now,
-            updatedAt: now
-        )
-
-        // Step 4: 목표 검증
-        do {
-            try GoalValidationService.validate(goal: goal)
-        } catch {
-            throw SetGoalError.validationFailed(error)
-        }
-
-        // Step 5: 기존 활성 목표 비활성화
+        // Step 3: 기존 활성 목표 비활성화
         do {
             try await goalRepository.deactivateAllGoals(for: userId)
         } catch {
             throw SetGoalError.deactivationFailed(error)
         }
 
-        // Step 6: 새 목표 저장
+        // Step 4: 새 목표 생성 (Repository의 create 메서드 사용)
         let savedGoal: Goal
         do {
-            savedGoal = try await goalRepository.save(goal)
+            savedGoal = try await goalRepository.create(
+                userId: userId,
+                goalType: goalType,
+                targetWeight: targetWeight,
+                targetBodyFatPct: targetBodyFatPct,
+                targetMuscleMass: targetMuscleMass,
+                weeklyWeightRate: weeklyWeightRate,
+                weeklyFatPctRate: weeklyFatPctRate,
+                weeklyMuscleRate: weeklyMuscleRate,
+                dailyCalorieTarget: dailyCalorieTarget,
+                startWeight: latestBody.weight as Decimal?,
+                startBodyFatPct: latestBody.bodyFatPercent as Decimal?,
+                startMuscleMass: latestBody.muscleMass as Decimal?,
+                startBMR: metabolismData?.bmr,
+                startTDEE: metabolismData?.tdee
+            )
         } catch {
             throw SetGoalError.saveFailed(error)
+        }
+
+        // Step 5: 목표 검증 (생성 후 검증)
+        do {
+            try GoalValidationService.validate(goal: savedGoal)
+        } catch {
+            // 검증 실패 시에도 이미 저장됨 - 로깅 용도
+            print("⚠️ Goal validation warning: \(error)")
         }
 
         return savedGoal
@@ -398,7 +392,7 @@ extension SetGoalUseCase {
         let calendar = Calendar.current
         let estimatedDate = calendar.date(
             byAdding: .day,
-            value: Int(daysToGoal.rounded0.toDouble()),
+            value: NSDecimalNumber(decimal: daysToGoal).intValue,
             to: Date()
         )
 

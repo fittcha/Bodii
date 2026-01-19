@@ -85,16 +85,20 @@ struct DietTabView: View {
         // Core Data 컨텍스트를 공유하여 일관된 데이터 접근
         let context = PersistenceController.shared.container.viewContext
 
+        // DataSources 초기화
+        let dailyLogLocalDataSource = DailyLogLocalDataSource(context: context)
+
         // Repositories 초기화
         let foodRepository = FoodRepository(context: context)
         let foodRecordRepository = FoodRecordRepository(context: context)
-        let dailyLogRepository = DailyLogRepository(context: context)
+        let dailyLogRepository = DailyLogRepositoryImpl(localDataSource: dailyLogLocalDataSource)
 
         // Services 초기화
         let foodRecordService = FoodRecordService(
             foodRecordRepository: foodRecordRepository,
+            dailyLogRepository: dailyLogRepository,
             foodRepository: foodRepository,
-            dailyLogRepository: dailyLogRepository
+            context: context
         )
 
         let localFoodSearchService = LocalFoodSearchService(
@@ -119,17 +123,19 @@ struct DietTabView: View {
 
         // 📚 학습 포인트: Photo Recognition Services 초기화
         // AI 사진 인식에 필요한 서비스들을 초기화합니다
-        let apiConfig = APIConfig.shared
-        let networkManager = NetworkManager(apiConfig: apiConfig)
+        let networkManager = NetworkManager(timeout: 30, maxRetries: 1)
 
         let visionAPIService = VisionAPIService(
             networkManager: networkManager,
-            apiConfig: apiConfig,
+            apiConfig: APIConfig.shared,
             usageTracker: VisionAPIUsageTracker.shared
         )
 
+        // UnifiedFoodSearchService 초기화 (FoodLabelMatcherService에 필요)
+        let unifiedFoodSearchService = UnifiedFoodSearchService(context: context)
+
         let foodLabelMatcher = FoodLabelMatcherService(
-            foodSearchService: localFoodSearchService
+            unifiedSearchService: unifiedFoodSearchService
         )
 
         _photoRecognitionViewModel = StateObject(wrappedValue: PhotoRecognitionViewModel(
@@ -220,13 +226,15 @@ struct DietTabView: View {
     /// - Returns: FoodDetailView
     private func foodDetailView(foodId: UUID) -> some View {
         let context = PersistenceController.shared.container.viewContext
+        let dailyLogLocalDataSource = DailyLogLocalDataSource(context: context)
         let foodRepository = FoodRepository(context: context)
         let foodRecordRepository = FoodRecordRepository(context: context)
-        let dailyLogRepository = DailyLogRepository(context: context)
+        let dailyLogRepository = DailyLogRepositoryImpl(localDataSource: dailyLogLocalDataSource)
         let foodRecordService = FoodRecordService(
             foodRecordRepository: foodRecordRepository,
+            dailyLogRepository: dailyLogRepository,
             foodRepository: foodRepository,
-            dailyLogRepository: dailyLogRepository
+            context: context
         )
 
         let viewModel = FoodDetailViewModel(
@@ -246,7 +254,7 @@ struct DietTabView: View {
                 // 저장 완료 시 음식 검색 시트 닫기 및 데이터 새로고침
                 showingFoodSearch = false
                 selectedFoodId = nil
-                dailyMealViewModel.loadData(userId: userId, bmr: bmr, tdee: tdee)
+                dailyMealViewModel.refresh()
             }
         )
     }
@@ -310,7 +318,7 @@ struct DietTabView: View {
                             // 모든 시트 닫기 및 데이터 새로고침
                             showingPhotoRecognition = false
                             showingFoodSearch = false
-                            dailyMealViewModel.loadData(userId: userId, bmr: bmr, tdee: tdee)
+                            dailyMealViewModel.refresh()
                         },
                         onAddMoreFoods: {
                             // 추가 음식 검색 (음식 검색 화면 열기)
@@ -341,16 +349,19 @@ struct DietTabView: View {
     private var manualEntrySheet: some View {
         NavigationStack {
             let context = PersistenceController.shared.container.viewContext
+            let dailyLogLocalDataSource = DailyLogLocalDataSource(context: context)
             let foodRepository = FoodRepository(context: context)
             let foodRecordRepository = FoodRecordRepository(context: context)
-            let dailyLogRepository = DailyLogRepository(context: context)
+            let dailyLogRepository = DailyLogRepositoryImpl(localDataSource: dailyLogLocalDataSource)
             let foodRecordService = FoodRecordService(
                 foodRecordRepository: foodRecordRepository,
+                dailyLogRepository: dailyLogRepository,
                 foodRepository: foodRepository,
-                dailyLogRepository: dailyLogRepository
+                context: context
             )
 
             let viewModel = ManualFoodEntryViewModel(
+                context: context,
                 foodRepository: foodRepository,
                 foodRecordService: foodRecordService
             )
@@ -366,7 +377,7 @@ struct DietTabView: View {
                     // 저장 완료 시 모든 시트 닫기 및 데이터 새로고침
                     showingManualEntry = false
                     showingFoodSearch = false
-                    dailyMealViewModel.loadData(userId: userId, bmr: bmr, tdee: tdee)
+                    dailyMealViewModel.refresh()
                 }
             )
             .toolbar {

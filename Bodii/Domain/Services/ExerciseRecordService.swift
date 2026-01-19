@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 /// 운동 기록 서비스
 ///
@@ -16,15 +17,18 @@ final class ExerciseRecordService {
 
     private let exerciseRecordRepository: ExerciseRecordRepository
     private let userRepository: UserRepository
+    private let context: NSManagedObjectContext
 
     // MARK: - Initialization
 
     init(
         exerciseRecordRepository: ExerciseRecordRepository,
-        userRepository: UserRepository
+        userRepository: UserRepository,
+        context: NSManagedObjectContext
     ) {
         self.exerciseRecordRepository = exerciseRecordRepository
         self.userRepository = userRepository
+        self.context = context
     }
 
     // MARK: - Public Methods
@@ -56,25 +60,24 @@ final class ExerciseRecordService {
             exerciseType: exerciseType,
             duration: duration,
             intensity: intensity,
-            weight: weight as Decimal
+            weight: weight.decimalValue
         )
 
-        // 4. ExerciseRecord 생성
-        let exerciseRecord = ExerciseRecord(
-            id: UUID(),
-            userId: userId,
-            date: date,
-            exerciseType: exerciseType,
-            duration: duration,
-            intensity: intensity,
-            caloriesBurned: caloriesBurned,
-            createdAt: Date()
-        )
+        // 4. ExerciseRecord 생성 (Core Data 엔티티)
+        let exerciseRecord = ExerciseRecord(context: context)
+        exerciseRecord.id = UUID()
+        exerciseRecord.user = user
+        exerciseRecord.date = date
+        exerciseRecord.exerciseType = exerciseType.rawValue
+        exerciseRecord.duration = duration
+        exerciseRecord.intensity = intensity.rawValue
+        exerciseRecord.caloriesBurned = caloriesBurned
+        exerciseRecord.createdAt = Date()
 
         // 5. ExerciseRecord 저장
         let savedRecord = try await exerciseRecordRepository.create(exerciseRecord)
 
-        return savedRecord.id
+        return savedRecord.id ?? UUID()
     }
 
     /// 운동 수정
@@ -110,22 +113,17 @@ final class ExerciseRecordService {
             exerciseType: exerciseType,
             duration: duration,
             intensity: intensity,
-            weight: weight as Decimal
+            weight: weight.decimalValue
         )
 
-        // 5. ExerciseRecord 업데이트
-        let updatedRecord = ExerciseRecord(
-            id: oldExercise.id,
-            userId: oldExercise.userId,
-            date: date,
-            exerciseType: exerciseType,
-            duration: duration,
-            intensity: intensity,
-            caloriesBurned: newCaloriesBurned,
-            createdAt: oldExercise.createdAt
-        )
+        // 5. ExerciseRecord 업데이트 (기존 Core Data 엔티티 수정)
+        oldExercise.date = date
+        oldExercise.exerciseType = exerciseType.rawValue
+        oldExercise.duration = duration
+        oldExercise.intensity = intensity.rawValue
+        oldExercise.caloriesBurned = newCaloriesBurned
 
-        _ = try await exerciseRecordRepository.update(updatedRecord)
+        _ = try await exerciseRecordRepository.update(oldExercise)
     }
 
     /// 운동 삭제

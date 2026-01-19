@@ -113,7 +113,7 @@ struct FetchSleepStatsUseCase {
     /// 수면 상태별 통계
     /// 📚 학습 포인트: Nested Statistics Type
     /// 각 수면 상태별 발생 빈도와 비율을 담는 타입
-    struct StatusStats: Codable, Equatable {
+    struct StatusStats: Codable, Equatable, Identifiable {
         /// 수면 상태
         let status: SleepStatus
 
@@ -124,6 +124,9 @@ struct FetchSleepStatsUseCase {
         /// 📚 학습 포인트: Percentage Calculation
         /// 차트나 통계 표시에 사용
         let percentage: Double
+
+        /// Identifiable을 위한 id
+        var id: SleepStatus { status }
 
         /// 비율을 백분율 문자열로 반환
         /// 📚 학습 포인트: Formatted String
@@ -492,12 +495,19 @@ struct FetchSleepStatsUseCase {
         // Step 2: 차트 데이터 포인트로 변환
         // 📚 학습 포인트: Map Transformation
         // Domain entity를 View에 최적화된 형태로 변환
-        let dataPoints = records.map { record -> SleepDataPoint in
-            SleepDataPoint(
-                id: record.id,
-                date: record.date,
+        let dataPoints = records.compactMap { record -> SleepDataPoint? in
+            guard let recordId = record.id,
+                  let recordDate = record.date else {
+                return nil
+            }
+
+            let sleepStatus = SleepStatus(rawValue: record.status) ?? .soso
+
+            return SleepDataPoint(
+                id: recordId,
+                date: recordDate,
                 duration: record.duration,
-                status: record.status
+                status: sleepStatus
             )
         }
 
@@ -547,12 +557,19 @@ struct FetchSleepStatsUseCase {
         let startDate = Calendar.current.date(byAdding: .day, value: -days, to: endDate) ?? endDate
         let records = try await sleepRepository.fetch(from: startDate, to: endDate)
 
-        let dataPoints = records.map { record -> SleepDataPoint in
-            SleepDataPoint(
-                id: record.id,
-                date: record.date,
+        let dataPoints = records.compactMap { record -> SleepDataPoint? in
+            guard let recordId = record.id,
+                  let recordDate = record.date else {
+                return nil
+            }
+
+            let sleepStatus = SleepStatus(rawValue: record.status) ?? .soso
+
+            return SleepDataPoint(
+                id: recordId,
+                date: recordDate,
                 duration: record.duration,
-                status: record.status
+                status: sleepStatus
             )
         }.sorted { $0.date < $1.date }
 

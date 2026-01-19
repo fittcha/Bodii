@@ -28,7 +28,47 @@ protocol GoalRepositoryProtocol {
 
     // MARK: - Create
 
-    /// 새로운 목표를 저장합니다.
+    /// 새로운 목표를 생성합니다.
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - Core Data 엔티티 생성을 Repository에 위임
+    /// - 도메인 레이어는 엔티티 생성 세부사항을 알 필요 없음
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - goalType: 목표 유형 (감량/유지/증량)
+    ///   - targetWeight: 목표 체중 (kg, 선택사항)
+    ///   - targetBodyFatPct: 목표 체지방률 (%, 선택사항)
+    ///   - targetMuscleMass: 목표 근육량 (kg, 선택사항)
+    ///   - weeklyWeightRate: 주간 체중 변화율 (kg/week, 선택사항)
+    ///   - weeklyFatPctRate: 주간 체지방률 변화율 (%/week, 선택사항)
+    ///   - weeklyMuscleRate: 주간 근육량 변화율 (kg/week, 선택사항)
+    ///   - dailyCalorieTarget: 일일 칼로리 목표 (kcal, 선택사항)
+    ///   - startWeight: 시작 체중 (kg, 선택사항)
+    ///   - startBodyFatPct: 시작 체지방률 (%, 선택사항)
+    ///   - startMuscleMass: 시작 근육량 (kg, 선택사항)
+    ///   - startBMR: 시작 BMR (kcal, 선택사항)
+    ///   - startTDEE: 시작 TDEE (kcal, 선택사항)
+    ///
+    /// - Returns: 생성된 목표 데이터
+    /// - Throws: RepositoryError - 생성 실패 시
+    func create(
+        userId: UUID,
+        goalType: GoalType,
+        targetWeight: Decimal?,
+        targetBodyFatPct: Decimal?,
+        targetMuscleMass: Decimal?,
+        weeklyWeightRate: Decimal?,
+        weeklyFatPctRate: Decimal?,
+        weeklyMuscleRate: Decimal?,
+        dailyCalorieTarget: Int32?,
+        startWeight: Decimal?,
+        startBodyFatPct: Decimal?,
+        startMuscleMass: Decimal?,
+        startBMR: Decimal?,
+        startTDEE: Decimal?
+    ) async throws -> Goal
+
+    /// 기존 목표를 저장합니다.
     /// 📚 학습 포인트: Async/Await
     /// - Swift 5.5+의 동시성 모델
     /// - 비동기 작업을 동기 코드처럼 작성 가능
@@ -117,6 +157,17 @@ protocol GoalRepositoryProtocol {
     ///
     /// 성능: <0.3초 (배치 업데이트)
     func deactivateAllGoals() async throws
+
+    /// 특정 사용자의 모든 활성 목표를 비활성화합니다.
+    /// 📚 학습 포인트: User-scoped Bulk Update
+    /// - 새 목표 설정 시 기존 활성 목표를 비활성화하는 용도
+    /// - 사용자별로 목표를 관리
+    ///
+    /// - Parameter userId: 사용자 ID
+    /// - Throws: RepositoryError - 업데이트 실패 시
+    ///
+    /// 성능: <0.3초 (배치 업데이트)
+    func deactivateAllGoals(for userId: UUID) async throws
 
     // MARK: - Delete
 
