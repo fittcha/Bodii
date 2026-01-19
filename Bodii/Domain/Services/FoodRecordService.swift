@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 /// FoodRecord 비즈니스 로직을 처리하는 서비스 구현
 ///
@@ -19,7 +20,8 @@ import Foundation
 /// let service = FoodRecordService(
 ///     foodRecordRepository: foodRecordRepository,
 ///     dailyLogRepository: dailyLogRepository,
-///     foodRepository: foodRepository
+///     foodRepository: foodRepository,
+///     context: persistenceController.viewContext
 /// )
 /// let foodRecord = try await service.addFoodRecord(
 ///     userId: userId,
@@ -40,10 +42,13 @@ final class FoodRecordService: FoodRecordServiceProtocol {
     private let foodRecordRepository: FoodRecordRepositoryProtocol
 
     /// DailyLog Repository
-    private let dailyLogRepository: DailyLogRepositoryProtocol
+    private let dailyLogRepository: DailyLogRepository
 
     /// Food Repository
     private let foodRepository: FoodRepositoryProtocol
+
+    /// Core Data Context
+    private let context: NSManagedObjectContext
 
     // MARK: - Initialization
 
@@ -53,14 +58,17 @@ final class FoodRecordService: FoodRecordServiceProtocol {
     ///   - foodRecordRepository: FoodRecord Repository
     ///   - dailyLogRepository: DailyLog Repository
     ///   - foodRepository: Food Repository
+    ///   - context: Core Data context
     init(
         foodRecordRepository: FoodRecordRepositoryProtocol,
-        dailyLogRepository: DailyLogRepositoryProtocol,
-        foodRepository: FoodRepositoryProtocol
+        dailyLogRepository: DailyLogRepository,
+        foodRepository: FoodRepositoryProtocol,
+        context: NSManagedObjectContext
     ) {
         self.foodRecordRepository = foodRecordRepository
         self.dailyLogRepository = dailyLogRepository
         self.foodRepository = foodRepository
+        self.context = context
     }
 
     // MARK: - Food Record Operations
@@ -87,26 +95,26 @@ final class FoodRecordService: FoodRecordServiceProtocol {
             quantityUnit: quantityUnit
         )
 
-        // 3. FoodRecord 생성 및 저장
-        let foodRecord = FoodRecord(
-            id: UUID(),
-            userId: userId,
-            foodId: foodId,
-            date: date,
-            mealType: mealType,
-            quantity: quantity,
-            quantityUnit: quantityUnit,
-            calculatedCalories: nutritionValues.calories,
-            calculatedCarbs: nutritionValues.carbs,
-            calculatedProtein: nutritionValues.protein,
-            calculatedFat: nutritionValues.fat,
-            createdAt: Date()
-        )
+        // 3. FoodRecord 생성 (Core Data 엔티티)
+        let foodRecord = FoodRecord(context: context)
+        foodRecord.id = UUID()
+        foodRecord.food = food
+        foodRecord.date = date
+        foodRecord.mealType = mealType.rawValue
+        foodRecord.quantity = NSDecimalNumber(decimal: quantity)
+        foodRecord.quantityUnit = quantityUnit.rawValue
+        foodRecord.calculatedCalories = nutritionValues.calories
+        foodRecord.calculatedCarbs = NSDecimalNumber(decimal: nutritionValues.carbs)
+        foodRecord.calculatedProtein = NSDecimalNumber(decimal: nutritionValues.protein)
+        foodRecord.calculatedFat = NSDecimalNumber(decimal: nutritionValues.fat)
+        foodRecord.createdAt = Date()
+
+        // User 연결은 별도로 처리 필요 (UserRepository를 통해)
 
         let savedFoodRecord = try await foodRecordRepository.save(foodRecord)
 
         // 4. DailyLog 조회 또는 생성
-        var dailyLog = try await dailyLogRepository.getOrCreate(
+        let dailyLog = try await dailyLogRepository.getOrCreate(
             for: date,
             userId: userId,
             bmr: bmr,
@@ -114,7 +122,7 @@ final class FoodRecordService: FoodRecordServiceProtocol {
         )
 
         // 5. DailyLog 총합 업데이트
-        dailyLog = updateDailyLogWithAddition(
+        updateDailyLogWithAddition(
             dailyLog: dailyLog,
             calories: nutritionValues.calories,
             carbs: nutritionValues.carbs,
@@ -135,20 +143,20 @@ final class FoodRecordService: FoodRecordServiceProtocol {
         mealType: MealType?
     ) async throws -> FoodRecord {
         // 1. 기존 FoodRecord 조회
-        guard var foodRecord = try await foodRecordRepository.findById(foodRecordId) else {
+        guard let foodRecord = try await foodRecordRepository.findById(foodRecordId) else {
             throw ServiceError.foodRecordNotFound
         }
 
         // 2. Food 정보 조회
-        guard let food = try await foodRepository.findById(foodRecord.foodId) else {
+        guard let food = foodRecord.food else {
             throw ServiceError.foodNotFound
         }
 
         // 3. 이전 영양소 값 저장
         let oldCalories = foodRecord.calculatedCalories
-        let oldCarbs = foodRecord.calculatedCarbs
-        let oldProtein = foodRecord.calculatedProtein
-        let oldFat = foodRecord.calculatedFat
+        let oldCarbs = foodRecord.calculatedCarbs?.decimalValue ?? Decimal(0)
+        let oldProtein = foodRecord.calculatedProtein?.decimalValue ?? Decimal(0)
+        let oldFat = foodRecord.calculatedFat?.decimalValue ?? Decimal(0)
 
         // 4. 새로운 영양소 계산
         let nutritionValues = calculateNutrition(
@@ -157,30 +165,36 @@ final class FoodRecordService: FoodRecordServiceProtocol {
             quantityUnit: quantityUnit
         )
 
-        // 5. FoodRecord 업데이트
-        foodRecord.quantity = quantity
-        foodRecord.quantityUnit = quantityUnit
+        // 5. FoodRecord 업데이트 (Core Data 엔티티 직접 수정)
+        foodRecord.quantity = NSDecimalNumber(decimal: quantity)
+        foodRecord.quantityUnit = quantityUnit.rawValue
         foodRecord.calculatedCalories = nutritionValues.calories
-        foodRecord.calculatedCarbs = nutritionValues.carbs
-        foodRecord.calculatedProtein = nutritionValues.protein
-        foodRecord.calculatedFat = nutritionValues.fat
+        foodRecord.calculatedCarbs = NSDecimalNumber(decimal: nutritionValues.carbs)
+        foodRecord.calculatedProtein = NSDecimalNumber(decimal: nutritionValues.protein)
+        foodRecord.calculatedFat = NSDecimalNumber(decimal: nutritionValues.fat)
 
         if let newMealType = mealType {
-            foodRecord.mealType = newMealType
+            foodRecord.mealType = newMealType.rawValue
         }
 
         let updatedFoodRecord = try await foodRecordRepository.update(foodRecord)
 
         // 6. DailyLog 조회
-        guard var dailyLog = try await dailyLogRepository.findByDate(
-            foodRecord.date,
-            userId: foodRecord.userId
+        guard let recordDate = foodRecord.date,
+              let user = foodRecord.user,
+              let userId = user.id else {
+            throw ServiceError.dailyLogNotFound
+        }
+
+        guard let dailyLog = try await dailyLogRepository.fetch(
+            for: recordDate,
+            userId: userId
         ) else {
             throw ServiceError.dailyLogNotFound
         }
 
         // 7. DailyLog에서 이전 값 차감
-        dailyLog = updateDailyLogWithDeletion(
+        updateDailyLogWithDeletion(
             dailyLog: dailyLog,
             calories: oldCalories,
             carbs: oldCarbs,
@@ -189,7 +203,7 @@ final class FoodRecordService: FoodRecordServiceProtocol {
         )
 
         // 8. DailyLog에 새로운 값 추가
-        dailyLog = updateDailyLogWithAddition(
+        updateDailyLogWithAddition(
             dailyLog: dailyLog,
             calories: nutritionValues.calories,
             carbs: nutritionValues.carbs,
@@ -210,20 +224,26 @@ final class FoodRecordService: FoodRecordServiceProtocol {
         }
 
         // 2. DailyLog 조회
-        guard var dailyLog = try await dailyLogRepository.findByDate(
-            foodRecord.date,
-            userId: foodRecord.userId
+        guard let recordDate = foodRecord.date,
+              let user = foodRecord.user,
+              let userId = user.id else {
+            throw ServiceError.dailyLogNotFound
+        }
+
+        guard let dailyLog = try await dailyLogRepository.fetch(
+            for: recordDate,
+            userId: userId
         ) else {
             throw ServiceError.dailyLogNotFound
         }
 
         // 3. DailyLog 총합에서 차감
-        dailyLog = updateDailyLogWithDeletion(
+        updateDailyLogWithDeletion(
             dailyLog: dailyLog,
             calories: foodRecord.calculatedCalories,
-            carbs: foodRecord.calculatedCarbs,
-            protein: foodRecord.calculatedProtein,
-            fat: foodRecord.calculatedFat
+            carbs: foodRecord.calculatedCarbs?.decimalValue ?? Decimal(0),
+            protein: foodRecord.calculatedProtein?.decimalValue ?? Decimal(0),
+            fat: foodRecord.calculatedFat?.decimalValue ?? Decimal(0)
         )
 
         // 4. DailyLog 저장
@@ -270,87 +290,107 @@ final class FoodRecordService: FoodRecordServiceProtocol {
     /// DailyLog에 영양소를 추가하고 비율과 순 칼로리를 재계산합니다.
     ///
     /// - Parameters:
-    ///   - dailyLog: 업데이트할 DailyLog
+    ///   - dailyLog: 업데이트할 DailyLog (Core Data 엔티티)
     ///   - calories: 추가할 칼로리 (kcal)
     ///   - carbs: 추가할 탄수화물 (g)
     ///   - protein: 추가할 단백질 (g)
     ///   - fat: 추가할 지방 (g)
-    /// - Returns: 업데이트된 DailyLog
     private func updateDailyLogWithAddition(
         dailyLog: DailyLog,
         calories: Int32,
         carbs: Decimal,
         protein: Decimal,
         fat: Decimal
-    ) -> DailyLog {
-        var updatedLog = dailyLog
-
+    ) {
         // 총합 증가
-        updatedLog.totalCaloriesIn += calories
-        updatedLog.totalCarbs += carbs
-        updatedLog.totalProtein += protein
-        updatedLog.totalFat += fat
+        dailyLog.totalCaloriesIn += calories
+
+        let currentCarbs = dailyLog.totalCarbs?.decimalValue ?? Decimal(0)
+        let currentProtein = dailyLog.totalProtein?.decimalValue ?? Decimal(0)
+        let currentFat = dailyLog.totalFat?.decimalValue ?? Decimal(0)
+
+        dailyLog.totalCarbs = NSDecimalNumber(decimal: currentCarbs + carbs)
+        dailyLog.totalProtein = NSDecimalNumber(decimal: currentProtein + protein)
+        dailyLog.totalFat = NSDecimalNumber(decimal: currentFat + fat)
 
         // 매크로 비율 재계산
+        let newCarbs = dailyLog.totalCarbs?.decimalValue ?? Decimal(0)
+        let newProtein = dailyLog.totalProtein?.decimalValue ?? Decimal(0)
+        let newFat = dailyLog.totalFat?.decimalValue ?? Decimal(0)
+
         let macroRatios = calculateMacroRatios(
-            carbs: updatedLog.totalCarbs,
-            protein: updatedLog.totalProtein,
-            fat: updatedLog.totalFat
+            carbs: newCarbs,
+            protein: newProtein,
+            fat: newFat
         )
-        updatedLog.carbsRatio = macroRatios.carbsRatio
-        updatedLog.proteinRatio = macroRatios.proteinRatio
-        updatedLog.fatRatio = macroRatios.fatRatio
+        if let carbsRatio = macroRatios.carbsRatio {
+            dailyLog.carbsRatio = NSDecimalNumber(decimal: carbsRatio)
+        }
+        if let proteinRatio = macroRatios.proteinRatio {
+            dailyLog.proteinRatio = NSDecimalNumber(decimal: proteinRatio)
+        }
+        if let fatRatio = macroRatios.fatRatio {
+            dailyLog.fatRatio = NSDecimalNumber(decimal: fatRatio)
+        }
 
         // 순 칼로리 재계산
-        updatedLog.netCalories = updatedLog.totalCaloriesIn - updatedLog.tdee
+        dailyLog.netCalories = dailyLog.totalCaloriesIn - dailyLog.tdee
 
         // 수정일시 업데이트
-        updatedLog.updatedAt = Date()
-
-        return updatedLog
+        dailyLog.updatedAt = Date()
     }
 
     /// DailyLog에서 영양소를 차감하고 비율과 순 칼로리를 재계산합니다.
     ///
     /// - Parameters:
-    ///   - dailyLog: 업데이트할 DailyLog
+    ///   - dailyLog: 업데이트할 DailyLog (Core Data 엔티티)
     ///   - calories: 차감할 칼로리 (kcal)
     ///   - carbs: 차감할 탄수화물 (g)
     ///   - protein: 차감할 단백질 (g)
     ///   - fat: 차감할 지방 (g)
-    /// - Returns: 업데이트된 DailyLog
     private func updateDailyLogWithDeletion(
         dailyLog: DailyLog,
         calories: Int32,
         carbs: Decimal,
         protein: Decimal,
         fat: Decimal
-    ) -> DailyLog {
-        var updatedLog = dailyLog
-
+    ) {
         // 총합 감소 (음수가 되지 않도록 max(0, ...) 처리)
-        updatedLog.totalCaloriesIn = max(0, updatedLog.totalCaloriesIn - calories)
-        updatedLog.totalCarbs = max(0, updatedLog.totalCarbs - carbs)
-        updatedLog.totalProtein = max(0, updatedLog.totalProtein - protein)
-        updatedLog.totalFat = max(0, updatedLog.totalFat - fat)
+        dailyLog.totalCaloriesIn = max(0, dailyLog.totalCaloriesIn - calories)
+
+        let currentCarbs = dailyLog.totalCarbs?.decimalValue ?? Decimal(0)
+        let currentProtein = dailyLog.totalProtein?.decimalValue ?? Decimal(0)
+        let currentFat = dailyLog.totalFat?.decimalValue ?? Decimal(0)
+
+        dailyLog.totalCarbs = NSDecimalNumber(decimal: max(0, currentCarbs - carbs))
+        dailyLog.totalProtein = NSDecimalNumber(decimal: max(0, currentProtein - protein))
+        dailyLog.totalFat = NSDecimalNumber(decimal: max(0, currentFat - fat))
 
         // 매크로 비율 재계산
+        let newCarbs = dailyLog.totalCarbs?.decimalValue ?? Decimal(0)
+        let newProtein = dailyLog.totalProtein?.decimalValue ?? Decimal(0)
+        let newFat = dailyLog.totalFat?.decimalValue ?? Decimal(0)
+
         let macroRatios = calculateMacroRatios(
-            carbs: updatedLog.totalCarbs,
-            protein: updatedLog.totalProtein,
-            fat: updatedLog.totalFat
+            carbs: newCarbs,
+            protein: newProtein,
+            fat: newFat
         )
-        updatedLog.carbsRatio = macroRatios.carbsRatio
-        updatedLog.proteinRatio = macroRatios.proteinRatio
-        updatedLog.fatRatio = macroRatios.fatRatio
+        if let carbsRatio = macroRatios.carbsRatio {
+            dailyLog.carbsRatio = NSDecimalNumber(decimal: carbsRatio)
+        }
+        if let proteinRatio = macroRatios.proteinRatio {
+            dailyLog.proteinRatio = NSDecimalNumber(decimal: proteinRatio)
+        }
+        if let fatRatio = macroRatios.fatRatio {
+            dailyLog.fatRatio = NSDecimalNumber(decimal: fatRatio)
+        }
 
         // 순 칼로리 재계산
-        updatedLog.netCalories = updatedLog.totalCaloriesIn - updatedLog.tdee
+        dailyLog.netCalories = dailyLog.totalCaloriesIn - dailyLog.tdee
 
         // 수정일시 업데이트
-        updatedLog.updatedAt = Date()
-
-        return updatedLog
+        dailyLog.updatedAt = Date()
     }
 
     /// 매크로 영양소 비율을 계산합니다.
@@ -403,4 +443,3 @@ enum ServiceError: Error, LocalizedError {
         }
     }
 }
-

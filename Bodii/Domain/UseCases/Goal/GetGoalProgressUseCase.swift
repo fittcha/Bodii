@@ -274,14 +274,14 @@ enum GetGoalProgressError: Error, LocalizedError {
 /// 목표 진행 상황 데이터
 ///
 /// 목표의 전체 진행 상황, 각 지표별 진행률, 트렌드, 예상 달성일을 포함합니다.
-public struct GoalProgressData {
+struct GoalProgressData {
     // MARK: - Basic Info
 
     /// 현재 활성 목표
-    public let goal: Goal
+    let goal: Goal
 
     /// 현재 체성분 상태
-    public let currentBody: BodyCompositionEntry
+    let currentBody: BodyCompositionEntry
 
     // MARK: - Progress
 

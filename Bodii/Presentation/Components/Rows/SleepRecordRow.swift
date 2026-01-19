@@ -10,6 +10,7 @@
 // 💡 Java 비교: Android의 RecyclerView Item Layout/Compose ListItem과 유사
 
 import SwiftUI
+import CoreData
 
 // MARK: - SleepRecordRow
 
@@ -335,6 +336,11 @@ extension SleepRecordRow {
 
 #if DEBUG
 extension SleepRecord {
+    /// Preview용 context
+    private static var previewContext: NSManagedObjectContext {
+        PersistenceController.preview.container.viewContext
+    }
+
     /// 📚 학습 포인트: Preview Sample Data
     /// SwiftUI Preview를 위한 샘플 수면 기록
     ///
@@ -351,18 +357,16 @@ extension SleepRecord {
             }
         }()
 
-        let calendar = Calendar.current
         let today = Date()
 
-        return SleepRecord(
-            id: UUID(),
-            userId: UUID(),
-            date: today,
-            duration: duration,
-            status: status,
-            createdAt: today,
-            updatedAt: today
-        )
+        let record = SleepRecord(context: previewContext)
+        record.id = UUID()
+        record.date = today
+        record.duration = duration
+        record.status = Int16(status.rawValue)
+        record.createdAt = today
+        record.updatedAt = today
+        return record
     }
 
     /// 📚 학습 포인트: Sample Week Data
@@ -379,15 +383,14 @@ extension SleepRecord {
         return (0..<7).map { index in
             let date = calendar.date(byAdding: .day, value: -index, to: today)!
 
-            return SleepRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: date,
-                duration: durations[index],
-                status: statuses[index],
-                createdAt: date,
-                updatedAt: date
-            )
+            let record = SleepRecord(context: previewContext)
+            record.id = UUID()
+            record.date = date
+            record.duration = durations[index]
+            record.status = Int16(statuses[index].rawValue)
+            record.createdAt = date
+            record.updatedAt = date
+            return record
         }
     }
 }

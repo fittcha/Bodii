@@ -111,8 +111,8 @@ struct ContentView: View {
 
         return DashboardView(
             metabolismViewModel: metabolismViewModel,
-            sleepRepository: sleepRepository,
             goalProgressViewModel: goalProgressViewModel,
+            sleepRepository: sleepRepository,
             userId: UserProfile.sample.id,
             onNavigateToBody: {
                 // 📚 학습 포인트: Tab Navigation

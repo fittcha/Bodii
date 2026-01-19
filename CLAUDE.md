@@ -7,8 +7,68 @@
 - docs/05_TASKS.md - 태스크 목록 (이 순서대로 구현)
 - docs/06_ALGORITHM.md - BMR/TDEE 계산 공식
 - docs/08_EDGE_CASES.md - 예외 처리
+- **docs/11_ARCHITECTURE_FIX.md - 아키텍처 문제 분석 및 수정 가이드 (중요!)**
 
 태스크 생성 시 docs/05_TASKS.md를 참고하세요.
+
+---
+
+## 아키텍처 핵심 규칙 (2026-01-19 정리)
+
+### 1. Core Data는 `codeGenerationType="class"` 사용 중
+
+Core Data가 자동 생성하는 NSManagedObject 서브클래스:
+- `User`, `Food`, `BodyRecord`, `ExerciseRecord`, `SleepRecord`, `DailyLog`, `Goal`, `FoodRecord`, `MetabolismSnapshot`
+
+**절대 금지**: Domain/Entities/에 위 이름과 동일한 struct 생성
+
+### 2. 3단계 데이터 변환 패턴 (필수)
+
+```
+[외부 데이터]     [DTO]           [Core Data Entity]
+HKSample    ──→   DataDTO    ──→   NSManagedObject
+API Response ──→              ──→
+                              ↑
+                     NSManagedObjectContext 필수!
+```
+
+**올바른 패턴**:
+```swift
+// Phase 1: 외부 데이터 → DTO
+func mapToBodyDataDTO(from sample: HKQuantitySample) -> BodyDataDTO
+
+// Phase 2: DTO → Core Data Entity (context 필수)
+func createBodyRecord(from dto: BodyDataDTO, context: NSManagedObjectContext) -> BodyRecord
+```
+
+### 3. Core Data 타입 변환 규칙
+
+```swift
+// NSDecimalNumber → Decimal 읽기
+let value: Decimal = record.weight?.decimalValue ?? .zero
+
+// Decimal → NSDecimalNumber 쓰기
+record.weight = NSDecimalNumber(decimal: value)
+
+// Int16 → enum
+let status = SleepStatus(rawValue: Int(record.status)) ?? .good
+
+// enum → Int16
+record.status = Int16(status.rawValue)
+```
+
+### 4. Preview/Sample 데이터 생성
+
+```swift
+// ❌ 금지: struct initializer 사용
+let food = Food(name: "사과", calories: 52)
+
+// ✅ 필수: Core Data context 사용
+let context = PersistenceController.preview.container.viewContext
+let food = Food(context: context)
+food.name = "사과"
+food.calories = NSDecimalNumber(value: 52)
+```
 
 ---
 
@@ -89,72 +149,45 @@ git merge origin/main
 
 ---
 
-## 긴급 수정 필요 사항 (2024-01-18 기준)
+## 수정 완료 현황 (2026-01-19)
 
-### 우선순위 1: Core Data/Domain 타입 충돌
-| 파일 | 오류 | 원인 | 해결 방법 |
-|------|------|------|-----------|
-| `Domain/Entities/User.swift` | Invalid redeclaration of 'User' | Core Data 자동 생성 User 클래스와 충돌 | 삭제 완료 (Core Data 클래스 사용) |
-| `Domain/Entities/ExerciseRecord.swift` | 'ExerciseRecord' is ambiguous | Core Data 자동 생성 클래스와 충돌 | 삭제 완료 (Core Data 클래스 사용) |
+### 완료된 수정
+| 카테고리 | 파일 | 수정 내용 |
+|----------|------|-----------|
+| Mapper | `HealthKitMapper.swift` | DTO 패턴 도입, context 기반 엔티티 생성 |
+| Mapper | `USDAFoodMapper.swift` | NSDecimalNumber 변환 |
+| Mapper | `KFDAFoodMapper.swift` | NSDecimalNumber 변환 |
+| Mapper | `MetabolismSnapshotMapper.swift` | context 파라미터 추가 |
+| Mapper | `SleepRecordMapper.swift` | Int16 ↔ enum 변환 |
+| HealthKit | `HealthKitDataTypes.swift` | CaseIterable, hkCategoryType |
+| HealthKit | `HealthKitBackgroundSync.swift` | String→UUID, 중복 extension 제거 |
+| Service | `LocalFoodSearchService.swift` | context 파라미터 |
+| Service | `TrendProjectionService.swift` | NSDecimalNumber→Decimal |
+| Service | `NutritionCalculator.swift` | Decimal→Int32 |
+| UseCase | `DeleteExerciseRecordUseCase.swift` | userId, date 처리 |
+| View | `DashboardView.swift` | Decimal→NSNumber, optional |
+| View | `FoodMatchCard.swift` | optional 처리 |
+| View | `FoodDetailView.swift` | optional String, NSDecimalNumber |
+| View | `SleepBarChart.swift` | BarMark .annotation |
+| ViewModel | `FoodDetailViewModel.swift` | servingSize 타입 |
+| Model | `EditedFoodItem.swift` | multiplier 계산 |
+| DataSource | `SleepLocalDataSource.swift` | nil → 0 |
+| Component | `BodyCompositionInputCard.swift` | 신규 생성 |
 
-### 우선순위 2: 타입 중복 선언
-| 파일 | 오류 | 원인 | 해결 방법 |
-|------|------|------|-----------|
-| `Data/Repositories/FoodRepository.swift:383` | Invalid redeclaration of 'RepositoryError' | 여러 파일에서 RepositoryError 중복 정의 | 하나의 파일로 통합 |
-| `Presentation/.../ManualFoodEntryViewModel.swift:391` | Invalid redeclaration of 'ValidationErrors' | 여러 파일에서 ValidationErrors 중복 정의 | 하나의 파일로 통합 |
-| `Domain/Services/NutritionCalculator.swift:338` | Invalid redeclaration of 'rounded' | Decimal extension 중복 | 하나의 파일로 통합 |
+### 남은 작업
+자세한 내용은 `docs/11_ARCHITECTURE_FIX.md` 참조
 
-### 우선순위 3: Food 타입 초기화 문제
-| 파일 | 오류 | 원인 | 해결 방법 |
-|------|------|------|-----------|
-| `Data/SampleData/SampleFoods.swift` (다수) | Argument passed to call that takes no arguments | Food 초기화 인자가 Core Data 클래스와 불일치 | Core Data Food 엔티티 사용 방식으로 변경 |
-| 여러 Preview/Component 파일들 | Cannot infer contextual base in reference to member | FoodSource 등 enum 참조 실패 | import 확인 및 전체 경로 사용 |
+**우선순위 높음**:
+- [ ] SleepRecordRow.swift - 타입 변환
+- [ ] DashboardViewModel.swift - Mock 클래스
+- [ ] ExerciseListView.swift - Mock 클래스
+- [ ] GoalProgressViewModel.swift - 타입 변환
+- [ ] SleepRepository.swift - 타입 변환
+- [ ] BodyRepository.swift - 타입 변환
 
-### 우선순위 4: 프로토콜 불일치
-| 파일 | 오류 | 원인 | 해결 방법 |
-|------|------|------|-----------|
-| `DashboardViewModel.swift:573` | MockDailyLogRepository does not conform to DailyLogRepository | Mock 클래스가 최신 프로토콜 미반영 | Mock 클래스 업데이트 |
-| `DailyMealView.swift:419` | MockFoodRepository does not conform to FoodRepositoryProtocol | 메서드 시그니처 불일치 | search(by:) → search(name:) 수정 |
-| `ExerciseListView.swift:633` | MockExerciseRecordRepository does not conform | Mock 클래스 프로토콜 미준수 | Mock 클래스 업데이트 |
-| 기타 Mock 클래스들 | does not conform to protocol | 프로토콜 변경 미반영 | 각 Mock 클래스 프로토콜 메서드 구현 |
-
-### 우선순위 5: SwiftUI ViewBuilder 오류
-| 파일 | 오류 | 원인 | 해결 방법 |
-|------|------|------|-----------|
-| 여러 View 파일들 | Cannot use explicit 'return' statement in ViewBuilder | SwiftUI ViewBuilder에서 return 사용 불가 | return 키워드 제거 |
-
-### 우선순위 6: Optional/타입 오류
-| 파일 | 오류 | 원인 | 해결 방법 |
-|------|------|------|-----------|
-| `FoodEntity+CoreData.swift:74` | Optional type must be unwrapped | Date? 타입 언래핑 필요 | ?? 또는 guard let 사용 |
-| `HealthKitSyncService.swift:198` | does not conform to 'Error' | 잘못된 에러 throw | HealthKitError 생성 방식 수정 |
-| `RecordSleepUseCase.swift:84` | Cannot convert Int16 to SleepStatus | 타입 변환 필요 | SleepStatus(rawValue:) 사용 |
-
-### 우선순위 7: API/프로토콜 메서드 누락
-| 파일 | 오류 | 원인 | 해결 방법 |
-|------|------|------|-----------|
-| `KFDAFoodAPIService.swift:153` | has no member 'buildKFDAURL' | APIConfigProtocol에 메서드 누락 | 프로토콜에 메서드 추가 또는 구현 변경 |
-
-### 우선순위 8: 기타
-| 파일 | 오류 | 원인 | 해결 방법 |
-|------|------|------|-----------|
-| `WeightTrendChart.swift:720` | unable to type-check expression | 표현식이 너무 복잡 | 표현식을 여러 변수로 분리 |
-| `FoodWithQuantity.swift:94` | Cannot find type 'CalculatedNutrition' | 타입 정의 누락 | 타입 정의 추가 또는 import 확인 |
-| `GetGoalProgressUseCase.swift:284` | Property uses internal type | 접근 제어자 불일치 | public → internal 변경 또는 타입 공개 |
-
----
-
-## 내일 작업 순서
-
-1. **main 브랜치에서 오류 수정** (위 우선순위 순서대로)
-2. **빌드 성공 확인** (`plutil -lint` + Xcode 빌드)
-3. **main에 커밋/푸시**
-4. **워크트리 브랜치 업데이트**
-   ```bash
-   git checkout <worktree-branch>
-   git merge main
-   ```
-5. **개발 작업 재개**
+**우선순위 중간**:
+- [ ] Mock 클래스 전체 업데이트
+- [ ] SampleFoods.swift - Core Data context 사용
 
 ---
 
@@ -170,8 +203,8 @@ Bodii/
 ├── Data/
 │   ├── Repositories/      # Repository 구현체
 │   ├── DataSources/       # Local/Remote 데이터 소스
-│   ├── DTOs/              # 데이터 전송 객체
-│   └── Mappers/           # 엔티티 변환
+│   ├── DTOs/              # 데이터 전송 객체 ← HealthKitMapper DTO 등
+│   └── Mappers/           # 엔티티 변환 (DTO 패턴 사용!)
 ├── Infrastructure/
 │   ├── Persistence/       # Core Data (Bodii.xcdatamodeld)
 │   ├── HealthKit/         # HealthKit 연동

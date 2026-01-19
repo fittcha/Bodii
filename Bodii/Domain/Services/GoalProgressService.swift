@@ -151,21 +151,27 @@ enum GoalProgressService {
         var bodyFatProgress: ProgressResult?
         var muscleProgress: ProgressResult?
 
-        if let target = goal.targetWeight,
-           let start = goal.startWeight,
+        if let targetNS = goal.targetWeight,
+           let startNS = goal.startWeight,
            let current = currentWeight {
+            let target = targetNS.decimalValue
+            let start = startNS.decimalValue
             weightProgress = calculateProgress(current: current, start: start, target: target)
         }
 
-        if let target = goal.targetBodyFatPct,
-           let start = goal.startBodyFatPct,
+        if let targetNS = goal.targetBodyFatPct,
+           let startNS = goal.startBodyFatPct,
            let current = currentBodyFatPct {
+            let target = targetNS.decimalValue
+            let start = startNS.decimalValue
             bodyFatProgress = calculateProgress(current: current, start: start, target: target)
         }
 
-        if let target = goal.targetMuscleMass,
-           let start = goal.startMuscleMass,
+        if let targetNS = goal.targetMuscleMass,
+           let startNS = goal.startMuscleMass,
            let current = currentMuscleMass {
+            let target = targetNS.decimalValue
+            let start = startNS.decimalValue
             muscleProgress = calculateProgress(current: current, start: start, target: target)
         }
 

@@ -48,7 +48,37 @@ final class SleepRepository: SleepRepositoryProtocol {
 
     // MARK: - Create
 
-    /// 새로운 수면 기록을 저장합니다.
+    /// 새로운 수면 기록을 생성합니다.
+    /// 📚 학습 포인트: Factory Method in Repository
+    /// - Core Data 엔티티 생성을 Repository에서 처리
+    /// - UseCase는 데이터만 전달
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - date: 수면 날짜
+    ///   - duration: 수면 시간 (분)
+    ///   - status: 수면 상태
+    /// - Returns: 생성된 수면 기록
+    /// - Throws: RepositoryError - 생성 실패 시
+    func create(
+        userId: UUID,
+        date: Date,
+        duration: Int32,
+        status: SleepStatus
+    ) async throws -> SleepRecord {
+        do {
+            return try await localDataSource.create(
+                userId: userId,
+                date: date,
+                duration: duration,
+                status: status
+            )
+        } catch {
+            throw RepositoryError.saveFailed(error.localizedDescription)
+        }
+    }
+
+    /// 기존 수면 기록을 저장합니다.
     /// 📚 학습 포인트: Error Handling
     /// - Data Source의 에러를 Repository 에러로 변환
     /// - 도메인 레이어가 infrastructure 에러를 알 필요 없음
@@ -187,7 +217,7 @@ final class SleepRepository: SleepRepositoryProtocol {
             // 📚 학습 포인트: Specific Error Handling
             // 에러 메시지에서 "찾을 수 없습니다" 문자열이 있으면 notFound 에러로 변환
             if error.localizedDescription.contains("찾을 수 없습니다") {
-                throw RepositoryError.notFound(sleepRecord.id)
+                throw RepositoryError.notFound(sleepRecord.id ?? UUID())
             }
             throw RepositoryError.updateFailed(error.localizedDescription)
         }

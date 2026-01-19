@@ -165,69 +165,12 @@ struct MealSectionView: View {
 
 // MARK: - Preview
 
-#Preview {
-    VStack(spacing: 16) {
-        // 빈 상태 프리뷰
-        MealSectionView(
-            mealType: .breakfast,
-            meals: [],
-            totalCalories: 0,
-            onAddFood: { print("Add food") },
-            onDeleteFood: { _ in print("Delete food") },
-            onEditFood: { _ in print("Edit food") },
-            onGetAIComment: nil
-        )
-        .padding()
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// Food는 Core Data 엔티티이므로 직접 초기화 불가
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-        // 데이터가 있는 상태 프리뷰
-        MealSectionView(
-            mealType: .lunch,
-            meals: [
-                FoodRecordWithFood(
-                    foodRecord: FoodRecord(
-                        id: UUID(),
-                        userId: UUID(),
-                        foodId: UUID(),
-                        date: Date(),
-                        mealType: .lunch,
-                        quantity: 1.0,
-                        quantityUnit: .serving,
-                        calculatedCalories: 330,
-                        calculatedCarbs: 70,
-                        calculatedProtein: 7,
-                        calculatedFat: 1,
-                        createdAt: Date(),
-                        updatedAt: Date()
-                    ),
-                    food: Food(
-                        id: UUID(),
-                        name: "백미밥",
-                        servingSize: 210,
-                        servingUnit: "g",
-                        caloriesPerServing: 330,
-                        carbsPerServing: 70,
-                        proteinPerServing: 7,
-                        fatPerServing: 1,
-                        sodiumPerServing: 0,
-                        fiberPerServing: nil,
-                        sugarPerServing: nil,
-                        source: .governmentAPI,
-                        sourceId: nil,
-                        usageCount: 10,
-                        lastUsedAt: Date(),
-                        isUserDefined: false,
-                        createdAt: Date(),
-                        updatedAt: Date()
-                    )
-                )
-            ],
-            totalCalories: 330,
-            onAddFood: { print("Add food") },
-            onDeleteFood: { _ in print("Delete food") },
-            onEditFood: { _ in print("Edit food") },
-            onGetAIComment: { print("Get AI comment") }
-        )
+#Preview("Placeholder") {
+    Text("MealSectionView Preview")
+        .font(.headline)
         .padding()
-    }
-    .background(Color(.systemGroupedBackground))
 }

@@ -10,6 +10,7 @@
 // 💡 Java 비교: JpaRepository 구현체 (Spring Data)와 유사
 
 import Foundation
+import CoreData
 
 /// 식품 검색 저장소 구현체
 ///
@@ -85,13 +86,13 @@ final class FoodSearchRepositoryImpl: FoodSearchRepository {
     /// 💡 Java 비교: @Inject constructor와 유사
     ///
     /// - Parameters:
-    ///   - searchService: 통합 검색 서비스 (기본값: UnifiedFoodSearchService())
+    ///   - context: Core Data NSManagedObjectContext
     ///   - localDataSource: 로컬 데이터 소스 (기본값: nil, Phase 5에서 구현 예정)
     init(
-        searchService: UnifiedFoodSearchService = UnifiedFoodSearchService(),
+        context: NSManagedObjectContext,
         localDataSource: FoodLocalDataSource? = nil
     ) {
-        self.searchService = searchService
+        self.searchService = UnifiedFoodSearchService(context: context)
         self.localDataSource = localDataSource
     }
 

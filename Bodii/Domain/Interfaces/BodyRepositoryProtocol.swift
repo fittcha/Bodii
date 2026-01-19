@@ -266,8 +266,14 @@ enum RepositoryError: Error, LocalizedError {
     /// 유효하지 않은 입력
     case invalidInput(String)
 
+    /// 유효하지 않은 데이터
+    case invalidData(String)
+
     /// 성능 타임아웃 (0.5초 초과)
     case timeout
+
+    /// Core Data Context가 해제됨
+    case contextDeallocated
 
     /// 알 수 없는 에러
     case unknown(Error)
@@ -289,8 +295,12 @@ enum RepositoryError: Error, LocalizedError {
             return "데이터를 찾을 수 없습니다 (ID: \(id))"
         case .invalidInput(let message):
             return "유효하지 않은 입력: \(message)"
+        case .invalidData(let message):
+            return "유효하지 않은 데이터: \(message)"
         case .timeout:
             return "작업 시간이 초과되었습니다 (성능 요구사항: 0.5초 이내)"
+        case .contextDeallocated:
+            return "Core Data Context가 해제되었습니다"
         case .unknown(let error):
             return "알 수 없는 에러: \(error.localizedDescription)"
         }

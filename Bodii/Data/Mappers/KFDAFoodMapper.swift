@@ -10,6 +10,7 @@
 // 💡 Java 비교: ModelMapper, MapStruct와 유사한 역할
 
 import Foundation
+import CoreData
 
 /// 식약처 API DTO를 Food 도메인 엔티티로 변환하는 매퍼
 ///
@@ -54,14 +55,14 @@ struct KFDAFoodMapper {
     /// - Example:
     /// ```swift
     /// do {
-    ///     let food = try mapper.toDomain(from: dto)
+    ///     let food = try mapper.toDomain(from: dto, context: context)
     /// } catch MappingError.missingRequiredField(let field) {
     ///     print("Missing field: \(field)")
     /// } catch MappingError.invalidNutritionData(let field) {
     ///     print("Invalid data: \(field)")
     /// }
     /// ```
-    func toDomain(from dto: KFDAFoodDTO) throws -> Food {
+    func toDomain(from dto: KFDAFoodDTO, context: NSManagedObjectContext) throws -> Food {
         // 필수 필드 검증
         guard !dto.foodCd.isEmpty else {
             throw MappingError.missingRequiredField("foodCd")
@@ -102,24 +103,23 @@ struct KFDAFoodMapper {
         let sugar = dto.parseDecimal(dto.sugar)
         let servingUnit = dto.servingUnit?.trimmingCharacters(in: .whitespaces)
 
-        // Food 엔티티 생성
-        return Food(
-            id: UUID(),
-            name: dto.descKor.trimmingCharacters(in: .whitespaces),
-            calories: calories,
-            carbohydrates: carbohydrates,
-            protein: protein,
-            fat: fat,
-            sodium: sodium,
-            fiber: fiber,
-            sugar: sugar,
-            servingSize: servingSize,
-            servingUnit: servingUnit,
-            source: .governmentAPI,
-            apiCode: dto.foodCd,
-            createdByUserId: nil,
-            createdAt: Date()
-        )
+        // Food Core Data 엔티티 생성
+        let food = Food(context: context)
+        food.id = UUID()
+        food.name = dto.descKor.trimmingCharacters(in: .whitespaces)
+        food.calories = calories
+        food.carbohydrates = NSDecimalNumber(decimal: carbohydrates)
+        food.protein = NSDecimalNumber(decimal: protein)
+        food.fat = NSDecimalNumber(decimal: fat)
+        food.sodium = sodium.map { NSDecimalNumber(decimal: $0) }
+        food.fiber = fiber.map { NSDecimalNumber(decimal: $0) }
+        food.sugar = sugar.map { NSDecimalNumber(decimal: $0) }
+        food.servingSize = NSDecimalNumber(decimal: servingSize)
+        food.servingUnit = servingUnit
+        food.source = FoodSource.governmentAPI.rawValue
+        food.apiCode = dto.foodCd
+        food.createdAt = Date()
+        return food
     }
 
     // MARK: - Helper Methods
@@ -226,12 +226,12 @@ extension KFDAFoodMapper {
     /// - Example:
     /// ```swift
     /// let dtos: [KFDAFoodDTO] = [...]
-    /// let foods = mapper.toDomainArray(from: dtos)
+    /// let foods = mapper.toDomainArray(from: dtos, context: context)
     /// // 일부 DTO가 잘못되어도 유효한 Food만 반환됨
     /// ```
-    func toDomainArray(from dtos: [KFDAFoodDTO]) -> [Food] {
+    func toDomainArray(from dtos: [KFDAFoodDTO], context: NSManagedObjectContext) -> [Food] {
         dtos.compactMap { dto in
-            try? toDomain(from: dto)
+            try? toDomain(from: dto, context: context)
         }
     }
 }

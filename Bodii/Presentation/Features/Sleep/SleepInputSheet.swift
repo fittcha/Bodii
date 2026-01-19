@@ -280,7 +280,7 @@ struct SleepInputSheet: View {
         // 요약 정보를 하나의 요소로 그룹화
         .accessibilityElement(children: .combine)
         .accessibilityLabel("총 수면 시간: \(viewModel.formattedDuration). \(viewModel.recommendedRange())")
-        .accessibilityAddTraits(.summaryElement)
+        .accessibilityAddTraits(.isStaticText)
     }
 
     /// 버튼 섹션
@@ -338,7 +338,6 @@ struct SleepInputSheet: View {
         // VoiceOver가 버튼의 기능과 상태를 명확히 전달
         .accessibilityLabel(viewModel.isSaving ? "저장 중" : "수면 기록 저장")
         .accessibilityHint(viewModel.isSaving ? "" : "두 번 탭하여 \(viewModel.formattedDuration)의 수면 기록을 저장합니다")
-        .accessibilityAddTraits(viewModel.canSave ? [] : .isNotEnabled)
     }
 
     /// 건너뛰기 버튼

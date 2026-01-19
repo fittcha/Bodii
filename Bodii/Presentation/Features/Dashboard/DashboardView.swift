@@ -401,7 +401,8 @@ struct DashboardView: View {
                             .fontWeight(.semibold)
                             .foregroundStyle(.primary)
 
-                        if let goalType = goalProgressViewModel.currentGoal?.goalType {
+                        if let goalTypeRaw = goalProgressViewModel.currentGoal?.goalType,
+                           let goalType = GoalType(rawValue: goalTypeRaw) {
                             Text(goalType.displayName)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -411,47 +412,45 @@ struct DashboardView: View {
                     Spacer()
 
                     // 진행률 배지
-                    if let overallProgress = goalProgressViewModel.overallProgress {
-                        HStack(spacing: 4) {
-                            Text("\(Int(overallProgress.rounded()))%")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .foregroundStyle(.blue)
+                    HStack(spacing: 4) {
+                        let overallProgress = goalProgressViewModel.overallProgress
+                        Text("\(NSDecimalNumber(decimal: overallProgress).intValue)%")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.blue)
 
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
 
                 // 프로그레스 바
-                if let overallProgress = goalProgressViewModel.overallProgress {
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            // 배경
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color(.systemGray5))
-                                .frame(height: 8)
+                GeometryReader { geometry in
+                    let overallProgress = goalProgressViewModel.overallProgress
+                    ZStack(alignment: .leading) {
+                        // 배경
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color(.systemGray5))
+                            .frame(height: 8)
 
-                            // 진행률
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(progressGradient(for: overallProgress))
-                                .frame(
-                                    width: geometry.size.width * min(Double(truncating: overallProgress as NSNumber) / 100.0, 1.0),
-                                    height: 8
-                                )
-                        }
+                        // 진행률
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(progressGradient(for: NSDecimalNumber(decimal: overallProgress)))
+                            .frame(
+                                width: geometry.size.width * min(NSDecimalNumber(decimal: overallProgress).doubleValue / 100.0, 1.0),
+                                height: 8
+                            )
                     }
-                    .frame(height: 8)
                 }
+                .frame(height: 8)
 
                 // 목표 요약
                 HStack(spacing: 16) {
                     if let weightProgress = goalProgressViewModel.weightProgress {
                         goalMetricPill(
                             icon: "scalemass",
-                            value: "\(Int(weightProgress.percentage.rounded()))%",
+                            value: "\(NSDecimalNumber(decimal: weightProgress.percentage).intValue)%",
                             label: "체중",
                             color: .blue
                         )
@@ -460,7 +459,7 @@ struct DashboardView: View {
                     if let bodyFatProgress = goalProgressViewModel.bodyFatProgress {
                         goalMetricPill(
                             icon: "percent",
-                            value: "\(Int(bodyFatProgress.percentage.rounded()))%",
+                            value: "\(NSDecimalNumber(decimal: bodyFatProgress.percentage).intValue)%",
                             label: "체지방",
                             color: .orange
                         )
@@ -469,7 +468,7 @@ struct DashboardView: View {
                     if let muscleProgress = goalProgressViewModel.muscleProgress {
                         goalMetricPill(
                             icon: "figure.strengthtraining.traditional",
-                            value: "\(Int(muscleProgress.percentage.rounded()))%",
+                            value: "\(NSDecimalNumber(decimal: muscleProgress.percentage).intValue)%",
                             label: "근육량",
                             color: .green
                         )

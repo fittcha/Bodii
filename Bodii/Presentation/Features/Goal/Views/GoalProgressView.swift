@@ -906,109 +906,15 @@ enum GoalTab {
 
 // MARK: - Preview
 
-#Preview("Goal Progress - Weight Loss") {
-    // 📚 학습 포인트: Preview with Mock Data
-    // Mock UseCase를 사용한 Preview
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// Goal, BodyCompositionEntry 등은 Core Data 엔티티이므로 struct처럼 초기화 불가
+// GoalProgressData에 Core Data Goal을 전달해야 함
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-    struct MockGetGoalProgressUseCase: GetGoalProgressUseCase {
-        func execute(previousProgress: Decimal?) async throws -> GoalProgressData {
-            // Mock 데이터 생성
-            let goal = Goal(
-                id: UUID(),
-                userId: UUID(),
-                goalType: .lose,
-                targetWeight: Decimal(65.0),
-                targetBodyFatPct: Decimal(18.0),
-                targetMuscleMass: nil,
-                weeklyWeightRate: Decimal(-0.5),
-                weeklyFatPctRate: Decimal(-0.5),
-                weeklyMuscleRate: nil,
-                dailyCalorieTarget: 2000,
-                startWeight: Decimal(70.0),
-                startBodyFatPct: Decimal(22.0),
-                startMuscleMass: Decimal(30.0),
-                startBMR: Decimal(1650),
-                startTDEE: Decimal(2310),
-                isActive: true,
-                createdAt: Date().addingTimeInterval(-30 * 24 * 60 * 60), // 30일 전
-                updatedAt: Date()
-            )
-
-            let currentBody = BodyCompositionEntry(
-                id: UUID(),
-                userId: UUID(),
-                weight: Decimal(67.0),
-                bodyFatPercent: Decimal(20.0),
-                muscleMass: Decimal(30.5),
-                measuredAt: Date(),
-                createdAt: Date()
-            )
-
-            let weightProgress = ProgressResult(
-                percentage: Decimal(60.0),
-                remaining: Decimal(2.0),
-                direction: .loss
-            )
-
-            let bodyFatProgress = ProgressResult(
-                percentage: Decimal(50.0),
-                remaining: Decimal(2.0),
-                direction: .loss
-            )
-
-            let weightProjection = ProjectionResult(
-                estimatedCompletionDate: Date().addingTimeInterval(30 * 24 * 60 * 60),
-                daysToCompletion: 30,
-                isOnTrack: true
-            )
-
-            return GoalProgressData(
-                goal: goal,
-                currentBody: currentBody,
-                overallProgress: Decimal(55.0),
-                weightProgress: weightProgress,
-                bodyFatProgress: bodyFatProgress,
-                muscleProgress: nil,
-                achievedMilestones: [.quarter, .half],
-                newlyAchievedMilestones: [],
-                weightTrend: nil,
-                bodyFatTrend: nil,
-                muscleTrend: nil,
-                weightProjection: weightProjection,
-                bodyFatProjection: nil,
-                muscleProjection: nil,
-                dataPointsCount: 10
-            )
-        }
-    }
-
-    let mockUseCase = MockGetGoalProgressUseCase()
-    let viewModel = GoalProgressViewModel(getGoalProgressUseCase: mockUseCase)
-
-    return GoalProgressView(
-        viewModel: viewModel,
-        onEditGoal: {
-            print("목표 수정")
-        }
-    )
-}
-
-#Preview("Goal Progress - Empty State") {
-    struct MockGetGoalProgressUseCase: GetGoalProgressUseCase {
-        func execute(previousProgress: Decimal?) async throws -> GoalProgressData {
-            throw GetGoalProgressError.noActiveGoal
-        }
-    }
-
-    let mockUseCase = MockGetGoalProgressUseCase()
-    let viewModel = GoalProgressViewModel(getGoalProgressUseCase: mockUseCase)
-
-    return GoalProgressView(
-        viewModel: viewModel,
-        onEditGoal: {
-            print("목표 설정")
-        }
-    )
+#Preview("Placeholder") {
+    Text("GoalProgressView Preview")
+        .font(.headline)
+        .padding()
 }
 
 // MARK: - Learning Notes

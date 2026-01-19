@@ -438,7 +438,7 @@ struct RecognitionConfirmView: View {
             // 음식 정보
             VStack(alignment: .leading, spacing: 6) {
                 // 음식 이름
-                Text(item.match.food.name)
+                Text(item.match.food.name ?? "음식")
                     .font(.body)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
@@ -570,7 +570,7 @@ struct RecognitionConfirmView: View {
 
     /// 총 칼로리
     private var totalCalories: Int {
-        selectedItems.reduce(0) { $0 + Int($1.calculatedCalories) ?? 0 }
+        selectedItems.reduce(0) { $0 + (Int($1.calculatedCalories) ?? 0) }
     }
 
     /// 총 탄수화물
@@ -654,89 +654,13 @@ struct RecognitionConfirmView: View {
 
 // MARK: - Preview
 
-#Preview("Confirm View with Items") {
-    #if DEBUG
-    // Mock 데이터
-    let mockMatches = [
-        FoodMatch(
-            label: "Pizza",
-            originalLabel: VisionLabel(description: "Pizza", score: 0.95, topicality: 0.95),
-            confidence: 0.95,
-            food: Food(
-                id: UUID(),
-                name: "페퍼로니 피자",
-                calories: 285,
-                carbohydrates: 36,
-                protein: 12,
-                fat: 10,
-                sodium: 640,
-                fiber: 2,
-                sugar: 4,
-                servingSize: 100,
-                servingUnit: "1조각",
-                source: .usda,
-                apiCode: "U000123",
-                createdByUserId: nil,
-                createdAt: Date()
-            ),
-            alternatives: [],
-            translatedKeyword: "피자"
-        ),
-        FoodMatch(
-            label: "Salad",
-            originalLabel: VisionLabel(description: "Salad", score: 0.72, topicality: 0.72),
-            confidence: 0.72,
-            food: Food(
-                id: UUID(),
-                name: "시저 샐러드",
-                calories: 180,
-                carbohydrates: 8,
-                protein: 6,
-                fat: 14,
-                sodium: 350,
-                fiber: 2,
-                sugar: 2,
-                servingSize: 150,
-                servingUnit: "1인분",
-                source: .usda,
-                apiCode: "U000456",
-                createdByUserId: nil,
-                createdAt: Date()
-            ),
-            alternatives: [],
-            translatedKeyword: "샐러드"
-        )
-    ]
+// 📚 학습 포인트: Core Data 의존성 Preview 제한
+// FoodMatch는 Core Data Food 엔티티를 참조
+// MockPhotoRecognitionViewModel 타입 호환성 필요
+// TODO: Phase 7에서 Preview용 Mock 완성
 
-    let editedItems = [
-        EditedFoodItem(match: mockMatches[0], quantity: 2.0, unit: .serving),
-        EditedFoodItem(match: mockMatches[1], quantity: 1.5, unit: .serving)
-    ]
-
-    let mockViewModel = MockPhotoRecognitionViewModel()
-
-    return RecognitionConfirmView(
-        viewModel: mockViewModel,
-        selectedItems: editedItems,
-        onSave: {
-            print("Saved!")
-        },
-        onCancel: {
-            print("Cancelled")
-        }
-    )
-    #endif
-}
-
-#Preview("Confirm View - Empty") {
-    #if DEBUG
-    let mockViewModel = MockPhotoRecognitionViewModel()
-
-    return RecognitionConfirmView(
-        viewModel: mockViewModel,
-        selectedItems: [],
-        onSave: { },
-        onCancel: { }
-    )
-    #endif
+#Preview("Placeholder") {
+    Text("RecognitionConfirmView Preview")
+        .font(.headline)
+        .padding()
 }

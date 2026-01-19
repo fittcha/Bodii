@@ -292,12 +292,13 @@ struct SleepBarChart: View {
                     x: .value("날짜", selected.date, unit: .day),
                     y: .value("수면 시간", Double(selected.duration) / 60.0)
                 )
-                .foregroundStyle(selected.status.color.opacity(0.3))
+                .foregroundStyle(selected.status.color.opacity(0.5))
                 .cornerRadius(4)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 4)
-                        .stroke(selected.status.color, lineWidth: 3)
-                )
+                .annotation(position: .top) {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(selected.status.color)
+                        .frame(width: 20, height: 4)
+                }
             }
         }
         .chartXAxis {

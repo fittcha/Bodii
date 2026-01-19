@@ -59,7 +59,7 @@ struct HealthKitDataTypes {
     /// - **activeEnergyBurned**: 활동 칼로리 (kcal 단위)
     /// - **stepCount**: 걸음 수 (count 단위)
     /// - **dietaryEnergyConsumed**: 섭취 칼로리 (kcal 단위)
-    enum QuantityType {
+    enum QuantityType: CaseIterable {
 
         /// 체중 (kg)
         ///
@@ -181,6 +181,13 @@ struct HealthKitDataTypes {
             return HKQuantityType.quantityType(forIdentifier: identifier)
         }
 
+        /// HKQuantityType 객체 반환 (alias for type)
+        ///
+        /// Background sync에서 사용하는 alias
+        var hkQuantityType: HKQuantityType? {
+            return type
+        }
+
         /// 사용자 친화적인 표시 이름 (한국어)
         ///
         /// UI에서 표시할 데이터 타입 이름
@@ -229,7 +236,7 @@ struct HealthKitDataTypes {
     /// 📚 학습 포인트: HKCategoryType
     /// 카테고리로 분류되는 건강 데이터 (수면, 마음 챙김 등)
     /// 💡 Java 비교: Enum 타입 데이터를 다루는 Column과 유사
-    enum CategoryType {
+    enum CategoryType: CaseIterable {
 
         /// 수면 분석
         ///
@@ -273,6 +280,13 @@ struct HealthKitDataTypes {
         /// ```
         var type: HKCategoryType? {
             return HKCategoryType.categoryType(forIdentifier: identifier)
+        }
+
+        /// HKCategoryType 객체 반환 (alias for type)
+        ///
+        /// Background sync에서 사용하는 alias
+        var hkCategoryType: HKCategoryType? {
+            return type
         }
 
         /// 사용자 친화적인 표시 이름 (한국어)
@@ -531,6 +545,7 @@ extension HealthKitDataTypes {
     /// }
     /// ```
     static func isWriteType(_ type: HKObjectType) -> Bool {
-        return writeTypes.contains(type)
+        guard let sampleType = type as? HKSampleType else { return false }
+        return writeTypes.contains(sampleType)
     }
 }

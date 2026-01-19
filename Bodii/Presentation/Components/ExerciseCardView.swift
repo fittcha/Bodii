@@ -79,7 +79,7 @@ struct ExerciseCardView: View {
         // 📚 학습 포인트: Badge Overlay for Data Source
         // HealthKit에서 가져온 데이터인 경우 Apple Watch 아이콘 표시
         .overlay(alignment: .topTrailing) {
-            if exercise.isFromHealthKit {
+            if exercise.fromHealthKit {
                 healthKitBadge
             }
         }
@@ -95,6 +95,18 @@ struct ExerciseCardView: View {
         }
     }
 
+    // MARK: - Computed Properties (Type Conversion)
+
+    /// 운동 종류 (Int16 → ExerciseType 변환)
+    private var exerciseType: ExerciseType {
+        ExerciseType(rawValue: exercise.exerciseType) ?? .other
+    }
+
+    /// 운동 강도 (Int16 → Intensity 변환)
+    private var intensity: Intensity {
+        Intensity(rawValue: exercise.intensity) ?? .medium
+    }
+
     // MARK: - View Components
 
     // 📚 학습 포인트: Computed Properties for View Composition
@@ -102,13 +114,13 @@ struct ExerciseCardView: View {
 
     /// 운동 종류 아이콘 섹션
     private var iconSection: some View {
-        Image(systemName: exercise.exerciseType.systemIconName)
+        Image(systemName: exerciseType.systemIconName)
             .font(.system(size: 32))
-            .foregroundStyle(exercise.exerciseType.accentColor)
+            .foregroundStyle(exerciseType.accentColor)
             .frame(width: 50, height: 50)
             .background(
                 Circle()
-                    .fill(exercise.exerciseType.accentColor.opacity(0.1))
+                    .fill(exerciseType.accentColor.opacity(0.1))
             )
     }
 
@@ -116,14 +128,14 @@ struct ExerciseCardView: View {
     private var contentSection: some View {
         VStack(alignment: .leading, spacing: 4) {
             // 운동 종류 이름
-            Text(exercise.exerciseType.displayName)
+            Text(exerciseType.displayName)
                 .font(.headline)
                 .foregroundStyle(.primary)
 
             // 강도 및 시간 정보
             HStack(spacing: 8) {
                 // 강도 뱃지
-                Text(exercise.intensity.displayName)
+                Text(intensity.displayName)
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundStyle(intensityColor)
@@ -204,7 +216,7 @@ struct ExerciseCardView: View {
     private var intensityColor: Color {
         // 📚 학습 포인트: switch expression
         // Swift의 switch는 표현식으로 사용 가능 (값 반환)
-        switch exercise.intensity {
+        switch intensity {
         case .low:
             return .green
         case .medium:
@@ -270,80 +282,12 @@ extension ExerciseType {
 
 // MARK: - Preview
 
-#Preview("Single Exercise") {
-    VStack(spacing: 16) {
-        // 📚 학습 포인트: Preview with Sample Data
-        // 개발 중 빠른 피드백을 위한 샘플 데이터 프리뷰
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// ExerciseRecord는 Core Data 엔티티이므로 직접 초기화 불가
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-        // 수동 입력 운동 기록
-        ExerciseCardView(
-            exercise: ExerciseRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                exerciseType: .running,
-                duration: 30,
-                intensity: .high,
-                caloriesBurned: 350,
-                createdAt: Date()
-            )
-        )
-
-        // HealthKit에서 동기화된 운동 기록
-        ExerciseCardView(
-            exercise: ExerciseRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                exerciseType: .yoga,
-                duration: 45,
-                intensity: .low,
-                caloriesBurned: 120,
-                healthKitId: "AB12CD34-5678-90EF-GHIJ-KLMNOPQRSTUV",
-                createdAt: Date()
-            )
-        )
-
-        ExerciseCardView(
-            exercise: ExerciseRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                exerciseType: .weight,
-                duration: 60,
-                intensity: .medium,
-                caloriesBurned: 280,
-                createdAt: Date()
-            )
-        )
-    }
-    .padding()
-    .background(Color(.systemGroupedBackground))
-}
-
-#Preview("With Delete Action") {
-    List {
-        // 📚 학습 포인트: List with swipeActions
-        // List 내에서 swipeActions가 자동으로 적용됨
-        ExerciseCardView(
-            exercise: ExerciseRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                exerciseType: .cycling,
-                duration: 40,
-                intensity: .medium,
-                caloriesBurned: 250,
-                createdAt: Date()
-            ),
-            onDelete: {
-                print("Delete action triggered")
-            }
-        )
-        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-    }
-    .listStyle(.plain)
-    .background(Color(.systemGroupedBackground))
+#Preview("Placeholder") {
+    Text("ExerciseCardView Preview")
+        .font(.headline)
+        .padding()
 }

@@ -161,9 +161,9 @@ final class GeminiService: GeminiServiceProtocol {
 
         // 총 영양소 계산
         let totalCalories = foodRecords.reduce(0) { $0 + Int($1.calculatedCalories) }
-        let totalCarbs = foodRecords.reduce(Decimal(0)) { $0 + $1.calculatedCarbs }
-        let totalProtein = foodRecords.reduce(Decimal(0)) { $0 + $1.calculatedProtein }
-        let totalFat = foodRecords.reduce(Decimal(0)) { $0 + $1.calculatedFat }
+        let totalCarbs = foodRecords.reduce(Decimal(0)) { $0 + ($1.calculatedCarbs?.decimalValue ?? 0) }
+        let totalProtein = foodRecords.reduce(Decimal(0)) { $0 + ($1.calculatedProtein?.decimalValue ?? 0) }
+        let totalFat = foodRecords.reduce(Decimal(0)) { $0 + ($1.calculatedFat?.decimalValue ?? 0) }
 
         // 끼니 이름
         let mealName = mealType?.displayName ?? "전체 식단"

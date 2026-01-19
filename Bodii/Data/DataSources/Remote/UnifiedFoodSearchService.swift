@@ -10,6 +10,7 @@
 // 💡 Java 비교: Facade Pattern + Strategy Pattern의 조합
 
 import Foundation
+import CoreData
 
 /// 통합 식품 검색 서비스
 ///
@@ -65,6 +66,13 @@ final class UnifiedFoodSearchService {
     /// USDA DTO to Domain 매퍼
     private let usdaMapper: USDAFoodMapper
 
+    /// Core Data context
+    ///
+    /// 📚 학습 포인트: Core Data Context Injection
+    /// Food가 Core Data 엔티티이므로 context가 필요
+    /// 💡 Java 비교: EntityManager 주입과 유사
+    private let context: NSManagedObjectContext
+
     // MARK: - Initialization
 
     /// UnifiedFoodSearchService 초기화
@@ -74,16 +82,19 @@ final class UnifiedFoodSearchService {
     /// 💡 Java 비교: @Inject constructor와 유사
     ///
     /// - Parameters:
+    ///   - context: Core Data NSManagedObjectContext
     ///   - kfdaService: 식약처 API 서비스
     ///   - usdaService: USDA API 서비스
     ///   - kfdaMapper: 식약처 매퍼 (기본값: KFDAFoodMapper())
     ///   - usdaMapper: USDA 매퍼 (기본값: USDAFoodMapper())
     init(
+        context: NSManagedObjectContext,
         kfdaService: KFDAFoodAPIService = KFDAFoodAPIService(),
         usdaService: USDAFoodAPIService = USDAFoodAPIService(),
         kfdaMapper: KFDAFoodMapper = KFDAFoodMapper(),
         usdaMapper: USDAFoodMapper = USDAFoodMapper()
     ) {
+        self.context = context
         self.kfdaService = kfdaService
         self.usdaService = usdaService
         self.kfdaMapper = kfdaMapper
@@ -257,7 +268,7 @@ final class UnifiedFoodSearchService {
             )
 
             // DTO를 도메인 엔티티로 변환
-            let foods = kfdaMapper.toDomainArray(from: response.foods)
+            let foods = kfdaMapper.toDomainArray(from: response.foods, context: context)
 
             #if DEBUG
             print("✅ KFDA search success: \(foods.count) foods found for '\(query)' (retry: \(retryCount))")
@@ -334,7 +345,7 @@ final class UnifiedFoodSearchService {
             )
 
             // DTO를 도메인 엔티티로 변환
-            let foods = usdaMapper.toDomainArray(from: response.foods ?? [])
+            let foods = usdaMapper.toDomainArray(from: response.foods ?? [], context: context)
 
             #if DEBUG
             print("✅ USDA search success: \(foods.count) foods found for '\(query)' (retry: \(retryCount))")
@@ -557,7 +568,7 @@ final class UnifiedFoodSearchService {
 
         for food in foods {
             // 중복 체크 키: apiCode 우선, 없으면 name 사용
-            let key = food.apiCode ?? food.name
+            let key = food.apiCode ?? food.name ?? UUID().uuidString
 
             // 이미 본 적이 있으면 스킵
             if seen.contains(key) {

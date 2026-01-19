@@ -55,7 +55,7 @@ final class LocalFoodSearchService: FoodSearchServiceProtocol {
 
         // 2. 사용자의 자주 사용하는 음식 목록 조회
         let frequentFoods = try await foodRepository.getFrequentFoods(userId: userId)
-        let frequentFoodIds = Set(frequentFoods.map { $0.id })
+        let frequentFoodIds = Set(frequentFoods.compactMap { $0.id })
 
         // 3. 검색 결과를 우선순위에 따라 정렬
         let sortedResults = sortByPriority(
@@ -105,7 +105,7 @@ final class LocalFoodSearchService: FoodSearchServiceProtocol {
             }
 
             // 우선순위가 같으면 이름 순으로 정렬 (가나다순)
-            return food1.name < food2.name
+            return (food1.name ?? "") < (food2.name ?? "")
         }
     }
 
@@ -118,8 +118,8 @@ final class LocalFoodSearchService: FoodSearchServiceProtocol {
     ///   - frequentFoodIds: 자주 사용하는 음식의 ID 집합
     /// - Returns: 우선순위 값 (1: 한국 음식 + 자주 사용, 2: 한국 음식, 3: 기타 + 자주 사용, 4: 기타)
     private func calculatePriority(food: Food, frequentFoodIds: Set<UUID>) -> Int {
-        let isKoreanFood = food.source == .governmentAPI
-        let isFrequent = frequentFoodIds.contains(food.id)
+        let isKoreanFood = food.source == FoodSource.governmentAPI.rawValue
+        let isFrequent = food.id.map { frequentFoodIds.contains($0) } ?? false
 
         switch (isKoreanFood, isFrequent) {
         case (true, true):   return 1  // 한국 음식 + 자주 사용

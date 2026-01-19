@@ -50,7 +50,7 @@ struct FoodRecordRow: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     // 음식 이름
-                    Text(food.name)
+                    Text(food.name ?? "")
                         .font(.body)
                         .foregroundColor(.primary)
 
@@ -80,14 +80,14 @@ struct FoodRecordRow: View {
         }
         .buttonStyle(PlainButtonStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(food.name), \(quantityText), \(foodRecord.calculatedCalories)킬로칼로리")
+        .accessibilityLabel("\(food.name ?? ""), \(quantityText), \(foodRecord.calculatedCalories)킬로칼로리")
         .accessibilityHint("두 번 탭하여 수정, 왼쪽으로 스와이프하여 삭제")
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(role: .destructive, action: onDelete) {
                 Label("삭제", systemImage: "trash")
             }
             .accessibilityLabel("삭제")
-            .accessibilityHint("\(food.name)을(를) 식단에서 삭제합니다")
+            .accessibilityHint("\(food.name ?? "")을(를) 식단에서 삭제합니다")
         }
     }
 
@@ -103,9 +103,11 @@ struct FoodRecordRow: View {
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 1
 
-        let quantityString = formatter.string(from: foodRecord.quantity as NSDecimalNumber) ?? "0"
+        let quantityNumber = foodRecord.quantity ?? NSDecimalNumber.zero
+        let quantityString = formatter.string(from: quantityNumber) ?? "0"
 
-        switch foodRecord.quantityUnit {
+        let unitValue = QuantityUnit(rawValue: foodRecord.quantityUnit) ?? .serving
+        switch unitValue {
         case .serving:
             return "\(quantityString)인분"
         case .grams:
@@ -116,134 +118,12 @@ struct FoodRecordRow: View {
 
 // MARK: - Preview
 
-#Preview {
-    VStack(spacing: 0) {
-        // 1인분 예시
-        FoodRecordRow(
-            foodRecord: FoodRecord(
-                id: UUID(),
-                userId: UUID(),
-                foodId: UUID(),
-                date: Date(),
-                mealType: .breakfast,
-                quantity: 1.0,
-                quantityUnit: .serving,
-                calculatedCalories: 330,
-                calculatedCarbs: 70,
-                calculatedProtein: 7,
-                calculatedFat: 1,
-                createdAt: Date(),
-                updatedAt: Date()
-            ),
-            food: Food(
-                id: UUID(),
-                name: "백미밥",
-                servingSize: 210,
-                servingUnit: "g",
-                caloriesPerServing: 330,
-                carbsPerServing: 70,
-                proteinPerServing: 7,
-                fatPerServing: 1,
-                sodiumPerServing: 0,
-                fiberPerServing: nil,
-                sugarPerServing: nil,
-                source: .governmentAPI,
-                sourceId: nil,
-                usageCount: 10,
-                lastUsedAt: Date(),
-                isUserDefined: false,
-                createdAt: Date(),
-                updatedAt: Date()
-            ),
-            onDelete: { print("Delete") },
-            onEdit: { print("Edit") }
-        )
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// FoodRecord, Food는 Core Data 엔티티이므로 직접 초기화 불가
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-        Divider()
-
-        // 그램 단위 예시
-        FoodRecordRow(
-            foodRecord: FoodRecord(
-                id: UUID(),
-                userId: UUID(),
-                foodId: UUID(),
-                date: Date(),
-                mealType: .lunch,
-                quantity: 150,
-                quantityUnit: .grams,
-                calculatedCalories: 235,
-                calculatedCarbs: 50,
-                calculatedProtein: 5,
-                calculatedFat: 0.7,
-                createdAt: Date(),
-                updatedAt: Date()
-            ),
-            food: Food(
-                id: UUID(),
-                name: "백미밥",
-                servingSize: 210,
-                servingUnit: "g",
-                caloriesPerServing: 330,
-                carbsPerServing: 70,
-                proteinPerServing: 7,
-                fatPerServing: 1,
-                sodiumPerServing: 0,
-                fiberPerServing: nil,
-                sugarPerServing: nil,
-                source: .governmentAPI,
-                sourceId: nil,
-                usageCount: 10,
-                lastUsedAt: Date(),
-                isUserDefined: false,
-                createdAt: Date(),
-                updatedAt: Date()
-            ),
-            onDelete: { print("Delete") },
-            onEdit: { print("Edit") }
-        )
-
-        Divider()
-
-        // 소수점 섭취량 예시
-        FoodRecordRow(
-            foodRecord: FoodRecord(
-                id: UUID(),
-                userId: UUID(),
-                foodId: UUID(),
-                date: Date(),
-                mealType: .dinner,
-                quantity: 1.5,
-                quantityUnit: .serving,
-                calculatedCalories: 495,
-                calculatedCarbs: 105,
-                calculatedProtein: 10.5,
-                calculatedFat: 1.5,
-                createdAt: Date(),
-                updatedAt: Date()
-            ),
-            food: Food(
-                id: UUID(),
-                name: "백미밥",
-                servingSize: 210,
-                servingUnit: "g",
-                caloriesPerServing: 330,
-                carbsPerServing: 70,
-                proteinPerServing: 7,
-                fatPerServing: 1,
-                sodiumPerServing: 0,
-                fiberPerServing: nil,
-                sugarPerServing: nil,
-                source: .governmentAPI,
-                sourceId: nil,
-                usageCount: 10,
-                lastUsedAt: Date(),
-                isUserDefined: false,
-                createdAt: Date(),
-                updatedAt: Date()
-            ),
-            onDelete: { print("Delete") },
-            onEdit: { print("Edit") }
-        )
-    }
-    .background(Color(.systemGroupedBackground))
+#Preview("Placeholder") {
+    Text("FoodRecordRow Preview")
+        .font(.headline)
+        .padding()
 }

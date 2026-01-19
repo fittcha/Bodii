@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import CoreData
 
 /// 음식 직접 입력 화면의 ViewModel
 ///
@@ -76,9 +77,12 @@ final class ManualFoodEntryViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     /// 필드별 유효성 검증 에러
-    @Published var validationErrors: ValidationErrors = ValidationErrors()
+    @Published var validationErrors: FoodValidationErrors = FoodValidationErrors()
 
     // MARK: - Private Properties
+
+    /// Core Data context
+    private let context: NSManagedObjectContext
 
     /// 음식 Repository
     private let foodRepository: FoodRepositoryProtocol
@@ -106,12 +110,15 @@ final class ManualFoodEntryViewModel: ObservableObject {
     /// ManualFoodEntryViewModel을 초기화합니다.
     ///
     /// - Parameters:
+    ///   - context: Core Data context
     ///   - foodRepository: 음식 Repository
     ///   - foodRecordService: 식단 기록 서비스
     init(
+        context: NSManagedObjectContext,
         foodRepository: FoodRepositoryProtocol,
         foodRecordService: FoodRecordServiceProtocol
     ) {
+        self.context = context
         self.foodRepository = foodRepository
         self.foodRecordService = foodRecordService
     }
@@ -164,32 +171,41 @@ final class ManualFoodEntryViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            // Food 엔티티 생성
-            let food = Food(
-                id: UUID(),
-                name: foodName.trimmingCharacters(in: .whitespacesAndNewlines),
-                calories: parsedCalories,
-                carbohydrates: parsedCarbohydrates,
-                protein: parsedProtein,
-                fat: parsedFat,
-                sodium: parsedSodium,
-                fiber: parsedFiber,
-                sugar: parsedSugar,
-                servingSize: parsedServingSize,
-                servingUnit: servingUnit.isEmpty ? nil : servingUnit.trimmingCharacters(in: .whitespacesAndNewlines),
-                source: .userDefined,
-                apiCode: nil,
-                createdByUserId: userId,
-                createdAt: Date()
-            )
+            // Food 엔티티 생성 (Core Data)
+            let food = Food(context: context)
+            food.id = UUID()
+            food.name = foodName.trimmingCharacters(in: .whitespacesAndNewlines)
+            food.calories = parsedCalories
+            food.carbohydrates = NSDecimalNumber(decimal: parsedCarbohydrates)
+            food.protein = NSDecimalNumber(decimal: parsedProtein)
+            food.fat = NSDecimalNumber(decimal: parsedFat)
+            food.sodium = parsedSodium.map { NSDecimalNumber(decimal: $0) }
+            food.fiber = parsedFiber.map { NSDecimalNumber(decimal: $0) }
+            food.sugar = parsedSugar.map { NSDecimalNumber(decimal: $0) }
+            food.servingSize = NSDecimalNumber(decimal: parsedServingSize)
+            food.servingUnit = servingUnit.isEmpty ? nil : servingUnit.trimmingCharacters(in: .whitespacesAndNewlines)
+            food.source = FoodSource.userDefined.rawValue
+            food.apiCode = nil
+            food.createdAt = Date()
+
+            // createdByUser relationship 설정
+            let userFetchRequest: NSFetchRequest<User> = User.fetchRequest()
+            userFetchRequest.predicate = NSPredicate(format: "id == %@", userId as CVarArg)
+            userFetchRequest.fetchLimit = 1
+            if let user = try? context.fetch(userFetchRequest).first {
+                food.createdByUser = user
+            }
 
             // Food 저장
             let savedFood = try await foodRepository.save(food)
 
             // 식단에 추가 (기본 1인분)
+            guard let savedFoodId = savedFood.id else {
+                throw ServiceError.invalidQuantity
+            }
             _ = try await foodRecordService.addFoodRecord(
                 userId: userId,
-                foodId: savedFood.id,
+                foodId: savedFoodId,
                 date: date,
                 mealType: currentMealType,
                 quantity: 1.0,
@@ -218,7 +234,7 @@ final class ManualFoodEntryViewModel: ObservableObject {
         sodium = ""
         fiber = ""
         sugar = ""
-        validationErrors = ValidationErrors()
+        validationErrors = FoodValidationErrors()
         errorMessage = nil
     }
 
@@ -228,7 +244,7 @@ final class ManualFoodEntryViewModel: ObservableObject {
     ///
     /// - Returns: 모든 필수 입력값이 유효한지 여부
     private func validate() -> Bool {
-        validationErrors = ValidationErrors()
+        validationErrors = FoodValidationErrors()
         var isValid = true
 
         // 음식명 검증 (필수)
@@ -385,10 +401,10 @@ extension ManualFoodEntryViewModel {
     }
 }
 
-// MARK: - ValidationErrors
+// MARK: - FoodValidationErrors
 
 /// 필드별 유효성 검증 에러
-struct ValidationErrors {
+struct FoodValidationErrors {
     var foodName: String?
     var calories: String?
     var servingSize: String?

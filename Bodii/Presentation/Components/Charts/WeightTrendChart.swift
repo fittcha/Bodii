@@ -718,22 +718,12 @@ extension WeightTrendChart {
 }
 
 #Preview("30일 데이터") {
+    // 📚 학습 포인트: 복잡한 표현식 단순화
+    // Swift 컴파일러는 복잡한 인라인 표현식에서 타입 체크 시간이 오래 걸림
+    // 별도 함수로 분리하여 해결
     ScrollView {
-        let now = Date()
-        let dataPoints = stride(from: -29, through: 0, by: 3).map { dayOffset in
-            FetchBodyTrendsUseCase.TrendDataPoint(
-                id: UUID(),
-                date: Calendar.current.date(byAdding: .day, value: dayOffset, to: now)!,
-                weight: Decimal(72.0 + Double(dayOffset) * 0.05), // 점진적 감소
-                bodyFatPercent: Decimal(20.0 + Double(dayOffset) * 0.03),
-                muscleMass: Decimal(31.0 - Double(dayOffset) * 0.02),
-                bmr: Decimal(1680),
-                tdee: Decimal(2280)
-            )
-        }
-
         WeightTrendChart(
-            dataPoints: dataPoints,
+            dataPoints: FetchBodyTrendsUseCase.sampleOutput().dataPoints,
             goalWeight: Decimal(70.0),
             period: .month
         )

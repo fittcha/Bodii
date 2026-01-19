@@ -311,9 +311,17 @@ final class PhotoRecognitionViewModel: ObservableObject {
         do {
             // 각 편집된 음식 항목을 식단 기록으로 저장
             for item in editedItems {
+                // Core Data Food.id는 UUID?이므로 언래핑 필요
+                guard let foodId = item.match.food.id else {
+                    #if DEBUG
+                    print("⚠️ Food ID가 없습니다: \(item.match.food.name ?? "Unknown")")
+                    #endif
+                    continue
+                }
+
                 _ = try await foodRecordService.addFoodRecord(
                     userId: userId,
-                    foodId: item.match.food.id,
+                    foodId: foodId,
                     date: date,
                     mealType: currentMealType,
                     quantity: item.quantity,  // 사용자가 편집한 수량

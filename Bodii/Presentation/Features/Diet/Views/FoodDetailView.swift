@@ -169,7 +169,7 @@ struct FoodDetailView: View {
     private func foodHeaderSection(food: Food) -> some View {
         VStack(spacing: 8) {
             // 음식 이름
-            Text(food.name)
+            Text(food.name ?? "알 수 없는 음식")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
@@ -177,11 +177,11 @@ struct FoodDetailView: View {
 
             // 1회 제공량 정보
             if let servingUnit = food.servingUnit {
-                Text("\(servingUnit) (\(formattedDecimal(food.servingSize))g)")
+                Text("\(servingUnit) (\(formattedDecimal(food.servingSize?.decimalValue ?? Decimal(100)))g)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             } else {
-                Text("\(formattedDecimal(food.servingSize))g")
+                Text("\(formattedDecimal(food.servingSize?.decimalValue ?? Decimal(100)))g")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -326,117 +326,6 @@ struct FoodDetailView: View {
 // MARK: - Preview
 
 #Preview {
-    // 프리뷰용 Mock 데이터
-    let mockViewModel = FoodDetailViewModel(
-        foodRepository: MockFoodRepository(),
-        foodRecordService: MockFoodRecordService()
-    )
-
-    return NavigationView {
-        FoodDetailView(
-            viewModel: mockViewModel,
-            foodId: UUID(),
-            userId: UUID(),
-            date: Date(),
-            initialMealType: .breakfast,
-            bmr: 1650,
-            tdee: 2310,
-            onSave: {
-                print("Save completed")
-            }
-        )
-    }
-}
-
-// MARK: - Mock Services for Preview
-
-private class MockFoodRepository: FoodRepositoryProtocol {
-    func save(_ food: Food) async throws -> Food {
-        return food
-    }
-
-    func findById(_ id: UUID) async throws -> Food? {
-        // 샘플 음식 반환
-        return Food(
-            id: id,
-            name: "백미밥",
-            calories: 330,
-            carbohydrates: 70,
-            protein: 7,
-            fat: 1,
-            sodium: 0,
-            fiber: 1.5,
-            sugar: 0.5,
-            servingSize: 210,
-            servingUnit: "1공기",
-            source: .governmentAPI,
-            apiCode: "D000001",
-            createdByUserId: nil,
-            createdAt: Date()
-        )
-    }
-
-    func findAll() async throws -> [Food] {
-        return []
-    }
-
-    func search(by name: String) async throws -> [Food] {
-        return []
-    }
-
-    func getRecentFoods(userId: UUID, limit: Int) async throws -> [Food] {
-        return []
-    }
-
-    func getFrequentFoods(userId: UUID, limit: Int) async throws -> [Food] {
-        return []
-    }
-
-    func getUserDefinedFoods(userId: UUID) async throws -> [Food] {
-        return []
-    }
-
-    func update(_ food: Food) async throws -> Food {
-        return food
-    }
-
-    func delete(_ foodId: UUID) async throws {
-        // Mock implementation
-    }
-}
-
-private class MockFoodRecordService: FoodRecordServiceProtocol {
-    func addFoodRecord(userId: UUID, foodId: UUID, date: Date, mealType: MealType, quantity: Decimal, quantityUnit: QuantityUnit, bmr: Int32, tdee: Int32) async throws -> FoodRecord {
-        // Mock implementation
-        return FoodRecord(
-            id: UUID(),
-            userId: userId,
-            foodId: foodId,
-            date: date,
-            mealType: mealType,
-            quantity: quantity,
-            quantityUnit: quantityUnit,
-            calculatedCalories: 330,
-            calculatedCarbs: 70,
-            calculatedProtein: 7,
-            calculatedFat: 1,
-            createdAt: Date()
-        )
-    }
-
-    func updateFoodRecord(foodRecordId: UUID, quantity: Decimal, quantityUnit: QuantityUnit, mealType: MealType?) async throws -> FoodRecord {
-        fatalError("Mock not implemented")
-    }
-
-    func deleteFoodRecord(foodRecordId: UUID) async throws {
-        // Mock implementation
-    }
-
-    func getFoodRecords(for date: Date, userId: UUID) async throws -> [FoodRecord] {
-        return []
-    }
-
-    func getFoodRecords(for date: Date, mealType: MealType, userId: UUID) async throws -> [FoodRecord] {
-        return []
-    }
+    Text("FoodDetailView Preview")
+        .padding()
 }

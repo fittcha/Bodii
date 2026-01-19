@@ -368,9 +368,18 @@ final class HealthKitBackgroundSync {
             // - 배터리 및 네트워크 리소스 절약
             let lastSyncDate = syncService.getLastSyncDate() ?? Date().addingTimeInterval(-7 * 24 * 60 * 60)
 
+            // String userId를 UUID로 변환 (default 사용자는 고정 UUID 사용)
+            let userUUID: UUID
+            if let parsedUUID = UUID(uuidString: userId) {
+                userUUID = parsedUUID
+            } else {
+                // "default" 등 유효하지 않은 문자열의 경우 고정 UUID 사용
+                userUUID = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
+            }
+
             try await syncService.syncSince(
                 date: lastSyncDate,
-                userId: userId
+                userId: userUUID
             )
 
             print("  ✅ Sync completed for \(typeName)")
@@ -465,19 +474,4 @@ final class HealthKitBackgroundSync {
 }
 
 // MARK: - HealthKitDataTypes Extension
-
-extension HealthKitDataTypes.QuantityType: CaseIterable {
-    /// 📚 학습 포인트: CaseIterable
-    /// - enum의 모든 case를 순회할 수 있게 만듦
-    /// - allCases 프로퍼티 자동 생성
-    /// 💡 Java 비교: Enum.values()와 유사
-    static var allCases: [HealthKitDataTypes.QuantityType] {
-        return [.weight, .bodyFatPercentage, .activeEnergyBurned, .stepCount, .dietaryEnergyConsumed]
-    }
-}
-
-extension HealthKitDataTypes.CategoryType: CaseIterable {
-    static var allCases: [HealthKitDataTypes.CategoryType] {
-        return [.sleepAnalysis]
-    }
-}
+// Note: CaseIterable conformance is now defined in HealthKitDataTypes.swift

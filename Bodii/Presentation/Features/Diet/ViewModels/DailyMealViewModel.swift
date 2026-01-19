@@ -60,7 +60,7 @@ final class DailyMealViewModel: ObservableObject {
     private let foodRecordService: FoodRecordServiceProtocol
 
     /// 일일 집계 Repository
-    private let dailyLogRepository: DailyLogRepositoryProtocol
+    private let dailyLogRepository: DailyLogRepository
 
     /// 음식 Repository
     private let foodRepository: FoodRepositoryProtocol
@@ -91,7 +91,7 @@ final class DailyMealViewModel: ObservableObject {
     ///   - diContainer: DI Container (AI comment ViewModel 생성용, 기본값: shared)
     init(
         foodRecordService: FoodRecordServiceProtocol,
-        dailyLogRepository: DailyLogRepositoryProtocol,
+        dailyLogRepository: DailyLogRepository,
         foodRepository: FoodRepositoryProtocol,
         diContainer: DIContainer = .shared
     ) {
@@ -179,14 +179,15 @@ final class DailyMealViewModel: ObservableObject {
     ///
     /// - Parameter mealType: 평가할 끼니 타입 (nil이면 전체 식단)
     func showAIComment(for mealType: MealType?) {
-        guard let userId = currentUserId else { return }
+        guard let _ = currentUserId else { return }
 
-        // DietCommentViewModel 생성
-        dietCommentViewModel = diContainer.makeDietCommentViewModel(
-            userId: userId,
-            goalType: currentGoalType,
-            tdee: Int(currentTDEE)
-        )
+        // TODO: DietCommentViewModel 생성 (Phase 7에서 구현 예정)
+        // DIContainer에 makeDietCommentViewModel 팩토리 추가 필요
+        // dietCommentViewModel = diContainer.makeDietCommentViewModel(
+        //     userId: userId,
+        //     goalType: currentGoalType,
+        //     tdee: Int(currentTDEE)
+        // )
 
         // 선택된 끼니 타입 저장
         selectedMealTypeForComment = mealType
@@ -255,7 +256,8 @@ final class DailyMealViewModel: ObservableObject {
         var foodRecordsWithFood: [FoodRecordWithFood] = []
 
         for foodRecord in foodRecords {
-            if let food = try await foodRepository.findById(foodRecord.foodId) {
+            // FoodRecord는 food relationship을 가짐 (Core Data)
+            if let food = foodRecord.food {
                 foodRecordsWithFood.append(
                     FoodRecordWithFood(foodRecord: foodRecord, food: food)
                 )
@@ -278,8 +280,11 @@ final class DailyMealViewModel: ObservableObject {
         }
 
         // FoodRecord를 mealType별로 분류
+        // mealType은 Int16이므로 MealType enum으로 변환
         for item in foodRecords {
-            groups[item.foodRecord.mealType, default: []].append(item)
+            if let mealType = MealType(rawValue: item.foodRecord.mealType) {
+                groups[mealType, default: []].append(item)
+            }
         }
 
         return groups
@@ -366,9 +371,9 @@ extension DailyMealViewModel {
 ///
 /// UI 렌더링 시 FoodRecord의 계산된 영양소와 Food의 이름을 함께 표시하기 위해 사용합니다.
 struct FoodRecordWithFood: Identifiable {
-    /// FoodRecord의 ID를 사용
+    /// FoodRecord의 ID를 사용 (Core Data의 id는 optional)
     var id: UUID {
-        foodRecord.id
+        foodRecord.id ?? UUID()
     }
 
     /// 식단 기록
