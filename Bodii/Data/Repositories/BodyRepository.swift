@@ -190,7 +190,7 @@ final class BodyRepository: BodyRepositoryProtocol {
             // 📚 학습 포인트: Specific Error Handling
             // 에러 메시지에서 "찾을 수 없습니다" 문자열이 있으면 notFound 에러로 변환
             if error.localizedDescription.contains("찾을 수 없습니다") {
-                throw RepositoryError.notFound(entry.id)
+                throw RepositoryError.notFoundWithId(entry.id)
             }
             throw RepositoryError.updateFailed(error.localizedDescription)
         }
@@ -212,7 +212,7 @@ final class BodyRepository: BodyRepositoryProtocol {
             // 📚 학습 포인트: Specific Error Handling
             // 에러 메시지에서 "찾을 수 없습니다" 문자열이 있으면 notFound 에러로 변환
             if error.localizedDescription.contains("찾을 수 없습니다") {
-                throw RepositoryError.notFound(id)
+                throw RepositoryError.notFoundWithId(id)
             }
             throw RepositoryError.deleteFailed(error.localizedDescription)
         }

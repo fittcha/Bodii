@@ -164,70 +164,20 @@ struct MealSectionView: View {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
 #Preview {
-    VStack(spacing: 16) {
-        // 빈 상태 프리뷰
-        MealSectionView(
-            mealType: .breakfast,
-            meals: [],
-            totalCalories: 0,
-            onAddFood: { print("Add food") },
-            onDeleteFood: { _ in print("Delete food") },
-            onEditFood: { _ in print("Edit food") },
-            onGetAIComment: nil
-        )
-        .padding()
+    Text("MealSectionView Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
+}
+// MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-        // 데이터가 있는 상태 프리뷰
-        MealSectionView(
-            mealType: .lunch,
-            meals: [
-                FoodRecordWithFood(
-                    foodRecord: FoodRecord(
-                        id: UUID(),
-                        userId: UUID(),
-                        foodId: UUID(),
-                        date: Date(),
-                        mealType: .lunch,
-                        quantity: 1.0,
-                        quantityUnit: .serving,
-                        calculatedCalories: 330,
-                        calculatedCarbs: 70,
-                        calculatedProtein: 7,
-                        calculatedFat: 1,
-                        createdAt: Date(),
-                        updatedAt: Date()
-                    ),
-                    food: Food(
-                        id: UUID(),
-                        name: "백미밥",
-                        servingSize: 210,
-                        servingUnit: "g",
-                        caloriesPerServing: 330,
-                        carbsPerServing: 70,
-                        proteinPerServing: 7,
-                        fatPerServing: 1,
-                        sodiumPerServing: 0,
-                        fiberPerServing: nil,
-                        sugarPerServing: nil,
-                        source: .governmentAPI,
-                        sourceId: nil,
-                        usageCount: 10,
-                        lastUsedAt: Date(),
-                        isUserDefined: false,
-                        createdAt: Date(),
-                        updatedAt: Date()
-                    )
-                )
-            ],
-            totalCalories: 330,
-            onAddFood: { print("Add food") },
-            onDeleteFood: { _ in print("Delete food") },
-            onEditFood: { _ in print("Edit food") },
-            onGetAIComment: { print("Get AI comment") }
-        )
-        .padding()
-    }
-    .background(Color(.systemGroupedBackground))
+#Preview {
+    Text("MealSectionView Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }

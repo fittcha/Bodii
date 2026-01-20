@@ -653,90 +653,11 @@ struct RecognitionConfirmView: View {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview("Confirm View with Items") {
-    #if DEBUG
-    // Mock 데이터
-    let mockMatches = [
-        FoodMatch(
-            label: "Pizza",
-            originalLabel: VisionLabel(description: "Pizza", score: 0.95, topicality: 0.95),
-            confidence: 0.95,
-            food: Food(
-                id: UUID(),
-                name: "페퍼로니 피자",
-                calories: 285,
-                carbohydrates: 36,
-                protein: 12,
-                fat: 10,
-                sodium: 640,
-                fiber: 2,
-                sugar: 4,
-                servingSize: 100,
-                servingUnit: "1조각",
-                source: .usda,
-                apiCode: "U000123",
-                createdByUserId: nil,
-                createdAt: Date()
-            ),
-            alternatives: [],
-            translatedKeyword: "피자"
-        ),
-        FoodMatch(
-            label: "Salad",
-            originalLabel: VisionLabel(description: "Salad", score: 0.72, topicality: 0.72),
-            confidence: 0.72,
-            food: Food(
-                id: UUID(),
-                name: "시저 샐러드",
-                calories: 180,
-                carbohydrates: 8,
-                protein: 6,
-                fat: 14,
-                sodium: 350,
-                fiber: 2,
-                sugar: 2,
-                servingSize: 150,
-                servingUnit: "1인분",
-                source: .usda,
-                apiCode: "U000456",
-                createdByUserId: nil,
-                createdAt: Date()
-            ),
-            alternatives: [],
-            translatedKeyword: "샐러드"
-        )
-    ]
-
-    let editedItems = [
-        EditedFoodItem(match: mockMatches[0], quantity: 2.0, unit: .serving),
-        EditedFoodItem(match: mockMatches[1], quantity: 1.5, unit: .serving)
-    ]
-
-    let mockViewModel = MockPhotoRecognitionViewModel()
-
-    return RecognitionConfirmView(
-        viewModel: mockViewModel,
-        selectedItems: editedItems,
-        onSave: {
-            print("Saved!")
-        },
-        onCancel: {
-            print("Cancelled")
-        }
-    )
-    #endif
-}
-
-#Preview("Confirm View - Empty") {
-    #if DEBUG
-    let mockViewModel = MockPhotoRecognitionViewModel()
-
-    return RecognitionConfirmView(
-        viewModel: mockViewModel,
-        selectedItems: [],
-        onSave: { },
-        onCancel: { }
-    )
-    #endif
+#Preview {
+    Text("RecognitionConfirmView Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }

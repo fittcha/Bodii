@@ -138,90 +138,20 @@ struct QuickAddFoodChip: View {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
 #Preview {
-    VStack(spacing: 16) {
-        // 한국 음식 예시 (백미밥)
-        QuickAddFoodChip(
-            food: Food(
-                id: UUID(),
-                name: "백미밥",
-                calories: 330,
-                carbohydrates: 70,
-                protein: 7,
-                fat: 1,
-                sodium: 0,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 210,
-                servingUnit: "1공기",
-                source: .governmentAPI,
-                apiCode: "D000001",
-                createdByUserId: nil,
-                createdAt: Date()
-            ),
-            onQuickAdd: { food in
-                print("Quick add: \(food.name)")
-            },
-            onSelectWithQuantity: { food in
-                print("Select quantity for: \(food.name)")
-            }
-        )
+    Text("QuickAddFoodChip Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
+}
+// MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-        // 단백질 음식 예시 (닭가슴살)
-        QuickAddFoodChip(
-            food: Food(
-                id: UUID(),
-                name: "닭가슴살",
-                calories: 165,
-                carbohydrates: 0,
-                protein: 31,
-                fat: 3.6,
-                sodium: 74,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 100,
-                servingUnit: "100g",
-                source: .governmentAPI,
-                apiCode: "D000002",
-                createdByUserId: nil,
-                createdAt: Date()
-            ),
-            onQuickAdd: { food in
-                print("Quick add: \(food.name)")
-            },
-            onSelectWithQuantity: { food in
-                print("Select quantity for: \(food.name)")
-            }
-        )
-
-        // 긴 이름 테스트
-        QuickAddFoodChip(
-            food: Food(
-                id: UUID(),
-                name: "아주 긴 음식 이름 테스트",
-                calories: 250,
-                carbohydrates: 30,
-                protein: 15,
-                fat: 10,
-                sodium: 500,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 150,
-                servingUnit: nil,
-                source: .userDefined,
-                apiCode: nil,
-                createdByUserId: UUID(),
-                createdAt: Date()
-            ),
-            onQuickAdd: { food in
-                print("Quick add: \(food.name)")
-            },
-            onSelectWithQuantity: { food in
-                print("Select quantity for: \(food.name)")
-            }
-        )
-    }
-    .padding()
-    .background(Color(.systemGroupedBackground))
+#Preview {
+    Text("QuickAddFoodChip Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }

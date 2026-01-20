@@ -377,22 +377,4 @@ final class FoodRepository: FoodRepositoryProtocol {
     }
 }
 
-// MARK: - Repository Errors
-
-/// Repository 레이어에서 발생하는 에러
-enum RepositoryError: Error, LocalizedError {
-    case contextDeallocated
-    case notFound
-    case invalidData
-
-    var errorDescription: String? {
-        switch self {
-        case .contextDeallocated:
-            return "Core Data context has been deallocated"
-        case .notFound:
-            return "Entity not found"
-        case .invalidData:
-            return "Invalid data format"
-        }
-    }
-}
+// RepositoryError는 Shared/Errors/RepositoryError.swift에 정의됨

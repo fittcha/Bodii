@@ -256,104 +256,20 @@ struct NutritionSummaryCard: View {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
 #Preview {
-    VStack(spacing: 16) {
-        // 균형 잡힌 식단 예시
-        NutritionSummaryCard(
-            dailyLog: DailyLog(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                totalCaloriesIn: 1500,
-                totalCarbs: 187.5,
-                totalProtein: 93.75,
-                totalFat: 41.67,
-                carbsRatio: 50,
-                proteinRatio: 25,
-                fatRatio: 25,
-                bmr: 1650,
-                tdee: 2310,
-                netCalories: -810,
-                totalCaloriesOut: 0,
-                exerciseMinutes: 0,
-                exerciseCount: 0,
-                steps: nil,
-                weight: nil,
-                bodyFatPct: nil,
-                sleepDuration: nil,
-                sleepStatus: nil,
-                createdAt: Date(),
-                updatedAt: Date()
-            ),
-            remainingCalories: 810,
-            calorieIntakePercentage: 65.0
-        )
-        .padding()
+    Text("NutritionSummaryCard Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
+}
+// MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-        // 고탄수 식단 예시
-        NutritionSummaryCard(
-            dailyLog: DailyLog(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                totalCaloriesIn: 2100,
-                totalCarbs: 367.5,
-                totalProtein: 78.75,
-                totalFat: 35,
-                carbsRatio: 70,
-                proteinRatio: 15,
-                fatRatio: 15,
-                bmr: 1650,
-                tdee: 2310,
-                netCalories: -210,
-                totalCaloriesOut: 0,
-                exerciseMinutes: 0,
-                exerciseCount: 0,
-                steps: nil,
-                weight: nil,
-                bodyFatPct: nil,
-                sleepDuration: nil,
-                sleepStatus: nil,
-                createdAt: Date(),
-                updatedAt: Date()
-            ),
-            remainingCalories: 210,
-            calorieIntakePercentage: 90.9
-        )
-        .padding()
-
-        // 빈 상태 예시
-        NutritionSummaryCard(
-            dailyLog: DailyLog(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                totalCaloriesIn: 0,
-                totalCarbs: 0,
-                totalProtein: 0,
-                totalFat: 0,
-                carbsRatio: nil,
-                proteinRatio: nil,
-                fatRatio: nil,
-                bmr: 1650,
-                tdee: 2310,
-                netCalories: -2310,
-                totalCaloriesOut: 0,
-                exerciseMinutes: 0,
-                exerciseCount: 0,
-                steps: nil,
-                weight: nil,
-                bodyFatPct: nil,
-                sleepDuration: nil,
-                sleepStatus: nil,
-                createdAt: Date(),
-                updatedAt: Date()
-            ),
-            remainingCalories: 2310,
-            calorieIntakePercentage: 0.0
-        )
-        .padding()
-    }
-    .background(Color(.systemGroupedBackground))
+#Preview {
+    Text("NutritionSummaryCard Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }

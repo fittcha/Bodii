@@ -521,71 +521,11 @@ private enum ViewState {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview("Photo Capture Sheet") {
-    #if DEBUG
-    let mockViewModel = MockPhotoRecognitionViewModel()
-    mockViewModel.showQuotaWarning = false
-    mockViewModel.remainingQuota = 850
-
-    return PhotoCaptureSheetView(
-        viewModel: mockViewModel,
-        photoCaptureService: PhotoCaptureService.shared,
-        onImageSelected: { image in
-            print("Image selected: \(image.size)")
-        },
-        onCancel: {
-            print("Cancelled")
-        },
-        onManualEntry: {
-            print("Manual entry")
-        }
-    )
-    #endif
-}
-
-#Preview("With Quota Warning") {
-    #if DEBUG
-    let mockViewModel = MockPhotoRecognitionViewModel()
-    mockViewModel.showQuotaWarning = true
-    mockViewModel.remainingQuota = 85
-    mockViewModel.daysUntilReset = 5
-
-    return PhotoCaptureSheetView(
-        viewModel: mockViewModel,
-        photoCaptureService: MockPhotoCaptureService(),
-        onImageSelected: { image in
-            print("Image selected: \(image.size)")
-        },
-        onCancel: {
-            print("Cancelled")
-        },
-        onManualEntry: {
-            print("Manual entry")
-        }
-    )
-    #endif
-}
-
-#Preview("Quota Exceeded") {
-    #if DEBUG
-    let mockViewModel = MockPhotoRecognitionViewModel()
-    mockViewModel.showQuotaWarning = false
-    mockViewModel.remainingQuota = 0
-    mockViewModel.daysUntilReset = 12
-
-    return PhotoCaptureSheetView(
-        viewModel: mockViewModel,
-        photoCaptureService: MockPhotoCaptureService(),
-        onImageSelected: { image in
-            print("Image selected: \(image.size)")
-        },
-        onCancel: {
-            print("Cancelled")
-        },
-        onManualEntry: {
-            print("Manual entry")
-        }
-    )
-    #endif
+#Preview {
+    Text("PhotoCaptureSheetView Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }

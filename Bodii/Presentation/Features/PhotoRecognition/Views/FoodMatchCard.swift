@@ -252,131 +252,20 @@ struct FoodMatchCard: View {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview("High Confidence Match") {
-    #if DEBUG
-    // 높은 신뢰도 매칭 예시 (피자, 95%)
-    let highConfidenceMatch = FoodMatch(
-        label: "Pizza",
-        originalLabel: VisionLabel(description: "Pizza", score: 0.95, topicality: 0.95),
-        confidence: 0.95,
-        food: Food(
-            id: UUID(),
-            name: "페퍼로니 피자",
-            calories: 285,
-            carbohydrates: 36,
-            protein: 12,
-            fat: 10,
-            sodium: 640,
-            fiber: 2,
-            sugar: 4,
-            servingSize: 100,
-            servingUnit: "1조각",
-            source: .usda,
-            apiCode: "U000123",
-            createdByUserId: nil,
-            createdAt: Date()
-        ),
-        alternatives: [],
-        translatedKeyword: "피자"
-    )
-
-    return VStack(spacing: 16) {
-        // 선택된 상태
-        FoodMatchCard(
-            match: highConfidenceMatch,
-            isSelected: true,
-            onToggleSelection: { _ in },
-            onTap: { }
-        )
-
-        // 선택되지 않은 상태
-        FoodMatchCard(
-            match: highConfidenceMatch,
-            isSelected: false,
-            onToggleSelection: { _ in },
-            onTap: { }
-        )
-    }
-    .padding()
-    .background(Color(.systemGroupedBackground))
-    #endif
+#Preview {
+    Text("FoodMatchCard Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }
+// MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview("Medium Confidence Match") {
-    #if DEBUG
-    // 중간 신뢰도 매칭 예시 (닭고기, 65%)
-    let mediumConfidenceMatch = FoodMatch(
-        label: "Chicken",
-        originalLabel: VisionLabel(description: "Chicken", score: 0.65, topicality: 0.65),
-        confidence: 0.65,
-        food: Food(
-            id: UUID(),
-            name: "닭가슴살",
-            calories: 165,
-            carbohydrates: 0,
-            protein: 31,
-            fat: 3.6,
-            sodium: 74,
-            fiber: nil,
-            sugar: nil,
-            servingSize: 100,
-            servingUnit: "100g",
-            source: .governmentAPI,
-            apiCode: "D000002",
-            createdByUserId: nil,
-            createdAt: Date()
-        ),
-        alternatives: [],
-        translatedKeyword: "닭고기"
-    )
-
-    return FoodMatchCard(
-        match: mediumConfidenceMatch,
-        isSelected: true,
-        onToggleSelection: { _ in },
-        onTap: { }
-    )
-    .padding()
-    .background(Color(.systemGroupedBackground))
-    #endif
-}
-
-#Preview("Low Confidence Match") {
-    #if DEBUG
-    // 낮은 신뢰도 매칭 예시 (샐러드, 45%)
-    let lowConfidenceMatch = FoodMatch(
-        label: "Salad",
-        originalLabel: VisionLabel(description: "Salad", score: 0.45, topicality: 0.45),
-        confidence: 0.45,
-        food: Food(
-            id: UUID(),
-            name: "그린 샐러드",
-            calories: 15,
-            carbohydrates: 3,
-            protein: 1,
-            fat: 0.2,
-            sodium: 10,
-            fiber: 1.5,
-            sugar: 1,
-            servingSize: 100,
-            servingUnit: "1컵",
-            source: .usda,
-            apiCode: "U000456",
-            createdByUserId: nil,
-            createdAt: Date()
-        ),
-        alternatives: [],
-        translatedKeyword: "샐러드"
-    )
-
-    return FoodMatchCard(
-        match: lowConfidenceMatch,
-        isSelected: false,
-        onToggleSelection: { _ in },
-        onTap: { }
-    )
-    .padding()
-    .background(Color(.systemGroupedBackground))
-    #endif
+#Preview {
+    Text("FoodMatchCard Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }

@@ -135,98 +135,20 @@ struct FoodSearchResultRow: View {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
 #Preview {
-    VStack(spacing: 0) {
-        // 한국 음식 예시 (백미밥)
-        FoodSearchResultRow(
-            food: Food(
-                id: UUID(),
-                name: "백미밥",
-                calories: 330,
-                carbohydrates: 70,
-                protein: 7,
-                fat: 1,
-                sodium: 0,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 210,
-                servingUnit: "1공기",
-                source: .governmentAPI,
-                apiCode: "D000001",
-                createdByUserId: nil,
-                createdAt: Date()
-            )
-        )
+    Text("FoodSearchResultRow Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
+}
+// MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-        Divider()
-
-        // 단백질 음식 예시 (닭가슴살)
-        FoodSearchResultRow(
-            food: Food(
-                id: UUID(),
-                name: "닭가슴살",
-                calories: 165,
-                carbohydrates: 0,
-                protein: 31,
-                fat: 3.6,
-                sodium: 74,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 100,
-                servingUnit: "100g",
-                source: .governmentAPI,
-                apiCode: "D000002",
-                createdByUserId: nil,
-                createdAt: Date()
-            )
-        )
-
-        Divider()
-
-        // 고지방 음식 예시 (아보카도)
-        FoodSearchResultRow(
-            food: Food(
-                id: UUID(),
-                name: "아보카도",
-                calories: 160,
-                carbohydrates: 9,
-                protein: 2,
-                fat: 15,
-                sodium: 7,
-                fiber: 7,
-                sugar: 0.7,
-                servingSize: 100,
-                servingUnit: "100g",
-                source: .usda,
-                apiCode: "U000001",
-                createdByUserId: nil,
-                createdAt: Date()
-            )
-        )
-
-        Divider()
-
-        // 사용자 정의 음식 예시 (제공 단위 없음)
-        FoodSearchResultRow(
-            food: Food(
-                id: UUID(),
-                name: "집밥 김치찌개",
-                calories: 150,
-                carbohydrates: 10,
-                protein: 12,
-                fat: 8,
-                sodium: 800,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 200,
-                servingUnit: nil,
-                source: .userDefined,
-                apiCode: nil,
-                createdByUserId: UUID(),
-                createdAt: Date()
-            )
-        )
-    }
-    .background(Color(.systemGroupedBackground))
+#Preview {
+    Text("FoodSearchResultRow Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }

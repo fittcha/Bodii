@@ -269,81 +269,11 @@ extension ExerciseType {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview("Single Exercise") {
-    VStack(spacing: 16) {
-        // 📚 학습 포인트: Preview with Sample Data
-        // 개발 중 빠른 피드백을 위한 샘플 데이터 프리뷰
-
-        // 수동 입력 운동 기록
-        ExerciseCardView(
-            exercise: ExerciseRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                exerciseType: .running,
-                duration: 30,
-                intensity: .high,
-                caloriesBurned: 350,
-                createdAt: Date()
-            )
-        )
-
-        // HealthKit에서 동기화된 운동 기록
-        ExerciseCardView(
-            exercise: ExerciseRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                exerciseType: .yoga,
-                duration: 45,
-                intensity: .low,
-                caloriesBurned: 120,
-                healthKitId: "AB12CD34-5678-90EF-GHIJ-KLMNOPQRSTUV",
-                createdAt: Date()
-            )
-        )
-
-        ExerciseCardView(
-            exercise: ExerciseRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                exerciseType: .weight,
-                duration: 60,
-                intensity: .medium,
-                caloriesBurned: 280,
-                createdAt: Date()
-            )
-        )
-    }
-    .padding()
-    .background(Color(.systemGroupedBackground))
-}
-
-#Preview("With Delete Action") {
-    List {
-        // 📚 학습 포인트: List with swipeActions
-        // List 내에서 swipeActions가 자동으로 적용됨
-        ExerciseCardView(
-            exercise: ExerciseRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Date(),
-                exerciseType: .cycling,
-                duration: 40,
-                intensity: .medium,
-                caloriesBurned: 250,
-                createdAt: Date()
-            ),
-            onDelete: {
-                print("Delete action triggered")
-            }
-        )
-        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-    }
-    .listStyle(.plain)
-    .background(Color(.systemGroupedBackground))
+#Preview("Exercise Card") {
+    Text("ExerciseCardView Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }

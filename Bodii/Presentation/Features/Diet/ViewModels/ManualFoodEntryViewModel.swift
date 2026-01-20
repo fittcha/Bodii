@@ -76,7 +76,7 @@ final class ManualFoodEntryViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     /// 필드별 유효성 검증 에러
-    @Published var validationErrors: ValidationErrors = ValidationErrors()
+    @Published var validationErrors: FoodValidationErrors = FoodValidationErrors()
 
     // MARK: - Private Properties
 
@@ -218,7 +218,7 @@ final class ManualFoodEntryViewModel: ObservableObject {
         sodium = ""
         fiber = ""
         sugar = ""
-        validationErrors = ValidationErrors()
+        validationErrors = FoodValidationErrors()
         errorMessage = nil
     }
 
@@ -228,7 +228,7 @@ final class ManualFoodEntryViewModel: ObservableObject {
     ///
     /// - Returns: 모든 필수 입력값이 유효한지 여부
     private func validate() -> Bool {
-        validationErrors = ValidationErrors()
+        validationErrors = FoodValidationErrors()
         var isValid = true
 
         // 음식명 검증 (필수)
@@ -385,10 +385,10 @@ extension ManualFoodEntryViewModel {
     }
 }
 
-// MARK: - ValidationErrors
+// MARK: - FoodValidationErrors
 
 /// 필드별 유효성 검증 에러
-struct ValidationErrors {
+struct FoodValidationErrors {
     var foodName: String?
     var calories: String?
     var servingSize: String?

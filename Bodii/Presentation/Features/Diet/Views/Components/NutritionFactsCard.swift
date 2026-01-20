@@ -279,116 +279,20 @@ struct NutritionFactsCard: View {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
 #Preview {
-    VStack(spacing: 20) {
-        // 1인분 섭취 (기본 영양소만)
-        NutritionFactsCard(
-            food: Food(
-                id: UUID(),
-                name: "백미밥",
-                calories: 330,
-                carbohydrates: 70,
-                protein: 7,
-                fat: 1,
-                sodium: nil,
-                fiber: nil,
-                sugar: nil,
-                servingSize: 210,
-                servingUnit: "1공기",
-                source: .governmentAPI,
-                apiCode: "D000001",
-                createdByUserId: nil,
-                createdAt: Date()
-            ),
-            quantity: 1.0,
-            quantityUnit: .serving,
-            calculatedCalories: 330,
-            calculatedCarbs: 70,
-            calculatedProtein: 7,
-            calculatedFat: 1
-        )
+    Text("NutritionFactsCard Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
+}
+// MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-        // 1.5인분 섭취 (모든 영양소 포함)
-        NutritionFactsCard(
-            food: Food(
-                id: UUID(),
-                name: "닭가슴살",
-                calories: 165,
-                carbohydrates: 0,
-                protein: 31,
-                fat: 3.6,
-                sodium: 74,
-                fiber: 0,
-                sugar: 0,
-                servingSize: 100,
-                servingUnit: "100g",
-                source: .usda,
-                apiCode: nil,
-                createdByUserId: nil,
-                createdAt: Date()
-            ),
-            quantity: 1.5,
-            quantityUnit: .serving,
-            calculatedCalories: 248,
-            calculatedCarbs: 0,
-            calculatedProtein: 46.5,
-            calculatedFat: 5.4
-        )
-
-        // 그램 단위 입력 (150g)
-        NutritionFactsCard(
-            food: Food(
-                id: UUID(),
-                name: "고구마",
-                calories: 86,
-                carbohydrates: 20,
-                protein: 1.6,
-                fat: 0.1,
-                sodium: 55,
-                fiber: 3,
-                sugar: 4.2,
-                servingSize: 100,
-                servingUnit: "중간 크기 1개",
-                source: .governmentAPI,
-                apiCode: "D000020",
-                createdByUserId: nil,
-                createdAt: Date()
-            ),
-            quantity: 150,
-            quantityUnit: .grams,
-            calculatedCalories: 129,
-            calculatedCarbs: 30,
-            calculatedProtein: 2.4,
-            calculatedFat: 0.15
-        )
-
-        // 0.5인분 섭취
-        NutritionFactsCard(
-            food: Food(
-                id: UUID(),
-                name: "아보카도",
-                calories: 160,
-                carbohydrates: 9,
-                protein: 2,
-                fat: 15,
-                sodium: 7,
-                fiber: 7,
-                sugar: 0.7,
-                servingSize: 100,
-                servingUnit: "반개",
-                source: .userDefined,
-                apiCode: nil,
-                createdByUserId: UUID(),
-                createdAt: Date()
-            ),
-            quantity: 0.5,
-            quantityUnit: .serving,
-            calculatedCalories: 80,
-            calculatedCarbs: 4.5,
-            calculatedProtein: 1,
-            calculatedFat: 7.5
-        )
-    }
-    .background(Color(.systemGroupedBackground))
+#Preview {
+    Text("NutritionFactsCard Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }

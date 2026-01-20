@@ -726,49 +726,20 @@ struct FoodMatchEditorView: View {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview("Food Match Editor") {
-    #if DEBUG
-    // Mock 데이터
-    let mockMatch = FoodMatch(
-        label: "Pizza",
-        originalLabel: VisionLabel(description: "Pizza", score: 0.95, topicality: 0.95),
-        confidence: 0.95,
-        food: Food(
-            id: UUID(),
-            name: "페퍼로니 피자",
-            calories: 285,
-            carbohydrates: 36,
-            protein: 12,
-            fat: 10,
-            sodium: 640,
-            fiber: 2,
-            sugar: 4,
-            servingSize: 100,
-            servingUnit: "1조각",
-            source: .usda,
-            apiCode: "U000123",
-            createdByUserId: nil,
-            createdAt: Date()
-        ),
-        alternatives: [],
-        translatedKeyword: "피자"
-    )
+#Preview {
+    Text("FoodMatchEditorView Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
+}
+// MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-    return FoodMatchEditorView(
-        match: mockMatch,
-        onSave: { match, quantity, unit, mealType in
-            print("Saved: \(match.food.name), \(quantity) \(unit.displayName), \(mealType.displayName)")
-        },
-        onDelete: {
-            print("Deleted")
-        },
-        onSearchAlternative: { match in
-            print("Search alternative for: \(match.food.name)")
-        },
-        onCancel: {
-            print("Cancelled")
-        }
-    )
-    #endif
+#Preview {
+    Text("FoodMatchEditorView Preview")
+        .font(.title)
+        .foregroundColor(.secondary)
 }
