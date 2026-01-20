@@ -365,17 +365,6 @@ public enum Milestone: String, CaseIterable, Hashable {
     }
 }
 
-// MARK: - Decimal Extension
-
-extension Decimal {
-    /// Decimal 값을 소수점 n자리로 반올림합니다.
-    ///
-    /// - Parameter places: 소수점 자릿수
-    /// - Returns: 반올림된 Decimal 값
-    func rounded(_ places: Int) -> Decimal {
-        var result = self
-        var rounded = Decimal()
-        NSDecimalRound(&rounded, &result, places, .plain)
-        return rounded
-    }
-}
+// 📚 학습 포인트: Decimal 확장 메서드 중복 방지
+// Decimal 관련 확장 메서드는 Shared/Extensions/Decimal+Extensions.swift에 정의됨
+// 해당 파일의 rounded(to:) 메서드 사용
