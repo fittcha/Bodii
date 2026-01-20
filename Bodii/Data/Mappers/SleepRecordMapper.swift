@@ -46,8 +46,8 @@ struct SleepRecordMapper {
                 return "필수 필드가 누락되었습니다: \(field)"
             case .invalidDataType(let field):
                 return "잘못된 데이터 타입입니다: \(field)"
-            case .invalidEnumValue(let field):
-                return "잘못된 enum 값입니다: \(field)"
+            case .invalidEnumValue(let value):
+                return "잘못된 enum 값입니다: \(value)"
             }
         }
     }

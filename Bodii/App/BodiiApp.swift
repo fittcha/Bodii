@@ -35,7 +35,8 @@ struct BodiiApp: App {
         // 📚 학습 포인트: App Initialization
         // HealthKit 서비스 초기화는 앱 시작 시 한 번만 수행
         // 💡 Java 비교: Application.onCreate()와 유사
-        setupHealthKitBackgroundSync()
+        // TODO: Phase 6 - DIContainer에 HealthKit 서비스 체인 구현 후 활성화
+        // setupHealthKitBackgroundSync()
     }
 
     // MARK: - Body
@@ -53,11 +54,12 @@ struct BodiiApp: App {
                 // 📚 학습 포인트: onAppear
                 // View가 화면에 나타날 때 HealthKit 백그라운드 동기화 시작
                 // 💡 Java 비교: Activity.onStart()와 유사
-                .onAppear {
-                    Task {
-                        await startHealthKitBackgroundSync()
-                    }
-                }
+                // TODO: Phase 6 - DIContainer에 HealthKit 서비스 체인 구현 후 활성화
+                // .onAppear {
+                //     Task {
+                //         await startHealthKitBackgroundSync()
+                //     }
+                // }
         }
     }
 
@@ -70,6 +72,8 @@ struct BodiiApp: App {
     /// - lazy initialization으로 필요할 때만 생성
     /// - 단일 인스턴스 재사용으로 메모리 효율적
     /// 💡 Java 비교: @Autowired Service 초기화와 유사
+    ///
+    /// TODO: Phase 6에서 DIContainer에 HealthKit 서비스 체인 구현 후 활성화
     private func setupHealthKitBackgroundSync() {
         // HealthKit 사용 가능 여부 확인
         guard HKHealthStore.isHealthDataAvailable() else {
@@ -77,14 +81,15 @@ struct BodiiApp: App {
             return
         }
 
+        // TODO: Phase 6 - DIContainer에 healthKitBackgroundSync 프로퍼티 추가 후 활성화
         // 📚 학습 포인트: DIContainer Dependency Injection
         // DIContainer가 모든 의존성 체인을 관리
         // healthStore → authService → readService → writeService → syncService → backgroundSync
         // 💡 Java 비교: Spring @Autowired 의존성 체인과 유사
-        let container = DIContainer.shared
-        healthKitBackgroundSync = container.healthKitBackgroundSync
+        // let container = DIContainer.shared
+        // healthKitBackgroundSync = container.healthKitBackgroundSync
 
-        print("✅ HealthKit background sync initialized from DIContainer")
+        print("⏸️ HealthKit background sync - pending DIContainer implementation (Phase 6)")
     }
 
     /// HealthKit 백그라운드 동기화 시작

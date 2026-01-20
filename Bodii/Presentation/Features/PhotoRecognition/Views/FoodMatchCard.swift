@@ -253,6 +253,8 @@ struct FoodMatchCard: View {
 }
 
 // MARK: - Preview
+// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
+// TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
 // 📚 학습 포인트: Core Data 엔티티 Preview 제한
 // FoodMatch는 Core Data Food 엔티티를 참조하므로 직접 초기화 불가

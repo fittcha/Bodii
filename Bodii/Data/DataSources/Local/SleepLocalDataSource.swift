@@ -125,6 +125,10 @@ final class SleepLocalDataSource {
             // 00:00-01:59 입력 시 전날로 처리
             let logicalDate = DateUtils.getLogicalDate(for: date)
 
+            // 📚 학습 포인트: User Relationship (Required)
+            // Core Data 모델에서 user relationship이 required이므로 반드시 설정해야 함
+            let user = try self.fetchOrCreateCurrentUser(context: context)
+
             // 📚 학습 포인트: Core Data Entity 직접 생성
             let sleepRecordEntity = SleepRecord(context: context)
             sleepRecordEntity.id = UUID()
@@ -134,10 +138,7 @@ final class SleepLocalDataSource {
             sleepRecordEntity.healthKitId = healthKitId
             sleepRecordEntity.createdAt = Date()
             sleepRecordEntity.updatedAt = Date()
-
-            // 📚 학습 포인트: User Relationship
-            // 현재는 단일 사용자 가정, 향후 다중 사용자 지원 시 수정 필요
-            // TODO: User 가져와서 연결
+            sleepRecordEntity.user = user
 
             // 📚 학습 포인트: DailyLog Update
             // SleepRecord 저장 시 해당 날짜의 DailyLog를 자동으로 업데이트
@@ -145,6 +146,7 @@ final class SleepLocalDataSource {
                 for: logicalDate,
                 duration: duration,
                 status: status,
+                user: user,
                 context: context
             )
 
@@ -389,6 +391,9 @@ final class SleepLocalDataSource {
                 )
             }
 
+            // User 조회/생성 (DailyLog 생성 시 필요)
+            let user = try self.fetchOrCreateCurrentUser(context: context)
+
             // 📚 학습 포인트: Store Old Date for DailyLog Update
             // 날짜가 변경될 수 있으므로 이전 날짜의 DailyLog도 업데이트 필요
             let oldDate = sleepRecordEntity.date ?? Date()
@@ -410,6 +415,7 @@ final class SleepLocalDataSource {
                     for: oldDate,
                     duration: nil,
                     status: nil,
+                    user: user,
                     context: context
                 )
             }
@@ -419,6 +425,7 @@ final class SleepLocalDataSource {
                 for: logicalDate,
                 duration: duration,
                 status: status,
+                user: user,
                 context: context
             )
 
@@ -446,6 +453,9 @@ final class SleepLocalDataSource {
             let statusValue = sleepRecord.status
             let status = SleepStatus(rawValue: statusValue) ?? .soso
 
+            // User 조회/생성 (required relationship)
+            let user = try self.fetchOrCreateCurrentUser(context: context)
+
             // 기존 레코드가 있는지 확인
             if let id = sleepRecord.id {
                 let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
@@ -464,6 +474,7 @@ final class SleepLocalDataSource {
                         for: logicalDate,
                         duration: duration,
                         status: status,
+                        user: user,
                         context: context
                     )
 
@@ -482,11 +493,13 @@ final class SleepLocalDataSource {
             newRecord.healthKitId = sleepRecord.healthKitId
             newRecord.createdAt = Date()
             newRecord.updatedAt = Date()
+            newRecord.user = user
 
             try self.updateDailyLog(
                 for: logicalDate,
                 duration: duration,
                 status: status,
+                user: user,
                 context: context
             )
 
@@ -621,6 +634,41 @@ final class SleepLocalDataSource {
         }
     }
 
+    // MARK: - User Helper
+
+    /// 현재 사용자를 조회하거나 없으면 생성합니다.
+    /// 📚 학습 포인트: Fetch or Create Pattern
+    /// - Core Data 모델에서 user relationship이 required이므로 반드시 필요
+    /// - 앱에 단일 사용자만 존재하는 것을 가정
+    ///
+    /// - Parameter context: Core Data 컨텍스트
+    /// - Returns: User 엔티티
+    /// - Throws: 조회/생성 실패 시 에러
+    private func fetchOrCreateCurrentUser(context: NSManagedObjectContext) throws -> User {
+        let fetchRequest: NSFetchRequest<User> = User.fetchRequest()
+        fetchRequest.fetchLimit = 1
+
+        if let existingUser = try context.fetch(fetchRequest).first {
+            return existingUser
+        }
+
+        // 사용자가 없으면 기본 사용자 생성
+        // 📚 학습 포인트: Default User Creation
+        // 일반적으로 온보딩 과정에서 사용자가 생성되지만,
+        // 예외 상황 대비 기본 사용자 생성
+        let newUser = User(context: context)
+        newUser.id = UUID()
+        newUser.name = "User"
+        newUser.birthDate = Calendar.current.date(byAdding: .year, value: -30, to: Date()) ?? Date()
+        newUser.gender = 0
+        newUser.height = 170
+        newUser.activityLevel = 2
+        newUser.createdAt = Date()
+        newUser.updatedAt = Date()
+
+        return newUser
+    }
+
     // MARK: - DailyLog Update Helper
 
     /// DailyLog의 수면 데이터를 업데이트합니다.
@@ -633,12 +681,14 @@ final class SleepLocalDataSource {
     ///   - date: 업데이트할 날짜
     ///   - duration: 수면 시간 (분 단위, nil이면 제거)
     ///   - status: 수면 상태 (nil이면 제거)
+    ///   - user: 사용자 (DailyLog 생성 시 필요)
     ///   - context: Core Data 컨텍스트
     /// - Throws: 업데이트 실패 시 에러
     private func updateDailyLog(
         for date: Date,
         duration: Int32?,
         status: SleepStatus?,
+        user: User? = nil,
         context: NSManagedObjectContext
     ) throws {
         // 📚 학습 포인트: Fetch or Create Pattern
@@ -667,8 +717,8 @@ final class SleepLocalDataSource {
         if let existingLog = results.first {
             dailyLog = existingLog
         } else {
-            // 📚 학습 포인트: Lazy Creation
-            // DailyLog가 없으면 새로 생성
+            // 📚 학습 포인트: Lazy Creation with User
+            // DailyLog가 없으면 새로 생성, user relationship 설정 필요
             dailyLog = DailyLog(context: context)
             dailyLog.id = UUID()
             dailyLog.date = startOfDay
@@ -687,7 +737,13 @@ final class SleepLocalDataSource {
             dailyLog.exerciseMinutes = 0
             dailyLog.exerciseCount = 0
 
-            // TODO: User 가져와서 연결
+            // User relationship 설정 (required)
+            if let user = user {
+                dailyLog.user = user
+            } else {
+                // user가 전달되지 않은 경우 조회/생성
+                dailyLog.user = try fetchOrCreateCurrentUser(context: context)
+            }
         }
 
         // 📚 학습 포인트: Update Sleep Data

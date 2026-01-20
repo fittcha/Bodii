@@ -92,7 +92,7 @@ final class FoodRecordRepository: FoodRecordRepositoryProtocol {
             let results = try self.context.fetch(fetchRequest)
 
             guard let foodRecordEntity = results.first else {
-                throw RepositoryError.notFound(id)
+                throw RepositoryError.notFoundWithId(id)
             }
 
             self.context.delete(foodRecordEntity)

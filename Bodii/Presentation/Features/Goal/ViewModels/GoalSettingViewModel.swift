@@ -110,7 +110,7 @@ final class GoalSettingViewModel: ObservableObject {
     @Published var isSaveSuccess: Bool = false
 
     /// 필드별 검증 에러
-    @Published var validationErrors: ValidationErrors = ValidationErrors()
+    @Published var validationErrors: GoalValidationErrors = GoalValidationErrors()
 
     // MARK: - Private Dependencies
 
@@ -337,7 +337,7 @@ final class GoalSettingViewModel: ObservableObject {
         // 2. 로딩 상태 시작
         isSaving = true
         errorMessage = nil
-        validationErrors = ValidationErrors()
+        validationErrors = GoalValidationErrors()
         defer { isSaving = false }
 
         do {
@@ -375,7 +375,7 @@ final class GoalSettingViewModel: ObservableObject {
     ///
     /// 사용자가 입력할 때마다 호출하여 검증 피드백 제공
     func validateInputs() {
-        validationErrors = ValidationErrors()
+        validationErrors = GoalValidationErrors()
 
         // 최소 1개 목표 활성화 검증
         if !hasAtLeastOneTarget {
@@ -441,7 +441,7 @@ final class GoalSettingViewModel: ObservableObject {
         clearInputs()
         errorMessage = nil
         isSaveSuccess = false
-        validationErrors = ValidationErrors()
+        validationErrors = GoalValidationErrors()
     }
 
     /// 입력 필드를 초기화합니다.
@@ -562,13 +562,13 @@ final class GoalSettingViewModel: ObservableObject {
     }
 }
 
-// MARK: - ValidationErrors
+// MARK: - GoalValidationErrors
 
 /// 필드별 검증 에러
 ///
 /// 📚 학습 포인트: Structured Validation Errors
 /// 각 필드별로 에러를 구분하여 UI에 표시
-struct ValidationErrors {
+struct GoalValidationErrors {
     var general: String?
     var targetWeight: String?
     var targetBodyFat: String?

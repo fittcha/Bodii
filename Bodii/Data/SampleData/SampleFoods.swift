@@ -16,7 +16,7 @@ import CoreData
 /// 샘플 음식 데이터 제공
 ///
 /// 테스트 및 초기 앱 사용을 위한 샘플 한국 음식 데이터를 제공합니다.
-/// 실제 식약처 영양 데이터베이스를 기반으로 한 정확한 영양 정보를 포함합니다.
+/// Core Data 컨텍스트가 필요합니다.
 ///
 /// - Note: 모든 샘플 음식은 FoodSource.governmentAPI를 사용합니다.
 /// - Note: Food는 Core Data 엔티티이므로 반드시 context를 제공해야 합니다.

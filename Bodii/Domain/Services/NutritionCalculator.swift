@@ -34,6 +34,45 @@ struct NutritionValues {
     let fat: Decimal
 }
 
+/// 계산된 영양소 결과 (확장 버전)
+///
+/// FoodWithQuantity에서 사용하는 영양소 계산 결과 구조체입니다.
+/// NutritionValues보다 더 많은 영양소 정보를 포함합니다.
+///
+/// - Example:
+/// ```swift
+/// let nutrition = CalculatedNutrition(
+///     calories: 330,
+///     carbohydrates: Decimal(73.4),
+///     protein: Decimal(6.8),
+///     fat: Decimal(2.5),
+///     sodium: Decimal(10),
+///     fiber: Decimal(3.5)
+/// )
+/// ```
+struct CalculatedNutrition {
+    /// 칼로리 (kcal)
+    let calories: Int32
+
+    /// 탄수화물 (g)
+    let carbohydrates: Decimal
+
+    /// 단백질 (g)
+    let protein: Decimal
+
+    /// 지방 (g)
+    let fat: Decimal
+
+    /// 나트륨 (mg, optional)
+    let sodium: Decimal?
+
+    /// 식이섬유 (g, optional)
+    let fiber: Decimal?
+
+    /// 당류 (g, optional)
+    let sugar: Decimal?
+}
+
 /// 매크로 영양소 비율
 ///
 /// 탄수화물, 단백질, 지방의 비율을 담는 구조체입니다.

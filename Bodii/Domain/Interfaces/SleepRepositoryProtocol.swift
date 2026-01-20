@@ -66,6 +66,25 @@ protocol SleepRepositoryProtocol {
     /// - SleepStatus는 duration 값에 따라 자동으로 결정됨
     func save(sleepRecord: SleepRecord) async throws -> SleepRecord
 
+    /// 입력 데이터로 새로운 수면 기록을 생성합니다.
+    ///
+    /// Core Data context 내에서 새로운 SleepRecord 엔티티를 생성하고 저장합니다.
+    /// UseCase에서 Core Data 엔티티를 직접 생성하지 않고 이 메서드를 사용합니다.
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - date: 수면 기준일
+    ///   - duration: 수면 시간 (분)
+    ///   - status: 수면 상태
+    /// - Returns: 생성된 수면 기록
+    /// - Throws: RepositoryError - 저장 실패 시
+    func createRecord(
+        userId: UUID,
+        date: Date,
+        duration: Int32,
+        status: SleepStatus
+    ) async throws -> SleepRecord
+
     // MARK: - Read (Single)
 
     /// ID로 특정 수면 기록을 조회합니다.
