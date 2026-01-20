@@ -54,11 +54,17 @@ struct SettingsView: View {
     /// - ViewModel 내부에 있지만 HealthKitPermissionView에 전달 필요
     let authService: HealthKitAuthorizationService
 
+    /// 프로필 설정 화면 표시 여부
+    @State private var showProfileSettings: Bool = false
+
     // MARK: - Body
 
     var body: some View {
         NavigationStack {
             List {
+                // 프로필 섹션
+                profileSection
+
                 // HealthKit 섹션
                 healthKitSection
 
@@ -67,6 +73,10 @@ struct SettingsView: View {
             }
             .navigationTitle("설정")
             .navigationBarTitleDisplayMode(.large)
+            // 프로필 설정 화면
+            .sheet(isPresented: $showProfileSettings) {
+                UserProfileSettingsView()
+            }
             // 📚 학습 포인트: Sheet Presentation with ViewModel
             // viewModel.showPermissionView가 true일 때 모달 표시
             .sheet(isPresented: $viewModel.showPermissionView) {
@@ -104,6 +114,52 @@ struct SettingsView: View {
     }
 
     // MARK: - View Components
+
+    /// 프로필 설정 섹션
+    ///
+    /// 📚 학습 포인트: Navigation to Detail View
+    /// - BMR/TDEE 계산에 필요한 사용자 기본 정보 설정
+    @ViewBuilder
+    private var profileSection: some View {
+        Section {
+            Button {
+                showProfileSettings = true
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "person.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.blue, .cyan],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 32)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("프로필 설정")
+                            .font(.body)
+                            .foregroundStyle(.primary)
+
+                        Text("키, 생년월일, 성별, 활동 수준")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } header: {
+            Text("내 정보")
+        } footer: {
+            Text("BMR(기초대사량)과 TDEE(총 일일 에너지 소비량) 계산에 필요한 정보입니다.")
+        }
+    }
 
     /// HealthKit 연동 섹션
     ///
