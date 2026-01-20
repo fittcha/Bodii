@@ -186,26 +186,6 @@ struct UserProfileSettingsView: View {
     }
 }
 
-// MARK: - ActivityLevel Korean Extension
-
-extension ActivityLevel {
-    /// 한국어 표시 이름
-    var koreanDisplayName: String {
-        switch self {
-        case .sedentary:
-            return "비활동적"
-        case .lightlyActive:
-            return "가벼운 활동"
-        case .moderatelyActive:
-            return "보통 활동"
-        case .veryActive:
-            return "활발한 활동"
-        case .extraActive:
-            return "매우 활발"
-        }
-    }
-}
-
 // MARK: - Preview
 
 #Preview {

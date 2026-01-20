@@ -85,11 +85,11 @@
 
 | 기능 | PRD 요구사항 | 개발 상태 | 비고 |
 |------|-------------|----------|------|
-| **8.1 온보딩 PageView** | 앱 소개 화면들 | ❌ 미구현 | 폴더만 생성됨 |
-| **8.2 기본 정보 입력** | 이름, 성별, 생년월일 | ❌ 미구현 | |
-| **8.3 체성분 입력** | 키, 몸무게 | ❌ 미구현 | |
-| **8.4 활동 수준 선택** | 5단계 | ❌ 미구현 | |
-| **8.5 온보딩 완료 플래그** | UserDefaults 저장 | ❌ 미구현 | |
+| **8.1 온보딩 PageView** | 앱 소개 화면들 | ✅ 완료 | OnboardingContainerView, WelcomeView |
+| **8.2 기본 정보 입력** | 이름, 성별, 생년월일 | ✅ 완료 | BasicInfoInputView |
+| **8.3 체성분 입력** | 키, 몸무게 | ✅ 완료 | BodyInfoInputView |
+| **8.4 활동 수준 선택** | 5단계 | ✅ 완료 | ActivityLevelSelectView |
+| **8.5 온보딩 완료 플래그** | UserDefaults 저장 | ✅ 완료 | AppStateService |
 
 ### 9. 설정
 
@@ -114,7 +114,7 @@
 |------|-------------|----------|------|
 | **11.1 날짜 유틸리티** | 02:00 기준, 포맷터 | ✅ 완료 | DateUtils, Date+Extensions |
 | **11.2 입력 검증** | 체성분, 음식, 수면, 운동 | ✅ 완료 | ValidationService, BodyMeasurementValidator |
-| **11.3 앱 상태 관리** | 첫 실행, 온보딩 완료 | ⚠️ 부분 | AppStateService 미확인 |
+| **11.3 앱 상태 관리** | 첫 실행, 온보딩 완료 | ✅ 완료 | AppStateService |
 
 ---
 
@@ -170,11 +170,11 @@
 | HealthKit 연동 | 5 | 5 | 0 | 0 | 100% |
 | 수면 관리 | 7 | 5 | 2 | 0 | ~85% |
 | 대시보드 | 6 | 6 | 0 | 0 | 100% |
-| **온보딩** | 5 | 0 | 0 | **5** | **0%** |
+| **온보딩** | 5 | 5 | 0 | 0 | **100%** |
 | 설정 | 4 | 4 | 0 | 0 | 100% |
 | DailyLog 관리 | 3 | 3 | 0 | 0 | 100% |
-| 유틸리티 | 3 | 2 | 1 | 0 | ~83% |
-| **Phase 1 합계** | **54** | **46** | **3** | **5** | **~91%** |
+| 유틸리티 | 3 | 3 | 0 | 0 | 100% |
+| **Phase 1 합계** | **54** | **51** | **3** | **0** | **~96%** |
 
 ### Phase 2 (AI) 완료 현황
 
@@ -194,39 +194,41 @@
 
 ## 긴급 개발 필요 항목
 
-### 1. 온보딩 (Phase 1 필수) - 우선순위: Critical
+### ~~1. 온보딩 (Phase 1 필수) - 우선순위: Critical~~ ✅ 완료 (2026-01-20)
 
-온보딩이 없으면 앱 첫 실행 시 사용자 기본 정보 없이 메인 화면으로 진입합니다.
+온보딩 기능이 구현되었습니다.
 
 | 파일 | 설명 | 상태 |
 |------|------|------|
-| `OnboardingView.swift` | 앱 소개 PageView | ❌ 미구현 |
-| `BasicInfoInputView.swift` | 이름, 성별, 생년월일 입력 | ❌ 미구현 |
-| `InitialBodyInputView.swift` | 키, 몸무게 입력 | ❌ 미구현 |
-| `ActivityLevelSelectionView.swift` | 활동 수준 선택 | ❌ 미구현 |
-| `OnboardingViewModel.swift` | 상태 관리 | ❌ 미구현 |
-| `AppStateService.swift` | 온보딩 완료 플래그 | ⚠️ 미확인 |
+| `OnboardingContainerView.swift` | 앱 소개 PageView | ✅ 완료 |
+| `WelcomeView.swift` | 환영 화면 | ✅ 완료 |
+| `BasicInfoInputView.swift` | 이름, 성별, 생년월일 입력 | ✅ 완료 |
+| `BodyInfoInputView.swift` | 키, 몸무게 입력 | ✅ 완료 |
+| `ActivityLevelSelectView.swift` | 활동 수준 선택 | ✅ 완료 |
+| `OnboardingCompleteView.swift` | BMR/TDEE 결과 표시 | ✅ 완료 |
+| `OnboardingViewModel.swift` | 상태 관리 | ✅ 완료 |
+| `AppStateService.swift` | 온보딩 완료 플래그 | ✅ 완료 |
 
-**온보딩 플로우:**
+**구현된 온보딩 플로우:**
 ```
-앱 첫 실행
+앱 첫 실행 (isOnboardingComplete == false)
     ↓
-앱 소개 (1~2 페이지)
+환영 화면 (WelcomeView)
     ↓
-기본 정보 입력 (이름, 성별, 생년월일)
+기본 정보 입력 (BasicInfoInputView: 이름, 성별, 생년월일)
     ↓
-신체 정보 입력 (키, 몸무게)
+신체 정보 입력 (BodyInfoInputView: 키, 몸무게)
     ↓
-활동 수준 선택 (5단계)
+활동 수준 선택 (ActivityLevelSelectView: 5단계)
     ↓
-User 생성 + BMR/TDEE 계산
+결과 화면 (OnboardingCompleteView: BMR/TDEE 표시)
     ↓
-온보딩 완료 플래그 저장
+User 생성 + 온보딩 완료 플래그 저장
     ↓
-메인 화면 진입
+메인 화면 진입 (ContentView)
 ```
 
-### 2. 수면 팝업 자동 표시 (Phase 1) - 우선순위: High
+### 1. 수면 팝업 자동 표시 (Phase 1) - 우선순위: High
 
 | 항목 | 요구사항 | 상태 |
 |------|---------|------|
@@ -234,14 +236,13 @@ User 생성 + BMR/TDEE 계산
 | "나중에" 버튼 | 최대 3회까지 재팝업 | ⚠️ 미확인 |
 | 3회 스킵 시 | 수면 탭에서 직접 입력 유도 | ⚠️ 미확인 |
 
-### 3. 앱 상태 관리 서비스 (Phase 1) - 우선순위: High
+### 2. 앱 상태 관리 서비스 (Phase 1) - 우선순위: High
 
 | 기능 | 설명 | 상태 |
 |------|------|------|
-| `isFirstLaunch` | 앱 최초 실행 여부 | ⚠️ 미확인 |
-| `isOnboardingComplete` | 온보딩 완료 여부 | ⚠️ 미확인 |
-| `sleepPromptSkipCount` | 수면 팝업 스킵 횟수 (오늘) | ⚠️ 미확인 |
-| `lastSleepPromptDate` | 마지막 수면 팝업 표시 날짜 | ⚠️ 미확인 |
+| `isOnboardingComplete` | 온보딩 완료 여부 | ✅ 완료 |
+| `sleepPromptSkipCount` | 수면 팝업 스킵 횟수 (오늘) | ✅ 완료 |
+| `lastSleepPromptDate` | 마지막 수면 팝업 표시 날짜 | ✅ 완료 |
 
 ---
 
@@ -276,19 +277,18 @@ User 생성 + BMR/TDEE 계산
 
 ## 개발 우선순위
 
-### 즉시 (Critical)
-1. **온보딩 구현** - 앱 사용의 시작점
+### ~~즉시 (Critical)~~ ✅ 완료
+~~1. **온보딩 구현** - 앱 사용의 시작점~~ ✅ 완료 (2026-01-20)
 
 ### 단기 (High)
-2. **수면 팝업 자동 표시 검증** - PRD 명세대로 동작하는지 확인
-3. **AppStateService 검증** - 온보딩/수면 팝업에 필요
+1. **수면 팝업 자동 표시 검증** - PRD 명세대로 동작하는지 확인
 
 ### 중기 (Medium)
-4. **전체 플로우 테스트** - 각 기능 간 연동 확인
-5. **에러 핸들링 검증** - 네트워크 오류, 저장 실패 등
+2. **전체 플로우 테스트** - 각 기능 간 연동 확인
+3. **에러 핸들링 검증** - 네트워크 오류, 저장 실패 등
 
 ### 장기 (Low)
-6. **Phase 3 소셜 기능** - 서버 구축 후 진행
+4. **Phase 3 소셜 기능** - 서버 구축 후 진행
 
 ---
 
