@@ -157,17 +157,18 @@ final class FoodDetailViewModel: ObservableObject {
         guard let food = food else { return }
 
         // 단위 변환 시 현재 섭취량을 유지
+        let servingSizeValue = food.servingSize?.decimalValue ?? Decimal(100)
         if quantityUnit == .serving && newUnit == .grams {
             // 인분 -> 그램: servings * servingSize
             quantity = NutritionCalculator.servingsToGrams(
                 servings: quantity,
-                servingSize: food.servingSize
+                servingSize: servingSizeValue
             )
         } else if quantityUnit == .grams && newUnit == .serving {
             // 그램 -> 인분: grams / servingSize
             quantity = NutritionCalculator.gramsToServings(
                 grams: quantity,
-                servingSize: food.servingSize
+                servingSize: servingSizeValue
             )
         }
 

@@ -103,13 +103,16 @@ final class DeleteExerciseRecordUseCase {
         }
 
         // 2. 권한 확인
-        guard existingRecord.userId == userId else {
+        guard existingRecord.user?.id == userId else {
             throw UnauthorizedError.notOwner("해당 운동 기록을 삭제할 권한이 없습니다.")
         }
 
         // 3. DailyLog 업데이트 (칼로리 및 시간 차감)
+        guard let recordDate = existingRecord.date else {
+            throw RecordNotFoundError.exerciseRecordNotFound("운동 기록 날짜가 없습니다.")
+        }
         try await dailyLogService.removeExercise(
-            date: existingRecord.date,
+            date: recordDate,
             userId: userId,
             calories: existingRecord.caloriesBurned,
             duration: existingRecord.duration

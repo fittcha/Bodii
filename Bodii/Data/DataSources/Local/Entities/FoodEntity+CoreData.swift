@@ -70,8 +70,9 @@ extension Food {
     /// - Parameter days: 만료 기준 일수 (기본값: 30일)
     /// - Returns: 만료되었으면 true
     func isCacheExpired(days: Int = 30) -> Bool {
+        guard let createdAtDate = createdAt else { return true }
         let expirationDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
-        return createdAt < expirationDate
+        return createdAtDate < expirationDate
     }
 
     // MARK: - Fetch Requests
@@ -197,7 +198,7 @@ enum FoodEntityError: Error {
 #if DEBUG
 extension Food {
     /// 디버깅용 설명 문자열
-    var debugDescription: String {
+    override public var debugDescription: String {
         """
         Food(
             id: \(id?.uuidString ?? "nil"),
@@ -234,6 +235,109 @@ extension Food {
         food.lastAccessedAt = Date()
         food.searchCount = 0
         return food
+    }
+
+    /// Preview용 음식 생성 (커스텀 데이터)
+    ///
+    /// - Parameters:
+    ///   - context: NSManagedObjectContext
+    ///   - name: 음식 이름
+    ///   - calories: 칼로리
+    ///   - carbohydrates: 탄수화물 (g)
+    ///   - protein: 단백질 (g)
+    ///   - fat: 지방 (g)
+    ///   - sodium: 나트륨 (mg)
+    ///   - fiber: 식이섬유 (g)
+    ///   - sugar: 당류 (g)
+    ///   - servingSize: 1회 제공량
+    ///   - servingUnit: 제공 단위
+    ///   - source: 음식 정보 출처
+    ///   - apiCode: API 코드
+    /// - Returns: 커스텀 Food entity
+    static func createPreview(
+        context: NSManagedObjectContext,
+        name: String,
+        calories: Int32,
+        carbohydrates: NSDecimalNumber,
+        protein: NSDecimalNumber,
+        fat: NSDecimalNumber,
+        sodium: NSDecimalNumber? = nil,
+        fiber: NSDecimalNumber? = nil,
+        sugar: NSDecimalNumber? = nil,
+        servingSize: NSDecimalNumber = 100,
+        servingUnit: String = "100g",
+        source: FoodSource = .governmentAPI,
+        apiCode: String? = nil
+    ) -> Food {
+        let food = Food(context: context)
+        food.id = UUID()
+        food.name = name
+        food.calories = calories
+        food.carbohydrates = carbohydrates
+        food.protein = protein
+        food.fat = fat
+        food.sodium = sodium
+        food.fiber = fiber
+        food.sugar = sugar
+        food.servingSize = servingSize
+        food.servingUnit = servingUnit
+        food.source = source.rawValue
+        food.apiCode = apiCode ?? "PREVIEW_\(UUID().uuidString.prefix(8))"
+        food.createdAt = Date()
+        food.lastAccessedAt = Date()
+        food.searchCount = 0
+        return food
+    }
+
+    /// Preview용 기본 context에서 음식 생성
+    ///
+    /// SwiftUI Preview에서 간편하게 사용할 수 있는 헬퍼
+    ///
+    /// - Parameters:
+    ///   - name: 음식 이름
+    ///   - calories: 칼로리
+    ///   - carbohydrates: 탄수화물 (g)
+    ///   - protein: 단백질 (g)
+    ///   - fat: 지방 (g)
+    ///   - sodium: 나트륨 (mg)
+    ///   - fiber: 식이섬유 (g)
+    ///   - sugar: 당류 (g)
+    ///   - servingSize: 1회 제공량
+    ///   - servingUnit: 제공 단위
+    ///   - source: 음식 정보 출처
+    ///   - apiCode: API 코드
+    /// - Returns: 커스텀 Food entity
+    @MainActor
+    static func preview(
+        name: String,
+        calories: Int32,
+        carbohydrates: Decimal,
+        protein: Decimal,
+        fat: Decimal,
+        sodium: Decimal? = nil,
+        fiber: Decimal? = nil,
+        sugar: Decimal? = nil,
+        servingSize: Decimal = 100,
+        servingUnit: String = "100g",
+        source: FoodSource = .governmentAPI,
+        apiCode: String? = nil
+    ) -> Food {
+        let context = PersistenceController.preview.container.viewContext
+        return createPreview(
+            context: context,
+            name: name,
+            calories: calories,
+            carbohydrates: carbohydrates as NSDecimalNumber,
+            protein: protein as NSDecimalNumber,
+            fat: fat as NSDecimalNumber,
+            sodium: sodium.map { $0 as NSDecimalNumber },
+            fiber: fiber.map { $0 as NSDecimalNumber },
+            sugar: sugar.map { $0 as NSDecimalNumber },
+            servingSize: servingSize as NSDecimalNumber,
+            servingUnit: servingUnit,
+            source: source,
+            apiCode: apiCode
+        )
     }
 }
 #endif

@@ -35,7 +35,7 @@ struct FoodSearchResultRow: View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
                 // 음식 이름
-                Text(food.name)
+                Text(food.name ?? "알 수 없는 음식")
                     .font(.body)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
@@ -47,9 +47,9 @@ struct FoodSearchResultRow: View {
 
                 // 매크로 미리보기 (P/C/F)
                 HStack(spacing: 8) {
-                    macroPreview("P", value: food.protein, color: .orange)
-                    macroPreview("C", value: food.carbohydrates, color: .blue)
-                    macroPreview("F", value: food.fat, color: .purple)
+                    macroPreview("P", value: food.protein?.decimalValue ?? Decimal(0), color: .orange)
+                    macroPreview("C", value: food.carbohydrates?.decimalValue ?? Decimal(0), color: .blue)
+                    macroPreview("F", value: food.fat?.decimalValue ?? Decimal(0), color: .purple)
                 }
             }
 
@@ -84,7 +84,7 @@ struct FoodSearchResultRow: View {
     ///
     /// - Returns: 포맷팅된 제공량 문자열 (예: "1인분 (210g)", "100g")
     private var servingSizeText: String {
-        let sizeString = formattedDecimal(food.servingSize)
+        let sizeString = formattedDecimal(food.servingSize?.decimalValue ?? Decimal(0))
 
         if let unit = food.servingUnit {
             return "\(unit) (\(sizeString)g)"
@@ -138,17 +138,12 @@ struct FoodSearchResultRow: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
-    Text("FoodSearchResultRow Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
-}
-// MARK: - Preview
-// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
-// TODO: PreviewHelpers를 사용한 Preview 구현 필요
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// Food는 Core Data 엔티티이므로 직접 초기화 불가
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-#Preview {
+#Preview("Placeholder") {
     Text("FoodSearchResultRow Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }

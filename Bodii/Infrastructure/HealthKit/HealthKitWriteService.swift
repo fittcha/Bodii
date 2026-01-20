@@ -117,10 +117,11 @@ final class HealthKitWriteService {
         // 📚 학습 포인트: Authorization Check Before Write
         // 쓰기 권한이 없으면 에러를 던짐
         // 💡 Java 비교: @PreAuthorize 어노테이션과 유사
-        if let sampleType = sample.sampleType {
-            let status = healthStore.authorizationStatus(for: sampleType)
+        // HKSample로 캐스팅하여 sampleType에 접근 (HKObject에는 sampleType이 없음)
+        if let hkSample = sample as? HKSample {
+            let status = healthStore.authorizationStatus(for: hkSample.sampleType)
             guard status == .sharingAuthorized else {
-                throw HealthKitError.dataTypeNotAuthorized(type: sampleType)
+                throw HealthKitError.dataTypeNotAuthorized(type: hkSample.sampleType)
             }
         }
 
@@ -133,7 +134,7 @@ final class HealthKitWriteService {
             // 📚 학습 포인트: Error Wrapping
             // 시스템 에러를 HealthKitError로 래핑하여 통일된 에러 처리
             // 💡 Java 비교: Custom Exception Wrapping
-            let typeName = sample.sampleType?.identifier ?? "unknown"
+            let typeName = (sample as? HKSample)?.sampleType.identifier ?? "unknown"
             throw HealthKitError.writeFailed(type: typeName, error: error)
         }
     }
@@ -179,10 +180,10 @@ final class HealthKitWriteService {
         // 하나라도 권한이 없으면 전체 저장 취소
         // 💡 Java 비교: Pre-validation before batch operation
         for sample in samples {
-            if let sampleType = sample.sampleType {
-                let status = healthStore.authorizationStatus(for: sampleType)
+            if let hkSample = sample as? HKSample {
+                let status = healthStore.authorizationStatus(for: hkSample.sampleType)
                 guard status == .sharingAuthorized else {
-                    throw HealthKitError.dataTypeNotAuthorized(type: sampleType)
+                    throw HealthKitError.dataTypeNotAuthorized(type: hkSample.sampleType)
                 }
             }
         }
@@ -194,7 +195,7 @@ final class HealthKitWriteService {
             try await healthStore.save(samples)
         } catch {
             // 배치 저장 실패 시 첫 번째 샘플의 타입 이름 사용
-            let typeName = samples.first?.sampleType?.identifier ?? "unknown"
+            let typeName = (samples.first as? HKSample)?.sampleType.identifier ?? "unknown"
             throw HealthKitError.writeFailed(type: typeName, error: error)
         }
     }
@@ -226,10 +227,11 @@ final class HealthKitWriteService {
     /// ```
     func delete(sample: HKObject) async throws {
         // 쓰기 권한 확인 (삭제는 쓰기 권한 필요)
-        if let sampleType = sample.sampleType {
-            let status = healthStore.authorizationStatus(for: sampleType)
+        // HKSample로 캐스팅하여 sampleType에 접근 (HKObject에는 sampleType이 없음)
+        if let hkSample = sample as? HKSample {
+            let status = healthStore.authorizationStatus(for: hkSample.sampleType)
             guard status == .sharingAuthorized else {
-                throw HealthKitError.dataTypeNotAuthorized(type: sampleType)
+                throw HealthKitError.dataTypeNotAuthorized(type: hkSample.sampleType)
             }
         }
 
@@ -239,7 +241,7 @@ final class HealthKitWriteService {
         do {
             try await healthStore.delete(sample)
         } catch {
-            let typeName = sample.sampleType?.identifier ?? "unknown"
+            let typeName = (sample as? HKSample)?.sampleType.identifier ?? "unknown"
             throw HealthKitError.writeFailed(type: typeName, error: error)
         }
     }
@@ -269,11 +271,12 @@ final class HealthKitWriteService {
         }
 
         // 모든 샘플의 쓰기 권한 확인
+        // HKSample로 캐스팅하여 sampleType에 접근 (HKObject에는 sampleType이 없음)
         for sample in samples {
-            if let sampleType = sample.sampleType {
-                let status = healthStore.authorizationStatus(for: sampleType)
+            if let hkSample = sample as? HKSample {
+                let status = healthStore.authorizationStatus(for: hkSample.sampleType)
                 guard status == .sharingAuthorized else {
-                    throw HealthKitError.dataTypeNotAuthorized(type: sampleType)
+                    throw HealthKitError.dataTypeNotAuthorized(type: hkSample.sampleType)
                 }
             }
         }
@@ -282,7 +285,7 @@ final class HealthKitWriteService {
         do {
             try await healthStore.delete(samples)
         } catch {
-            let typeName = samples.first?.sampleType?.identifier ?? "unknown"
+            let typeName = (samples.first as? HKSample)?.sampleType.identifier ?? "unknown"
             throw HealthKitError.writeFailed(type: typeName, error: error)
         }
     }

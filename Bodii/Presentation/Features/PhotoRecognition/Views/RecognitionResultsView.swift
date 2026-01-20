@@ -643,8 +643,12 @@ struct RecognitionResultsView: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview("Recognition Results") {
+// 📚 학습 포인트: Core Data 및 ViewModel 타입 제약
+// Food는 Core Data 엔티티, MockPhotoRecognitionViewModel은 PhotoRecognitionViewModel으로 변환 불가
+// TODO: Phase 7에서 Preview용 helper 및 protocol 리팩토링 후 수정
+
+#Preview("Placeholder") {
     Text("RecognitionResultsView Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }

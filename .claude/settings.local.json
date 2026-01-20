@@ -1,6 +1,21 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(done)",
+      "Bash(xcrun simctl:*)",
+      "Bash(ruby -e:*)",
+      "Bash(gem install:*)",
+      "Bash(ruby:*)",
+      "Bash(pip3 install:*)",
+      "Bash(git add:*)",
+      "Bash(plutil:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: 빌드 오류 전면 수정 - Core Data 타입 변환 및 프로토콜 준수\n\n주요 수정 사항:\n- NSDecimalNumber ↔ Decimal 타입 변환 \\(as Decimal?, as Decimal 캐스팅\\)\n- Optional Unwrapping \\(UUID?, Date?, String?\\) 처리\n- Int16 ↔ Enum \\(SleepStatus, ExerciseType\\) rawValue 변환\n- @Bindable/@MainActor 어노테이션 추가 \\(SwiftUI + Concurrency\\)\n- Equatable/Hashable 프로토콜 준수 추가 \\(FoodMatch, FoodRecordWithFood, ChartDataPoint\\)\n- 컴파일러 복잡도 오류 해결 \\(GoalProgressChart @ChartContentBuilder 분리\\)\n- Core Data 엔티티 수정 패턴 변경 \\(UpdateGoalUseCase\\)\n- Static member 접근 수정 \\(BodyMeasurementValidator Self. 사용\\)\n- DIContainer Exercise 인프라 추가 \\(DataSource, Repository, Service, UseCase\\)\n\n수정된 파일 \\(29개\\):\n- App: DIContainer.swift\n- Data: ExerciseRecordLocalDataSource, BodyRecordMapper, Repositories\n- Domain: ExerciseRecordRepository, FoodLabelMatcherService, UseCases\n- Infrastructure: HealthKitWriteService\n- Presentation: Charts, Rows, Views, ViewModels\n- Shared: BodyMeasurementValidator\n\n빌드 결과: ✅ BUILD SUCCEEDED\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "task-master-ai"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

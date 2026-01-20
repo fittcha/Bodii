@@ -159,7 +159,7 @@ struct NutritionFactsCard: View {
     private var optionalNutrientsSection: some View {
         VStack(spacing: 12) {
             // 나트륨
-            if let sodium = food.sodium {
+            if let sodium = food.sodium?.decimalValue {
                 nutritionRow(
                     name: "나트륨",
                     value: sodium * multiplier,
@@ -169,7 +169,7 @@ struct NutritionFactsCard: View {
             }
 
             // 식이섬유
-            if let fiber = food.fiber {
+            if let fiber = food.fiber?.decimalValue {
                 nutritionRow(
                     name: "식이섬유",
                     value: fiber * multiplier,
@@ -179,7 +179,7 @@ struct NutritionFactsCard: View {
             }
 
             // 당류
-            if let sugar = food.sugar {
+            if let sugar = food.sugar?.decimalValue {
                 nutritionRow(
                     name: "당류",
                     value: sugar * multiplier,
@@ -247,7 +247,8 @@ struct NutritionFactsCard: View {
             return quantity
         } else {
             // 그램 단위일 경우: quantity / servingSize
-            return quantity / food.servingSize
+            let servingSize = food.servingSize?.decimalValue ?? 1
+            return servingSize > 0 ? quantity / servingSize : quantity
         }
     }
 
@@ -282,17 +283,12 @@ struct NutritionFactsCard: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
-    Text("NutritionFactsCard Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
-}
-// MARK: - Preview
-// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
-// TODO: PreviewHelpers를 사용한 Preview 구현 필요
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// Food는 Core Data 엔티티이므로 직접 초기화 불가
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-#Preview {
+#Preview("Placeholder") {
     Text("NutritionFactsCard Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }

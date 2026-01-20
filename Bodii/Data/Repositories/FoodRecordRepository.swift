@@ -18,21 +18,7 @@ import CoreData
 /// - Example:
 /// ```swift
 /// let repository = FoodRecordRepository(context: persistenceController.viewContext)
-/// let foodRecord = FoodRecord(
-///     id: UUID(),
-///     userId: UUID(),
-///     foodId: UUID(),
-///     date: Date(),
-///     mealType: .breakfast,
-///     quantity: Decimal(1.0),
-///     quantityUnit: .serving,
-///     calculatedCalories: 330,
-///     calculatedCarbs: Decimal(73.4),
-///     calculatedProtein: Decimal(6.8),
-///     calculatedFat: Decimal(2.5),
-///     createdAt: Date()
-/// )
-/// try await repository.save(foodRecord)
+/// let records = try await repository.findByDate(date, userId: userId)
 /// ```
 final class FoodRecordRepository: FoodRecordRepositoryProtocol {
 
@@ -54,15 +40,11 @@ final class FoodRecordRepository: FoodRecordRepositoryProtocol {
 
     func save(_ foodRecord: FoodRecord) async throws -> FoodRecord {
         try await context.perform { [weak self] in
-            guard let self = self else {
+            guard self != nil else {
                 throw RepositoryError.contextDeallocated
             }
 
-            let foodRecordEntity = NSEntityDescription.insertNewObject(forEntityName: "FoodRecord", into: self.context)
-
-            self.updateEntity(foodRecordEntity, from: foodRecord)
-
-            try self.context.save()
+            try self?.context.save()
 
             return foodRecord
         }
@@ -74,13 +56,13 @@ final class FoodRecordRepository: FoodRecordRepositoryProtocol {
                 throw RepositoryError.contextDeallocated
             }
 
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "FoodRecord")
+            let fetchRequest: NSFetchRequest<FoodRecord> = FoodRecord.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
             fetchRequest.fetchLimit = 1
 
             let results = try self.context.fetch(fetchRequest)
 
-            return results.first.flatMap { self.mapToFoodRecord($0) }
+            return results.first
         }
     }
 
@@ -90,18 +72,7 @@ final class FoodRecordRepository: FoodRecordRepositoryProtocol {
                 throw RepositoryError.contextDeallocated
             }
 
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "FoodRecord")
-            fetchRequest.predicate = NSPredicate(format: "id == %@", foodRecord.id as CVarArg)
-            fetchRequest.fetchLimit = 1
-
-            let results = try self.context.fetch(fetchRequest)
-
-            guard let foodRecordEntity = results.first else {
-                throw RepositoryError.notFound
-            }
-
-            self.updateEntity(foodRecordEntity, from: foodRecord)
-
+            // FoodRecord는 이미 Core Data 엔티티이므로 context를 저장하면 됨
             try self.context.save()
 
             return foodRecord
@@ -114,14 +85,14 @@ final class FoodRecordRepository: FoodRecordRepositoryProtocol {
                 throw RepositoryError.contextDeallocated
             }
 
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "FoodRecord")
+            let fetchRequest: NSFetchRequest<FoodRecord> = FoodRecord.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
             fetchRequest.fetchLimit = 1
 
             let results = try self.context.fetch(fetchRequest)
 
             guard let foodRecordEntity = results.first else {
-                throw RepositoryError.notFound
+                throw RepositoryError.notFound(id)
             }
 
             self.context.delete(foodRecordEntity)
@@ -141,10 +112,10 @@ final class FoodRecordRepository: FoodRecordRepositoryProtocol {
             let calendar = Calendar.current
             let startOfDay = calendar.startOfDay(for: date)
             guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
-                throw RepositoryError.invalidData
+                throw RepositoryError.invalidData("날짜 계산 실패")
             }
 
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "FoodRecord")
+            let fetchRequest: NSFetchRequest<FoodRecord> = FoodRecord.fetchRequest()
             fetchRequest.predicate = NSPredicate(
                 format: "user.id == %@ AND date >= %@ AND date < %@",
                 userId as CVarArg,
@@ -155,7 +126,7 @@ final class FoodRecordRepository: FoodRecordRepositoryProtocol {
 
             let results = try self.context.fetch(fetchRequest)
 
-            return results.compactMap { self.mapToFoodRecord($0) }
+            return results
         }
     }
 
@@ -169,10 +140,10 @@ final class FoodRecordRepository: FoodRecordRepositoryProtocol {
             let calendar = Calendar.current
             let startOfDay = calendar.startOfDay(for: date)
             guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
-                throw RepositoryError.invalidData
+                throw RepositoryError.invalidData("날짜 계산 실패")
             }
 
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "FoodRecord")
+            let fetchRequest: NSFetchRequest<FoodRecord> = FoodRecord.fetchRequest()
             fetchRequest.predicate = NSPredicate(
                 format: "user.id == %@ AND date >= %@ AND date < %@ AND mealType == %d",
                 userId as CVarArg,
@@ -184,93 +155,7 @@ final class FoodRecordRepository: FoodRecordRepositoryProtocol {
 
             let results = try self.context.fetch(fetchRequest)
 
-            return results.compactMap { self.mapToFoodRecord($0) }
-        }
-    }
-
-    // MARK: - Private Helpers
-
-    /// Core Data 엔티티를 도메인 모델로 변환합니다.
-    ///
-    /// - Parameter entity: Core Data NSManagedObject
-    /// - Returns: FoodRecord 도메인 모델
-    private func mapToFoodRecord(_ entity: NSManagedObject) -> FoodRecord? {
-        guard let id = entity.value(forKey: "id") as? UUID,
-              let date = entity.value(forKey: "date") as? Date,
-              let mealTypeRaw = entity.value(forKey: "mealType") as? Int16,
-              let mealType = MealType(rawValue: mealTypeRaw),
-              let quantity = entity.value(forKey: "quantity") as? Decimal,
-              let quantityUnitRaw = entity.value(forKey: "quantityUnit") as? Int16,
-              let quantityUnit = QuantityUnit(rawValue: quantityUnitRaw),
-              let calculatedCalories = entity.value(forKey: "calculatedCalories") as? Int32,
-              let calculatedCarbs = entity.value(forKey: "calculatedCarbs") as? Decimal,
-              let calculatedProtein = entity.value(forKey: "calculatedProtein") as? Decimal,
-              let calculatedFat = entity.value(forKey: "calculatedFat") as? Decimal,
-              let createdAt = entity.value(forKey: "createdAt") as? Date else {
-            return nil
-        }
-
-        // user relationship에서 userId 추출
-        guard let userEntity = entity.value(forKey: "user") as? NSManagedObject,
-              let userId = userEntity.value(forKey: "id") as? UUID else {
-            return nil
-        }
-
-        // food relationship에서 foodId 추출
-        guard let foodEntity = entity.value(forKey: "food") as? NSManagedObject,
-              let foodId = foodEntity.value(forKey: "id") as? UUID else {
-            return nil
-        }
-
-        return FoodRecord(
-            id: id,
-            userId: userId,
-            foodId: foodId,
-            date: date,
-            mealType: mealType,
-            quantity: quantity,
-            quantityUnit: quantityUnit,
-            calculatedCalories: calculatedCalories,
-            calculatedCarbs: calculatedCarbs,
-            calculatedProtein: calculatedProtein,
-            calculatedFat: calculatedFat,
-            createdAt: createdAt
-        )
-    }
-
-    /// 도메인 모델의 값으로 Core Data 엔티티를 업데이트합니다.
-    ///
-    /// - Parameters:
-    ///   - entity: 업데이트할 Core Data NSManagedObject
-    ///   - foodRecord: 소스 FoodRecord 도메인 모델
-    private func updateEntity(_ entity: NSManagedObject, from foodRecord: FoodRecord) {
-        entity.setValue(foodRecord.id, forKey: "id")
-        entity.setValue(foodRecord.date, forKey: "date")
-        entity.setValue(foodRecord.mealType.rawValue, forKey: "mealType")
-        entity.setValue(foodRecord.quantity, forKey: "quantity")
-        entity.setValue(foodRecord.quantityUnit.rawValue, forKey: "quantityUnit")
-        entity.setValue(foodRecord.calculatedCalories, forKey: "calculatedCalories")
-        entity.setValue(foodRecord.calculatedCarbs, forKey: "calculatedCarbs")
-        entity.setValue(foodRecord.calculatedProtein, forKey: "calculatedProtein")
-        entity.setValue(foodRecord.calculatedFat, forKey: "calculatedFat")
-        entity.setValue(foodRecord.createdAt, forKey: "createdAt")
-
-        // User relationship 설정
-        let userFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "User")
-        userFetchRequest.predicate = NSPredicate(format: "id == %@", foodRecord.userId as CVarArg)
-        userFetchRequest.fetchLimit = 1
-
-        if let userEntity = try? context.fetch(userFetchRequest).first {
-            entity.setValue(userEntity, forKey: "user")
-        }
-
-        // Food relationship 설정
-        let foodFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Food")
-        foodFetchRequest.predicate = NSPredicate(format: "id == %@", foodRecord.foodId as CVarArg)
-        foodFetchRequest.fetchLimit = 1
-
-        if let foodEntity = try? context.fetch(foodFetchRequest).first {
-            entity.setValue(foodEntity, forKey: "food")
+            return results
         }
     }
 }

@@ -18,7 +18,7 @@ import CoreData
 /// 📚 학습 포인트: Clean Architecture - Data Source Layer
 /// - Repository와 Core Data 사이의 추상화 레이어
 /// - Core Data 특화된 작업 수행 (NSFetchRequest, NSManagedObjectContext 등)
-/// - Mapper를 활용하여 Domain Entity와 Core Data Entity 변환
+/// - Core Data SleepRecord 엔티티를 직접 사용
 /// - 02:00 경계 로직 적용 (DateUtils.getLogicalDate)
 /// - SleepRecord 저장 시 DailyLog 자동 업데이트
 /// 💡 Java 비교: JPA를 사용하는 DAO 구현체와 유사
@@ -45,9 +45,9 @@ final class SleepLocalDataSource {
     /// - 테스트 시 인메모리 컨트롤러로 교체 가능
     private let persistenceController: PersistenceController
 
-    /// SleepRecord 매퍼
+    /// SleepRecord 매퍼 (검증용)
     /// 📚 학습 포인트: Mapper Pattern
-    /// - Core Data Entity ↔ Domain Entity 변환 담당
+    /// - 상태 변환 및 검증 담당
     private let sleepRecordMapper: SleepRecordMapper
 
     // MARK: - Initialization
@@ -66,6 +66,34 @@ final class SleepLocalDataSource {
 
     // MARK: - Create
 
+    /// 새로운 수면 기록을 생성합니다 (Repository에서 호출).
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - Repository에서 userId와 함께 호출
+    /// - 내부적으로 save()를 호출
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - date: 수면 날짜
+    ///   - duration: 수면 시간 (분)
+    ///   - status: 수면 상태
+    /// - Returns: 생성된 SleepRecord Core Data 엔티티
+    /// - Throws: 저장 실패 시 에러
+    func create(
+        userId: UUID,
+        date: Date,
+        duration: Int32,
+        status: SleepStatus
+    ) async throws -> SleepRecord {
+        // 현재는 userId를 사용하지 않지만, 향후 다중 사용자 지원 시 사용
+        // TODO: User relationship 연결
+        return try await save(
+            date: date,
+            duration: duration,
+            status: status,
+            healthKitId: nil
+        )
+    }
+
     /// 새로운 수면 기록을 저장합니다.
     /// 📚 학습 포인트: Transactional Operation with Side Effects
     /// - SleepRecord 생성
@@ -74,10 +102,19 @@ final class SleepLocalDataSource {
     /// - 하나의 트랜잭션에서 모두 처리 (원자성 보장)
     /// 💡 Java 비교: @Transactional 메서드와 유사
     ///
-    /// - Parameter sleepRecord: 저장할 수면 기록 데이터
-    /// - Returns: 저장된 수면 기록 데이터
+    /// - Parameters:
+    ///   - date: 수면 날짜
+    ///   - duration: 수면 시간 (분)
+    ///   - status: 수면 상태
+    ///   - healthKitId: HealthKit ID (옵션)
+    /// - Returns: 저장된 SleepRecord Core Data 엔티티
     /// - Throws: 저장 실패 시 에러
-    func save(sleepRecord: Bodii.SleepRecord) async throws -> Bodii.SleepRecord {
+    func save(
+        date: Date,
+        duration: Int32,
+        status: SleepStatus,
+        healthKitId: String? = nil
+    ) async throws -> SleepRecord {
         // 📚 학습 포인트: Background Context for Write Operations
         // UI 블로킹을 방지하기 위해 백그라운드 컨텍스트 사용
         let context = persistenceController.newBackgroundContext()
@@ -86,14 +123,17 @@ final class SleepLocalDataSource {
             // 📚 학습 포인트: 02:00 Boundary Logic
             // DateUtils.getLogicalDate를 사용하여 논리적 날짜 계산
             // 00:00-01:59 입력 시 전날로 처리
-            let logicalDate = DateUtils.getLogicalDate(for: sleepRecord.date)
+            let logicalDate = DateUtils.getLogicalDate(for: date)
 
-            // 📚 학습 포인트: Mapper 사용
-            // Domain entity를 Core Data entity로 변환
-            var adjustedSleepRecord = sleepRecord
-            adjustedSleepRecord.date = logicalDate
-
-            let sleepRecordEntity = self.sleepRecordMapper.toEntity(adjustedSleepRecord, context: context)
+            // 📚 학습 포인트: Core Data Entity 직접 생성
+            let sleepRecordEntity = SleepRecord(context: context)
+            sleepRecordEntity.id = UUID()
+            sleepRecordEntity.date = logicalDate
+            sleepRecordEntity.duration = duration
+            sleepRecordEntity.status = self.sleepRecordMapper.int16FromStatus(status)
+            sleepRecordEntity.healthKitId = healthKitId
+            sleepRecordEntity.createdAt = Date()
+            sleepRecordEntity.updatedAt = Date()
 
             // 📚 학습 포인트: User Relationship
             // 현재는 단일 사용자 가정, 향후 다중 사용자 지원 시 수정 필요
@@ -103,8 +143,8 @@ final class SleepLocalDataSource {
             // SleepRecord 저장 시 해당 날짜의 DailyLog를 자동으로 업데이트
             try self.updateDailyLog(
                 for: logicalDate,
-                duration: sleepRecord.duration,
-                status: sleepRecord.status,
+                duration: duration,
+                status: status,
                 context: context
             )
 
@@ -122,10 +162,7 @@ final class SleepLocalDataSource {
                 )
             }
 
-            // 📚 학습 포인트: Return Saved Entity
-            // 저장된 Core Data entity를 다시 Domain entity로 변환
-            // ID가 할당되고 관계가 설정된 최신 상태를 반환
-            return try self.sleepRecordMapper.toDomain(sleepRecordEntity)
+            return sleepRecordEntity
         }
     }
 
@@ -137,9 +174,9 @@ final class SleepLocalDataSource {
     /// - 성능: <0.1초 (Primary Key 조회)
     ///
     /// - Parameter id: 조회할 기록의 고유 식별자
-    /// - Returns: 수면 기록 데이터 (없으면 nil)
+    /// - Returns: SleepRecord Core Data 엔티티 (없으면 nil)
     /// - Throws: 조회 실패 시 에러
-    func fetch(by id: UUID) async throws -> Bodii.SleepRecord? {
+    func fetch(by id: UUID) async throws -> SleepRecord? {
         let context = persistenceController.viewContext
 
         return try await context.perform {
@@ -151,11 +188,7 @@ final class SleepLocalDataSource {
             request.fetchLimit = 1
 
             let results = try context.fetch(request)
-
-            // 📚 학습 포인트: Optional Mapping
-            // 결과가 있으면 변환, 없으면 nil 반환
-            guard let sleepRecordEntity = results.first else { return nil }
-            return try self.sleepRecordMapper.toDomain(sleepRecordEntity)
+            return results.first
         }
     }
 
@@ -166,9 +199,9 @@ final class SleepLocalDataSource {
     /// - 성능: <0.2초 (날짜 인덱스 활용)
     ///
     /// - Parameter date: 조회할 날짜
-    /// - Returns: 해당 날짜의 수면 기록 데이터 (없으면 nil)
+    /// - Returns: SleepRecord Core Data 엔티티 (없으면 nil)
     /// - Throws: 조회 실패 시 에러
-    func fetch(for date: Date) async throws -> Bodii.SleepRecord? {
+    func fetch(for date: Date) async throws -> SleepRecord? {
         let context = persistenceController.viewContext
 
         return try await context.perform {
@@ -199,9 +232,7 @@ final class SleepLocalDataSource {
             request.fetchLimit = 1
 
             let results = try context.fetch(request)
-
-            guard let sleepRecordEntity = results.first else { return nil }
-            return try self.sleepRecordMapper.toDomain(sleepRecordEntity)
+            return results.first
         }
     }
 
@@ -210,9 +241,9 @@ final class SleepLocalDataSource {
     /// - 날짜 기준 내림차순 정렬 후 첫 번째 결과
     /// - 성능: <0.1초 (날짜 인덱스 + LIMIT 1)
     ///
-    /// - Returns: 가장 최근 수면 기록 데이터 (없으면 nil)
+    /// - Returns: SleepRecord Core Data 엔티티 (없으면 nil)
     /// - Throws: 조회 실패 시 에러
-    func fetchLatest() async throws -> Bodii.SleepRecord? {
+    func fetchLatest() async throws -> SleepRecord? {
         let context = persistenceController.viewContext
 
         return try await context.perform {
@@ -221,9 +252,7 @@ final class SleepLocalDataSource {
             request.fetchLimit = 1
 
             let results = try context.fetch(request)
-
-            guard let sleepRecordEntity = results.first else { return nil }
-            return try self.sleepRecordMapper.toDomain(sleepRecordEntity)
+            return results.first
         }
     }
 
@@ -235,9 +264,9 @@ final class SleepLocalDataSource {
     /// - 성능: <0.5초 (최대 1000개 레코드 기준)
     /// 💡 주의: 데이터가 많아지면 fetchAll 대신 date range 쿼리 사용 권장
     ///
-    /// - Returns: 모든 수면 기록 데이터 배열
+    /// - Returns: 모든 SleepRecord Core Data 엔티티 배열
     /// - Throws: 조회 실패 시 에러
-    func fetchAll() async throws -> [Bodii.SleepRecord] {
+    func fetchAll() async throws -> [SleepRecord] {
         let context = persistenceController.viewContext
 
         return try await context.perform {
@@ -249,11 +278,7 @@ final class SleepLocalDataSource {
             // 실제 앱에서는 페이징 구현 권장
             request.fetchLimit = Self.maxFetchLimit
 
-            let results = try context.fetch(request)
-
-            // 📚 학습 포인트: Collection Transformation
-            // map을 사용하여 배열 전체를 변환
-            return try self.sleepRecordMapper.toDomain(results)
+            return try context.fetch(request)
         }
     }
 
@@ -266,9 +291,9 @@ final class SleepLocalDataSource {
     /// - Parameters:
     ///   - startDate: 조회 시작 날짜 (inclusive)
     ///   - endDate: 조회 종료 날짜 (inclusive)
-    /// - Returns: 기간 내 수면 기록 데이터 배열 (날짜 오름차순)
+    /// - Returns: 기간 내 SleepRecord Core Data 엔티티 배열 (날짜 오름차순)
     /// - Throws: 조회 실패 시 에러
-    func fetch(from startDate: Date, to endDate: Date) async throws -> [Bodii.SleepRecord] {
+    func fetch(from startDate: Date, to endDate: Date) async throws -> [SleepRecord] {
         let context = persistenceController.viewContext
 
         return try await context.perform {
@@ -296,9 +321,7 @@ final class SleepLocalDataSource {
             // 차트는 시간순으로 표시하므로 오름차순 정렬
             request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
 
-            let results = try context.fetch(request)
-
-            return try self.sleepRecordMapper.toDomain(results)
+            return try context.fetch(request)
         }
     }
 
@@ -308,9 +331,9 @@ final class SleepLocalDataSource {
     /// - 자주 사용되는 패턴을 간단히 표현
     ///
     /// - Parameter days: 조회할 일수 (예: 7, 30, 90)
-    /// - Returns: 최근 N일간의 수면 기록 데이터 배열 (날짜 오름차순)
+    /// - Returns: 최근 N일간의 SleepRecord Core Data 엔티티 배열 (날짜 오름차순)
     /// - Throws: 조회 실패 시 에러
-    func fetchRecent(days: Int) async throws -> [Bodii.SleepRecord] {
+    func fetchRecent(days: Int) async throws -> [SleepRecord] {
         // 📚 학습 포인트: Date Calculation
         // 현재 시간에서 N일 전 계산
         let endDate = Date()
@@ -334,17 +357,26 @@ final class SleepLocalDataSource {
     /// - DailyLog도 함께 업데이트
     /// - 성능: <0.2초 (단일 레코드 업데이트)
     ///
-    /// - Parameter sleepRecord: 수정할 수면 기록 데이터 (ID 포함)
-    /// - Returns: 수정된 수면 기록 데이터
+    /// - Parameters:
+    ///   - id: 수정할 기록의 ID
+    ///   - date: 새로운 날짜
+    ///   - duration: 새로운 수면 시간 (분)
+    ///   - status: 새로운 수면 상태
+    /// - Returns: 수정된 SleepRecord Core Data 엔티티
     /// - Throws: 수정 실패 시 에러
-    func update(sleepRecord: Bodii.SleepRecord) async throws -> Bodii.SleepRecord {
+    func update(
+        id: UUID,
+        date: Date,
+        duration: Int32,
+        status: SleepStatus
+    ) async throws -> SleepRecord {
         let context = persistenceController.newBackgroundContext()
 
         return try await context.perform {
             // 📚 학습 포인트: Fetch Before Update
             // 업데이트할 엔티티를 먼저 조회
             let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
-            request.predicate = NSPredicate(format: "id == %@", sleepRecord.id as CVarArg)
+            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
             request.fetchLimit = 1
 
             let results = try context.fetch(request)
@@ -353,7 +385,7 @@ final class SleepLocalDataSource {
                 throw NSError(
                     domain: "SleepLocalDataSource",
                     code: 1004,
-                    userInfo: [NSLocalizedDescriptionKey: "수정할 기록을 찾을 수 없습니다 (ID: \(sleepRecord.id))"]
+                    userInfo: [NSLocalizedDescriptionKey: "수정할 기록을 찾을 수 없습니다 (ID: \(id))"]
                 )
             }
 
@@ -363,14 +395,13 @@ final class SleepLocalDataSource {
 
             // 📚 학습 포인트: 02:00 Boundary Logic
             // DateUtils.getLogicalDate를 사용하여 논리적 날짜 계산
-            let logicalDate = DateUtils.getLogicalDate(for: sleepRecord.date)
+            let logicalDate = DateUtils.getLogicalDate(for: date)
 
-            var adjustedSleepRecord = sleepRecord
-            adjustedSleepRecord.date = logicalDate
-
-            // 📚 학습 포인트: Update Entity
-            // Mapper의 updateEntity 메서드 사용
-            self.sleepRecordMapper.updateEntity(sleepRecordEntity, from: adjustedSleepRecord)
+            // 📚 학습 포인트: Update Entity 직접 수정
+            sleepRecordEntity.date = logicalDate
+            sleepRecordEntity.duration = duration
+            sleepRecordEntity.status = self.sleepRecordMapper.int16FromStatus(status)
+            sleepRecordEntity.updatedAt = Date()
 
             // 📚 학습 포인트: Update DailyLog for Both Dates
             // 날짜가 변경되었다면 이전 날짜의 DailyLog에서 수면 데이터 제거
@@ -386,15 +417,111 @@ final class SleepLocalDataSource {
             // 새로운 날짜의 DailyLog 업데이트
             try self.updateDailyLog(
                 for: logicalDate,
-                duration: sleepRecord.duration,
-                status: sleepRecord.status,
+                duration: duration,
+                status: status,
                 context: context
             )
 
             try context.save()
 
-            return try self.sleepRecordMapper.toDomain(sleepRecordEntity)
+            return sleepRecordEntity
         }
+    }
+
+    /// 기존 SleepRecord 엔티티를 저장합니다 (Repository에서 호출).
+    /// 📚 학습 포인트: Entity Save Pattern
+    /// - 이미 생성된 SleepRecord 엔티티를 저장
+    /// - ID가 있으면 업데이트, 없으면 새로 생성
+    ///
+    /// - Parameter sleepRecord: 저장할 SleepRecord Core Data 엔티티
+    /// - Returns: 저장된 SleepRecord Core Data 엔티티
+    /// - Throws: 저장 실패 시 에러
+    func save(sleepRecord: SleepRecord) async throws -> SleepRecord {
+        let context = persistenceController.newBackgroundContext()
+
+        return try await context.perform {
+            // SleepRecord의 속성을 사용하여 저장
+            let date = sleepRecord.date ?? Date()
+            let duration = sleepRecord.duration
+            let statusValue = sleepRecord.status
+            let status = SleepStatus(rawValue: statusValue) ?? .soso
+
+            // 기존 레코드가 있는지 확인
+            if let id = sleepRecord.id {
+                let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+                request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+                request.fetchLimit = 1
+
+                if let existingRecord = try context.fetch(request).first {
+                    // 업데이트
+                    let logicalDate = DateUtils.getLogicalDate(for: date)
+                    existingRecord.date = logicalDate
+                    existingRecord.duration = duration
+                    existingRecord.status = statusValue
+                    existingRecord.updatedAt = Date()
+
+                    try self.updateDailyLog(
+                        for: logicalDate,
+                        duration: duration,
+                        status: status,
+                        context: context
+                    )
+
+                    try context.save()
+                    return existingRecord
+                }
+            }
+
+            // 새로 생성
+            let logicalDate = DateUtils.getLogicalDate(for: date)
+            let newRecord = SleepRecord(context: context)
+            newRecord.id = sleepRecord.id ?? UUID()
+            newRecord.date = logicalDate
+            newRecord.duration = duration
+            newRecord.status = statusValue
+            newRecord.healthKitId = sleepRecord.healthKitId
+            newRecord.createdAt = Date()
+            newRecord.updatedAt = Date()
+
+            try self.updateDailyLog(
+                for: logicalDate,
+                duration: duration,
+                status: status,
+                context: context
+            )
+
+            try context.save()
+            return newRecord
+        }
+    }
+
+    /// SleepRecord 엔티티를 업데이트합니다 (Repository에서 호출).
+    /// 📚 학습 포인트: Entity Update Pattern
+    /// - SleepRecord 엔티티의 속성을 사용하여 업데이트
+    ///
+    /// - Parameter sleepRecord: 업데이트할 SleepRecord Core Data 엔티티
+    /// - Returns: 업데이트된 SleepRecord Core Data 엔티티
+    /// - Throws: 업데이트 실패 시 에러
+    func update(sleepRecord: SleepRecord) async throws -> SleepRecord {
+        guard let id = sleepRecord.id else {
+            throw NSError(
+                domain: "SleepLocalDataSource",
+                code: 1007,
+                userInfo: [NSLocalizedDescriptionKey: "수정할 기록의 ID가 없습니다"]
+            )
+        }
+
+        let date = sleepRecord.date ?? Date()
+        let duration = sleepRecord.duration
+        let statusValue = sleepRecord.status
+        let status = SleepStatus(rawValue: statusValue) ?? .soso
+
+        return try await update(
+            id: id,
+            date: date,
+            duration: duration,
+            status: status
+        )
     }
 
     // MARK: - Delete
@@ -486,8 +613,8 @@ final class SleepLocalDataSource {
             let dailyLogs = try context.fetch(dailyLogRequest)
 
             for dailyLog in dailyLogs {
-                dailyLog.sleepDuration = nil
-                dailyLog.sleepStatus = nil
+                dailyLog.sleepDuration = 0
+                dailyLog.sleepStatus = 0
             }
 
             try context.save()
@@ -564,17 +691,17 @@ final class SleepLocalDataSource {
         }
 
         // 📚 학습 포인트: Update Sleep Data
-        // nil이면 제거, 값이 있으면 업데이트
+        // nil이면 0으로 설정, 값이 있으면 업데이트
         if let duration = duration {
             dailyLog.sleepDuration = duration
         } else {
-            dailyLog.sleepDuration = nil
+            dailyLog.sleepDuration = 0
         }
 
         if let status = status {
             dailyLog.sleepStatus = status.rawValue
         } else {
-            dailyLog.sleepStatus = nil
+            dailyLog.sleepStatus = 0
         }
 
         dailyLog.updatedAt = Date()
@@ -588,7 +715,7 @@ final class SleepLocalDataSource {
 /// Local Data Source의 역할:
 /// - Repository와 Core Data 사이의 추상화 레이어
 /// - Core Data 특화된 작업 수행 (NSFetchRequest, NSManagedObjectContext 등)
-/// - Mapper를 활용하여 Domain Entity와 Core Data Entity 변환
+/// - Core Data SleepRecord 엔티티를 직접 사용
 /// - 성능 최적화 (백그라운드 컨텍스트, 인덱스 활용 등)
 ///
 /// 주요 특징:
@@ -625,17 +752,12 @@ final class SleepLocalDataSource {
 /// ```swift
 /// let dataSource = SleepLocalDataSource()
 ///
-/// // 저장
-/// let sleepRecord = Bodii.SleepRecord(
-///     id: UUID(),
-///     userId: user.id,
+/// // 저장 (Core Data 엔티티 반환)
+/// let saved = try await dataSource.save(
 ///     date: Date(),
 ///     duration: 420,
-///     status: .good,
-///     createdAt: Date(),
-///     updatedAt: Date()
+///     status: .good
 /// )
-/// let saved = try await dataSource.save(sleepRecord: sleepRecord)
 ///
 /// // 조회
 /// let latest = try await dataSource.fetchLatest()
@@ -643,13 +765,15 @@ final class SleepLocalDataSource {
 /// let forDate = try await dataSource.fetch(for: Date())
 ///
 /// // 업데이트
-/// var updated = saved
-/// updated.duration = 450
-/// updated.status = .excellent
-/// try await dataSource.update(sleepRecord: updated)
+/// let updated = try await dataSource.update(
+///     id: saved.id!,
+///     date: Date(),
+///     duration: 450,
+///     status: .excellent
+/// )
 ///
 /// // 삭제
-/// try await dataSource.delete(by: saved.id)
+/// try await dataSource.delete(by: saved.id!)
 /// ```
 ///
 /// 💡 실무 팁:

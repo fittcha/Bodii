@@ -195,7 +195,7 @@ final class HealthKitSyncService {
         // 시작 날짜 계산 (현재 시각에서 N일 전)
         let calendar = Calendar.current
         guard let startDate = calendar.date(byAdding: .day, value: -days, to: Date()) else {
-            throw HealthKitError.invalidDateRange(message: "Failed to calculate start date for \(days) days ago")
+            throw HealthKitError.invalidDateRange(message: "시작 날짜 계산 실패")
         }
 
         print("🔄 Starting full sync for last \(days) days (since \(startDate))")

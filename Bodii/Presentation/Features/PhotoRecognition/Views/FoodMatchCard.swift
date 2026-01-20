@@ -72,7 +72,7 @@ struct FoodMatchCard: View {
                 VStack(alignment: .leading, spacing: 6) {
                     // 음식 이름과 신뢰도
                     HStack(spacing: 8) {
-                        Text(match.food.name)
+                        Text(match.food.name ?? "알 수 없는 음식")
                             .font(.body)
                             .fontWeight(.medium)
                             .foregroundColor(.primary)
@@ -117,9 +117,9 @@ struct FoodMatchCard: View {
 
                         // 매크로 미리보기 (P/C/F)
                         HStack(spacing: 6) {
-                            macroPreview("P", value: match.food.protein, color: .orange)
-                            macroPreview("C", value: match.food.carbohydrates, color: .blue)
-                            macroPreview("F", value: match.food.fat, color: .purple)
+                            macroPreview("P", value: match.food.protein?.decimalValue ?? Decimal(0), color: .orange)
+                            macroPreview("C", value: match.food.carbohydrates?.decimalValue ?? Decimal(0), color: .blue)
+                            macroPreview("F", value: match.food.fat?.decimalValue ?? Decimal(0), color: .purple)
                         }
                     }
                 }
@@ -199,7 +199,8 @@ struct FoodMatchCard: View {
 
     /// 1회 제공량 텍스트
     private var servingSizeText: String {
-        let sizeString = formattedDecimal(match.food.servingSize)
+        let size = match.food.servingSize?.decimalValue ?? Decimal(100)
+        let sizeString = formattedDecimal(size)
 
         if let unit = match.food.servingUnit {
             return "\(unit) (\(sizeString)g)"
@@ -255,17 +256,14 @@ struct FoodMatchCard: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
-    Text("FoodMatchCard Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
-}
-// MARK: - Preview
-// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
-// TODO: PreviewHelpers를 사용한 Preview 구현 필요
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// FoodMatch는 Core Data Food 엔티티를 참조하므로 직접 초기화 불가
+// VisionLabel도 mid 파라미터가 필요하며 구조가 복잡함
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-#Preview {
+#Preview("Placeholder") {
     Text("FoodMatchCard Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
+        .background(Color(.systemGroupedBackground))
 }

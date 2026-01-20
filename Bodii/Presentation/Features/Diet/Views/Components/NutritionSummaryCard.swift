@@ -135,9 +135,9 @@ struct NutritionSummaryCard: View {
             HStack(spacing: 20) {
                 // 매크로 차트
                 MacroRatioChart(
-                    carbsRatio: dailyLog.carbsRatio,
-                    proteinRatio: dailyLog.proteinRatio,
-                    fatRatio: dailyLog.fatRatio,
+                    carbsRatio: dailyLog.carbsRatio as Decimal?,
+                    proteinRatio: dailyLog.proteinRatio as Decimal?,
+                    fatRatio: dailyLog.fatRatio as Decimal?,
                     size: 100
                 )
 
@@ -145,22 +145,22 @@ struct NutritionSummaryCard: View {
                 VStack(spacing: 8) {
                     macroItem(
                         name: "탄수화물",
-                        amount: dailyLog.totalCarbs,
-                        ratio: dailyLog.carbsRatio,
+                        amount: (dailyLog.totalCarbs as? Decimal) ?? Decimal.zero,
+                        ratio: dailyLog.carbsRatio as Decimal?,
                         color: .blue
                     )
 
                     macroItem(
                         name: "단백질",
-                        amount: dailyLog.totalProtein,
-                        ratio: dailyLog.proteinRatio,
+                        amount: (dailyLog.totalProtein as? Decimal) ?? Decimal.zero,
+                        ratio: dailyLog.proteinRatio as Decimal?,
                         color: .orange
                     )
 
                     macroItem(
                         name: "지방",
-                        amount: dailyLog.totalFat,
-                        ratio: dailyLog.fatRatio,
+                        amount: (dailyLog.totalFat as? Decimal) ?? Decimal.zero,
+                        ratio: dailyLog.fatRatio as Decimal?,
                         color: .purple
                     )
                 }
@@ -259,17 +259,13 @@ struct NutritionSummaryCard: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
-    Text("NutritionSummaryCard Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
-}
-// MARK: - Preview
-// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
-// TODO: PreviewHelpers를 사용한 Preview 구현 필요
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// DailyLog는 Core Data 엔티티이므로 struct처럼 초기화 불가
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-#Preview {
+#Preview("Placeholder") {
     Text("NutritionSummaryCard Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
+        .background(Color(.systemGroupedBackground))
 }

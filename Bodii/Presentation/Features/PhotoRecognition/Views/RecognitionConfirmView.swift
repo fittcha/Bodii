@@ -438,7 +438,7 @@ struct RecognitionConfirmView: View {
             // 음식 정보
             VStack(alignment: .leading, spacing: 6) {
                 // 음식 이름
-                Text(item.match.food.name)
+                Text(item.match.food.name ?? "음식")
                     .font(.body)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
@@ -570,7 +570,7 @@ struct RecognitionConfirmView: View {
 
     /// 총 칼로리
     private var totalCalories: Int {
-        selectedItems.reduce(0) { $0 + Int($1.calculatedCalories) ?? 0 }
+        selectedItems.reduce(0) { $0 + (Int($1.calculatedCalories) ?? 0) }
     }
 
     /// 총 탄수화물
@@ -656,8 +656,13 @@ struct RecognitionConfirmView: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
+// 📚 학습 포인트: Core Data 의존성 Preview 제한
+// FoodMatch는 Core Data Food 엔티티를 참조
+// MockPhotoRecognitionViewModel 타입 호환성 필요
+// TODO: Phase 7에서 Preview용 Mock 완성
+
+#Preview("Placeholder") {
     Text("RecognitionConfirmView Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }

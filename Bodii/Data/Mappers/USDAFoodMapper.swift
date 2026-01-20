@@ -10,6 +10,7 @@
 // 💡 Java 비교: 식약처 매퍼보다 더 복잡한 변환 로직 (배열 검색 + 단위 변환)
 
 import Foundation
+import CoreData
 
 /// USDA API DTO를 Food 도메인 엔티티로 변환하는 매퍼
 ///
@@ -62,7 +63,7 @@ struct USDAFoodMapper {
     ///     print("Invalid data: \(field)")
     /// }
     /// ```
-    func toDomain(from dto: USDAFoodDTO) throws -> Food {
+    func toDomain(from dto: USDAFoodDTO, context: NSManagedObjectContext) throws -> Food {
         // 필수 필드 검증
         guard !dto.description.isEmpty else {
             throw MappingError.missingRequiredField("description")
@@ -110,24 +111,24 @@ struct USDAFoodMapper {
         // 제공량 단위 처리
         let servingUnit = parseServingUnit(from: dto)
 
-        // Food 엔티티 생성
-        return Food(
-            id: UUID(),
-            name: dto.description.trimmingCharacters(in: .whitespaces),
-            calories: calories,
-            carbohydrates: carbohydrates,
-            protein: protein,
-            fat: fat,
-            sodium: sodium,
-            fiber: fiber,
-            sugar: sugar,
-            servingSize: servingSize,
-            servingUnit: servingUnit,
-            source: .usda,
-            apiCode: String(dto.fdcId),
-            createdByUserId: nil,
-            createdAt: Date()
-        )
+        // Food Core Data 엔티티 생성
+        let food = Food(context: context)
+        food.id = UUID()
+        food.name = dto.description.trimmingCharacters(in: .whitespaces)
+        food.calories = calories
+        food.carbohydrates = NSDecimalNumber(decimal: carbohydrates)
+        food.protein = NSDecimalNumber(decimal: protein)
+        food.fat = NSDecimalNumber(decimal: fat)
+        food.sodium = sodium.map { NSDecimalNumber(decimal: $0) }
+        food.fiber = fiber.map { NSDecimalNumber(decimal: $0) }
+        food.sugar = sugar.map { NSDecimalNumber(decimal: $0) }
+        food.servingSize = NSDecimalNumber(decimal: servingSize)
+        food.servingUnit = servingUnit
+        food.source = FoodSource.usda.rawValue
+        food.apiCode = String(dto.fdcId)
+        food.createdAt = Date()
+
+        return food
     }
 
     // MARK: - Helper Methods
@@ -333,12 +334,12 @@ extension USDAFoodMapper {
     /// - Example:
     /// ```swift
     /// let dtos: [USDAFoodDTO] = [...]
-    /// let foods = mapper.toDomainArray(from: dtos)
+    /// let foods = mapper.toDomainArray(from: dtos, context: context)
     /// // 일부 DTO가 잘못되어도 유효한 Food만 반환됨
     /// ```
-    func toDomainArray(from dtos: [USDAFoodDTO]) -> [Food] {
+    func toDomainArray(from dtos: [USDAFoodDTO], context: NSManagedObjectContext) -> [Food] {
         dtos.compactMap { dto in
-            try? toDomain(from: dto)
+            try? toDomain(from: dto, context: context)
         }
     }
 }

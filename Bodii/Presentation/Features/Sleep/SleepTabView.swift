@@ -107,7 +107,7 @@ struct SleepTabView: View {
             // 수면 기록 추가 시트
             .sheet(isPresented: $showInputSheet) {
                 SleepInputSheet(
-                    viewModel: container.makeSleepInputViewModel(),
+                    viewModel: container.makeSleepInputViewModel(userId: UserProfile.sample.id),
                     canSkip: true,
                     onSkip: nil
                 )
@@ -223,6 +223,7 @@ fileprivate struct SleepHistoryContentView: View {
         .sheet(item: $viewModel.recordToEdit) { record in
             SleepInputSheet(
                 viewModel: container.makeSleepInputViewModel(
+                    userId: UserProfile.sample.id,
                     defaultHours: Int(record.duration / 60),
                     defaultMinutes: Int(record.duration % 60)
                 ),

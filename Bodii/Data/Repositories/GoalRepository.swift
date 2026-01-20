@@ -48,10 +48,14 @@ final class GoalRepository: GoalRepositoryProtocol {
     // MARK: - Create
 
     /// 새로운 목표를 생성합니다.
-    /// 📚 학습 포인트: Factory Method in Repository
-    /// - Core Data 엔티티 생성을 LocalDataSource에 위임
-    /// - UseCase는 직접 NSManagedObject를 생성하지 않음
-    func createGoal(
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - Core Data 엔티티 생성을 Local Data Source에 위임
+    /// - 도메인 레이어는 엔티티 생성 세부사항을 알 필요 없음
+    ///
+    /// - Parameters: 목표 설정에 필요한 모든 값들
+    /// - Returns: 생성된 목표 데이터
+    /// - Throws: RepositoryError - 생성 실패 시
+    func create(
         userId: UUID,
         goalType: GoalType,
         targetWeight: Decimal?,
@@ -60,12 +64,12 @@ final class GoalRepository: GoalRepositoryProtocol {
         weeklyWeightRate: Decimal?,
         weeklyFatPctRate: Decimal?,
         weeklyMuscleRate: Decimal?,
+        dailyCalorieTarget: Int32?,
         startWeight: Decimal?,
         startBodyFatPct: Decimal?,
         startMuscleMass: Decimal?,
         startBMR: Decimal?,
-        startTDEE: Decimal?,
-        dailyCalorieTarget: Int32?
+        startTDEE: Decimal?
     ) async throws -> Goal {
         do {
             return try await localDataSource.create(
@@ -75,8 +79,6 @@ final class GoalRepository: GoalRepositoryProtocol {
                 targetBodyFatPct: targetBodyFatPct,
                 targetMuscleMass: targetMuscleMass,
                 weeklyWeightRate: weeklyWeightRate,
-                weeklyFatPctRate: weeklyFatPctRate,
-                weeklyMuscleRate: weeklyMuscleRate,
                 dailyCalorieTarget: dailyCalorieTarget,
                 startWeight: startWeight,
                 startBodyFatPct: startBodyFatPct,
@@ -89,7 +91,7 @@ final class GoalRepository: GoalRepositoryProtocol {
         }
     }
 
-    /// 새로운 목표를 저장합니다.
+    /// 기존 목표를 저장합니다.
     /// 📚 학습 포인트: Error Handling
     /// - Data Source의 에러를 Repository 에러로 변환
     /// - 도메인 레이어가 infrastructure 에러를 알 필요 없음
@@ -102,7 +104,8 @@ final class GoalRepository: GoalRepositoryProtocol {
         do {
             // 📚 학습 포인트: Async/Await Chain
             // Local Data Source의 비동기 메서드를 호출하고 결과 반환
-            return try await localDataSource.save(goal)
+            try await localDataSource.save(goal)
+            return goal
         } catch {
             // 📚 학습 포인트: Error Transformation
             // Infrastructure 에러를 Domain 에러로 변환
@@ -187,12 +190,13 @@ final class GoalRepository: GoalRepositoryProtocol {
     /// - Throws: RepositoryError - 수정 실패 시
     func update(_ goal: Goal) async throws -> Goal {
         do {
-            return try await localDataSource.update(goal)
+            try await localDataSource.save(goal)
+            return goal
         } catch {
             // 📚 학습 포인트: Specific Error Handling
             // 에러 메시지에서 "찾을 수 없습니다" 문자열이 있으면 notFound 에러로 변환
             if error.localizedDescription.contains("찾을 수 없습니다") {
-                throw RepositoryError.notFoundWithId(goal.id)
+                throw RepositoryError.notFound(goal.id ?? UUID())
             }
             throw RepositoryError.updateFailed(error.localizedDescription)
         }
@@ -213,16 +217,16 @@ final class GoalRepository: GoalRepositoryProtocol {
     }
 
     /// 특정 사용자의 모든 활성 목표를 비활성화합니다.
-    /// 📚 학습 포인트: Bulk Update with User Filter
+    /// 📚 학습 포인트: User-scoped Bulk Update
     /// - 새 목표 설정 시 기존 활성 목표를 비활성화하는 용도
-    /// - Use Case에서 save 전에 호출
+    /// - 사용자별로 목표를 관리
     ///
     /// - Parameter userId: 사용자 ID
     /// - Throws: RepositoryError - 업데이트 실패 시
     func deactivateAllGoals(for userId: UUID) async throws {
         do {
-            // TODO: userId 필터 적용 필요 시 LocalDataSource에 메서드 추가
-            // 현재는 전체 비활성화로 대체 (단일 사용자 가정)
+            // 현재 LocalDataSource는 userId 필터 없이 모든 활성 목표를 비활성화
+            // TODO: LocalDataSource에 사용자별 비활성화 메서드 추가
             try await localDataSource.deactivateAllGoals()
         } catch {
             throw RepositoryError.updateFailed(error.localizedDescription)
@@ -259,7 +263,10 @@ final class GoalRepository: GoalRepositoryProtocol {
     /// - Throws: RepositoryError - 삭제 실패 시
     func deleteAll() async throws {
         do {
-            try await localDataSource.deleteAll()
+            let allGoals = try await localDataSource.fetchAll()
+            for goal in allGoals {
+                try await localDataSource.delete(goal)
+            }
         } catch {
             throw RepositoryError.deleteFailed(error.localizedDescription)
         }

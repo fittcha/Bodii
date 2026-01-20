@@ -350,20 +350,22 @@ final class GoalProgressViewModel: ObservableObject {
     func getWeightChartData() -> [ChartDataPoint]? {
         guard let goal = currentGoal,
               let body = currentBody,
-              let startWeight = goal.startWeight,
-              let targetWeight = goal.targetWeight,
-              let currentWeight = body.weight else {
+              let startWeight = goal.startWeight?.decimalValue,
+              let targetWeight = goal.targetWeight?.decimalValue,
+              let createdAt = goal.createdAt else {
             return nil
         }
 
+        let currentWeight = body.weight
+
         return [
             ChartDataPoint(
-                date: goal.createdAt,
+                date: createdAt,
                 value: startWeight,
                 label: "시작"
             ),
             ChartDataPoint(
-                date: body.measuredAt,
+                date: body.date,
                 value: currentWeight,
                 label: "현재"
             ),
@@ -381,20 +383,22 @@ final class GoalProgressViewModel: ObservableObject {
     func getBodyFatChartData() -> [ChartDataPoint]? {
         guard let goal = currentGoal,
               let body = currentBody,
-              let startBodyFat = goal.startBodyFatPct,
-              let targetBodyFat = goal.targetBodyFatPct,
-              let currentBodyFat = body.bodyFatPercent else {
+              let startBodyFat = goal.startBodyFatPct?.decimalValue,
+              let targetBodyFat = goal.targetBodyFatPct?.decimalValue,
+              let createdAt = goal.createdAt else {
             return nil
         }
 
+        let currentBodyFat = body.bodyFatPercent
+
         return [
             ChartDataPoint(
-                date: goal.createdAt,
+                date: createdAt,
                 value: startBodyFat,
                 label: "시작"
             ),
             ChartDataPoint(
-                date: body.measuredAt,
+                date: body.date,
                 value: currentBodyFat,
                 label: "현재"
             ),
@@ -412,20 +416,22 @@ final class GoalProgressViewModel: ObservableObject {
     func getMuscleChartData() -> [ChartDataPoint]? {
         guard let goal = currentGoal,
               let body = currentBody,
-              let startMuscle = goal.startMuscleMass,
-              let targetMuscle = goal.targetMuscleMass,
-              let currentMuscle = body.muscleMass else {
+              let startMuscle = goal.startMuscleMass?.decimalValue,
+              let targetMuscle = goal.targetMuscleMass?.decimalValue,
+              let createdAt = goal.createdAt else {
             return nil
         }
 
+        let currentMuscle = body.muscleMass
+
         return [
             ChartDataPoint(
-                date: goal.createdAt,
+                date: createdAt,
                 value: startMuscle,
                 label: "시작"
             ),
             ChartDataPoint(
-                date: body.measuredAt,
+                date: body.date,
                 value: currentMuscle,
                 label: "현재"
             ),
@@ -552,7 +558,7 @@ final class GoalProgressViewModel: ObservableObject {
 ///
 /// 📚 학습 포인트: Chart Data Model
 /// - Swift Charts에서 사용하기 위한 데이터 구조
-struct ChartDataPoint: Identifiable {
+struct ChartDataPoint: Identifiable, Equatable {
     /// 고유 식별자
     let id = UUID()
 
@@ -564,6 +570,12 @@ struct ChartDataPoint: Identifiable {
 
     /// 레이블 (시작, 현재, 목표 등)
     let label: String
+
+    // MARK: - Equatable
+
+    static func == (lhs: ChartDataPoint, rhs: ChartDataPoint) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 // MARK: - Preview Support

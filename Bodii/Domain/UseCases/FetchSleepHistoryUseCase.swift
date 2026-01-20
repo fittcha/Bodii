@@ -10,6 +10,7 @@
 // 💡 Java 비교: Service layer의 조회 메서드와 유사하지만 더 세분화됨
 
 import Foundation
+import CoreData
 
 // MARK: - FetchSleepHistoryUseCase
 
@@ -114,7 +115,7 @@ struct FetchSleepHistoryUseCase {
         /// 차트나 통계 표시에 사용
         /// - Returns: [SleepStatus: 개수]
         var statusDistribution: [SleepStatus: Int] {
-            Dictionary(grouping: records) { $0.status }
+            Dictionary(grouping: records) { SleepStatus(rawValue: $0.status) ?? .soso }
                 .mapValues { $0.count }
         }
 
@@ -283,7 +284,7 @@ struct FetchSleepHistoryUseCase {
         // Step 2: 날짜 내림차순 정렬 (최신순)
         // 📚 학습 포인트: Sorting
         // UI 리스트는 최신 기록을 먼저 표시
-        let sortedRecords = records.sorted { $0.date > $1.date }
+        let sortedRecords = records.sorted { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }
 
         // Step 3: 결과 반환
         return Output(
@@ -352,38 +353,41 @@ extension FetchSleepHistoryUseCase {
     /// 샘플 입력 - 최근 30일
     static let sampleInputMonth = Input(mode: .recent(days: 30))
 
+    /// Preview용 context
+    private static var previewContext: NSManagedObjectContext {
+        PersistenceController.preview.container.viewContext
+    }
+
     /// 샘플 출력 - 7일 데이터
     static func sampleOutput() -> Output {
         let now = Date()
-        let records = [
-            SleepRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: now,
-                duration: 420, // 7시간
-                status: .good,
-                createdAt: now,
-                updatedAt: now
-            ),
-            SleepRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Calendar.current.date(byAdding: .day, value: -1, to: now)!,
-                duration: 480, // 8시간
-                status: .excellent,
-                createdAt: now,
-                updatedAt: now
-            ),
-            SleepRecord(
-                id: UUID(),
-                userId: UUID(),
-                date: Calendar.current.date(byAdding: .day, value: -2, to: now)!,
-                duration: 360, // 6시간
-                status: .soso,
-                createdAt: now,
-                updatedAt: now
-            )
-        ]
+        let context = previewContext
+
+        let record1 = SleepRecord(context: context)
+        record1.id = UUID()
+        record1.date = now
+        record1.duration = 420 // 7시간
+        record1.status = Int16(SleepStatus.good.rawValue)
+        record1.createdAt = now
+        record1.updatedAt = now
+
+        let record2 = SleepRecord(context: context)
+        record2.id = UUID()
+        record2.date = Calendar.current.date(byAdding: .day, value: -1, to: now)!
+        record2.duration = 480 // 8시간
+        record2.status = Int16(SleepStatus.excellent.rawValue)
+        record2.createdAt = now
+        record2.updatedAt = now
+
+        let record3 = SleepRecord(context: context)
+        record3.id = UUID()
+        record3.date = Calendar.current.date(byAdding: .day, value: -2, to: now)!
+        record3.duration = 360 // 6시간
+        record3.status = Int16(SleepStatus.soso.rawValue)
+        record3.createdAt = now
+        record3.updatedAt = now
+
+        let records = [record1, record2, record3]
 
         let startDate = Calendar.current.date(byAdding: .day, value: -7, to: now)!
         let dateRange = startDate...now

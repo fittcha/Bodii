@@ -50,7 +50,7 @@ struct FoodRecordRow: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     // 음식 이름
-                    Text(food.name)
+                    Text(food.name ?? "")
                         .font(.body)
                         .foregroundColor(.primary)
 
@@ -80,14 +80,14 @@ struct FoodRecordRow: View {
         }
         .buttonStyle(PlainButtonStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(food.name), \(quantityText), \(foodRecord.calculatedCalories)킬로칼로리")
+        .accessibilityLabel("\(food.name ?? ""), \(quantityText), \(foodRecord.calculatedCalories)킬로칼로리")
         .accessibilityHint("두 번 탭하여 수정, 왼쪽으로 스와이프하여 삭제")
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(role: .destructive, action: onDelete) {
                 Label("삭제", systemImage: "trash")
             }
             .accessibilityLabel("삭제")
-            .accessibilityHint("\(food.name)을(를) 식단에서 삭제합니다")
+            .accessibilityHint("\(food.name ?? "")을(를) 식단에서 삭제합니다")
         }
     }
 
@@ -103,9 +103,11 @@ struct FoodRecordRow: View {
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 1
 
-        let quantityString = formatter.string(from: foodRecord.quantity as NSDecimalNumber) ?? "0"
+        let quantityNumber = foodRecord.quantity ?? NSDecimalNumber.zero
+        let quantityString = formatter.string(from: quantityNumber) ?? "0"
 
-        switch foodRecord.quantityUnit {
+        let unitValue = QuantityUnit(rawValue: foodRecord.quantityUnit) ?? .serving
+        switch unitValue {
         case .serving:
             return "\(quantityString)인분"
         case .grams:
@@ -118,8 +120,12 @@ struct FoodRecordRow: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// FoodRecord, Food는 Core Data 엔티티이므로 직접 초기화 불가
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
+
+#Preview("Placeholder") {
     Text("FoodRecordRow Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }

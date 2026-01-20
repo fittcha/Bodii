@@ -524,8 +524,12 @@ private enum ViewState {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
+// 📚 학습 포인트: Core Data 의존성 Preview 제한
+// MockPhotoRecognitionViewModel은 PhotoRecognitionViewModel 프로토콜을 구현해야 함
+// TODO: Phase 7에서 Preview용 Mock 구현 완성
+
+#Preview("Placeholder") {
     Text("PhotoCaptureSheetView Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }

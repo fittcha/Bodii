@@ -717,13 +717,18 @@ extension WeightTrendChart {
     }
 }
 
-// Preview는 복잡한 표현식으로 인해 임시 비활성화
-// TODO: 표현식을 분리하여 Preview 구현 필요
-
-#Preview("Weight Trend Chart") {
-    Text("WeightTrendChart Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+#Preview("30일 데이터") {
+    // 📚 학습 포인트: 복잡한 표현식 단순화
+    // Swift 컴파일러는 복잡한 인라인 표현식에서 타입 체크 시간이 오래 걸림
+    // 별도 함수로 분리하여 해결
+    ScrollView {
+        WeightTrendChart(
+            dataPoints: FetchBodyTrendsUseCase.sampleOutput().dataPoints,
+            goalWeight: Decimal(70.0),
+            period: .month
+        )
+        .padding()
+    }
 }
 
 // MARK: - Documentation

@@ -661,17 +661,172 @@ struct GoalSettingView: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
-    Text("GoalSettingView Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
-}
-// MARK: - Preview
-// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
-// TODO: PreviewHelpers를 사용한 Preview 구현 필요
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// Goal은 Core Data 엔티티이므로 struct처럼 초기화 불가
+// MockSetGoalUseCase에서 Core Data Goal을 반환해야 함
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-#Preview {
+#Preview("Placeholder") {
     Text("GoalSettingView Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }
+
+// MARK: - Learning Notes
+
+/// ## Complex Multi-Target Form Pattern
+///
+/// 여러 개의 독립적인 목표를 설정할 수 있는 복잡한 폼 UI 구현 패턴입니다.
+///
+/// ### 주요 구성 요소
+///
+/// 1. **Goal Type Selector**:
+///    - Picker with Segmented Style
+///    - 3가지 목표 유형 선택 (감량/유지/증량)
+///
+/// 2. **Multi-Target Toggles**:
+///    - 각 목표를 독립적으로 활성화/비활성화
+///    - 체중, 체지방률, 근육량 목표 선택
+///
+/// 3. **Conditional Input Fields**:
+///    - 토글이 활성화된 경우에만 입력 필드 표시
+///    - 애니메이션으로 자연스러운 전환
+///
+/// 4. **Real-time Validation**:
+///    - 입력값 변경 시 즉시 검증
+///    - 필드별 에러 메시지 표시
+///
+/// 5. **Estimated Completion Preview**:
+///    - 입력값 기반 예상 달성일 자동 계산
+///    - 실시간 업데이트
+///
+/// ### Toggle-based Conditional Form Pattern
+///
+/// **Toggle Header with Content**:
+/// ```swift
+/// VStack(alignment: .leading, spacing: 12) {
+///     // 토글 헤더
+///     HStack {
+///         sectionHeader(title: "체중 목표", icon: "scalemass")
+///         Spacer()
+///         Toggle("", isOn: $viewModel.isWeightEnabled)
+///             .labelsHidden()
+///     }
+///
+///     // 조건부 콘텐츠
+///     if viewModel.isWeightEnabled {
+///         // 입력 필드들
+///     }
+/// }
+/// .animation(.easeInOut(duration: 0.2), value: viewModel.isWeightEnabled)
+/// ```
+///
+/// **애니메이션 적용**:
+/// - `transition(.opacity.combined(with: .move(edge: .top)))`: 페이드 + 슬라이드 효과
+/// - `animation(.easeInOut, value: isEnabled)`: 토글 상태 변경 시 애니메이션
+///
+/// ### Real-time Preview Pattern
+///
+/// **ViewModel의 Computed Property**:
+/// ```swift
+/// var estimatedCompletionDate: Date? {
+///     // 활성화된 모든 목표의 달성일 계산
+///     // 가장 늦은 날짜 반환
+/// }
+/// ```
+///
+/// **View의 자동 업데이트**:
+/// ```swift
+/// if let completionDate = viewModel.estimatedCompletionDate {
+///     Text(completionDate, format: .dateTime.year().month().day())
+///         .font(.system(size: 32, weight: .bold))
+/// }
+/// ```
+///
+/// @StateObject 덕분에:
+/// - targetWeightInput 변경 → estimatedCompletionDate 재계산 → View 업데이트
+/// - weeklyWeightRateInput 변경 → estimatedCompletionDate 재계산 → View 업데이트
+///
+/// ### Validation Error Display Pattern
+///
+/// **Field-level Validation**:
+/// ```swift
+/// TextField("목표 체중 (kg)", text: $viewModel.targetWeightInput)
+///     .keyboardType(.decimalPad)
+///
+/// if let error = viewModel.validationErrors.targetWeight {
+///     HStack {
+///         Image(systemName: "exclamationmark.triangle.fill")
+///         Text(error)
+///     }
+///     .foregroundStyle(.orange)
+/// }
+/// ```
+///
+/// **General Validation**:
+/// ```swift
+/// if let generalError = viewModel.validationErrors.general {
+///     validationErrorLabel(generalError)
+/// }
+/// ```
+///
+/// ### Form Submission Pattern
+///
+/// **Save Button with Loading State**:
+/// ```swift
+/// Button(action: {
+///     isCalorieFocused = false  // 키보드 숨기기
+///     Task { await viewModel.save() }
+/// }) {
+///     HStack {
+///         if viewModel.isSaving {
+///             ProgressView().tint(.white)
+///         } else {
+///             Image(systemName: "checkmark.circle.fill")
+///         }
+///         Text(viewModel.isSaving ? "저장 중..." : "목표 저장")
+///     }
+/// }
+/// .disabled(!viewModel.canSave)
+/// ```
+///
+/// **Success Callback**:
+/// ```swift
+/// .onChange(of: viewModel.isSaveSuccess) { _, success in
+///     if success {
+///         onSaveSuccess?()
+///         dismiss()
+///     }
+/// }
+/// ```
+///
+/// ### Best Practices
+///
+/// 1. **Section-based Organization**:
+///    - 각 목표를 독립적인 섹션으로 분리
+///    - 명확한 시각적 구분
+///
+/// 2. **Progressive Disclosure**:
+///    - 토글로 필요한 입력만 표시
+///    - 복잡도 감소
+///
+/// 3. **Real-time Feedback**:
+///    - 예상 달성일 즉시 계산
+///    - 입력값 검증 즉시 표시
+///
+/// 4. **Clear Visual Hierarchy**:
+///    - 섹션 헤더로 명확한 구분
+///    - 아이콘으로 시각적 단서 제공
+///
+/// 5. **Keyboard Management**:
+///    - @FocusState로 키보드 제어
+///    - 저장 시 키보드 자동 숨김
+///
+/// 6. **Accessibility**:
+///    - Toggle labels hidden but accessible
+///    - Semantic colors for errors
+///
+/// 7. **Consistent Styling**:
+///    - 모든 입력 필드 동일한 스타일
+///    - 권장 범위 힌트 일관된 위치
+///

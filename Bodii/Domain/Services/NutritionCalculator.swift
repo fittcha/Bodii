@@ -204,6 +204,12 @@ enum NutritionCalculator {
         unit: QuantityUnit
     ) -> NutritionValues {
         // Food의 영양소는 servingSize 기준
+        // Core Data NSDecimalNumber? → Decimal 변환
+        let servingSize = food.servingSize?.decimalValue ?? Decimal(100)
+        let carbohydrates = food.carbohydrates?.decimalValue ?? Decimal(0)
+        let proteinValue = food.protein?.decimalValue ?? Decimal(0)
+        let fatValue = food.fat?.decimalValue ?? Decimal(0)
+
         let multiplier: Decimal
 
         switch unit {
@@ -215,14 +221,18 @@ enum NutritionCalculator {
         case .grams:
             // 그램 단위: quantity는 그램 수, servingSize로 나누어 인분 수 계산
             // 예) quantity=105g, servingSize=210g → 0.5인분
-            multiplier = quantity / food.servingSize
+            guard servingSize > 0 else {
+                return NutritionValues(calories: 0, carbs: 0, protein: 0, fat: 0)
+            }
+            multiplier = quantity / servingSize
         }
 
         // 영양소 계산 (비례)
-        let calories = Int32((Decimal(food.calories) * multiplier).rounded())
-        let carbs = food.carbohydrates * multiplier
-        let protein = food.protein * multiplier
-        let fat = food.fat * multiplier
+        let caloriesDecimal = Decimal(food.calories) * multiplier
+        let calories = Int32(NSDecimalNumber(decimal: caloriesDecimal).intValue)
+        let carbs = carbohydrates * multiplier
+        let protein = proteinValue * multiplier
+        let fat = fatValue * multiplier
 
         return NutritionValues(
             calories: calories,
@@ -232,52 +242,13 @@ enum NutritionCalculator {
         )
     }
 
-    /// Food 정보와 섭취량을 기반으로 확장된 영양소 값을 계산합니다.
-    ///
-    /// FoodWithQuantity에서 사용하는 메서드입니다.
-    /// calculateNutrition과 동일하지만 나트륨, 식이섬유, 당류도 포함합니다.
-    ///
-    /// - Parameters:
-    ///   - from: 음식 정보
-    ///   - quantity: 섭취량 (unit에 따라 인분 또는 그램)
-    ///   - unit: 섭취량 단위
-    /// - Returns: 계산된 영양소 값 (확장)
+    /// FoodWithQuantity에서 사용하는 calculate 메서드 (calculateNutrition의 별칭)
     static func calculate(
         from food: Food,
         quantity: Decimal,
         unit: QuantityUnit
-    ) -> CalculatedNutrition {
-        // Food의 영양소는 servingSize 기준
-        let multiplier: Decimal
-
-        switch unit {
-        case .serving:
-            multiplier = quantity
-        case .grams:
-            let servingSize = food.servingSize as Decimal? ?? Decimal(100)
-            multiplier = servingSize > 0 ? quantity / servingSize : Decimal(0)
-        }
-
-        // 영양소 계산 (비례)
-        let calories = Int32((Decimal(food.calories) * multiplier).rounded0)
-        let carbohydrates = (food.carbohydrates as Decimal? ?? Decimal(0)) * multiplier
-        let protein = (food.protein as Decimal? ?? Decimal(0)) * multiplier
-        let fat = (food.fat as Decimal? ?? Decimal(0)) * multiplier
-
-        // Optional 영양소 계산
-        let sodium: Decimal? = (food.sodium as Decimal?).map { $0 * multiplier }
-        let fiber: Decimal? = (food.fiber as Decimal?).map { $0 * multiplier }
-        let sugar: Decimal? = (food.sugar as Decimal?).map { $0 * multiplier }
-
-        return CalculatedNutrition(
-            calories: calories,
-            carbohydrates: carbohydrates,
-            protein: protein,
-            fat: fat,
-            sodium: sodium,
-            fiber: fiber,
-            sugar: sugar
-        )
+    ) -> NutritionValues {
+        calculateNutrition(food: food, quantity: quantity, unit: unit)
     }
 
     // MARK: - Macro Ratio Calculation
@@ -353,9 +324,9 @@ enum NutritionCalculator {
         }
 
         // 비율 계산 (백분율)
-        let carbsRatio = (carbsCalories / totalCalories * 100).rounded(2)
-        let proteinRatio = (proteinCalories / totalCalories * 100).rounded(2)
-        let fatRatio = (fatCalories / totalCalories * 100).rounded(2)
+        let carbsRatio = (carbsCalories / totalCalories * 100).rounded(to: 2)
+        let proteinRatio = (proteinCalories / totalCalories * 100).rounded(to: 2)
+        let fatRatio = (fatCalories / totalCalories * 100).rounded(to: 2)
 
         return MacroRatios(
             carbsRatio: carbsRatio,
@@ -408,24 +379,6 @@ enum NutritionCalculator {
     }
 }
 
-// MARK: - Decimal Extensions
-
-/// Decimal 소수점 반올림을 위한 확장
-extension Decimal {
-    /// 소수점 n자리에서 반올림합니다.
-    ///
-    /// - Parameter places: 소수점 자리수
-    /// - Returns: 반올림된 Decimal 값
-    ///
-    /// - Example:
-    /// ```swift
-    /// let value = Decimal(3.14159)
-    /// let rounded = value.rounded(2)  // 3.14
-    /// ```
-    func rounded(_ places: Int = 0) -> Decimal {
-        var result = self
-        var rounded = Decimal()
-        NSDecimalRound(&rounded, &result, places, .plain)
-        return rounded
-    }
-}
+// 📚 학습 포인트: Decimal 확장 메서드 중복 방지
+// Decimal 관련 확장 메서드는 Shared/Extensions/Decimal+Extensions.swift에 정의됨
+// 해당 파일의 rounded(to:) 메서드 사용

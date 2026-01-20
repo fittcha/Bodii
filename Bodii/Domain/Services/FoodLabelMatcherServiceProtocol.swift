@@ -90,7 +90,17 @@ protocol FoodLabelMatcherServiceProtocol {
 ///     translatedKeyword: "피자"
 /// )
 /// ```
-struct FoodMatch: Identifiable {
+struct FoodMatch: Identifiable, Hashable {
+
+    // MARK: - Hashable
+
+    static func == (lhs: FoodMatch, rhs: FoodMatch) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 
     // MARK: - Properties
 
@@ -194,10 +204,3 @@ struct FoodMatch: Identifiable {
     }
 }
 
-// MARK: - Equatable
-
-extension FoodMatch: Equatable {
-    static func == (lhs: FoodMatch, rhs: FoodMatch) -> Bool {
-        return lhs.id == rhs.id
-    }
-}

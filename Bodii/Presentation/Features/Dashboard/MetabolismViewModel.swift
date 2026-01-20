@@ -156,7 +156,8 @@ class MetabolismViewModel: ObservableObject {
     /// - ±100 kcal 범위는 유지 상태로 간주
     var isCalorieMaintenance: Bool {
         guard let balance = calorieBalance else { return false }
-        return abs(balance as NSDecimalNumber).doubleValue <= 100
+        let absBalance = balance < 0 ? -balance : balance
+        return NSDecimalNumber(decimal: absBalance).doubleValue <= 100
     }
 
     /// 총 칼로리 소비량 (TDEE + 운동)

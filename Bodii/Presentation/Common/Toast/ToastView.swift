@@ -143,8 +143,8 @@ struct ToastModifier: ViewModifier {
             content
 
             // 토스트 뷰
-            if isShowing, let message = message {
-                ToastView(message: message, type: type)
+            if isShowing, let toastMessage = message {
+                ToastView(message: toastMessage, type: type)
                     .padding(.top, 8)
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .zIndex(1)
@@ -153,7 +153,7 @@ struct ToastModifier: ViewModifier {
                         DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 isShowing = false
-                                message = nil
+                                self.message = nil
                             }
                         }
                     }

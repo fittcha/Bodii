@@ -359,9 +359,9 @@ struct GoalProgressView: View {
             switch selectedTab {
             case .weight:
                 if let progress = viewModel.weightProgress,
-                   let startWeight = goal?.startWeight,
-                   let targetWeight = goal?.targetWeight,
-                   let currentWeight = body?.weight {
+                   let startWeight = goal?.startWeight as Decimal?,
+                   let targetWeight = goal?.targetWeight as Decimal?,
+                   let currentWeight = body?.weight as Decimal? {
                     goalDetailCard(
                         title: "체중 목표",
                         icon: "scalemass",
@@ -376,9 +376,9 @@ struct GoalProgressView: View {
 
             case .bodyFat:
                 if let progress = viewModel.bodyFatProgress,
-                   let startBodyFat = goal?.startBodyFatPct,
-                   let targetBodyFat = goal?.targetBodyFatPct,
-                   let currentBodyFat = body?.bodyFatPercent {
+                   let startBodyFat = goal?.startBodyFatPct as Decimal?,
+                   let targetBodyFat = goal?.targetBodyFatPct as Decimal?,
+                   let currentBodyFat = body?.bodyFatPercent as Decimal? {
                     goalDetailCard(
                         title: "체지방률 목표",
                         icon: "percent",
@@ -393,9 +393,9 @@ struct GoalProgressView: View {
 
             case .muscle:
                 if let progress = viewModel.muscleProgress,
-                   let startMuscle = goal?.startMuscleMass,
-                   let targetMuscle = goal?.targetMuscleMass,
-                   let currentMuscle = body?.muscleMass {
+                   let startMuscle = goal?.startMuscleMass as Decimal?,
+                   let targetMuscle = goal?.targetMuscleMass as Decimal?,
+                   let currentMuscle = body?.muscleMass as Decimal? {
                     goalDetailCard(
                         title: "근육량 목표",
                         icon: "figure.strengthtraining.traditional",
@@ -757,20 +757,21 @@ struct GoalProgressView: View {
     /// - Returns: 차트 데이터 포인트 배열 (시작, 현재, 목표)
     private func getChartDataPoints(for tab: GoalTab) -> [ChartDataPoint]? {
         guard let goal = viewModel.currentGoal,
-              let body = viewModel.currentBody else {
+              let body = viewModel.currentBody,
+              let startDate = goal.createdAt else {
             return nil
         }
 
+        let currentDate = Date()
+
         switch tab {
         case .weight:
-            guard let startWeight = goal.startWeight,
-                  let targetWeight = goal.targetWeight,
-                  let currentWeight = body.weight else {
+            guard let startWeight = goal.startWeight as Decimal?,
+                  let targetWeight = goal.targetWeight as Decimal? else {
                 return nil
             }
+            let currentWeight = body.weight as Decimal
 
-            let startDate = goal.createdAt
-            let currentDate = Date()
             // 예상 달성일 또는 기본값 (90일 후)
             let goalDate = viewModel.weightCompletionDate ?? Calendar.current.date(byAdding: .day, value: 90, to: startDate)!
 
@@ -781,14 +782,12 @@ struct GoalProgressView: View {
             ]
 
         case .bodyFat:
-            guard let startBodyFat = goal.startBodyFatPct,
-                  let targetBodyFat = goal.targetBodyFatPct,
-                  let currentBodyFat = body.bodyFatPercent else {
+            guard let startBodyFat = goal.startBodyFatPct as Decimal?,
+                  let targetBodyFat = goal.targetBodyFatPct as Decimal?,
+                  let currentBodyFat = body.bodyFatPercent as Decimal? else {
                 return nil
             }
 
-            let startDate = goal.createdAt
-            let currentDate = Date()
             let goalDate = viewModel.bodyFatCompletionDate ?? Calendar.current.date(byAdding: .day, value: 90, to: startDate)!
 
             return [
@@ -798,14 +797,12 @@ struct GoalProgressView: View {
             ]
 
         case .muscle:
-            guard let startMuscle = goal.startMuscleMass,
-                  let targetMuscle = goal.targetMuscleMass,
-                  let currentMuscle = body.muscleMass else {
+            guard let startMuscle = goal.startMuscleMass as Decimal?,
+                  let targetMuscle = goal.targetMuscleMass as Decimal?,
+                  let currentMuscle = body.muscleMass as Decimal? else {
                 return nil
             }
 
-            let startDate = goal.createdAt
-            let currentDate = Date()
             let goalDate = viewModel.muscleCompletionDate ?? Calendar.current.date(byAdding: .day, value: 90, to: startDate)!
 
             return [
@@ -908,17 +905,13 @@ enum GoalTab {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
-    Text("GoalProgressView Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
-}
-// MARK: - Preview
-// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
-// TODO: PreviewHelpers를 사용한 Preview 구현 필요
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// Goal, BodyCompositionEntry 등은 Core Data 엔티티이므로 struct처럼 초기화 불가
+// GoalProgressData에 Core Data Goal을 전달해야 함
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-#Preview {
+#Preview("Placeholder") {
     Text("GoalProgressView Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }

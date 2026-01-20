@@ -88,14 +88,14 @@ struct MetabolismSnapshotMapper {
 
         // 📚 학습 포인트: NSDecimalNumber → Decimal Conversion
         // Core Data의 NSDecimalNumber를 Swift의 Decimal로 변환
-        let bmr = entity.bmr ?? Decimal(0)
-        let tdee = entity.tdee ?? Decimal(0)
-        let weight = entity.weight ?? Decimal(0)
+        let bmr = entity.bmr?.decimalValue ?? Decimal(0)
+        let tdee = entity.tdee?.decimalValue ?? Decimal(0)
+        let weight = entity.weight?.decimalValue ?? Decimal(0)
 
         // 📚 학습 포인트: Field Name Mapping
         // Core Data에서는 bodyFatPct, Domain에서는 bodyFatPercent
         // 데이터베이스 네이밍과 도메인 네이밍을 분리할 수 있음
-        let bodyFatPercent = entity.bodyFatPct ?? Decimal(0)
+        let bodyFatPercent = entity.bodyFatPct?.decimalValue ?? Decimal(0)
 
         // 📚 학습 포인트: Int16 → Enum Conversion
         // Core Data의 Int16 값을 ActivityLevel enum으로 변환
@@ -146,15 +146,16 @@ struct MetabolismSnapshotMapper {
 
         // 📚 학습 포인트: Value Assignment
         // Domain entity의 값을 Core Data entity로 복사
+        // Decimal → NSDecimalNumber 변환 필요
         entity.id = domainEntity.id
         entity.date = domainEntity.date
-        entity.bmr = domainEntity.bmr
-        entity.tdee = domainEntity.tdee
-        entity.weight = domainEntity.weight
+        entity.bmr = NSDecimalNumber(decimal: domainEntity.bmr)
+        entity.tdee = NSDecimalNumber(decimal: domainEntity.tdee)
+        entity.weight = NSDecimalNumber(decimal: domainEntity.weight)
 
         // 📚 학습 포인트: Field Name Mapping
         // Domain의 bodyFatPercent를 Core Data의 bodyFatPct로 매핑
-        entity.bodyFatPct = domainEntity.bodyFatPercent
+        entity.bodyFatPct = NSDecimalNumber(decimal: domainEntity.bodyFatPercent)
 
         // 📚 학습 포인트: Enum → Int16 Conversion
         // ActivityLevel enum을 Core Data의 Int16 값으로 변환
@@ -186,10 +187,10 @@ struct MetabolismSnapshotMapper {
         // 불변(immutable) 필드와 가변(mutable) 필드 구분
 
         entity.date = domainEntity.date
-        entity.bmr = domainEntity.bmr
-        entity.tdee = domainEntity.tdee
-        entity.weight = domainEntity.weight
-        entity.bodyFatPct = domainEntity.bodyFatPercent
+        entity.bmr = NSDecimalNumber(decimal: domainEntity.bmr)
+        entity.tdee = NSDecimalNumber(decimal: domainEntity.tdee)
+        entity.weight = NSDecimalNumber(decimal: domainEntity.weight)
+        entity.bodyFatPct = NSDecimalNumber(decimal: domainEntity.bodyFatPercent)
         entity.activityLevel = domainEntity.activityLevel.rawValue
 
         // 📚 학습 포인트: Audit Trail

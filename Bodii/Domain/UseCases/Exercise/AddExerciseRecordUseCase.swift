@@ -140,24 +140,22 @@ final class AddExerciseRecordUseCase {
             weight: userWeight
         )
 
-        // 3. ExerciseRecord 엔티티 생성
-        let record = ExerciseRecord(
-            id: UUID(),
+        // 3-4. ExerciseRecord 생성 및 저장
+        let savedRecord = try await exerciseRepository.createRecord(
             userId: userId,
             date: date,
             exerciseType: exerciseType,
             duration: duration,
             intensity: intensity,
             caloriesBurned: caloriesBurned,
-            createdAt: Date()
+            note: note,
+            fromHealthKit: false,
+            healthKitId: nil
         )
-
-        // 4. ExerciseRecord 저장
-        let savedRecord = try await exerciseRepository.create(record)
 
         // 5. DailyLog 업데이트
         try await dailyLogService.addExercise(
-            date: savedRecord.date,
+            date: savedRecord.date ?? date,
             userId: userId,
             calories: savedRecord.caloriesBurned,
             duration: savedRecord.duration,

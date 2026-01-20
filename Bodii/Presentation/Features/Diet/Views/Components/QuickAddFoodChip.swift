@@ -55,8 +55,8 @@ struct QuickAddFoodChip: View {
             // 📚 학습 포인트: Tap and Long Press Gestures
             // 짧게 탭하면 즉시 추가, 길게 누르면 수량 선택
             VStack(alignment: .leading, spacing: 6) {
-                // 음식 이름
-                Text(food.name)
+                // 음식 이름 (Core Data의 name은 String?)
+                Text(food.name ?? "알 수 없는 음식")
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
@@ -117,7 +117,9 @@ struct QuickAddFoodChip: View {
         if let unit = food.servingUnit {
             return unit
         } else {
-            let sizeString = formattedDecimal(food.servingSize)
+            // servingSize는 NSDecimalNumber? 이므로 .decimalValue로 변환
+            let sizeDecimal = food.servingSize?.decimalValue ?? Decimal(100)
+            let sizeString = formattedDecimal(sizeDecimal)
             return "\(sizeString)g"
         }
     }
@@ -141,17 +143,12 @@ struct QuickAddFoodChip: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview {
-    Text("QuickAddFoodChip Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
-}
-// MARK: - Preview
-// Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
-// TODO: PreviewHelpers를 사용한 Preview 구현 필요
+// 📚 학습 포인트: Core Data 엔티티 Preview 제한
+// Food는 Core Data 엔티티이므로 직접 초기화 불가
+// TODO: Phase 7에서 Preview용 Core Data context helper 구현
 
-#Preview {
+#Preview("Placeholder") {
     Text("QuickAddFoodChip Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }

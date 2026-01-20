@@ -240,7 +240,72 @@ struct BodyCompositionStatistics: Codable, Equatable {
     }
 }
 
-// RepositoryError는 Shared/Errors/RepositoryError.swift에 정의됨
+// MARK: - Error
+
+/// Repository 작업 중 발생할 수 있는 에러
+/// 📚 학습 포인트: Domain Error
+/// - 도메인 레이어의 에러 정의
+/// - Infrastructure 에러를 도메인 에러로 변환
+/// 💡 Java 비교: Custom Exception과 유사
+enum RepositoryError: Error, LocalizedError {
+    /// 저장 실패
+    case saveFailed(String)
+
+    /// 조회 실패
+    case fetchFailed(String)
+
+    /// 업데이트 실패
+    case updateFailed(String)
+
+    /// 삭제 실패
+    case deleteFailed(String)
+
+    /// 데이터를 찾을 수 없음
+    case notFound(UUID)
+
+    /// 유효하지 않은 입력
+    case invalidInput(String)
+
+    /// 유효하지 않은 데이터
+    case invalidData(String)
+
+    /// 성능 타임아웃 (0.5초 초과)
+    case timeout
+
+    /// Core Data Context가 해제됨
+    case contextDeallocated
+
+    /// 알 수 없는 에러
+    case unknown(Error)
+
+    /// 에러 설명 (사용자에게 표시할 메시지)
+    /// 📚 학습 포인트: LocalizedError Protocol
+    /// errorDescription을 구현하여 사용자 친화적인 에러 메시지 제공
+    var errorDescription: String? {
+        switch self {
+        case .saveFailed(let message):
+            return "저장 실패: \(message)"
+        case .fetchFailed(let message):
+            return "조회 실패: \(message)"
+        case .updateFailed(let message):
+            return "수정 실패: \(message)"
+        case .deleteFailed(let message):
+            return "삭제 실패: \(message)"
+        case .notFound(let id):
+            return "데이터를 찾을 수 없습니다 (ID: \(id))"
+        case .invalidInput(let message):
+            return "유효하지 않은 입력: \(message)"
+        case .invalidData(let message):
+            return "유효하지 않은 데이터: \(message)"
+        case .timeout:
+            return "작업 시간이 초과되었습니다 (성능 요구사항: 0.5초 이내)"
+        case .contextDeallocated:
+            return "Core Data Context가 해제되었습니다"
+        case .unknown(let error):
+            return "알 수 없는 에러: \(error.localizedDescription)"
+        }
+    }
+}
 
 // MARK: - Documentation
 

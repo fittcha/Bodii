@@ -319,7 +319,11 @@ enum Formatters {
     /// ```
     static func servingSize(_ value: Decimal) -> String {
         // If it's a whole number, format with 0 decimals
-        if value.truncatingRemainder(dividingBy: 1) == 0 {
+        // Decimal doesn't have truncatingRemainder, so we check if it's a whole number
+        var rounded = Decimal()
+        var mutableValue = value
+        NSDecimalRound(&rounded, &mutableValue, 0, .plain)
+        if value == rounded {
             return value.formatted0
         }
         // Otherwise, format with 1 decimal

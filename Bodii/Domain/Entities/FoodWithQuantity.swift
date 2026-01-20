@@ -91,7 +91,7 @@ struct FoodWithQuantity {
     /// print(nutrition.calories)
     /// print(nutrition.protein)
     /// ```
-    var calculatedNutrition: CalculatedNutrition {
+    var calculatedNutrition: NutritionValues {
         NutritionCalculator.calculate(
             from: food,
             quantity: quantity,
@@ -110,7 +110,7 @@ struct FoodWithQuantity {
     ///
     /// 섭취량에 비례하여 계산된 탄수화물입니다.
     var calculatedCarbohydrates: Decimal {
-        calculatedNutrition.carbohydrates
+        calculatedNutrition.carbs
     }
 
     /// 계산된 단백질 (g)
@@ -127,25 +127,42 @@ struct FoodWithQuantity {
         calculatedNutrition.fat
     }
 
+    // MARK: - Extended Nutrition (직접 계산)
+
+    /// 섭취량 배수 계산
+    private var multiplier: Decimal {
+        switch unit {
+        case .serving:
+            return quantity
+        case .grams:
+            let servingSize = food.servingSize?.decimalValue ?? Decimal(100)
+            guard servingSize > 0 else { return Decimal(0) }
+            return quantity / servingSize
+        }
+    }
+
     /// 계산된 나트륨 (mg)
     ///
     /// 섭취량에 비례하여 계산된 나트륨입니다. (optional)
     var calculatedSodium: Decimal? {
-        calculatedNutrition.sodium
+        guard let sodium = food.sodium?.decimalValue else { return nil }
+        return sodium * multiplier
     }
 
     /// 계산된 식이섬유 (g)
     ///
     /// 섭취량에 비례하여 계산된 식이섬유입니다. (optional)
     var calculatedFiber: Decimal? {
-        calculatedNutrition.fiber
+        guard let fiber = food.fiber?.decimalValue else { return nil }
+        return fiber * multiplier
     }
 
     /// 계산된 당류 (g)
     ///
     /// 섭취량에 비례하여 계산된 당류입니다. (optional)
     var calculatedSugar: Decimal? {
-        calculatedNutrition.sugar
+        guard let sugar = food.sugar?.decimalValue else { return nil }
+        return sugar * multiplier
     }
 
     // MARK: - Macro Ratios
@@ -154,21 +171,36 @@ struct FoodWithQuantity {
     ///
     /// 칼로리 기준 탄수화물 비율입니다.
     var carbsPercentage: Decimal {
-        calculatedNutrition.carbsPercentage
+        let macros = NutritionCalculator.calculateMacroRatios(
+            carbs: calculatedCarbohydrates,
+            protein: calculatedProtein,
+            fat: calculatedFat
+        )
+        return macros.carbsRatio ?? Decimal(0)
     }
 
     /// 단백질 비율 (%)
     ///
     /// 칼로리 기준 단백질 비율입니다.
     var proteinPercentage: Decimal {
-        calculatedNutrition.proteinPercentage
+        let macros = NutritionCalculator.calculateMacroRatios(
+            carbs: calculatedCarbohydrates,
+            protein: calculatedProtein,
+            fat: calculatedFat
+        )
+        return macros.proteinRatio ?? Decimal(0)
     }
 
     /// 지방 비율 (%)
     ///
     /// 칼로리 기준 지방 비율입니다.
     var fatPercentage: Decimal {
-        calculatedNutrition.fatPercentage
+        let macros = NutritionCalculator.calculateMacroRatios(
+            carbs: calculatedCarbohydrates,
+            protein: calculatedProtein,
+            fat: calculatedFat
+        )
+        return macros.fatRatio ?? Decimal(0)
     }
 }
 
@@ -216,80 +248,22 @@ extension FoodWithQuantity {
     }
 }
 
-// MARK: - FoodRecord Conversion
+// MARK: - FoodRecord Data
+// 📚 학습 포인트: Core Data Managed Object Creation
+// FoodRecord는 Core Data 엔티티이므로 struct 초기화 방식을 사용할 수 없습니다.
+// FoodRecord 생성은 FoodRecordRepository를 통해 수행해야 합니다.
+//
+// 이 extension은 FoodRecord 생성에 필요한 데이터를 제공합니다.
 
 extension FoodWithQuantity {
-    /// FoodRecord로 변환합니다
+    /// FoodRecord 생성에 필요한 데이터를 반환합니다
     ///
-    /// 사용자가 섭취량을 확정하고 식단에 기록할 때 사용합니다.
+    /// Core Data FoodRecord 생성을 위해 Repository에서 사용할 데이터입니다.
     ///
-    /// - Parameters:
-    ///   - userId: 사용자 ID
-    ///   - date: 섭취 일자
-    ///   - mealType: 끼니 종류
-    /// - Returns: 생성된 FoodRecord
-    ///
-    /// Example:
-    /// ```swift
-    /// let record = foodWithQuantity.toFoodRecord(
-    ///     userId: currentUser.id,
-    ///     date: Date(),
-    ///     mealType: .breakfast
-    /// )
-    /// // 아침 식사로 기록
-    /// ```
-    func toFoodRecord(
-        userId: UUID,
-        date: Date,
-        mealType: MealType
-    ) -> FoodRecord {
+    /// - Returns: (calories: Int32, carbs: Decimal, protein: Decimal, fat: Decimal)
+    var foodRecordNutritionData: (calories: Int32, carbs: Decimal, protein: Decimal, fat: Decimal) {
         let nutrition = calculatedNutrition
-
-        return FoodRecord(
-            id: UUID(),
-            userId: userId,
-            foodId: food.id,
-            date: date,
-            mealType: mealType,
-            quantity: quantity,
-            quantityUnit: unit,
-            calculatedCalories: nutrition.calories,
-            calculatedCarbs: nutrition.carbohydrates,
-            calculatedProtein: nutrition.protein,
-            calculatedFat: nutrition.fat,
-            createdAt: Date()
-        )
-    }
-
-    /// CalculatedNutrition을 사용하여 FoodRecord로 변환합니다 (대안 방법)
-    ///
-    /// calculatedNutrition의 toFoodRecord() 메서드를 활용합니다.
-    ///
-    /// - Parameters:
-    ///   - userId: 사용자 ID
-    ///   - date: 섭취 일자
-    ///   - mealType: 끼니 종류
-    /// - Returns: 생성된 FoodRecord
-    ///
-    /// Example:
-    /// ```swift
-    /// let record = foodWithQuantity.toFoodRecordUsingCalculation(
-    ///     userId: currentUser.id,
-    ///     date: Date(),
-    ///     mealType: .lunch
-    /// )
-    /// ```
-    func toFoodRecordUsingCalculation(
-        userId: UUID,
-        date: Date,
-        mealType: MealType
-    ) -> FoodRecord {
-        calculatedNutrition.toFoodRecord(
-            foodId: food.id,
-            userId: userId,
-            date: date,
-            mealType: mealType
-        )
+        return (nutrition.calories, nutrition.carbs, nutrition.protein, nutrition.fat)
     }
 }
 
@@ -301,7 +275,7 @@ extension FoodWithQuantity: Identifiable {
     /// Food의 ID를 사용합니다.
     /// - Note: 같은 Food라도 quantity가 다르면 다른 인스턴스이지만, ID는 동일합니다.
     var id: UUID {
-        food.id
+        food.id ?? UUID()
     }
 }
 
@@ -406,6 +380,6 @@ extension FoodWithQuantity {
     /// // "현미밥 1.5인분"
     /// ```
     var fullDisplay: String {
-        "\(food.name) \(quantityDisplay)"
+        "\(food.name ?? "알 수 없는 음식") \(quantityDisplay)"
     }
 }

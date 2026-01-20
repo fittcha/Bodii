@@ -51,7 +51,7 @@ struct ExerciseInputView: View {
     // 💡 Java 비교: ViewModel + LiveData 자동 구독과 유사
 
     /// 뷰 모델
-    var viewModel: ExerciseInputViewModel
+    @Bindable var viewModel: ExerciseInputViewModel
 
     /// 저장 성공 시 실행할 콜백
     let onSaveSuccess: (() -> Void)?
@@ -438,10 +438,15 @@ struct ExerciseInputView: View {
 // Preview는 Core Data 엔티티 초기화 문제로 인해 임시 비활성화
 // TODO: PreviewHelpers를 사용한 Preview 구현 필요
 
-#Preview("Exercise Input") {
+// 📚 학습 포인트: Core Data 엔티티와 Protocol 제약
+// AddExerciseRecordUseCase가 ExerciseRecord (Core Data 엔티티)를 반환하므로
+// Mock 구현에서 직접 초기화 불가
+// TODO: Phase 7에서 UseCase를 protocol 기반으로 리팩토링 후 수정
+
+#Preview("Placeholder") {
     Text("ExerciseInputView Preview")
-        .font(.title)
-        .foregroundColor(.secondary)
+        .font(.headline)
+        .padding()
 }
 
 // MARK: - Learning Notes

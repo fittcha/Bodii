@@ -53,6 +53,35 @@ protocol ExerciseRecordRepository {
     /// - Returns: 생성된 운동 기록 (저장소에서 할당된 ID 포함)
     func create(_ record: ExerciseRecord) async throws -> ExerciseRecord
 
+    /// 입력 데이터로 새로운 운동 기록을 생성합니다.
+    ///
+    /// Core Data context 내에서 새로운 ExerciseRecord 엔티티를 생성하고 저장합니다.
+    /// UseCase에서 Core Data 엔티티를 직접 생성하지 않고 이 메서드를 사용합니다.
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - date: 운동일
+    ///   - exerciseType: 운동 종류
+    ///   - duration: 운동 시간 (분)
+    ///   - intensity: 운동 강도
+    ///   - caloriesBurned: 소모 칼로리 (kcal)
+    ///   - note: 메모 (선택사항)
+    ///   - fromHealthKit: HealthKit에서 가져온 데이터인지 여부
+    ///   - healthKitId: HealthKit 원본 데이터 ID (선택사항)
+    /// - Throws: 데이터 저장 실패 시 에러
+    /// - Returns: 생성된 운동 기록
+    func createRecord(
+        userId: UUID,
+        date: Date,
+        exerciseType: ExerciseType,
+        duration: Int32,
+        intensity: Intensity,
+        caloriesBurned: Int32,
+        note: String?,
+        fromHealthKit: Bool,
+        healthKitId: String?
+    ) async throws -> ExerciseRecord
+
     // MARK: - Read
 
     /// ID로 운동 기록을 조회합니다.

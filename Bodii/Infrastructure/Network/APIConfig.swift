@@ -49,11 +49,14 @@ protocol APIConfigProtocol {
     /// Vision API URL 생성
     func buildVisionURL(endpoint: VisionEndpoint) -> URL?
 
-    /// KFDA API URL 생성
-    func buildKFDAURL(endpoint: APIConfig.KFDAEndpoint) -> URL?
-
     /// USDA API URL 생성
     func buildUSDAURL(endpoint: APIConfig.USDAEndpoint) -> URL?
+
+    /// Gemini API URL 생성
+    func buildGeminiURL(endpoint: APIConfig.GeminiEndpoint) -> URL?
+
+    /// KFDA API URL 생성
+    func buildKFDAURL(endpoint: APIConfig.KFDAEndpoint) -> URL?
 }
 
 /// Vision API 엔드포인트
@@ -654,18 +657,26 @@ final class MockAPIConfig: APIConfigProtocol {
         return components?.url
     }
 
-    func buildKFDAURL(endpoint: APIConfig.KFDAEndpoint) -> URL? {
-        var components = URLComponents(string: kfdaBaseURL + endpoint.path)
-        var queryItems = endpoint.queryItems
-        queryItems.append(URLQueryItem(name: "serviceKey", value: kfdaAPIKey))
-        components?.queryItems = queryItems
-        return components?.url
-    }
-
     func buildUSDAURL(endpoint: APIConfig.USDAEndpoint) -> URL? {
         var components = URLComponents(string: usdaBaseURL + endpoint.path)
         var queryItems = endpoint.queryItems
         queryItems.append(URLQueryItem(name: "api_key", value: usdaAPIKey))
+        components?.queryItems = queryItems
+        return components?.url
+    }
+
+    func buildGeminiURL(endpoint: APIConfig.GeminiEndpoint) -> URL? {
+        var components = URLComponents(string: geminiBaseURL + endpoint.path)
+        var queryItems = endpoint.queryItems
+        queryItems.append(URLQueryItem(name: "key", value: geminiAPIKey))
+        components?.queryItems = queryItems
+        return components?.url
+    }
+
+    func buildKFDAURL(endpoint: APIConfig.KFDAEndpoint) -> URL? {
+        var components = URLComponents(string: kfdaBaseURL + endpoint.path)
+        var queryItems = endpoint.queryItems
+        queryItems.append(URLQueryItem(name: "serviceKey", value: kfdaAPIKey))
         components?.queryItems = queryItems
         return components?.url
     }

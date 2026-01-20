@@ -1280,8 +1280,7 @@ extension HealthKitReadService {
             return .walking
 
         // MARK: Running
-        case .running,
-             .jogging:
+        case .running:
             return .running
 
         // MARK: Cycling

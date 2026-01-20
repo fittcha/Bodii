@@ -181,11 +181,11 @@ final class ExerciseInputViewModel {
         // 편집 모드일 때는 기존 운동 기록 데이터로 폼 초기화
         // 💡 Java 비교: Intent extras로 전달받은 데이터로 UI 초기화와 유사
         if let exercise = editingExercise {
-            self.selectedExerciseType = exercise.exerciseType
+            self.selectedExerciseType = ExerciseType(rawValue: exercise.exerciseType) ?? .other
             self.duration = exercise.duration
-            self.selectedIntensity = exercise.intensity
+            self.selectedIntensity = Intensity(rawValue: exercise.intensity) ?? .medium
             self.note = exercise.note ?? ""
-            self.selectedDate = exercise.date
+            self.selectedDate = exercise.date ?? Date()
         }
     }
 
@@ -235,19 +235,17 @@ final class ExerciseInputViewModel {
             // 💡 Java 비교: id != null ? update() : create() 패턴과 유사
 
             if let editingExercise = editingExercise,
-               let updateUseCase = updateExerciseRecordUseCase {
+               let updateUseCase = updateExerciseRecordUseCase,
+               let recordId = editingExercise.id {
                 // 편집 모드: UpdateExerciseRecordUseCase 호출
                 _ = try await updateUseCase.execute(
-                    recordId: editingExercise.id,
+                    recordId: recordId,
                     userId: userId,
-                    date: selectedDate,
                     exerciseType: selectedExerciseType,
                     duration: duration,
                     intensity: selectedIntensity,
                     note: note.isEmpty ? nil : note,
-                    userWeight: userWeight,
-                    userBMR: userBMR,
-                    userTDEE: userTDEE
+                    userWeight: userWeight
                 )
             } else {
                 // 추가 모드: AddExerciseRecordUseCase 호출

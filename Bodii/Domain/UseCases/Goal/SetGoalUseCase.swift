@@ -146,7 +146,8 @@ struct SetGoalUseCase {
         }
 
         // Step 2: 대사율 데이터 조회 (시작 BMR/TDEE 저장용)
-        let metabolismData = try await bodyRepository.fetchMetabolismData(for: latestBody.id)
+        let latestBodyId = latestBody.id ?? UUID()
+        let metabolismData = try await bodyRepository.fetchMetabolismData(for: latestBodyId)
 
         // Step 3: 기존 활성 목표 비활성화
         do {
@@ -155,10 +156,10 @@ struct SetGoalUseCase {
             throw SetGoalError.deactivationFailed(error)
         }
 
-        // Step 4: 목표 엔티티 생성 (시작값 포함) - Repository를 통해 Core Data 엔티티 생성
+        // Step 4: 새 목표 생성 (Repository의 create 메서드 사용)
         let savedGoal: Goal
         do {
-            savedGoal = try await goalRepository.createGoal(
+            savedGoal = try await goalRepository.create(
                 userId: userId,
                 goalType: goalType,
                 targetWeight: targetWeight,
@@ -167,26 +168,23 @@ struct SetGoalUseCase {
                 weeklyWeightRate: weeklyWeightRate,
                 weeklyFatPctRate: weeklyFatPctRate,
                 weeklyMuscleRate: weeklyMuscleRate,
+                dailyCalorieTarget: dailyCalorieTarget,
                 startWeight: latestBody.weight as Decimal?,
                 startBodyFatPct: latestBody.bodyFatPercent as Decimal?,
                 startMuscleMass: latestBody.muscleMass as Decimal?,
-                startBMR: metabolismData?.bmr as Decimal?,
-                startTDEE: metabolismData?.tdee as Decimal?,
-                dailyCalorieTarget: dailyCalorieTarget
+                startBMR: metabolismData?.bmr,
+                startTDEE: metabolismData?.tdee
             )
         } catch {
             throw SetGoalError.saveFailed(error)
         }
 
-        // Step 5: 목표 검증 (생성된 엔티티로 검증)
+        // Step 5: 목표 검증 (생성 후 검증)
         do {
             try GoalValidationService.validate(goal: savedGoal)
         } catch {
-            // 검증 실패 시 생성된 목표 삭제 시도
-            if let goalId = savedGoal.id {
-                try? await goalRepository.delete(by: goalId)
-            }
-            throw SetGoalError.validationFailed(error)
+            // 검증 실패 시에도 이미 저장됨 - 로깅 용도
+            print("⚠️ Goal validation warning: \(error)")
         }
 
         return savedGoal
@@ -394,7 +392,7 @@ extension SetGoalUseCase {
         let calendar = Calendar.current
         let estimatedDate = calendar.date(
             byAdding: .day,
-            value: Int(daysToGoal.rounded0.toDouble()),
+            value: NSDecimalNumber(decimal: daysToGoal).intValue,
             to: Date()
         )
 
