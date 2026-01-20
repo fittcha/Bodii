@@ -60,9 +60,9 @@ struct ExerciseListView: View {
     /// 사용자 체중 (kg) - 칼로리 계산에 사용
     @State private var userWeight: Decimal = 70.0
     /// 사용자 기초대사량 (kcal)
-    @State private var userBMR: Int32 = 1650
+    @State private var userBMR: Decimal = 1650
     /// 사용자 활동대사량 (kcal)
-    @State private var userTDEE: Int32 = 2310
+    @State private var userTDEE: Decimal = 2310
 
     // MARK: - Body
 
@@ -139,16 +139,17 @@ struct ExerciseListView: View {
                     exerciseToDelete = nil
                 }
                 Button("삭제", role: .destructive) {
-                    if let exercise = exerciseToDelete {
+                    if let exercise = exerciseToDelete, let exerciseId = exercise.id {
                         Task {
-                            await viewModel.deleteExercise(id: exercise.id)
+                            await viewModel.deleteExercise(id: exerciseId)
                             exerciseToDelete = nil
                         }
                     }
                 }
             } message: {
                 if let exercise = exerciseToDelete {
-                    Text("\(exercise.exerciseType.displayName) 기록을 삭제하시겠습니까?")
+                    let exerciseTypeName = ExerciseType(rawValue: exercise.exerciseType)?.displayName ?? "운동"
+                    Text("\(exerciseTypeName) 기록을 삭제하시겠습니까?")
                 }
             }
             .alert("오류", isPresented: .constant(viewModel.hasError)) {

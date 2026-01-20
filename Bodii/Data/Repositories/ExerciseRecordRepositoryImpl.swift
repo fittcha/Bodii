@@ -69,7 +69,32 @@ final class ExerciseRecordRepositoryImpl: ExerciseRecordRepository {
         // 📚 학습 포인트: Repository는 단순히 DataSource에 위임
         // 비즈니스 로직은 UseCase에서 처리하고,
         // Repository는 데이터 영속성만 담당
-        return try await localDataSource.create(record)
+        return try await localDataSource.save(record)
+    }
+
+    /// 입력 데이터로 새로운 운동 기록을 생성합니다.
+    func createRecord(
+        userId: UUID,
+        date: Date,
+        exerciseType: ExerciseType,
+        duration: Int32,
+        intensity: Intensity,
+        caloriesBurned: Int32,
+        note: String?,
+        fromHealthKit: Bool,
+        healthKitId: String?
+    ) async throws -> ExerciseRecord {
+        return try await localDataSource.createRecord(
+            userId: userId,
+            date: date,
+            exerciseType: exerciseType,
+            duration: duration,
+            intensity: intensity,
+            caloriesBurned: caloriesBurned,
+            note: note,
+            fromHealthKit: fromHealthKit,
+            healthKitId: healthKitId
+        )
     }
 
     // MARK: - Read

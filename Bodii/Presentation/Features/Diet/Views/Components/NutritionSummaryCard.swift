@@ -135,9 +135,9 @@ struct NutritionSummaryCard: View {
             HStack(spacing: 20) {
                 // 매크로 차트
                 MacroRatioChart(
-                    carbsRatio: dailyLog.carbsRatio,
-                    proteinRatio: dailyLog.proteinRatio,
-                    fatRatio: dailyLog.fatRatio,
+                    carbsRatio: dailyLog.carbsRatio as Decimal?,
+                    proteinRatio: dailyLog.proteinRatio as Decimal?,
+                    fatRatio: dailyLog.fatRatio as Decimal?,
                     size: 100
                 )
 
@@ -145,22 +145,22 @@ struct NutritionSummaryCard: View {
                 VStack(spacing: 8) {
                     macroItem(
                         name: "탄수화물",
-                        amount: dailyLog.totalCarbs,
-                        ratio: dailyLog.carbsRatio,
+                        amount: (dailyLog.totalCarbs as? Decimal) ?? Decimal.zero,
+                        ratio: dailyLog.carbsRatio as Decimal?,
                         color: .blue
                     )
 
                     macroItem(
                         name: "단백질",
-                        amount: dailyLog.totalProtein,
-                        ratio: dailyLog.proteinRatio,
+                        amount: (dailyLog.totalProtein as? Decimal) ?? Decimal.zero,
+                        ratio: dailyLog.proteinRatio as Decimal?,
                         color: .orange
                     )
 
                     macroItem(
                         name: "지방",
-                        amount: dailyLog.totalFat,
-                        ratio: dailyLog.fatRatio,
+                        amount: (dailyLog.totalFat as? Decimal) ?? Decimal.zero,
+                        ratio: dailyLog.fatRatio as Decimal?,
                         color: .purple
                     )
                 }

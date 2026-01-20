@@ -55,6 +55,50 @@ final class ExerciseRecordLocalDataSource {
 
     // MARK: - Create / Save
 
+    /// 입력 데이터로 새로운 운동 기록을 생성합니다.
+    func createRecord(
+        userId: UUID,
+        date: Date,
+        exerciseType: ExerciseType,
+        duration: Int32,
+        intensity: Intensity,
+        caloriesBurned: Int32,
+        note: String?,
+        fromHealthKit: Bool,
+        healthKitId: String?
+    ) async throws -> ExerciseRecord {
+        return try await context.perform { [weak self] in
+            guard let self = self else {
+                throw DataSourceError.contextDeallocated
+            }
+
+            // Core Data context에서 새 엔티티 생성
+            let record = ExerciseRecord(context: self.context)
+            record.id = UUID()
+            record.date = date
+            record.exerciseType = exerciseType.rawValue
+            record.duration = duration
+            record.intensity = intensity.rawValue
+            record.caloriesBurned = caloriesBurned
+            record.note = note
+            record.fromHealthKit = fromHealthKit
+            record.healthKitId = healthKitId
+            record.createdAt = Date()
+
+            // User relationship 설정
+            let userRequest: NSFetchRequest<User> = User.fetchRequest()
+            userRequest.predicate = NSPredicate(format: "id == %@", userId as CVarArg)
+            userRequest.fetchLimit = 1
+
+            if let user = try? self.context.fetch(userRequest).first {
+                record.user = user
+            }
+
+            try self.context.save()
+            return record
+        }
+    }
+
     /// 운동 기록을 저장합니다 (새로 생성하거나 업데이트).
     ///
     /// - Parameter record: 저장할 운동 기록

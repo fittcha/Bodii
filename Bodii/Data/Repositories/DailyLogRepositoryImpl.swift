@@ -119,7 +119,8 @@ final class DailyLogRepositoryImpl: DailyLogRepository {
     /// - Throws: 업데이트 실패 시 에러
     /// - Returns: 업데이트된 DailyLog
     func update(_ dailyLog: DailyLog) async throws -> DailyLog {
-        return try await localDataSource.update(dailyLog)
+        try await localDataSource.save(dailyLog)
+        return dailyLog
     }
 
     // MARK: - Exercise Updates

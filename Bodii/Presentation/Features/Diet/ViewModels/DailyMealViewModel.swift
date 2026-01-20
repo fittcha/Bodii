@@ -370,7 +370,7 @@ extension DailyMealViewModel {
 /// FoodRecord와 Food 정보를 함께 담는 헬퍼 모델
 ///
 /// UI 렌더링 시 FoodRecord의 계산된 영양소와 Food의 이름을 함께 표시하기 위해 사용합니다.
-struct FoodRecordWithFood: Identifiable {
+struct FoodRecordWithFood: Identifiable, Equatable {
     /// FoodRecord의 ID를 사용 (Core Data의 id는 optional)
     var id: UUID {
         foodRecord.id ?? UUID()
@@ -381,4 +381,10 @@ struct FoodRecordWithFood: Identifiable {
 
     /// 음식 정보
     let food: Food
+
+    // MARK: - Equatable
+
+    static func == (lhs: FoodRecordWithFood, rhs: FoodRecordWithFood) -> Bool {
+        lhs.id == rhs.id
+    }
 }

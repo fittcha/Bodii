@@ -342,7 +342,7 @@ struct BodyRecordDetailView: View {
                 Spacer()
 
                 // 활동 계수 표시
-                Text("\(String(format: "%.2f", metabolism.activityLevel.tdeeMultiplier))x")
+                Text("\(String(format: "%.2f", metabolism.activityLevel.multiplier))x")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundStyle(.purple)

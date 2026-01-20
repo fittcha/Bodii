@@ -558,7 +558,7 @@ final class GoalProgressViewModel: ObservableObject {
 ///
 /// 📚 학습 포인트: Chart Data Model
 /// - Swift Charts에서 사용하기 위한 데이터 구조
-struct ChartDataPoint: Identifiable {
+struct ChartDataPoint: Identifiable, Equatable {
     /// 고유 식별자
     let id = UUID()
 
@@ -570,6 +570,12 @@ struct ChartDataPoint: Identifiable {
 
     /// 레이블 (시작, 현재, 목표 등)
     let label: String
+
+    // MARK: - Equatable
+
+    static func == (lhs: ChartDataPoint, rhs: ChartDataPoint) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 // MARK: - Preview Support

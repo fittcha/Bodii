@@ -68,9 +68,6 @@ struct GoalTargetInputCard: View {
     /// 목표값 입력 (String - 사용자 입력 그대로)
     @Binding var targetValue: String
 
-    /// 주간 변화율 입력 (String - 사용자 입력 그대로)
-    @Binding var weeklyRate: String
-
     // 📚 학습 포인트: Field Configuration
     // 각 입력 필드의 설정 정보
 
@@ -82,6 +79,9 @@ struct GoalTargetInputCard: View {
 
     /// 목표값 레이블 (예: "목표 체중 (kg)")
     let targetLabel: String
+
+    /// 주간 변화율 입력 (String - 사용자 입력 그대로)
+    @Binding var weeklyRate: String
 
     /// 주간 변화율 단위 (예: "kg/주")
     let rateUnit: String
