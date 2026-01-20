@@ -24,6 +24,10 @@ struct BodiiApp: App {
     // Core Data의 PersistenceController를 앱 전역에서 사용
     private let persistenceController = PersistenceController.shared
 
+    // 📚 학습 포인트: App State Service
+    // 온보딩 완료 여부 등 앱 전역 상태 관리
+    @StateObject private var appState = AppStateService()
+
     // 📚 학습 포인트: @State for Background Sync
     // 백그라운드 동기화 상태 추적
     // 💡 Java 비교: Application 레벨 변수와 유사
@@ -46,20 +50,34 @@ struct BodiiApp: App {
     // iOS: 단일 윈도우, macOS: 다중 윈도우 지원
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                // 📚 학습 포인트: Environment
-                // managedObjectContext를 View 계층 전체에 주입
-                // 하위 뷰에서 @Environment(\.managedObjectContext)로 접근 가능
-                .environment(\.managedObjectContext, persistenceController.viewContext)
-                // 📚 학습 포인트: onAppear
-                // View가 화면에 나타날 때 HealthKit 백그라운드 동기화 시작
-                // 💡 Java 비교: Activity.onStart()와 유사
-                // TODO: Phase 6 - DIContainer에 HealthKit 서비스 체인 구현 후 활성화
-                // .onAppear {
-                //     Task {
-                //         await startHealthKitBackgroundSync()
-                //     }
-                // }
+            // 📚 학습 포인트: Conditional Root View
+            // 온보딩 완료 여부에 따라 다른 루트 뷰 표시
+            // - 미완료: OnboardingContainerView
+            // - 완료: ContentView (메인 탭)
+            Group {
+                if appState.isOnboardingComplete {
+                    ContentView()
+                } else {
+                    OnboardingContainerView()
+                }
+            }
+            // 📚 학습 포인트: Environment
+            // managedObjectContext를 View 계층 전체에 주입
+            // 하위 뷰에서 @Environment(\.managedObjectContext)로 접근 가능
+            .environment(\.managedObjectContext, persistenceController.viewContext)
+            // 📚 학습 포인트: EnvironmentObject
+            // AppStateService를 View 계층 전체에 주입
+            // 온보딩 완료 시 자동으로 메인 화면으로 전환
+            .environmentObject(appState)
+            // 📚 학습 포인트: onAppear
+            // View가 화면에 나타날 때 HealthKit 백그라운드 동기화 시작
+            // 💡 Java 비교: Activity.onStart()와 유사
+            // TODO: Phase 6 - DIContainer에 HealthKit 서비스 체인 구현 후 활성화
+            // .onAppear {
+            //     Task {
+            //         await startHealthKitBackgroundSync()
+            //     }
+            // }
         }
     }
 
