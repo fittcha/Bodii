@@ -20,7 +20,7 @@ enum RepositoryError: Error, LocalizedError {
     case notFoundWithId(UUID)
 
     /// 유효하지 않은 데이터 형식
-    case invalidData
+    case invalidData(String)
 
     /// 유효하지 않은 입력
     case invalidInput(String)
@@ -51,8 +51,8 @@ enum RepositoryError: Error, LocalizedError {
             return "Entity not found"
         case .notFoundWithId(let id):
             return "데이터를 찾을 수 없습니다 (ID: \(id))"
-        case .invalidData:
-            return "Invalid data format"
+        case .invalidData(let message):
+            return "유효하지 않은 데이터: \(message)"
         case .invalidInput(let message):
             return "유효하지 않은 입력: \(message)"
         case .saveFailed(let message):
