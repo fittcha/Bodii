@@ -148,49 +148,45 @@ struct SetGoalUseCase {
         // Step 2: 대사율 데이터 조회 (시작 BMR/TDEE 저장용)
         let metabolismData = try await bodyRepository.fetchMetabolismData(for: latestBody.id)
 
-        // Step 3: 목표 엔티티 생성 (시작값 포함)
-        let now = Date()
-        var goal = Goal(
-            id: UUID(),
-            userId: userId,
-            goalType: goalType,
-            targetWeight: targetWeight,
-            targetBodyFatPct: targetBodyFatPct,
-            targetMuscleMass: targetMuscleMass,
-            weeklyWeightRate: weeklyWeightRate,
-            weeklyFatPctRate: weeklyFatPctRate,
-            weeklyMuscleRate: weeklyMuscleRate,
-            startWeight: latestBody.weight,
-            startBodyFatPct: latestBody.bodyFatPercent,
-            startMuscleMass: latestBody.muscleMass,
-            startBMR: metabolismData?.bmr,
-            startTDEE: metabolismData?.tdee,
-            dailyCalorieTarget: dailyCalorieTarget,
-            isActive: true,
-            createdAt: now,
-            updatedAt: now
-        )
-
-        // Step 4: 목표 검증
-        do {
-            try GoalValidationService.validate(goal: goal)
-        } catch {
-            throw SetGoalError.validationFailed(error)
-        }
-
-        // Step 5: 기존 활성 목표 비활성화
+        // Step 3: 기존 활성 목표 비활성화
         do {
             try await goalRepository.deactivateAllGoals(for: userId)
         } catch {
             throw SetGoalError.deactivationFailed(error)
         }
 
-        // Step 6: 새 목표 저장
+        // Step 4: 목표 엔티티 생성 (시작값 포함) - Repository를 통해 Core Data 엔티티 생성
         let savedGoal: Goal
         do {
-            savedGoal = try await goalRepository.save(goal)
+            savedGoal = try await goalRepository.createGoal(
+                userId: userId,
+                goalType: goalType,
+                targetWeight: targetWeight,
+                targetBodyFatPct: targetBodyFatPct,
+                targetMuscleMass: targetMuscleMass,
+                weeklyWeightRate: weeklyWeightRate,
+                weeklyFatPctRate: weeklyFatPctRate,
+                weeklyMuscleRate: weeklyMuscleRate,
+                startWeight: latestBody.weight as Decimal?,
+                startBodyFatPct: latestBody.bodyFatPercent as Decimal?,
+                startMuscleMass: latestBody.muscleMass as Decimal?,
+                startBMR: metabolismData?.bmr as Decimal?,
+                startTDEE: metabolismData?.tdee as Decimal?,
+                dailyCalorieTarget: dailyCalorieTarget
+            )
         } catch {
             throw SetGoalError.saveFailed(error)
+        }
+
+        // Step 5: 목표 검증 (생성된 엔티티로 검증)
+        do {
+            try GoalValidationService.validate(goal: savedGoal)
+        } catch {
+            // 검증 실패 시 생성된 목표 삭제 시도
+            if let goalId = savedGoal.id {
+                try? await goalRepository.delete(by: goalId)
+            }
+            throw SetGoalError.validationFailed(error)
         }
 
         return savedGoal

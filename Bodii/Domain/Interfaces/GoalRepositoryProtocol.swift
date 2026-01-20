@@ -28,6 +28,45 @@ protocol GoalRepositoryProtocol {
 
     // MARK: - Create
 
+    /// 새로운 목표를 생성합니다.
+    /// 📚 학습 포인트: Factory Method in Repository
+    /// - Core Data 엔티티 생성을 Repository에 위임
+    /// - UseCase는 직접 NSManagedObject를 생성하지 않음
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - goalType: 목표 유형
+    ///   - targetWeight: 목표 체중 (선택사항)
+    ///   - targetBodyFatPct: 목표 체지방률 (선택사항)
+    ///   - targetMuscleMass: 목표 근육량 (선택사항)
+    ///   - weeklyWeightRate: 주간 체중 변화율 (선택사항)
+    ///   - weeklyFatPctRate: 주간 체지방률 변화율 (선택사항)
+    ///   - weeklyMuscleRate: 주간 근육량 변화율 (선택사항)
+    ///   - startWeight: 시작 체중 (선택사항)
+    ///   - startBodyFatPct: 시작 체지방률 (선택사항)
+    ///   - startMuscleMass: 시작 근육량 (선택사항)
+    ///   - startBMR: 시작 BMR (선택사항)
+    ///   - startTDEE: 시작 TDEE (선택사항)
+    ///   - dailyCalorieTarget: 일일 칼로리 목표 (선택사항)
+    /// - Returns: 생성된 목표 엔티티
+    /// - Throws: RepositoryError - 생성 실패 시
+    func createGoal(
+        userId: UUID,
+        goalType: GoalType,
+        targetWeight: Decimal?,
+        targetBodyFatPct: Decimal?,
+        targetMuscleMass: Decimal?,
+        weeklyWeightRate: Decimal?,
+        weeklyFatPctRate: Decimal?,
+        weeklyMuscleRate: Decimal?,
+        startWeight: Decimal?,
+        startBodyFatPct: Decimal?,
+        startMuscleMass: Decimal?,
+        startBMR: Decimal?,
+        startTDEE: Decimal?,
+        dailyCalorieTarget: Int32?
+    ) async throws -> Goal
+
     /// 새로운 목표를 저장합니다.
     /// 📚 학습 포인트: Async/Await
     /// - Swift 5.5+의 동시성 모델
@@ -117,6 +156,17 @@ protocol GoalRepositoryProtocol {
     ///
     /// 성능: <0.3초 (배치 업데이트)
     func deactivateAllGoals() async throws
+
+    /// 특정 사용자의 모든 활성 목표를 비활성화합니다.
+    /// 📚 학습 포인트: Bulk Update with User Filter
+    /// - 새 목표 설정 시 기존 활성 목표를 비활성화하는 용도
+    /// - Use Case에서 save 전에 호출
+    ///
+    /// - Parameter userId: 사용자 ID
+    /// - Throws: RepositoryError - 업데이트 실패 시
+    ///
+    /// 성능: <0.3초 (배치 업데이트)
+    func deactivateAllGoals(for userId: UUID) async throws
 
     // MARK: - Delete
 

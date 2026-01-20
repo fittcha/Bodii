@@ -34,6 +34,45 @@ struct NutritionValues {
     let fat: Decimal
 }
 
+/// 계산된 영양소 결과 (확장 버전)
+///
+/// FoodWithQuantity에서 사용하는 영양소 계산 결과 구조체입니다.
+/// NutritionValues보다 더 많은 영양소 정보를 포함합니다.
+///
+/// - Example:
+/// ```swift
+/// let nutrition = CalculatedNutrition(
+///     calories: 330,
+///     carbohydrates: Decimal(73.4),
+///     protein: Decimal(6.8),
+///     fat: Decimal(2.5),
+///     sodium: Decimal(10),
+///     fiber: Decimal(3.5)
+/// )
+/// ```
+struct CalculatedNutrition {
+    /// 칼로리 (kcal)
+    let calories: Int32
+
+    /// 탄수화물 (g)
+    let carbohydrates: Decimal
+
+    /// 단백질 (g)
+    let protein: Decimal
+
+    /// 지방 (g)
+    let fat: Decimal
+
+    /// 나트륨 (mg, optional)
+    let sodium: Decimal?
+
+    /// 식이섬유 (g, optional)
+    let fiber: Decimal?
+
+    /// 당류 (g, optional)
+    let sugar: Decimal?
+}
+
 /// 매크로 영양소 비율
 ///
 /// 탄수화물, 단백질, 지방의 비율을 담는 구조체입니다.
@@ -190,6 +229,54 @@ enum NutritionCalculator {
             carbs: carbs,
             protein: protein,
             fat: fat
+        )
+    }
+
+    /// Food 정보와 섭취량을 기반으로 확장된 영양소 값을 계산합니다.
+    ///
+    /// FoodWithQuantity에서 사용하는 메서드입니다.
+    /// calculateNutrition과 동일하지만 나트륨, 식이섬유, 당류도 포함합니다.
+    ///
+    /// - Parameters:
+    ///   - from: 음식 정보
+    ///   - quantity: 섭취량 (unit에 따라 인분 또는 그램)
+    ///   - unit: 섭취량 단위
+    /// - Returns: 계산된 영양소 값 (확장)
+    static func calculate(
+        from food: Food,
+        quantity: Decimal,
+        unit: QuantityUnit
+    ) -> CalculatedNutrition {
+        // Food의 영양소는 servingSize 기준
+        let multiplier: Decimal
+
+        switch unit {
+        case .serving:
+            multiplier = quantity
+        case .grams:
+            let servingSize = food.servingSize as Decimal? ?? Decimal(100)
+            multiplier = servingSize > 0 ? quantity / servingSize : Decimal(0)
+        }
+
+        // 영양소 계산 (비례)
+        let calories = Int32((Decimal(food.calories) * multiplier).rounded0)
+        let carbohydrates = (food.carbohydrates as Decimal? ?? Decimal(0)) * multiplier
+        let protein = (food.protein as Decimal? ?? Decimal(0)) * multiplier
+        let fat = (food.fat as Decimal? ?? Decimal(0)) * multiplier
+
+        // Optional 영양소 계산
+        let sodium: Decimal? = (food.sodium as Decimal?).map { $0 * multiplier }
+        let fiber: Decimal? = (food.fiber as Decimal?).map { $0 * multiplier }
+        let sugar: Decimal? = (food.sugar as Decimal?).map { $0 * multiplier }
+
+        return CalculatedNutrition(
+            calories: calories,
+            carbohydrates: carbohydrates,
+            protein: protein,
+            fat: fat,
+            sodium: sodium,
+            fiber: fiber,
+            sugar: sugar
         )
     }
 

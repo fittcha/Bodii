@@ -195,7 +195,7 @@ final class HealthKitSyncService {
         // 시작 날짜 계산 (현재 시각에서 N일 전)
         let calendar = Calendar.current
         guard let startDate = calendar.date(byAdding: .day, value: -days, to: Date()) else {
-            throw HealthKitError.invalidDateRange
+            throw HealthKitError.invalidDateRange(message: "Failed to calculate start date for \(days) days ago")
         }
 
         print("🔄 Starting full sync for last \(days) days (since \(startDate))")
@@ -695,7 +695,7 @@ final class HealthKitSyncService {
         while currentDate <= to {
             let sleepData = try await readService.fetchSleepData(for: currentDate)
 
-            if sleepData.totalDurationMinutes > 0 {
+            if let sleepData = sleepData, sleepData.totalDurationMinutes > 0 {
                 // 📚 학습 포인트: Conflict Resolution for Sleep
                 // - healthKitId를 사용하여 중복 수면 기록 건너뛰기
                 // - 수동 입력 수면이 있으면 HealthKit 임포트 건너뛰기 (수동 입력 우선)

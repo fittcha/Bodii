@@ -69,6 +69,24 @@ final class SleepRepository: SleepRepositoryProtocol {
         }
     }
 
+    func createRecord(
+        userId: UUID,
+        date: Date,
+        duration: Int32,
+        status: SleepStatus
+    ) async throws -> SleepRecord {
+        do {
+            return try await localDataSource.createRecord(
+                userId: userId,
+                date: date,
+                duration: duration,
+                status: status
+            )
+        } catch {
+            throw RepositoryError.saveFailed(error.localizedDescription)
+        }
+    }
+
     // MARK: - Read (Single)
 
     /// ID로 특정 수면 기록을 조회합니다.
@@ -187,7 +205,11 @@ final class SleepRepository: SleepRepositoryProtocol {
             // 📚 학습 포인트: Specific Error Handling
             // 에러 메시지에서 "찾을 수 없습니다" 문자열이 있으면 notFound 에러로 변환
             if error.localizedDescription.contains("찾을 수 없습니다") {
-                throw RepositoryError.notFoundWithId(sleepRecord.id)
+                if let id = sleepRecord.id {
+                    throw RepositoryError.notFoundWithId(id)
+                } else {
+                    throw RepositoryError.notFound
+                }
             }
             throw RepositoryError.updateFailed(error.localizedDescription)
         }

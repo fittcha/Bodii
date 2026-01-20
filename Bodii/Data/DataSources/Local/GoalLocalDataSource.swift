@@ -33,6 +33,8 @@ final class GoalLocalDataSource {
         targetBodyFatPct: Decimal? = nil,
         targetMuscleMass: Decimal? = nil,
         weeklyWeightRate: Decimal? = nil,
+        weeklyFatPctRate: Decimal? = nil,
+        weeklyMuscleRate: Decimal? = nil,
         dailyCalorieTarget: Int32? = nil,
         startWeight: Decimal? = nil,
         startBodyFatPct: Decimal? = nil,
@@ -52,6 +54,8 @@ final class GoalLocalDataSource {
             goal.targetBodyFatPct = targetBodyFatPct as NSDecimalNumber?
             goal.targetMuscleMass = targetMuscleMass as NSDecimalNumber?
             goal.weeklyWeightRate = weeklyWeightRate as NSDecimalNumber?
+            goal.weeklyFatPctRate = weeklyFatPctRate as NSDecimalNumber?
+            goal.weeklyMuscleRate = weeklyMuscleRate as NSDecimalNumber?
             goal.dailyCalorieTarget = dailyCalorieTarget ?? 0
             goal.startWeight = startWeight as NSDecimalNumber?
             goal.startBodyFatPct = startBodyFatPct as NSDecimalNumber?
@@ -135,12 +139,24 @@ final class GoalLocalDataSource {
     // MARK: - Update
 
     /// 목표를 저장합니다.
-    func save(_ goal: Goal) async throws {
+    func save(_ goal: Goal) async throws -> Goal {
         let context = goal.managedObjectContext ?? persistenceController.viewContext
 
-        try await context.perform {
+        return try await context.perform {
             goal.updatedAt = Date()
             try context.save()
+            return goal
+        }
+    }
+
+    /// 목표를 수정합니다.
+    func update(_ goal: Goal) async throws -> Goal {
+        let context = goal.managedObjectContext ?? persistenceController.viewContext
+
+        return try await context.perform {
+            goal.updatedAt = Date()
+            try context.save()
+            return goal
         }
     }
 
@@ -189,6 +205,22 @@ final class GoalLocalDataSource {
             }
 
             context.delete(goal)
+            try context.save()
+        }
+    }
+
+    /// 모든 목표를 삭제합니다.
+    func deleteAll() async throws {
+        let context = persistenceController.newBackgroundContext()
+
+        try await context.perform {
+            let request: NSFetchRequest<Goal> = Goal.fetchRequest()
+            let results = try context.fetch(request)
+
+            for goal in results {
+                context.delete(goal)
+            }
+
             try context.save()
         }
     }

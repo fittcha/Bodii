@@ -81,7 +81,7 @@ struct RecordSleepUseCase {
         /// 📚 학습 포인트: Convenience Property
         /// sleepRecord에서 추출한 값을 직접 접근 가능하게 함
         var status: SleepStatus {
-            sleepRecord.status
+            SleepStatus(rawValue: sleepRecord.status) ?? .good
         }
 
         /// 수면 시간 (분)
@@ -195,23 +195,10 @@ struct RecordSleepUseCase {
         // - Oversleep: > 9h (540분)
         let status = SleepStatus.from(durationMinutes: input.duration)
 
-        // Step 2: SleepRecord 도메인 엔티티 생성
-        // 📚 학습 포인트: Domain Entity Creation
-        // 계산된 status를 포함하여 저장할 엔티티 생성
-        let now = Date()
-        let sleepRecord = SleepRecord(
-            id: UUID(),
-            userId: input.userId,
-            date: input.date,
-            duration: input.duration,
-            status: status,
-            createdAt: now,
-            updatedAt: now
-        )
-
-        // Step 3: Repository를 통해 저장
+        // Step 2-3: Repository를 통해 저장
         // 📚 학습 포인트: Repository Pattern
         // 데이터 저장 세부사항을 추상화하여 Use Case는 비즈니스 로직에만 집중
+        // Core Data 엔티티는 Repository에서 생성 (UseCase는 context를 알 수 없음)
         // 📚 학습 포인트: 02:00 Boundary Logic
         // Repository/DataSource에서 자동으로 처리:
         // - 02:00 이전 입력 시 전날로 처리
@@ -223,7 +210,12 @@ struct RecordSleepUseCase {
         // - DailyLog가 없으면 자동 생성
         let savedRecord: SleepRecord
         do {
-            savedRecord = try await sleepRepository.save(sleepRecord: sleepRecord)
+            savedRecord = try await sleepRepository.createRecord(
+                userId: input.userId,
+                date: input.date,
+                duration: input.duration,
+                status: status
+            )
         } catch {
             throw RecordError.saveFailed(error)
         }
