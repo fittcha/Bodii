@@ -81,19 +81,19 @@ struct BodyMeasurementValidator {
         var errorDescription: String? {
             switch self {
             case .invalidWeight(let value):
-                return "체중은 \(formatRange(weightRange)) kg 범위여야 합니다. (입력값: \(formatDecimal(value)) kg)"
+                return "체중은 \(Self.formatRange(weightRange)) kg 범위여야 합니다. (입력값: \(Self.formatDecimal(value)) kg)"
 
             case .invalidBodyFatPercent(let value):
-                return "체지방률은 \(formatRange(bodyFatPercentRange))% 범위여야 합니다. (입력값: \(formatDecimal(value))%)"
+                return "체지방률은 \(Self.formatRange(bodyFatPercentRange))% 범위여야 합니다. (입력값: \(Self.formatDecimal(value))%)"
 
             case .invalidMuscleMass(let value):
-                return "근육량은 \(formatRange(muscleMassRange)) kg 범위여야 합니다. (입력값: \(formatDecimal(value)) kg)"
+                return "근육량은 \(Self.formatRange(muscleMassRange)) kg 범위여야 합니다. (입력값: \(Self.formatDecimal(value)) kg)"
 
             case .invalidHeight(let value):
-                return "신장은 \(formatRange(heightRange)) cm 범위여야 합니다. (입력값: \(formatDecimal(value)) cm)"
+                return "신장은 \(Self.formatRange(heightRange)) cm 범위여야 합니다. (입력값: \(Self.formatDecimal(value)) cm)"
 
             case .muscleMassExceedsWeight(let muscleMass, let weight):
-                return "근육량(\(formatDecimal(muscleMass)) kg)은 체중(\(formatDecimal(weight)) kg)보다 작아야 합니다."
+                return "근육량(\(Self.formatDecimal(muscleMass)) kg)은 체중(\(Self.formatDecimal(weight)) kg)보다 작아야 합니다."
 
             case .invalidAge(let value):
                 return "나이는 1세 이상이어야 합니다. (입력값: \(value)세)"

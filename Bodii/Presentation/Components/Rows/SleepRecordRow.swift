@@ -83,6 +83,20 @@ struct SleepRecordRow: View {
         }
     }
 
+    // MARK: - Computed Properties
+
+    /// Core Data의 Int16 status를 SleepStatus enum으로 변환
+    /// 📚 학습 포인트: Core Data Enum Conversion
+    /// - Core Data는 Int16로 저장, UI에서는 enum 사용
+    private var sleepStatus: SleepStatus {
+        SleepStatus(rawValue: record.status) ?? .soso
+    }
+
+    /// 수면 상태 표시 이름
+    private var statusDisplayName: String {
+        sleepStatus.displayName
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -90,7 +104,7 @@ struct SleepRecordRow: View {
             // 날짜 및 수면 시간 정보
             VStack(alignment: .leading, spacing: style.spacing) {
                 // 날짜
-                Text(formatDate(record.date))
+                Text(formatDate(record.date ?? Date()))
                     .font(style.dateFont)
                     .fontWeight(.medium)
                     .foregroundStyle(.primary)
@@ -108,7 +122,7 @@ struct SleepRecordRow: View {
 
                 // 상세 모드에서는 생성일시 표시
                 if style == .detailed {
-                    Text("기록: \(formatDateTime(record.createdAt))")
+                    Text("기록: \(formatDateTime(record.createdAt ?? Date()))")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }
@@ -123,7 +137,7 @@ struct SleepRecordRow: View {
         // 📚 학습 포인트: Accessibility Label for Row
         // VoiceOver가 전체 Row 정보를 한 번에 읽어줄 수 있도록 통합 레이블
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(formatDate(record.date)), 수면 시간 \(formatDuration(record.duration)), 상태 \(record.status.displayName)")
+        .accessibilityLabel("\(formatDate(record.date ?? Date())), 수면 시간 \(formatDuration(record.duration)), 상태 \(statusDisplayName)")
         .accessibilityAddTraits(.isButton)
         .accessibilityHint("두 번 탭하여 수면 기록을 편집합니다")
     }
@@ -137,11 +151,11 @@ struct SleepRecordRow: View {
         Group {
             switch style {
             case .compact:
-                SleepStatusBadge(compact: record.status)
+                SleepStatusBadge(compact: sleepStatus)
             case .default:
-                SleepStatusBadge(status: record.status)
+                SleepStatusBadge(status: sleepStatus)
             case .detailed:
-                SleepStatusBadge(large: record.status)
+                SleepStatusBadge(large: sleepStatus)
             }
         }
     }

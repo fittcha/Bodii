@@ -312,6 +312,101 @@ struct GoalProgressChart: View {
         .cornerRadius(8)
     }
 
+    // MARK: - Chart Content Builders
+
+    /// 목표선 (수평선)
+    @ChartContentBuilder
+    private var goalLineContent: some ChartContent {
+        if let goal = goalPoint {
+            let goalValue = NSDecimalNumber(decimal: goal.value).doubleValue
+            RuleMark(y: .value("목표", goalValue))
+                .foregroundStyle(metric.color.opacity(0.5))
+                .lineStyle(StrokeStyle(lineWidth: 2, dash: [8, 4]))
+        }
+    }
+
+    /// 실제 진행 라인
+    @ChartContentBuilder
+    private var actualProgressContent: some ChartContent {
+        ForEach(actualProgressPoints) { point in
+            let yValue = NSDecimalNumber(decimal: point.value).doubleValue
+            LineMark(
+                x: .value("날짜", point.date),
+                y: .value(metric.displayName, yValue)
+            )
+            .foregroundStyle(metric.color)
+            .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+            .interpolationMethod(.linear)
+        }
+    }
+
+    /// 영역 채우기
+    @ChartContentBuilder
+    private var areaFillContent: some ChartContent {
+        ForEach(actualProgressPoints) { point in
+            let yValue = NSDecimalNumber(decimal: point.value).doubleValue
+            AreaMark(
+                x: .value("날짜", point.date),
+                y: .value(metric.displayName, yValue)
+            )
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [metric.color.opacity(0.3), metric.color.opacity(0.05)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .interpolationMethod(.linear)
+        }
+    }
+
+    /// 예상 궤적 라인
+    @ChartContentBuilder
+    private var projectedLineContent: some ChartContent {
+        ForEach(projectedPoints) { point in
+            let yValue = NSDecimalNumber(decimal: point.value).doubleValue
+            LineMark(
+                x: .value("날짜", point.date),
+                y: .value(metric.displayName, yValue)
+            )
+            .foregroundStyle(metric.color.opacity(0.5))
+            .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, dash: [5, 5]))
+            .interpolationMethod(.linear)
+        }
+    }
+
+    /// 데이터 포인트 마커
+    @ChartContentBuilder
+    private var dataPointsContent: some ChartContent {
+        ForEach(dataPoints) { point in
+            let yValue = NSDecimalNumber(decimal: point.value).doubleValue
+            PointMark(
+                x: .value("날짜", point.date),
+                y: .value(metric.displayName, yValue)
+            )
+            .foregroundStyle(metric.color)
+            .symbolSize(point == startPoint ? 100 : 60)
+        }
+    }
+
+    /// 선택된 포인트 강조
+    @ChartContentBuilder
+    private var selectionContent: some ChartContent {
+        if let selected = selectedDataPoint {
+            let yValue = NSDecimalNumber(decimal: selected.value).doubleValue
+            RuleMark(x: .value("날짜", selected.date))
+                .foregroundStyle(.gray.opacity(0.3))
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+            PointMark(
+                x: .value("날짜", selected.date),
+                y: .value(metric.displayName, yValue)
+            )
+            .foregroundStyle(metric.color)
+            .symbolSize(120)
+        }
+    }
+
     /// 차트 뷰
     /// 📚 학습 포인트: Swift Charts Implementation with Goal Progress
     /// - Chart { } 블록 내에 Mark 정의
@@ -320,142 +415,12 @@ struct GoalProgressChart: View {
     /// - RuleMark: 목표선 및 마일스톤 표시
     private var chartView: some View {
         Chart {
-            // 1. 목표선 (수평선)
-            // 📚 학습 포인트: RuleMark for Goal Line
-            if let goal = goalPoint {
-                RuleMark(
-                    y: .value("목표", NSDecimalNumber(decimal: goal.value).doubleValue)
-                )
-                .foregroundStyle(metric.color.opacity(0.5))
-                .lineStyle(StrokeStyle(lineWidth: 2, dash: [8, 4])) // 긴 점선
-                .annotation(position: .top, alignment: .trailing) {
-                    Text("목표: \(formatValue(goal.value))")
-                        .font(.caption2)
-                        .foregroundStyle(metric.color)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(metric.color.opacity(0.1))
-                        .cornerRadius(6)
-                }
-            }
-
-            // 2. 마일스톤 수평선
-            // 📚 학습 포인트: Milestone Lines
-            if let start = startPoint?.value, let goal = goalPoint?.value {
-                ForEach(Milestone.allCases, id: \.self) { milestone in
-                    let milestoneValue = calculateMilestoneValue(
-                        start: start,
-                        goal: goal,
-                        percentage: milestone.percentage
-                    )
-
-                    RuleMark(
-                        y: .value("Milestone", NSDecimalNumber(decimal: milestoneValue).doubleValue)
-                    )
-                    .foregroundStyle(achievedMilestones.contains(milestone) ? Color.purple.opacity(0.3) : Color.gray.opacity(0.1))
-                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
-                    .annotation(position: .leading, alignment: .leading) {
-                        if achievedMilestones.contains(milestone) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.caption2)
-                                .foregroundStyle(.purple)
-                        }
-                    }
-                }
-            }
-
-            // 3. 실제 진행 라인 (시작 → 현재)
-            // 📚 학습 포인트: Actual Progress Line
-            ForEach(actualProgressPoints) { point in
-                LineMark(
-                    x: .value("날짜", point.date),
-                    y: .value(metric.displayName, NSDecimalNumber(decimal: point.value).doubleValue)
-                )
-                .foregroundStyle(metric.color)
-                .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
-                .interpolationMethod(.linear)
-
-                // 영역 채우기 (라인 아래 부분)
-                AreaMark(
-                    x: .value("날짜", point.date),
-                    y: .value(metric.displayName, NSDecimalNumber(decimal: point.value).doubleValue)
-                )
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [metric.color.opacity(0.3), metric.color.opacity(0.05)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .interpolationMethod(.linear)
-            }
-
-            // 4. 예상 궤적 라인 (현재 → 목표)
-            // 📚 학습 포인트: Projected Trajectory Line (Dashed)
-            ForEach(projectedPoints) { point in
-                LineMark(
-                    x: .value("날짜", point.date),
-                    y: .value(metric.displayName, NSDecimalNumber(decimal: point.value).doubleValue)
-                )
-                .foregroundStyle(metric.color.opacity(0.5))
-                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, dash: [5, 5])) // 점선
-                .interpolationMethod(.linear)
-            }
-
-            // 5. 데이터 포인트 마커
-            // 📚 학습 포인트: Point Markers
-            ForEach(dataPoints) { point in
-                PointMark(
-                    x: .value("날짜", point.date),
-                    y: .value(metric.displayName, NSDecimalNumber(decimal: point.value).doubleValue)
-                )
-                .foregroundStyle(metric.color)
-                .symbolSize(point == startPoint ? 100 : 60) // 시작점은 크게
-                .symbol {
-                    if point == startPoint {
-                        // 시작 지점 특별 표시
-                        Circle()
-                            .fill(metric.color)
-                            .strokeBorder(.white, lineWidth: 2)
-                            .overlay {
-                                Image(systemName: "flag.fill")
-                                    .font(.caption2)
-                                    .foregroundStyle(.white)
-                            }
-                    } else {
-                        Circle()
-                            .fill(metric.color)
-                    }
-                }
-                .annotation(position: .top, alignment: .center) {
-                    Text(point.label)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            // 6. 선택된 데이터 포인트 강조
-            // 📚 학습 포인트: Selection Indicator
-            if let selected = selectedDataPoint {
-                RuleMark(
-                    x: .value("날짜", selected.date)
-                )
-                .foregroundStyle(.gray.opacity(0.3))
-                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
-
-                PointMark(
-                    x: .value("날짜", selected.date),
-                    y: .value(metric.displayName, NSDecimalNumber(decimal: selected.value).doubleValue)
-                )
-                .foregroundStyle(.white)
-                .symbolSize(120)
-                .symbol {
-                    Circle()
-                        .fill(metric.color)
-                        .strokeBorder(.white, lineWidth: 3)
-                        .shadow(color: metric.color.opacity(0.3), radius: 4)
-                }
-            }
+            goalLineContent
+            areaFillContent
+            actualProgressContent
+            projectedLineContent
+            dataPointsContent
+            selectionContent
         }
         .chartXAxis {
             // 📚 학습 포인트: Custom X Axis

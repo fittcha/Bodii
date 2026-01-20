@@ -334,7 +334,7 @@ final class FoodLabelMatcherService: FoodLabelMatcherServiceProtocol {
         // 💡 정확한 이름 매칭일수록 높은 신뢰도
         let matchQuality = calculateMatchQuality(
             labelText: label.description,
-            foodName: primaryFood.name,
+            foodName: primaryFood.name ?? "",
             translations: translations
         )
         let confidence = label.score * matchQuality
@@ -501,8 +501,9 @@ final class FoodLabelMatcherService: FoodLabelMatcherServiceProtocol {
         var result: [Food] = []
 
         for food in foods {
-            if !seen.contains(food.id) {
-                seen.insert(food.id)
+            guard let foodId = food.id else { continue }
+            if !seen.contains(foodId) {
+                seen.insert(foodId)
                 result.append(food)
             }
         }

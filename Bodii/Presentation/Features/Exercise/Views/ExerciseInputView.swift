@@ -51,7 +51,7 @@ struct ExerciseInputView: View {
     // 💡 Java 비교: ViewModel + LiveData 자동 구독과 유사
 
     /// 뷰 모델
-    var viewModel: ExerciseInputViewModel
+    @Bindable var viewModel: ExerciseInputViewModel
 
     /// 저장 성공 시 실행할 콜백
     let onSaveSuccess: (() -> Void)?

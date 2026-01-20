@@ -72,10 +72,14 @@ struct MealSectionView: View {
                         foodRecord: item.foodRecord,
                         food: item.food,
                         onDelete: {
-                            onDeleteFood(item.foodRecord.id)
+                            if let id = item.foodRecord.id {
+                                onDeleteFood(id)
+                            }
                         },
                         onEdit: {
-                            onEditFood(item.foodRecord.id)
+                            if let id = item.foodRecord.id {
+                                onEditFood(id)
+                            }
                         }
                     )
                 }

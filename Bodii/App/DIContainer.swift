@@ -152,10 +152,36 @@ final class DIContainer {
         return GoalRepository(localDataSource: goalLocalDataSource)
     }()
 
+    // MARK: - Exercise Infrastructure
+
+    /// Exercise 로컬 데이터 소스
+    lazy var exerciseLocalDataSource: ExerciseRecordLocalDataSource = {
+        return ExerciseRecordLocalDataSource(context: PersistenceController.shared.container.viewContext)
+    }()
+
+    /// DailyLog 로컬 데이터 소스
+    lazy var dailyLogLocalDataSource: DailyLogLocalDataSource = {
+        return DailyLogLocalDataSource(context: PersistenceController.shared.container.viewContext)
+    }()
+
+    /// Exercise 리포지토리
+    lazy var exerciseRepository: ExerciseRecordRepository = {
+        return ExerciseRecordRepositoryImpl(localDataSource: exerciseLocalDataSource)
+    }()
+
+    /// DailyLog 리포지토리
+    lazy var dailyLogRepository: DailyLogRepository = {
+        return DailyLogRepositoryImpl(localDataSource: dailyLogLocalDataSource)
+    }()
+
+    /// DailyLog 서비스
+    lazy var dailyLogService: DailyLogService = {
+        return DailyLogService(repository: dailyLogRepository)
+    }()
+
     // TODO: Phase 3에서 추가 예정
     // - UserRepository
     // - FoodRepository
-    // - ExerciseRepository
 
     // MARK: - Use Cases
 
@@ -247,9 +273,26 @@ final class DIContainer {
         return UpdateGoalUseCase(goalRepository: goalRepository)
     }()
 
+    // MARK: - Exercise Use Cases
+
+    /// 운동 기록 추가 Use Case
+    lazy var addExerciseRecordUseCase: AddExerciseRecordUseCase = {
+        return AddExerciseRecordUseCase(
+            exerciseRepository: exerciseRepository,
+            dailyLogService: dailyLogService
+        )
+    }()
+
+    /// 운동 기록 수정 Use Case
+    lazy var updateExerciseRecordUseCase: UpdateExerciseRecordUseCase = {
+        return UpdateExerciseRecordUseCase(
+            exerciseRepository: exerciseRepository,
+            dailyLogService: dailyLogService
+        )
+    }()
+
     // TODO: Phase 4에서 추가 예정
     // - SearchFoodUseCase
-    // - LogExerciseUseCase
     // - etc.
 }
 
@@ -273,6 +316,7 @@ extension DIContainer {
     /// - Parameters:
     ///   - userProfile: 사용자 프로필 (BMR/TDEE 계산에 필요)
     /// - Returns: 새로운 BodyCompositionViewModel 인스턴스
+    @MainActor
     func makeBodyCompositionViewModel(userProfile: UserProfile) -> BodyCompositionViewModel {
         return BodyCompositionViewModel(
             recordBodyCompositionUseCase: recordBodyCompositionUseCase,
@@ -289,6 +333,7 @@ extension DIContainer {
     /// 💡 Java 비교: @Bean 메서드와 유사
     ///
     /// - Returns: 새로운 BodyTrendsViewModel 인스턴스
+    @MainActor
     func makeBodyTrendsViewModel() -> BodyTrendsViewModel {
         return BodyTrendsViewModel(
             fetchBodyTrendsUseCase: fetchBodyTrendsUseCase,
@@ -303,6 +348,7 @@ extension DIContainer {
     /// 💡 Java 비교: @Bean 메서드와 유사
     ///
     /// - Returns: 새로운 MetabolismViewModel 인스턴스
+    @MainActor
     func makeMetabolismViewModel() -> MetabolismViewModel {
         return MetabolismViewModel(bodyRepository: bodyRepository)
     }
@@ -321,6 +367,7 @@ extension DIContainer {
     ///   - defaultHours: 기본 수면 시간 (시간, 기본값: 7)
     ///   - defaultMinutes: 기본 수면 시간 (분, 기본값: 0)
     /// - Returns: 새로운 SleepInputViewModel 인스턴스
+    @MainActor
     func makeSleepInputViewModel(
         userId: UUID,
         defaultHours: Int = 7,
@@ -343,6 +390,7 @@ extension DIContainer {
     ///
     /// - Parameter defaultMode: 기본 조회 모드 (기본값: 최근 30일)
     /// - Returns: 새로운 SleepHistoryViewModel 인스턴스
+    @MainActor
     func makeSleepHistoryViewModel(
         defaultMode: FetchSleepHistoryUseCase.QueryMode = .recent(days: 30)
     ) -> SleepHistoryViewModel {
@@ -361,6 +409,7 @@ extension DIContainer {
     /// 💡 Java 비교: @Bean 메서드와 유사
     ///
     /// - Returns: 새로운 SleepTrendsViewModel 인스턴스
+    @MainActor
     func makeSleepTrendsViewModel() -> SleepTrendsViewModel {
         return SleepTrendsViewModel(
             fetchSleepStatsUseCase: fetchSleepStatsUseCase,
@@ -378,6 +427,7 @@ extension DIContainer {
     ///
     /// - Parameter userId: 사용자 ID (목표 소유자)
     /// - Returns: 새로운 GoalSettingViewModel 인스턴스
+    @MainActor
     func makeGoalSettingViewModel(userId: UUID) -> GoalSettingViewModel {
         return GoalSettingViewModel(
             setGoalUseCase: setGoalUseCase,
@@ -392,6 +442,7 @@ extension DIContainer {
     /// 💡 Java 비교: @Bean 메서드와 유사
     ///
     /// - Returns: 새로운 GoalProgressViewModel 인스턴스
+    @MainActor
     func makeGoalProgressViewModel() -> GoalProgressViewModel {
         return GoalProgressViewModel(getGoalProgressUseCase: getGoalProgressUseCase)
     }
@@ -406,10 +457,45 @@ extension DIContainer {
     /// 💡 Java 비교: @Bean 메서드와 유사
     ///
     /// - Returns: 새로운 SleepPromptManager 인스턴스
+    @MainActor
     func makeSleepPromptManager() -> SleepPromptManager {
         return SleepPromptManager(
             sleepRepository: sleepRepository,
             userDefaults: .standard
+        )
+    }
+
+    // MARK: - Exercise ViewModels
+
+    /// ExerciseInputViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 운동 입력/편집 화면용 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - userWeight: 사용자 체중 (kg)
+    ///   - userBMR: 사용자 BMR
+    ///   - userTDEE: 사용자 TDEE
+    ///   - editingExercise: 편집할 운동 기록 (편집 모드일 때만 제공)
+    /// - Returns: 새로운 ExerciseInputViewModel 인스턴스
+    @MainActor
+    func makeExerciseInputViewModel(
+        userId: UUID,
+        userWeight: Decimal,
+        userBMR: Decimal,
+        userTDEE: Decimal,
+        editingExercise: ExerciseRecord? = nil
+    ) -> ExerciseInputViewModel {
+        return ExerciseInputViewModel(
+            addExerciseRecordUseCase: addExerciseRecordUseCase,
+            updateExerciseRecordUseCase: editingExercise != nil ? updateExerciseRecordUseCase : nil,
+            userId: userId,
+            userWeight: userWeight,
+            userBMR: userBMR,
+            userTDEE: userTDEE,
+            editingExercise: editingExercise
         )
     }
 

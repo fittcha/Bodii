@@ -38,6 +38,11 @@ struct SleepHistoryView: View {
     /// - 새 레코드 추가/편집 시 ViewModel 생성에 사용
     let container: DIContainer
 
+    /// 사용자 ID
+    /// 📚 학습 포인트: User Context
+    /// - 수면 기록 추가/편집 시 사용자 식별에 사용
+    let userId: UUID
+
     /// 추가 버튼 표시 여부
     /// 📚 학습 포인트: Optional Feature Toggle
     /// - true: 플로팅 추가 버튼 표시 (기본값)
@@ -66,14 +71,17 @@ struct SleepHistoryView: View {
     /// - Parameters:
     ///   - viewModel: 수면 기록 리스트 ViewModel
     ///   - container: DIContainer for creating ViewModels
+    ///   - userId: 사용자 ID
     ///   - showAddButton: 추가 버튼 표시 여부 (기본값: true)
     init(
         viewModel: SleepHistoryViewModel,
         container: DIContainer,
+        userId: UUID,
         showAddButton: Bool = true
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.container = container
+        self.userId = userId
         self.showAddButton = showAddButton
     }
 
@@ -128,7 +136,7 @@ struct SleepHistoryView: View {
             // 새 레코드 추가 시트
             .sheet(isPresented: $showAddSheet) {
                 SleepInputSheet(
-                    viewModel: container.makeSleepInputViewModel(),
+                    viewModel: container.makeSleepInputViewModel(userId: userId),
                     canSkip: true,
                     onSkip: nil
                 )
@@ -138,6 +146,7 @@ struct SleepHistoryView: View {
             .sheet(item: $viewModel.recordToEdit) { record in
                 SleepInputSheet(
                     viewModel: container.makeSleepInputViewModel(
+                        userId: userId,
                         defaultHours: Int(record.duration / 60),
                         defaultMinutes: Int(record.duration % 60)
                     ),

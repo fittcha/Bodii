@@ -83,19 +83,19 @@ struct BodyRecordMapper {
         // 📚 학습 포인트: NSDecimalNumber → Decimal Conversion
         // Core Data의 NSDecimalNumber를 Swift의 Decimal로 변환
         // weight는 non-optional이므로 직접 접근 가능
-        let weight = entity.weight ?? Decimal(0)
+        let weight = (entity.weight as Decimal?) ?? Decimal(0)
 
         // 📚 학습 포인트: Optional Chaining with Nil Coalescing
         // bodyFatPercent가 nil이면 기본값 0 사용
         // 실제로는 필수값이지만 Core Data 모델에서 optional로 정의됨
-        let bodyFatPercent = entity.bodyFatPercent ?? Decimal(0)
+        let bodyFatPercent = (entity.bodyFatPercent as Decimal?) ?? Decimal(0)
 
-        let muscleMass = entity.muscleMass ?? Decimal(0)
+        let muscleMass = (entity.muscleMass as Decimal?) ?? Decimal(0)
 
         // 📚 학습 포인트: Calculated vs Stored Value
         // bodyFatMass가 저장되어 있으면 사용하고, 없으면 자동 계산
         // 과거 데이터의 일관성을 위해 저장된 값을 우선 사용
-        let bodyFatMass = entity.bodyFatMass ?? BodyCompositionEntry.calculateBodyFatMass(
+        let bodyFatMass = (entity.bodyFatMass as Decimal?) ?? BodyCompositionEntry.calculateBodyFatMass(
             weight: weight,
             bodyFatPercent: bodyFatPercent
         )
@@ -146,12 +146,13 @@ struct BodyRecordMapper {
 
         // 📚 학습 포인트: Value Assignment
         // Domain entity의 값을 Core Data entity로 복사
+        // Decimal → NSDecimalNumber 변환 필요
         entity.id = domainEntity.id
         entity.date = domainEntity.date
-        entity.weight = domainEntity.weight
-        entity.bodyFatPercent = domainEntity.bodyFatPercent
-        entity.muscleMass = domainEntity.muscleMass
-        entity.bodyFatMass = domainEntity.bodyFatMass
+        entity.weight = NSDecimalNumber(decimal: domainEntity.weight)
+        entity.bodyFatPercent = NSDecimalNumber(decimal: domainEntity.bodyFatPercent)
+        entity.muscleMass = NSDecimalNumber(decimal: domainEntity.muscleMass)
+        entity.bodyFatMass = NSDecimalNumber(decimal: domainEntity.bodyFatMass)
         entity.healthKitId = domainEntity.healthKitId
 
         // 📚 학습 포인트: Timestamp Management
@@ -177,12 +178,13 @@ struct BodyRecordMapper {
         // 📚 학습 포인트: Partial Update
         // ID와 createdAt은 변경하지 않고 나머지 필드만 업데이트
         // 불변(immutable) 필드와 가변(mutable) 필드 구분
+        // Decimal → NSDecimalNumber 변환 필요
 
         entity.date = domainEntity.date
-        entity.weight = domainEntity.weight
-        entity.bodyFatPercent = domainEntity.bodyFatPercent
-        entity.muscleMass = domainEntity.muscleMass
-        entity.bodyFatMass = domainEntity.bodyFatMass
+        entity.weight = NSDecimalNumber(decimal: domainEntity.weight)
+        entity.bodyFatPercent = NSDecimalNumber(decimal: domainEntity.bodyFatPercent)
+        entity.muscleMass = NSDecimalNumber(decimal: domainEntity.muscleMass)
+        entity.bodyFatMass = NSDecimalNumber(decimal: domainEntity.bodyFatMass)
         entity.healthKitId = domainEntity.healthKitId
 
         // 📚 학습 포인트: Audit Trail

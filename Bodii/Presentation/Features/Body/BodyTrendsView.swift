@@ -202,20 +202,24 @@ struct BodyTrendsView: View {
                 GridItem(.flexible())
             ], spacing: 16) {
                 // 평균 체중
-                statisticItem(
-                    title: "평균 체중",
-                    value: formatWeight(output.averageWeight),
-                    icon: "scalemass",
-                    color: .blue
-                )
+                if let avgWeight = output.averageWeight {
+                    statisticItem(
+                        title: "평균 체중",
+                        value: formatWeight(avgWeight),
+                        icon: "scalemass",
+                        color: .blue
+                    )
+                }
 
                 // 평균 체지방률
-                statisticItem(
-                    title: "평균 체지방률",
-                    value: formatBodyFat(output.averageBodyFatPercent),
-                    icon: "percent",
-                    color: .orange
-                )
+                if let avgBodyFat = output.averageBodyFatPercent {
+                    statisticItem(
+                        title: "평균 체지방률",
+                        value: formatBodyFat(avgBodyFat),
+                        icon: "percent",
+                        color: .orange
+                    )
+                }
 
                 // 체중 변화
                 if let weightChange = output.weightChange {
@@ -228,7 +232,7 @@ struct BodyTrendsView: View {
                 }
 
                 // 체지방률 변화
-                if let bodyFatChange = output.bodyFatChange {
+                if let bodyFatChange = output.bodyFatPercentChange {
                     statisticItem(
                         title: "체지방 변화",
                         value: formatBodyFatChange(bodyFatChange),

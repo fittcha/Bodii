@@ -115,7 +115,7 @@ struct FetchSleepHistoryUseCase {
         /// 차트나 통계 표시에 사용
         /// - Returns: [SleepStatus: 개수]
         var statusDistribution: [SleepStatus: Int] {
-            Dictionary(grouping: records) { $0.status }
+            Dictionary(grouping: records) { SleepStatus(rawValue: $0.status) ?? .soso }
                 .mapValues { $0.count }
         }
 
@@ -284,7 +284,7 @@ struct FetchSleepHistoryUseCase {
         // Step 2: 날짜 내림차순 정렬 (최신순)
         // 📚 학습 포인트: Sorting
         // UI 리스트는 최신 기록을 먼저 표시
-        let sortedRecords = records.sorted { $0.date > $1.date }
+        let sortedRecords = records.sorted { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }
 
         // Step 3: 결과 반환
         return Output(

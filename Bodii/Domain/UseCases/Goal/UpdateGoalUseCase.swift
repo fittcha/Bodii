@@ -161,28 +161,38 @@ struct UpdateGoalUseCase {
         }
 
         // Step 2: 수정 가능한 필드만 업데이트 (시작값과 생성일은 보존)
-        var updatedGoal = Goal(
-            id: existingGoal.id,
-            userId: existingGoal.userId,
-            goalType: goalType ?? existingGoal.goalType,
-            targetWeight: targetWeight ?? existingGoal.targetWeight,
-            targetBodyFatPct: targetBodyFatPct ?? existingGoal.targetBodyFatPct,
-            targetMuscleMass: targetMuscleMass ?? existingGoal.targetMuscleMass,
-            weeklyWeightRate: weeklyWeightRate ?? existingGoal.weeklyWeightRate,
-            weeklyFatPctRate: weeklyFatPctRate ?? existingGoal.weeklyFatPctRate,
-            weeklyMuscleRate: weeklyMuscleRate ?? existingGoal.weeklyMuscleRate,
-            // 시작값 보존 (히스토리 유지)
-            startWeight: existingGoal.startWeight,
-            startBodyFatPct: existingGoal.startBodyFatPct,
-            startMuscleMass: existingGoal.startMuscleMass,
-            startBMR: existingGoal.startBMR,
-            startTDEE: existingGoal.startTDEE,
-            dailyCalorieTarget: dailyCalorieTarget ?? existingGoal.dailyCalorieTarget,
-            isActive: isActive ?? existingGoal.isActive,
-            // 생성일 보존, 수정일 갱신
-            createdAt: existingGoal.createdAt,
-            updatedAt: Date()
-        )
+        // Core Data 엔티티는 직접 프로퍼티를 수정
+        if let newGoalType = goalType {
+            existingGoal.goalType = newGoalType.rawValue
+        }
+        if let newTargetWeight = targetWeight {
+            existingGoal.targetWeight = NSDecimalNumber(decimal: newTargetWeight)
+        }
+        if let newTargetBodyFatPct = targetBodyFatPct {
+            existingGoal.targetBodyFatPct = NSDecimalNumber(decimal: newTargetBodyFatPct)
+        }
+        if let newTargetMuscleMass = targetMuscleMass {
+            existingGoal.targetMuscleMass = NSDecimalNumber(decimal: newTargetMuscleMass)
+        }
+        if let newWeeklyWeightRate = weeklyWeightRate {
+            existingGoal.weeklyWeightRate = NSDecimalNumber(decimal: newWeeklyWeightRate)
+        }
+        if let newWeeklyFatPctRate = weeklyFatPctRate {
+            existingGoal.weeklyFatPctRate = NSDecimalNumber(decimal: newWeeklyFatPctRate)
+        }
+        if let newWeeklyMuscleRate = weeklyMuscleRate {
+            existingGoal.weeklyMuscleRate = NSDecimalNumber(decimal: newWeeklyMuscleRate)
+        }
+        if let newDailyCalorieTarget = dailyCalorieTarget {
+            existingGoal.dailyCalorieTarget = newDailyCalorieTarget
+        }
+        if let newIsActive = isActive {
+            existingGoal.isActive = newIsActive
+        }
+        // 수정일 갱신
+        existingGoal.updatedAt = Date()
+
+        let updatedGoal = existingGoal
 
         // Step 3: 수정된 목표 검증
         do {

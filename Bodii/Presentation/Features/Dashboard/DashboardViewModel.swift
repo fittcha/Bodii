@@ -79,32 +79,32 @@ final class DashboardViewModel {
 
     /// 총 탄수화물 (g)
     var totalCarbs: Decimal {
-        dailyLog?.totalCarbs ?? 0
+        (dailyLog?.totalCarbs as Decimal?) ?? Decimal.zero
     }
 
     /// 총 단백질 (g)
     var totalProtein: Decimal {
-        dailyLog?.totalProtein ?? 0
+        (dailyLog?.totalProtein as Decimal?) ?? Decimal.zero
     }
 
     /// 총 지방 (g)
     var totalFat: Decimal {
-        dailyLog?.totalFat ?? 0
+        (dailyLog?.totalFat as Decimal?) ?? Decimal.zero
     }
 
     /// 탄수화물 비율 (%)
     var carbsRatio: Decimal? {
-        dailyLog?.carbsRatio
+        dailyLog?.carbsRatio as Decimal?
     }
 
     /// 단백질 비율 (%)
     var proteinRatio: Decimal? {
-        dailyLog?.proteinRatio
+        dailyLog?.proteinRatio as Decimal?
     }
 
     /// 지방 비율 (%)
     var fatRatio: Decimal? {
-        dailyLog?.fatRatio
+        dailyLog?.fatRatio as Decimal?
     }
 
     /// 운동 소모 칼로리
@@ -130,7 +130,7 @@ final class DashboardViewModel {
     /// 수면 상태
     var sleepStatus: SleepStatus? {
         guard let statusRawValue = dailyLog?.sleepStatus else { return nil }
-        return SleepStatus(rawValue: Int(statusRawValue))
+        return SleepStatus(rawValue: Int16(statusRawValue))
     }
 
     /// 체중 (kg)
@@ -412,27 +412,9 @@ extension DashboardViewModel {
 // MARK: - MockDailyLogRepository for Preview
 
 /// Preview용 Mock DailyLog Repository
-private final class MockDailyLogRepository: DailyLogRepositoryProtocol {
+private final class MockDailyLogRepository: DailyLogRepository {
 
     private let context = PersistenceController.preview.container.viewContext
-
-    func save(_ dailyLog: DailyLog) async throws -> DailyLog {
-        try context.save()
-        return dailyLog
-    }
-
-    func update(_ dailyLog: DailyLog) async throws -> DailyLog {
-        try context.save()
-        return dailyLog
-    }
-
-    func delete(_ id: UUID) async throws {
-        // No-op for preview
-    }
-
-    func findByDate(_ date: Date, userId: UUID) async throws -> DailyLog? {
-        return nil
-    }
 
     func getOrCreate(for date: Date, userId: UUID, bmr: Int32, tdee: Int32) async throws -> DailyLog {
         let dailyLog = DailyLog(context: context)
@@ -445,8 +427,29 @@ private final class MockDailyLogRepository: DailyLogRepositoryProtocol {
         return dailyLog
     }
 
-    func findByDateRange(startDate: Date, endDate: Date, userId: UUID) async throws -> [DailyLog] {
-        return []
+    func fetch(for date: Date, userId: UUID) async throws -> DailyLog? {
+        return nil
+    }
+
+    func fetchCurrentDay(userId: UUID) async throws -> DailyLog? {
+        return nil
+    }
+
+    func update(_ dailyLog: DailyLog) async throws -> DailyLog {
+        try context.save()
+        return dailyLog
+    }
+
+    func addExercise(date: Date, userId: UUID, calories: Int32, duration: Int32) async throws {
+        // No-op for preview
+    }
+
+    func removeExercise(date: Date, userId: UUID, calories: Int32, duration: Int32) async throws {
+        // No-op for preview
+    }
+
+    func updateExercise(date: Date, userId: UUID, oldCalories: Int32, newCalories: Int32, oldDuration: Int32, newDuration: Int32) async throws {
+        // No-op for preview
     }
 
     /// Preview용 샘플 DailyLog 생성 (데이터 있음)
