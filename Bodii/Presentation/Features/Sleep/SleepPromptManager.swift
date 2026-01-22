@@ -140,10 +140,19 @@ class SleepPromptManager: ObservableObject {
         }
 
         // 📚 학습 포인트: Skip Count Check
-        // 건너뛰기 횟수에 따라 강제 입력 모드 결정
+        // 건너뛰기 횟수에 따라 프롬프트 표시 여부 결정
+        // PRD 요구사항: "3회 스킵 후 더 이상 팝업 안 뜸"
         let skipCount = getSkipCount(for: today)
-        isForceEntry = skipCount >= Self.maxSkipCount
 
+        // 3회 이상 스킵했으면 더 이상 팝업 표시 안 함
+        if skipCount >= Self.maxSkipCount {
+            isForceEntry = true
+            shouldShowPrompt = false
+            print("ℹ️ Sleep prompt hidden - max skip count (\(Self.maxSkipCount)) reached for today")
+            return
+        }
+
+        isForceEntry = false
         // 프롬프트 표시
         shouldShowPrompt = true
     }
@@ -321,8 +330,8 @@ extension SleepPromptManager {
 ///
 /// 2. 건너뛰기 로직:
 ///    - 하루에 최대 3회까지 건너뛰기 가능
-///    - 3회 건너뛰기 후에는 강제 입력 모드
-///    - 강제 입력 모드에서는 건너뛰기 버튼 숨김
+///    - 3회 건너뛰기 후에는 팝업이 더 이상 표시되지 않음 (PRD 요구사항)
+///    - 수면 탭에서 직접 입력 가능
 ///    - 수면 기록을 입력하면 건너뛰기 횟수 초기화
 ///
 /// 3. 날짜 경계:
