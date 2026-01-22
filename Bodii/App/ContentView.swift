@@ -148,7 +148,11 @@ struct ContentView: View {
     }
 
     private var dietTab: some View {
-        PlaceholderView(title: "식단", systemImage: "fork.knife")
+        // 📚 학습 포인트: Diet Tab Container View
+        // DietTabView는 자체적으로 NavigationStack을 포함하고 있음
+        // DI가 DietTabView 내부에서 처리됨
+        // 💡 Java 비교: Android의 Fragment Container와 유사
+        DietTabView()
             .tabItem {
                 Label("식단", systemImage: "fork.knife")
             }
@@ -156,11 +160,21 @@ struct ContentView: View {
     }
 
     private var exerciseTab: some View {
-        PlaceholderView(title: "운동", systemImage: "figure.run")
-            .tabItem {
-                Label("운동", systemImage: "figure.run")
-            }
-            .tag(Tab.exercise)
+        // 📚 학습 포인트: Exercise Tab with NavigationStack
+        // ExerciseListView는 NavigationStack을 포함하지 않으므로 여기서 래핑
+        // DIContainer를 통해 ViewModel 생성 및 의존성 주입
+        // TODO: Phase 7 - UserProfile.sample 대신 실제 사용자 데이터 사용
+        let viewModel = DIContainer.shared.makeExerciseListViewModel(
+            userId: UserProfile.sample.id
+        )
+
+        return NavigationStack {
+            ExerciseListView(viewModel: viewModel)
+        }
+        .tabItem {
+            Label("운동", systemImage: "figure.run")
+        }
+        .tag(Tab.exercise)
     }
 
     private var sleepTab: some View {
@@ -176,11 +190,18 @@ struct ContentView: View {
     }
 
     private var settingsTab: some View {
-        PlaceholderView(title: "설정", systemImage: "gearshape.fill")
-            .tabItem {
-                Label("설정", systemImage: "gearshape.fill")
-            }
-            .tag(Tab.settings)
+        // 📚 학습 포인트: Settings Tab with HealthKit Services
+        // SettingsView는 자체적으로 NavigationStack을 포함하고 있음
+        // DIContainer를 통해 HealthKit 서비스 주입
+        // 💡 Java 비교: Android의 SettingsActivity와 유사
+        SettingsView(
+            authService: DIContainer.shared.healthKitAuthService,
+            syncService: DIContainer.shared.healthKitSyncService
+        )
+        .tabItem {
+            Label("설정", systemImage: "gearshape.fill")
+        }
+        .tag(Tab.settings)
     }
 }
 

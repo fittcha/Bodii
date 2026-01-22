@@ -291,6 +291,19 @@ final class DIContainer {
         )
     }()
 
+    /// 운동 기록 조회 Use Case
+    lazy var getExerciseRecordsUseCase: GetExerciseRecordsUseCase = {
+        return GetExerciseRecordsUseCase(exerciseRepository: exerciseRepository)
+    }()
+
+    /// 운동 기록 삭제 Use Case
+    lazy var deleteExerciseRecordUseCase: DeleteExerciseRecordUseCase = {
+        return DeleteExerciseRecordUseCase(
+            exerciseRepository: exerciseRepository,
+            dailyLogService: dailyLogService
+        )
+    }()
+
     // TODO: Phase 4에서 추가 예정
     // - SearchFoodUseCase
     // - etc.
@@ -496,6 +509,24 @@ extension DIContainer {
             userBMR: userBMR,
             userTDEE: userTDEE,
             editingExercise: editingExercise
+        )
+    }
+
+    /// ExerciseListViewModel 생성
+    /// 📚 학습 포인트: Factory Method Pattern
+    /// - 운동 기록 목록 화면용 ViewModel 생성
+    /// - 의존성 주입을 한 곳에서 관리
+    /// 💡 Java 비교: @Bean 메서드와 유사
+    ///
+    /// - Parameter userId: 사용자 ID
+    /// - Returns: 새로운 ExerciseListViewModel 인스턴스
+    @MainActor
+    func makeExerciseListViewModel(userId: UUID) -> ExerciseListViewModel {
+        return ExerciseListViewModel(
+            getExerciseRecordsUseCase: getExerciseRecordsUseCase,
+            deleteExerciseRecordUseCase: deleteExerciseRecordUseCase,
+            dailyLogRepository: dailyLogRepository,
+            userId: userId
         )
     }
 
