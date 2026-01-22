@@ -14,7 +14,10 @@ import SwiftUI
 /// **주요 기능**:
 /// - 온보딩 완료 여부 관리
 /// - 첫 실행 여부 확인
-/// - 수면 프롬프트 스킵 횟수 관리
+///
+/// **Note**: 수면 프롬프트 관련 기능은 `SleepPromptManager`로 이전됨
+/// - 날짜별 독립적인 스킵 횟수 관리
+/// - PRD 요구사항 준수 (3회 스킵 후 팝업 숨김)
 ///
 /// - Example:
 /// ```swift
@@ -84,10 +87,15 @@ final class AppStateService: ObservableObject {
         userDefaults.set(true, forKey: Keys.isFirstLaunch)
     }
 
-    // MARK: - Sleep Prompt Methods
+    // MARK: - Sleep Prompt Methods (DEPRECATED)
+    // Note: 수면 프롬프트 관련 기능은 SleepPromptManager로 이전됨
+    // SleepPromptManager가 날짜별 키를 사용하여 더 견고하게 관리함
+    // 이 메서드들은 하위 호환성을 위해 유지되지만, 사용하지 않음
 
     /// 오늘의 수면 프롬프트 스킵 횟수 조회
     /// - Returns: 오늘 스킵한 횟수 (0~3)
+    /// - Note: **Deprecated** - `SleepPromptManager.getCurrentSkipCount()` 사용 권장
+    @available(*, deprecated, message: "Use SleepPromptManager.getCurrentSkipCount() instead")
     func getSleepPromptSkipCount() -> Int {
         // 마지막 수면 프롬프트 날짜 확인
         guard let lastDate = userDefaults.object(forKey: Keys.lastSleepPromptDate) as? Date else {
@@ -105,6 +113,8 @@ final class AppStateService: ObservableObject {
     }
 
     /// 수면 프롬프트 스킵 횟수 증가
+    /// - Note: **Deprecated** - `SleepPromptManager.incrementSkipCount()` 사용 권장
+    @available(*, deprecated, message: "Use SleepPromptManager.incrementSkipCount() instead")
     func incrementSleepPromptSkipCount() {
         let currentCount = getSleepPromptSkipCount()
         userDefaults.set(currentCount + 1, forKey: Keys.sleepPromptSkipCount)
@@ -112,6 +122,8 @@ final class AppStateService: ObservableObject {
     }
 
     /// 수면 프롬프트 스킵 횟수 리셋
+    /// - Note: **Deprecated** - `SleepPromptManager.resetSkipCount()` 사용 권장
+    @available(*, deprecated, message: "Use SleepPromptManager.resetSkipCount() instead")
     func resetSleepPromptSkipCount() {
         userDefaults.set(0, forKey: Keys.sleepPromptSkipCount)
     }
