@@ -191,6 +191,140 @@ git merge origin/main
 
 ---
 
+## 테스트 코드 작성 규칙 (2026-01-24 추가)
+
+### 문제 발생 원인 분석
+
+**2026-01-24 발생한 빌드 오류 원인**:
+
+1. **Mock 클래스 중복 선언**
+   - 동일한 Mock 클래스(MockFoodRepository, MockDailyLogRepository 등)가 여러 테스트 파일에서 각각 선언됨
+   - Swift 컴파일러가 "ambiguous use of..." 오류 발생
+   - **근본 원인**: Mock 클래스를 중앙 집중화하지 않고 각 테스트 파일에서 개별 정의
+
+2. **테스트 파일 경로 불일치**
+   - 파일이 `BodiiTests/` 루트에 있어야 하는데 잘못된 경로에 생성됨
+   - project.pbxproj의 경로와 실제 파일 위치 불일치
+   - **근본 원인**: Xcode 외부에서 파일 생성 시 경로 검증 부재
+
+3. **프로토콜 메서드 시그니처 불일치**
+   - Mock 클래스가 프로토콜의 최신 메서드 시그니처를 반영하지 않음
+   - 예: `findByDateRange(from:to:userId:)` vs `findByDateRange(startDate:endDate:userId:)`
+   - **근본 원인**: 프로토콜 변경 시 Mock 클래스 동기화 누락
+
+4. **Core Data 엔티티 직접 초기화 시도**
+   - 테스트에서 `Food(name: "사과")` 같은 struct 초기화 시도
+   - Core Data 엔티티는 반드시 context와 함께 초기화 필요
+   - **근본 원인**: Core Data 엔티티와 일반 struct 혼동
+
+### 필수 준수 규칙
+
+#### 1. Mock 클래스 중앙 집중화
+```
+BodiiTests/
+├── Mocks/
+│   └── MockRepositories.swift    # 모든 Mock Repository 클래스 정의
+├── Helpers/
+│   └── TestHelpers.swift         # 테스트 유틸리티 함수
+└── [Feature]Tests/
+    └── [Feature]Tests.swift      # 개별 테스트 파일
+```
+
+**규칙**:
+- 모든 Mock 클래스는 `BodiiTests/Mocks/MockRepositories.swift`에만 정의
+- 개별 테스트 파일에서 Mock 클래스 중복 정의 **절대 금지**
+- 새 Mock 필요 시 기존 `MockRepositories.swift`에 추가
+
+#### 2. 테스트 파일 생성 전 확인사항
+```bash
+# Mock 클래스 중복 확인
+grep -r "class Mock" BodiiTests/
+
+# 파일 이름 중복 확인
+find BodiiTests -name "*.swift" | xargs basename -a | sort | uniq -d
+
+# 프로젝트 파일 유효성 검사
+plutil -lint Bodii.xcodeproj/project.pbxproj
+```
+
+#### 3. Mock 클래스 프로토콜 동기화
+프로토콜 수정 시 반드시:
+1. 원본 프로토콜 파일 확인: `Bodii/Domain/Interfaces/[Protocol].swift`
+2. Mock 클래스 업데이트: `BodiiTests/Mocks/MockRepositories.swift`
+3. 메서드 시그니처 정확히 일치시키기
+
+```swift
+// ❌ 잘못된 예 - 파라미터 이름 불일치
+func findByDateRange(from: Date, to: Date, userId: UUID) // Mock
+func findByDateRange(startDate: Date, endDate: Date, userId: UUID) // Protocol
+
+// ✅ 올바른 예 - 정확히 일치
+func findByDateRange(startDate: Date, endDate: Date, userId: UUID) // 둘 다 동일
+```
+
+#### 4. Core Data 테스트 패턴
+```swift
+// ❌ 금지: struct 초기화
+let food = Food(name: "사과", calories: 52)
+
+// ✅ 필수: Core Data context 사용
+let context = PersistenceController.preview.container.viewContext
+let food = Food(context: context)
+food.id = UUID()
+food.name = "사과"
+food.calories = NSDecimalNumber(value: 52)
+```
+
+#### 5. 점진적 테스트 추가 프로세스
+새 테스트 추가 시 반드시 다음 순서 준수:
+
+1. **준비**: 기존 Mock 클래스 확인
+2. **생성**: 테스트 파일 1개만 생성
+3. **검증**: `xcodebuild build -scheme Bodii -destination 'platform=iOS Simulator,name=iPhone 16'`
+4. **커밋**: 빌드 성공 확인 후 커밋
+5. **반복**: 다음 테스트 파일 추가
+
+**절대 금지**: 여러 테스트 파일을 한 번에 추가하고 나중에 빌드 확인
+
+### 테스트 파일 구조 템플릿
+
+```swift
+// BodiiTests/[Feature]Tests/[Feature]Tests.swift
+import XCTest
+@testable import Bodii
+
+final class [Feature]Tests: XCTestCase {
+
+    // MARK: - Properties
+    private var sut: [SystemUnderTest]!
+    private var mockRepository: Mock[Repository]!  // MockRepositories.swift에서 import
+
+    // MARK: - Setup & Teardown
+    override func setUp() {
+        super.setUp()
+        mockRepository = Mock[Repository]()
+        sut = [SystemUnderTest](repository: mockRepository)
+    }
+
+    override func tearDown() {
+        sut = nil
+        mockRepository = nil
+        super.tearDown()
+    }
+
+    // MARK: - Tests
+    func test_[행동]_[조건]_[기대결과]() {
+        // Given
+
+        // When
+
+        // Then
+    }
+}
+```
+
+---
+
 ## 파일 구조 규칙
 
 ```
