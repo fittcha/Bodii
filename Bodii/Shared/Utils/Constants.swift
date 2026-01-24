@@ -88,13 +88,13 @@ enum Constants {
         /// Hours 00:00-01:59 belong to previous day
         static let boundaryHour: Int = 2
 
-        /// Morning prompt hour (06:00)
-        /// Show sleep recording prompt at 6 AM or later
-        /// 📚 학습 포인트: Separation of Concerns
+        /// Morning prompt hour (02:00)
+        /// Show sleep recording prompt at 2 AM or later
+        /// 📚 학습 포인트: PRD 요구사항 - "새벽 2시 이후 앱 첫 실행 시 수면 입력 팝업 자동 표시"
         /// - boundaryHour: Date assignment logic (when sleep belongs to previous day)
         /// - promptHour: User notification timing (when to show prompt)
-        /// 💡 Java 비교: Different constants for different business rules
-        static let promptHour: Int = 6
+        /// 💡 Note: promptHour와 boundaryHour가 동일 (02:00)
+        static let promptHour: Int = 2
 
         /// Maximum sleep popup retry count
         static let maxPopupRetries: Int = 3

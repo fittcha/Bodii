@@ -14,15 +14,16 @@ import XCTest
 
 /// SleepPromptManager에 대한 단위 테스트
 ///
-/// 📚 학습 포인트: Prompt Timing vs Sleep Boundary
-/// - promptHour (6 AM): 사용자에게 프롬프트를 보여주는 시간
+/// 📚 학습 포인트: PRD 요구사항 (수면 팝업)
+/// - promptHour (2 AM): 새벽 2시 이후 앱 첫 실행 시 수면 입력 팝업 자동 표시
 /// - boundaryHour (2 AM): 수면 날짜를 계산하는 경계 시간
-/// - These are separate concerns and use different constants
+/// - 3회 스킵 후 더 이상 팝업 안 뜸
 ///
 /// 테스트 시 주의사항:
 /// - checkShouldShow()는 DateUtils.shouldShowSleepPopup()을 사용
-/// - shouldShowSleepPopup()는 promptHour (6 AM)을 사용
-/// - 06:00 이전에는 프롬프트가 표시되지 않아야 함
+/// - shouldShowSleepPopup()는 promptHour (2 AM)을 사용
+/// - 02:00 이전에는 프롬프트가 표시되지 않아야 함
+/// - 3회 스킵 후에는 shouldShowPrompt = false
 ///
 /// 📚 학습 포인트: Manager Testing
 /// - 프롬프트 표시 로직 검증
@@ -258,16 +259,16 @@ final class SleepPromptManagerTests: XCTestCase {
 
     // MARK: - Prompt Logic Tests
 
-    /// 프롬프트 표시 - 시간 조건 미충족 (06:00 이전)
+    /// 프롬프트 표시 - 시간 조건 미충족 (02:00 이전)
     /// 📚 학습 포인트: Time-based Logic Testing
-    /// 06:00 이전에는 프롬프트가 표시되지 않는지 확인
+    /// 02:00 이전에는 프롬프트가 표시되지 않는지 확인
     /// Note: 이 테스트는 실제 시간에 의존하므로 DateUtils.shouldShowSleepPopup이 false를 반환하는 경우를 시뮬레이션
-    func testCheckShouldShow_Before6AM_DoesNotShowPrompt() async {
+    func testCheckShouldShow_Before2AM_DoesNotShowPrompt() async {
         // Given: 시간 조건 확인은 DateUtils에 의존
         // Note: 이 테스트는 DateUtils.shouldShowSleepPopup() == true인 시간에 실행되면 실패할 수 있음
         // 실제 프로덕션 코드에서는 DateUtils를 주입받아 Mock으로 대체하는 것이 이상적
 
-        // When: 프롬프트 확인 (시간이 06:00 이후라면)
+        // When: 프롬프트 확인 (시간이 02:00 이후라면)
         await sut.checkShouldShow()
 
         // Then: DateUtils.shouldShowSleepPopup()의 반환값에 따라 결과가 달라짐
@@ -302,7 +303,7 @@ final class SleepPromptManagerTests: XCTestCase {
         // Given: 건너뛰기 1회 (강제 입력 모드 아님)
         sut.incrementSkipCount()
 
-        // When: 프롬프트 확인 (06:00 이후 시간대에서 실행 가정)
+        // When: 프롬프트 확인 (02:00 이후 시간대에서 실행 가정)
         await sut.checkShouldShow()
 
         // Then: 프롬프트 표시되어야 함 (시간 조건이 충족된다면)
@@ -315,12 +316,13 @@ final class SleepPromptManagerTests: XCTestCase {
         }
     }
 
-    /// 프롬프트 표시 - 강제 입력 모드 (3회 건너뛰기 후)
-    func testCheckShouldShow_After3Skips_ShowsForceEntryPrompt() async {
+    /// 프롬프트 표시 - 3회 건너뛰기 후 팝업 숨김
+    /// PRD 요구사항: "3회 스킵 후 더 이상 팝업 안 뜸"
+    func testCheckShouldShow_After3Skips_HidesPrompt() async {
         // Given: 오늘 기록 없음
         mockRepository.recordToReturn = nil
 
-        // Given: 건너뛰기 3회 (강제 입력 모드)
+        // Given: 건너뛰기 3회
         sut.incrementSkipCount()
         sut.incrementSkipCount()
         sut.incrementSkipCount()
@@ -328,12 +330,12 @@ final class SleepPromptManagerTests: XCTestCase {
         // When: 프롬프트 확인
         await sut.checkShouldShow()
 
-        // Then: 강제 입력 모드로 프롬프트 표시
+        // Then: 3회 스킵 후 팝업이 표시되지 않아야 함
         if DateUtils.shouldShowSleepPopup() {
-            XCTAssertTrue(sut.shouldShowPrompt,
-                         "강제 입력 모드에서 프롬프트가 표시되어야 합니다")
+            XCTAssertFalse(sut.shouldShowPrompt,
+                         "3회 스킵 후에는 프롬프트가 표시되지 않아야 합니다 (PRD 요구사항)")
             XCTAssertTrue(sut.isForceEntry,
-                         "3회 건너뛰기 후 강제 입력 모드여야 합니다")
+                         "3회 건너뛰기 후 isForceEntry는 true여야 합니다")
         }
     }
 
@@ -566,30 +568,43 @@ final class SleepPromptManagerTests: XCTestCase {
 
     /// 통합 테스트 - 전체 워크플로우
     /// 📚 학습 포인트: End-to-End Testing
-    /// 프롬프트 표시부터 기록 저장까지 전체 흐름 검증
+    /// PRD 요구사항: "나중에" 버튼 클릭 시 최대 3회까지 재팝업, 3회 스킵 후 더 이상 팝업 안 뜸
     func testFullWorkflow_SkipAndRecord_WorksCorrectly() async {
-        // Day 1: 첫 번째 건너뛰기
+        // 스킵 1회: 팝업 표시, 건너뛰기 가능
         await sut.checkShouldShow()
         if DateUtils.shouldShowSleepPopup() {
-            XCTAssertTrue(sut.shouldShowPrompt)
+            XCTAssertTrue(sut.shouldShowPrompt, "1회 전 팝업 표시되어야 함")
             XCTAssertFalse(sut.isForceEntry)
         }
         sut.incrementSkipCount()
         XCTAssertEqual(sut.getCurrentSkipCount(), 1)
 
-        // Day 2: 두 번째 건너뛰기
+        // 스킵 2회: 팝업 표시, 건너뛰기 가능
         await sut.checkShouldShow()
+        if DateUtils.shouldShowSleepPopup() {
+            XCTAssertTrue(sut.shouldShowPrompt, "2회 전 팝업 표시되어야 함")
+        }
         sut.incrementSkipCount()
         XCTAssertEqual(sut.getCurrentSkipCount(), 2)
         XCTAssertFalse(sut.isForceEntry)
 
-        // Day 3: 세 번째 건너뛰기
+        // 스킵 3회: 팝업 표시, 건너뛰기 가능 (이번이 마지막)
         await sut.checkShouldShow()
+        if DateUtils.shouldShowSleepPopup() {
+            XCTAssertTrue(sut.shouldShowPrompt, "3회 전 팝업 표시되어야 함")
+        }
         sut.incrementSkipCount()
         XCTAssertEqual(sut.getCurrentSkipCount(), 3)
         XCTAssertTrue(sut.isForceEntry)
 
-        // Day 4: 강제 입력 모드에서 기록 저장
+        // 3회 스킵 후: 팝업 더 이상 표시 안 됨 (PRD 요구사항)
+        await sut.checkShouldShow()
+        if DateUtils.shouldShowSleepPopup() {
+            XCTAssertFalse(sut.shouldShowPrompt,
+                          "3회 스킵 후 팝업이 표시되지 않아야 합니다 (PRD 요구사항)")
+        }
+
+        // 수면 기록 저장 후: 초기화
         mockRepository.recordToReturn = SleepRecord.sample()
         await sut.checkShouldShow()
         XCTAssertFalse(sut.shouldShowPrompt,
@@ -726,9 +741,9 @@ class MockSleepRepository: SleepRepositoryProtocol {
 ///    - 남은 건너뛰기 횟수 계산
 ///
 /// 3. 프롬프트 로직 테스트
-///    - 시간 조건 확인 (06:00 프롬프트 경계, 02:00 수면 경계는 독립적)
+///    - 시간 조건 확인 (02:00 프롬프트 경계)
 ///    - 기록 존재 여부 확인
-///    - 건너뛰기 횟수에 따른 동작
+///    - 건너뛰기 횟수에 따른 동작 (3회 스킵 후 팝업 숨김)
 ///    - 자동 초기화 로직
 ///
 /// 4. 데이터 정리 테스트
@@ -763,13 +778,12 @@ class MockSleepRepository: SleepRepositoryProtocol {
 ///
 /// 시간 의존성 주의사항:
 /// - DateUtils.shouldShowSleepPopup()은 실제 시간에 의존
-/// - 06:00 이전에 테스트 실행 시 일부 테스트 실패 가능
+/// - 02:00 이전에 테스트 실행 시 일부 테스트 실패 가능
 /// - 실무에서는 DateUtils를 Protocol로 만들어 Mock 주입 권장
 ///
-/// 프롬프트 vs 수면 경계:
-/// - promptHour (6 AM): 프롬프트 표시 시간 (사용자 UX)
-/// - boundaryHour (2 AM): 수면 날짜 계산 경계 (비즈니스 로직)
-/// - 이 두 값은 독립적이며 서로 다른 목적을 가짐
+/// PRD 요구사항:
+/// - promptHour (2 AM): 새벽 2시 이후 앱 첫 실행 시 수면 입력 팝업 자동 표시
+/// - 3회 스킵 후 더 이상 팝업 안 뜸 (shouldShowPrompt = false)
 ///
 /// 💡 실무 팁:
 /// - Manager 테스트는 비즈니스 로직에 집중
