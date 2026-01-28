@@ -53,6 +53,20 @@ enum Gender: Int16, CaseIterable, Codable {
             return -161.0
         }
     }
+
+    /// 운동 칼로리 계산을 위한 성별 보정 계수
+    /// 📚 학습 포인트: Gender-based Exercise Calorie Adjustment
+    /// - 여성은 일반적으로 남성보다 근육량이 적고 체지방률이 높아
+    ///   동일한 운동에서 약 10% 적은 칼로리를 소모합니다.
+    /// - 참고: ACSM (American College of Sports Medicine) 가이드라인
+    var exerciseCalorieMultiplier: Double {
+        switch self {
+        case .male:
+            return 1.0
+        case .female:
+            return 0.9
+        }
+    }
 }
 
 // MARK: - Identifiable

@@ -23,12 +23,12 @@ import Foundation
 ///
 /// 비즈니스 플로우:
 /// 1. 입력 데이터 검증
-/// 2. BMR 계산 (CalculateBMRUseCase)
+/// 2. BMR 계산 (CalculateBMRUseCase) - 체지방률 유무에 따라 공식 선택
 /// 3. TDEE 계산 (CalculateTDEEUseCase)
 /// 4. BodyCompositionEntry 생성
 /// 5. MetabolismData 생성
 /// 6. Repository를 통해 저장
-/// 7. 사용자의 현재 값 업데이트 (향후 구현)
+/// 7. User 엔티티의 현재 값 업데이트 (currentWeight, currentBMR, currentTDEE 등)
 struct RecordBodyCompositionUseCase {
 
     // MARK: - Types
@@ -140,6 +140,9 @@ struct RecordBodyCompositionUseCase {
         /// 저장 실패
         case saveFailed(Error)
 
+        /// 사용자 업데이트 실패
+        case userUpdateFailed(Error)
+
         /// 에러 설명 (사용자에게 표시할 메시지)
         /// 📚 학습 포인트: LocalizedError Protocol
         /// errorDescription을 구현하여 사용자 친화적인 에러 메시지 제공
@@ -153,6 +156,8 @@ struct RecordBodyCompositionUseCase {
                 return "TDEE 계산 실패: \(error.localizedDescription)"
             case .saveFailed(let error):
                 return "저장 실패: \(error.localizedDescription)"
+            case .userUpdateFailed(let error):
+                return "사용자 정보 업데이트 실패: \(error.localizedDescription)"
             }
         }
     }
@@ -173,6 +178,11 @@ struct RecordBodyCompositionUseCase {
     /// 💡 Java 비교: Interface에 의존하는 것과 동일
     private let bodyRepository: BodyRepositoryProtocol
 
+    /// 사용자 데이터 저장소
+    /// 📚 학습 포인트: User Entity Update
+    /// 체성분 저장 시 User 엔티티의 현재 값도 함께 업데이트
+    private let userRepository: UserRepository
+
     // MARK: - Initialization
 
     /// RecordBodyCompositionUseCase 초기화
@@ -185,14 +195,17 @@ struct RecordBodyCompositionUseCase {
     ///   - calculateBMRUseCase: BMR 계산 Use Case (기본값: 새 인스턴스)
     ///   - calculateTDEEUseCase: TDEE 계산 Use Case (기본값: 새 인스턴스)
     ///   - bodyRepository: 신체 데이터 저장소 (필수)
+    ///   - userRepository: 사용자 데이터 저장소 (필수)
     init(
         calculateBMRUseCase: CalculateBMRUseCase = CalculateBMRUseCase(),
         calculateTDEEUseCase: CalculateTDEEUseCase = CalculateTDEEUseCase(),
-        bodyRepository: BodyRepositoryProtocol
+        bodyRepository: BodyRepositoryProtocol,
+        userRepository: UserRepository
     ) {
         self.calculateBMRUseCase = calculateBMRUseCase
         self.calculateTDEEUseCase = calculateTDEEUseCase
         self.bodyRepository = bodyRepository
+        self.userRepository = userRepository
     }
 
     // MARK: - Execute
@@ -289,15 +302,22 @@ struct RecordBodyCompositionUseCase {
         // Step 5: 사용자 현재 값 업데이트
         // 📚 학습 포인트: Side Effect
         // 저장 작업과 함께 사용자의 현재 값도 업데이트
-        // TODO: UserRepository를 통해 User 엔티티의 currentWeight, currentBMR 등 업데이트
-        // 예시 코드 (UserRepository 구현 후 활성화):
-        // try await userRepository.updateCurrentValues(
-        //     weight: input.weight,
-        //     bodyFatPercent: input.bodyFatPercent,
-        //     muscleMass: input.muscleMass,
-        //     bmr: bmrOutput.bmr,
-        //     tdee: tdeeOutput.tdee
-        // )
+        // User 엔티티의 currentWeight, currentBMR, currentTDEE 등 업데이트
+        do {
+            try await userRepository.updateCurrentValues(
+                weight: input.weight,
+                bodyFatPercent: input.bodyFatPercent,
+                muscleMass: input.muscleMass,
+                bmr: bmrOutput.bmr,
+                tdee: tdeeOutput.tdee
+            )
+        } catch {
+            // 📚 학습 포인트: Non-critical Error Handling
+            // User 업데이트 실패는 치명적이지 않으므로 로깅만 하고 계속 진행
+            // 다음 체성분 입력 시 다시 시도됨
+            print("⚠️ User 현재 값 업데이트 실패 (비치명적): \(error.localizedDescription)")
+            // 필요시 throw RecordError.userUpdateFailed(error) 로 변경 가능
+        }
 
         // Step 6: 결과 반환
         // 📚 학습 포인트: Successful Completion
@@ -371,11 +391,15 @@ extension RecordBodyCompositionUseCase {
 ///
 /// 비즈니스 플로우:
 /// 1. 입력 검증: 체중, 체지방률, 근육량의 범위와 일관성 확인
-/// 2. BMR 계산: Mifflin-St Jeor 공식 사용 (CalculateBMRUseCase)
+/// 2. BMR 계산: 하이브리드 공식 사용 (CalculateBMRUseCase)
+///    - 체지방률 있음 → Katch-McArdle 공식 (더 정확)
+///    - 체지방률 없음 → Mifflin-St Jeor 공식 (표준)
 /// 3. TDEE 계산: BMR × Activity Multiplier (CalculateTDEEUseCase)
 /// 4. 엔티티 생성: BodyCompositionEntry와 MetabolismData 생성
 /// 5. 저장: Repository를 통해 Core Data에 저장
-/// 6. 사용자 업데이트: User 엔티티의 현재 값 업데이트 (향후 구현)
+/// 6. 사용자 업데이트: User 엔티티의 현재 값 업데이트
+///    - currentWeight, currentBodyFatPct, currentMuscleMass
+///    - currentBMR, currentTDEE, metabolismUpdatedAt
 ///
 /// 에러 처리:
 /// - 각 단계의 에러를 적절한 RecordError로 변환

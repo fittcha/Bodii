@@ -179,9 +179,48 @@ final class DIContainer {
         return DailyLogService(repository: dailyLogRepository)
     }()
 
-    // TODO: Phase 3에서 추가 예정
-    // - UserRepository
-    // - FoodRepository
+    /// User 리포지토리
+    /// 📚 학습 포인트: User Data Access
+    /// - 현재 사용자 정보 조회
+    /// - User → UserProfile 변환
+    lazy var userRepository: UserRepository = {
+        return UserRepository()
+    }()
+
+    /// FoodRecord 리포지토리
+    /// 📚 학습 포인트: Food Record Data Access
+    /// - 식단 기록 CRUD
+    /// - 날짜별 식단 조회
+    lazy var foodRecordRepository: FoodRecordRepositoryProtocol = {
+        return FoodRecordRepository(context: PersistenceController.shared.container.viewContext)
+    }()
+
+    /// DietComment 캐시
+    /// 📚 학습 포인트: In-Memory Cache
+    /// - AI 식단 코멘트 캐싱
+    /// - LRU 정책, 24시간 만료
+    lazy var dietCommentCache: DietCommentCache = {
+        return DietCommentCache()
+    }()
+
+    /// DietComment 리포지토리
+    /// 📚 학습 포인트: AI Service Repository
+    /// - AI 식단 코멘트 생성 및 캐싱
+    /// - Gemini API 연동
+    lazy var dietCommentRepository: DietCommentRepository = {
+        return DietCommentRepositoryImpl(
+            geminiService: geminiService,
+            cache: dietCommentCache,
+            foodRecordRepository: foodRecordRepository
+        )
+    }()
+
+    /// Gemini AI 서비스
+    /// 📚 학습 포인트: AI Service
+    /// - AI 식단 코멘트 생성
+    lazy var geminiService: GeminiServiceProtocol = {
+        return GeminiService()
+    }()
 
     // MARK: - Use Cases
 
@@ -200,12 +239,15 @@ final class DIContainer {
     /// Body composition 기록 Use Case
     /// 📚 학습 포인트: Orchestration Use Case with Dependencies
     /// 여러 Use Case와 Repository를 조합하여 복잡한 비즈니스 로직 구현
+    /// - BMR/TDEE 자동 계산 (하이브리드 공식: 체지방률 유무에 따라 공식 선택)
+    /// - User 엔티티의 currentWeight, currentBMR 등 자동 업데이트
     /// 💡 Java 비교: @Service with @Autowired dependencies
     lazy var recordBodyCompositionUseCase: RecordBodyCompositionUseCase = {
         return RecordBodyCompositionUseCase(
             calculateBMRUseCase: calculateBMRUseCase,
             calculateTDEEUseCase: calculateTDEEUseCase,
-            bodyRepository: bodyRepository
+            bodyRepository: bodyRepository,
+            userRepository: userRepository
         )
     }()
 
@@ -489,6 +531,7 @@ extension DIContainer {
     /// - Parameters:
     ///   - userId: 사용자 ID
     ///   - userWeight: 사용자 체중 (kg)
+    ///   - userGender: 사용자 성별 (칼로리 보정에 사용)
     ///   - userBMR: 사용자 BMR
     ///   - userTDEE: 사용자 TDEE
     ///   - editingExercise: 편집할 운동 기록 (편집 모드일 때만 제공)
@@ -497,6 +540,7 @@ extension DIContainer {
     func makeExerciseInputViewModel(
         userId: UUID,
         userWeight: Decimal,
+        userGender: Gender,
         userBMR: Decimal,
         userTDEE: Decimal,
         editingExercise: ExerciseRecord? = nil
@@ -506,6 +550,7 @@ extension DIContainer {
             updateExerciseRecordUseCase: editingExercise != nil ? updateExerciseRecordUseCase : nil,
             userId: userId,
             userWeight: userWeight,
+            userGender: userGender,
             userBMR: userBMR,
             userTDEE: userTDEE,
             editingExercise: editingExercise

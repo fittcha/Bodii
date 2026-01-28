@@ -85,10 +85,11 @@ final class ExerciseInputViewModel {
     ///
     /// 현재 입력값을 기반으로 예상 소모 칼로리를 계산합니다.
     /// 폼의 어떤 값이든 변경되면 자동으로 재계산됩니다.
+    /// 성별에 따른 보정 계수가 적용됩니다 (남성: 1.0, 여성: 0.9).
     ///
     /// - Returns: 예상 소모 칼로리 (kcal)
     ///
-    /// - Note: ExerciseCalcService를 사용하여 MET 기반 계산
+    /// - Note: ExerciseCalcService를 사용하여 MET 기반 계산 (성별 고려)
     var previewCalories: Int32 {
         guard duration > 0 else { return 0 }
 
@@ -96,7 +97,8 @@ final class ExerciseInputViewModel {
             exerciseType: selectedExerciseType,
             duration: duration,
             intensity: selectedIntensity,
-            weight: userWeight
+            weight: userWeight,
+            gender: userGender
         )
     }
 
@@ -145,6 +147,9 @@ final class ExerciseInputViewModel {
     /// 사용자 TDEE - DailyLog 생성 시 사용
     private let userTDEE: Decimal
 
+    /// 사용자 성별 - 칼로리 보정에 사용
+    private let userGender: Gender
+
     // MARK: - Initialization
 
     /// ExerciseInputViewModel 초기화
@@ -154,6 +159,7 @@ final class ExerciseInputViewModel {
     ///   - updateExerciseRecordUseCase: 운동 기록 수정 유스케이스 (편집 모드일 때만 필요)
     ///   - userId: 사용자 ID
     ///   - userWeight: 사용자 체중 (kg)
+    ///   - userGender: 사용자 성별 (칼로리 보정에 사용)
     ///   - userBMR: 사용자 BMR
     ///   - userTDEE: 사용자 TDEE
     ///   - editingExercise: 편집할 운동 기록 (편집 모드일 때만 제공)
@@ -163,6 +169,7 @@ final class ExerciseInputViewModel {
         updateExerciseRecordUseCase: UpdateExerciseRecordUseCase? = nil,
         userId: UUID,
         userWeight: Decimal,
+        userGender: Gender,
         userBMR: Decimal,
         userTDEE: Decimal,
         editingExercise: ExerciseRecord? = nil,
@@ -173,6 +180,7 @@ final class ExerciseInputViewModel {
         self.editingExercise = editingExercise
         self.userId = userId
         self.userWeight = userWeight
+        self.userGender = userGender
         self.userBMR = userBMR
         self.userTDEE = userTDEE
         self.selectedDate = selectedDate
@@ -245,7 +253,8 @@ final class ExerciseInputViewModel {
                     duration: duration,
                     intensity: selectedIntensity,
                     note: note.isEmpty ? nil : note,
-                    userWeight: userWeight
+                    userWeight: userWeight,
+                    userGender: userGender
                 )
             } else {
                 // 추가 모드: AddExerciseRecordUseCase 호출
@@ -257,6 +266,7 @@ final class ExerciseInputViewModel {
                     intensity: selectedIntensity,
                     note: note.isEmpty ? nil : note,
                     userWeight: userWeight,
+                    userGender: userGender,
                     userBMR: userBMR,
                     userTDEE: userTDEE
                 )

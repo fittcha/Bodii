@@ -36,7 +36,8 @@ import Foundation
 ///     duration: 45,
 ///     intensity: .medium,
 ///     note: "점심 자전거 라이딩",
-///     userWeight: user.currentWeight ?? 70.0
+///     userWeight: user.currentWeight ?? 70.0,
+///     userGender: Gender(rawValue: user.gender) ?? .male
 /// )
 /// ```
 ///
@@ -89,6 +90,7 @@ final class UpdateExerciseRecordUseCase {
     ///   - intensity: 운동 강도
     ///   - note: 메모 (선택사항)
     ///   - userWeight: 사용자 체중 (kg) - MET 계산에 사용
+    ///   - userGender: 사용자 성별 - 칼로리 보정에 사용
     ///
     /// - Throws:
     ///   - RecordNotFoundError: 운동 기록을 찾을 수 없을 때
@@ -108,7 +110,8 @@ final class UpdateExerciseRecordUseCase {
     ///         duration: 45,  // 30분 → 45분으로 변경
     ///         intensity: .high,
     ///         note: "아침 조깅 (연장)",
-    ///         userWeight: user.currentWeight ?? 70.0
+    ///         userWeight: user.currentWeight ?? 70.0,
+    ///         userGender: Gender(rawValue: user.gender) ?? .male
     ///     )
     ///     print("운동 기록 수정: \(updatedRecord.caloriesBurned)kcal")
     /// } catch {
@@ -122,7 +125,8 @@ final class UpdateExerciseRecordUseCase {
         duration: Int32,
         intensity: Intensity,
         note: String? = nil,
-        userWeight: Decimal
+        userWeight: Decimal,
+        userGender: Gender
     ) async throws -> ExerciseRecord {
         // 1. 기존 운동 기록 조회
         guard let existingRecord = try await exerciseRepository.fetchById(recordId, userId: userId) else {
@@ -147,12 +151,13 @@ final class UpdateExerciseRecordUseCase {
 
         let newCalories: Int32
         if needsRecalculation {
-            // 칼로리 재계산
+            // 칼로리 재계산 (성별 고려)
             newCalories = ExerciseCalcService.calculateCalories(
                 exerciseType: exerciseType,
                 duration: duration,
                 intensity: intensity,
-                weight: userWeight
+                weight: userWeight,
+                gender: userGender
             )
         } else {
             // 변경사항이 없으면 기존 칼로리 유지

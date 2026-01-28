@@ -37,6 +37,7 @@ import Foundation
 ///     intensity: .high,
 ///     note: "아침 조깅",
 ///     userWeight: user.currentWeight ?? 70.0,
+///     userGender: Gender(rawValue: user.gender) ?? .male,
 ///     userBMR: user.currentBMR ?? 1650,
 ///     userTDEE: user.currentTDEE ?? 2310
 /// )
@@ -89,6 +90,7 @@ final class AddExerciseRecordUseCase {
     ///   - intensity: 운동 강도
     ///   - note: 메모 (선택사항)
     ///   - userWeight: 사용자 체중 (kg) - MET 계산에 사용
+    ///   - userGender: 사용자 성별 - 칼로리 보정에 사용
     ///   - userBMR: 사용자 BMR - DailyLog 생성 시 사용
     ///   - userTDEE: 사용자 TDEE - DailyLog 생성 시 사용
     ///
@@ -110,6 +112,7 @@ final class AddExerciseRecordUseCase {
     ///         intensity: .high,
     ///         note: "아침 조깅",
     ///         userWeight: user.currentWeight ?? 70.0,
+    ///         userGender: Gender(rawValue: user.gender) ?? .male,
     ///         userBMR: user.currentBMR ?? 1650,
     ///         userTDEE: user.currentTDEE ?? 2310
     ///     )
@@ -126,18 +129,20 @@ final class AddExerciseRecordUseCase {
         intensity: Intensity,
         note: String? = nil,
         userWeight: Decimal,
+        userGender: Gender,
         userBMR: Decimal,
         userTDEE: Decimal
     ) async throws -> ExerciseRecord {
         // 1. 입력값 검증
         try validateInput(duration: duration)
 
-        // 2. MET 기반 칼로리 계산
+        // 2. MET 기반 칼로리 계산 (성별 고려)
         let caloriesBurned = ExerciseCalcService.calculateCalories(
             exerciseType: exerciseType,
             duration: duration,
             intensity: intensity,
-            weight: userWeight
+            weight: userWeight,
+            gender: userGender
         )
 
         // 3-4. ExerciseRecord 생성 및 저장
