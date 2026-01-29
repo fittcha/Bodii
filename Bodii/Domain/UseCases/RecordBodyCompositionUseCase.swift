@@ -47,12 +47,12 @@ struct RecordBodyCompositionUseCase {
         /// 부동소수점 오차를 방지하기 위해 Decimal 사용
         let weight: Decimal
 
-        /// 체지방률 (%)
+        /// 체지방률 (%) - 선택 입력
         /// 범위: 1-60%
-        let bodyFatPercent: Decimal
+        let bodyFatPercent: Decimal?
 
-        /// 근육량 (kg)
-        let muscleMass: Decimal
+        /// 근육량 (kg) - 선택 입력
+        let muscleMass: Decimal?
 
         /// 사용자 프로필 (BMR/TDEE 계산에 필요)
         /// 📚 학습 포인트: Composition
@@ -64,17 +64,19 @@ struct RecordBodyCompositionUseCase {
         /// 비즈니스 규칙 검증을 도메인 레이어에서 처리
         /// - Returns: 유효하면 true, 그렇지 않으면 false
         var isValid: Bool {
-            // 체중: 20-500 kg
+            // 체중: 20-500 kg (필수)
             guard weight >= 20 && weight <= 500 else { return false }
 
-            // 체지방률: 1-60%
-            guard bodyFatPercent >= 1 && bodyFatPercent <= 60 else { return false }
+            // 체지방률: 입력 시 1-60% (선택)
+            if let bf = bodyFatPercent {
+                guard bf >= 1 && bf <= 60 else { return false }
+            }
 
-            // 근육량: 10-100 kg
-            guard muscleMass >= 10 && muscleMass <= 100 else { return false }
-
-            // 근육량은 체중보다 작아야 함
-            guard muscleMass < weight else { return false }
+            // 근육량: 입력 시 10-100 kg (선택)
+            if let mm = muscleMass {
+                guard mm >= 10 && mm <= 100 else { return false }
+                guard mm < weight else { return false }
+            }
 
             return true
         }
@@ -236,27 +238,26 @@ struct RecordBodyCompositionUseCase {
             throw RecordError.invalidInput("입력 값이 유효하지 않습니다. 체중(20-500kg), 체지방률(1-60%), 근육량(10-100kg)을 확인하세요.")
         }
 
+        // 선택 입력값 처리 (nil이면 0으로 기본값)
+        let bodyFatPercent = input.bodyFatPercent ?? Decimal(0)
+        let muscleMass = input.muscleMass ?? Decimal(0)
+
         // Step 1: BMR 계산
-        // 📚 학습 포인트: Error Handling with do-catch
-        // Use Case의 에러를 RecordError로 래핑하여 계층별 에러 분리
+        // 체지방률이 있으면 Katch-McArdle, 없으면 Mifflin-St Jeor 공식 사용
         let bmrOutput: CalculateBMRUseCase.Output
         do {
             bmrOutput = try calculateBMRUseCase.execute(
-                profile: input.userProfile,
-                bodyEntry: BodyCompositionEntry(
-                    date: input.date,
-                    weight: input.weight,
-                    bodyFatPercent: input.bodyFatPercent,
-                    muscleMass: input.muscleMass
-                )
+                weight: input.weight,
+                height: input.userProfile.height,
+                age: input.userProfile.age,
+                gender: input.userProfile.gender,
+                bodyFatPercent: input.bodyFatPercent  // nil이면 Mifflin-St Jeor 사용
             )
         } catch {
             throw RecordError.bmrCalculationFailed(error)
         }
 
         // Step 2: TDEE 계산
-        // 📚 학습 포인트: Use Case Chaining
-        // BMR 계산 결과를 바로 TDEE 계산에 사용
         let tdeeOutput: CalculateTDEEUseCase.Output
         do {
             tdeeOutput = try calculateTDEEUseCase.execute(
@@ -268,13 +269,11 @@ struct RecordBodyCompositionUseCase {
         }
 
         // Step 3: 도메인 엔티티 생성
-        // 📚 학습 포인트: Domain Entity Creation
-        // 계산된 값들을 사용하여 저장할 엔티티 생성
         let bodyEntry = BodyCompositionEntry(
             date: input.date,
             weight: input.weight,
-            bodyFatPercent: input.bodyFatPercent,
-            muscleMass: input.muscleMass
+            bodyFatPercent: bodyFatPercent,
+            muscleMass: muscleMass
         )
 
         let metabolismData = MetabolismData(
@@ -282,7 +281,7 @@ struct RecordBodyCompositionUseCase {
             bmr: bmrOutput.bmr,
             tdee: tdeeOutput.tdee,
             weight: input.weight,
-            bodyFatPercent: input.bodyFatPercent,
+            bodyFatPercent: bodyFatPercent,
             activityLevel: input.userProfile.activityLevel
         )
 
@@ -346,8 +345,8 @@ struct RecordBodyCompositionUseCase {
     func execute(
         date: Date = Date(),
         weight: Decimal,
-        bodyFatPercent: Decimal,
-        muscleMass: Decimal,
+        bodyFatPercent: Decimal? = nil,
+        muscleMass: Decimal? = nil,
         userProfile: UserProfile
     ) async throws -> Output {
         let input = Input(

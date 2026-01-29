@@ -131,9 +131,14 @@ final class BodyLocalDataSource {
                 metabolismSnapshot.bodyRecord = bodyRecord
             }
 
-            // 📚 학습 포인트: User Relationship
-            // 현재는 단일 사용자 가정, 향후 다중 사용자 지원 시 수정 필요
-            // TODO: User 가져와서 연결
+            // User Relationship 설정 (필수 - non-optional relationship)
+            // 현재는 단일 사용자 가정
+            let userRequest: NSFetchRequest<User> = User.fetchRequest()
+            userRequest.fetchLimit = 1
+            if let user = try context.fetch(userRequest).first {
+                bodyRecord.user = user
+                metabolismSnapshot.user = user
+            }
 
             // 📚 학습 포인트: Context Save
             // 변경사항을 영구 저장소에 기록
@@ -395,6 +400,7 @@ final class BodyLocalDataSource {
                 let snapshot = self.metabolismSnapshotMapper.toEntity(metabolismData, context: context)
                 bodyRecord.metabolismSnapshot = snapshot
                 snapshot.bodyRecord = bodyRecord
+                snapshot.user = bodyRecord.user
             }
 
             try context.save()

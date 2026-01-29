@@ -143,17 +143,24 @@ class BodyCompositionViewModel: ObservableObject {
     /// - 실시간으로 입력 유효성 검증
     /// - View에서 저장 버튼 활성화/비활성화에 사용
     var isInputValid: Bool {
-        guard let weight = Decimal(string: weightInput),
-              let bodyFatPercent = Decimal(string: bodyFatPercentInput),
-              let muscleMass = Decimal(string: muscleMassInput) else {
+        // 체중은 필수
+        guard let weight = Decimal(string: weightInput) else {
             return false
         }
-
-        // 범위 검증
         guard weight >= 20 && weight <= 500 else { return false }
-        guard bodyFatPercent >= 1 && bodyFatPercent <= 60 else { return false }
-        guard muscleMass >= 10 && muscleMass <= 100 else { return false }
-        guard muscleMass < weight else { return false }
+
+        // 체지방률은 선택 (입력 시 범위 검증)
+        if !bodyFatPercentInput.isEmpty {
+            guard let bodyFatPercent = Decimal(string: bodyFatPercentInput),
+                  bodyFatPercent >= 1 && bodyFatPercent <= 60 else { return false }
+        }
+
+        // 근육량은 선택 (입력 시 범위 검증)
+        if !muscleMassInput.isEmpty {
+            guard let muscleMass = Decimal(string: muscleMassInput),
+                  muscleMass >= 10 && muscleMass <= 100 else { return false }
+            if muscleMass >= weight { return false }
+        }
 
         return true
     }
@@ -180,13 +187,13 @@ class BodyCompositionViewModel: ObservableObject {
             return
         }
 
-        // 입력 값을 Decimal로 변환
-        guard let weight = Decimal(string: weightInput),
-              let bodyFatPercent = Decimal(string: bodyFatPercentInput),
-              let muscleMass = Decimal(string: muscleMassInput) else {
-            errorMessage = "숫자 변환에 실패했습니다."
+        // 입력 값을 Decimal로 변환 (체중 필수, 나머지 선택)
+        guard let weight = Decimal(string: weightInput) else {
+            errorMessage = "체중을 올바르게 입력해주세요."
             return
         }
+        let bodyFatPercent = Decimal(string: bodyFatPercentInput)
+        let muscleMass = Decimal(string: muscleMassInput)
 
         // 저장 시작
         isSaving = true
