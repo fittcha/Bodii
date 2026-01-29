@@ -103,11 +103,35 @@ struct GeminiRequestDTO: Codable {
         /// 텍스트 콘텐츠
         ///
         /// 사용자 프롬프트 또는 AI 응답 텍스트
-        let text: String
+        let text: String?
+
+        /// 인라인 이미지 데이터 (Multimodal 요청용)
+        ///
+        /// 📚 학습 포인트: Gemini Multimodal Input
+        /// 이미지를 base64로 인코딩하여 텍스트와 함께 전송
+        let inlineData: InlineData?
 
         /// CodingKeys for API field mapping
         enum CodingKeys: String, CodingKey {
             case text = "text"
+            case inlineData = "inline_data"
+        }
+    }
+
+    /// 인라인 데이터 (이미지 등 바이너리 콘텐츠)
+    ///
+    /// Gemini API의 multimodal 요청에서 이미지를 전달하는 구조체
+    struct InlineData: Codable {
+        /// MIME 타입 (예: "image/jpeg", "image/png")
+        let mimeType: String
+
+        /// Base64 인코딩된 데이터
+        let data: String
+
+        /// CodingKeys for API field mapping
+        enum CodingKeys: String, CodingKey {
+            case mimeType = "mime_type"
+            case data = "data"
         }
     }
 
@@ -219,8 +243,40 @@ extension GeminiRequestDTO {
         temperature: Double = 0.7,
         maxOutputTokens: Int = 1024
     ) {
-        let part = Part(text: prompt)
+        let part = Part(text: prompt, inlineData: nil)
         let content = Content(parts: [part], role: nil)
+
+        let config = GenerationConfig(
+            temperature: temperature,
+            topK: nil,
+            topP: nil,
+            maxOutputTokens: maxOutputTokens,
+            stopSequences: nil
+        )
+
+        self.contents = [content]
+        self.generationConfig = config
+        self.safetySettings = nil
+    }
+
+    /// 이미지 + 텍스트 프롬프트로 Multimodal 요청 생성
+    ///
+    /// - Parameters:
+    ///   - imageBase64: Base64 인코딩된 이미지 데이터
+    ///   - mimeType: 이미지 MIME 타입 (기본값: "image/jpeg")
+    ///   - prompt: 분석 요청 텍스트
+    ///   - temperature: 응답의 창의성 (0.0-1.0, 기본값: 0.3)
+    ///   - maxOutputTokens: 최대 출력 토큰 수 (기본값: 2048)
+    init(
+        imageBase64: String,
+        mimeType: String = "image/jpeg",
+        prompt: String,
+        temperature: Double = 0.3,
+        maxOutputTokens: Int = 2048
+    ) {
+        let imagePart = Part(text: nil, inlineData: InlineData(mimeType: mimeType, data: imageBase64))
+        let textPart = Part(text: prompt, inlineData: nil)
+        let content = Content(parts: [imagePart, textPart], role: nil)
 
         let config = GenerationConfig(
             temperature: temperature,
@@ -266,7 +322,9 @@ extension GeminiRequestDTO {
             }
 
             for part in content.parts {
-                guard !part.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                let hasText = part.text.map { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty } ?? false
+                let hasImage = part.inlineData != nil
+                guard hasText || hasImage else {
                     return false
                 }
             }

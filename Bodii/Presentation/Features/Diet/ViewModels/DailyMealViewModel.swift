@@ -54,6 +54,15 @@ final class DailyMealViewModel: ObservableObject {
     /// AI 코멘트 생성 중인 끼니 타입
     @Published var selectedMealTypeForComment: MealType?
 
+    /// 일일 전체 식단 AI 코멘트 (탭 상단 카드용)
+    @Published var dailyComment: DietComment?
+
+    /// 일일 코멘트 로딩 상태
+    @Published var isDailyCommentLoading: Bool = false
+
+    /// 일일 코멘트 에러 메시지
+    @Published var dailyCommentError: String?
+
     // MARK: - Private Properties
 
     /// 식단 기록 서비스
@@ -77,6 +86,9 @@ final class DailyMealViewModel: ObservableObject {
     /// 현재 목표 타입 (감량/유지/증량)
     private var currentGoalType: GoalType = .maintain
 
+    /// AI 식단 코멘트 생성 UseCase
+    private let generateDietCommentUseCase: GenerateDietCommentUseCase
+
     /// DI Container (AI comment ViewModel 생성용)
     private let diContainer: DIContainer
 
@@ -88,16 +100,19 @@ final class DailyMealViewModel: ObservableObject {
     ///   - foodRecordService: 식단 기록 서비스
     ///   - dailyLogRepository: 일일 집계 Repository
     ///   - foodRepository: 음식 Repository
+    ///   - generateDietCommentUseCase: AI 식단 코멘트 생성 UseCase
     ///   - diContainer: DI Container (AI comment ViewModel 생성용, 기본값: shared)
     init(
         foodRecordService: FoodRecordServiceProtocol,
         dailyLogRepository: DailyLogRepository,
         foodRepository: FoodRepositoryProtocol,
+        generateDietCommentUseCase: GenerateDietCommentUseCase,
         diContainer: DIContainer = .shared
     ) {
         self.foodRecordService = foodRecordService
         self.dailyLogRepository = dailyLogRepository
         self.foodRepository = foodRepository
+        self.generateDietCommentUseCase = generateDietCommentUseCase
         self.diContainer = diContainer
     }
 
@@ -179,21 +194,61 @@ final class DailyMealViewModel: ObservableObject {
     ///
     /// - Parameter mealType: 평가할 끼니 타입 (nil이면 전체 식단)
     func showAIComment(for mealType: MealType?) {
-        guard let _ = currentUserId else { return }
+        guard let userId = currentUserId else { return }
 
-        // TODO: DietCommentViewModel 생성 (Phase 7에서 구현 예정)
-        // DIContainer에 makeDietCommentViewModel 팩토리 추가 필요
-        // dietCommentViewModel = diContainer.makeDietCommentViewModel(
-        //     userId: userId,
-        //     goalType: currentGoalType,
-        //     tdee: Int(currentTDEE)
-        // )
+        dietCommentViewModel = diContainer.makeDietCommentViewModel(
+            userId: userId,
+            goalType: currentGoalType,
+            tdee: Int(currentTDEE)
+        )
 
-        // 선택된 끼니 타입 저장
         selectedMealTypeForComment = mealType
-
-        // Sheet 표시
         showAICommentSheet = true
+    }
+
+    /// 일일 전체 식단 AI 코멘트를 자동 생성합니다.
+    ///
+    /// 식단 추가/수정/삭제 후 호출되어 오늘의 전체 식단(아침/점심/저녁/간식)을
+    /// 종합 분석한 점수와 총평을 생성합니다.
+    func generateDailyComment() {
+        guard let userId = currentUserId else { return }
+        guard hasAnyMeals else {
+            dailyComment = nil
+            dailyCommentError = nil
+            return
+        }
+
+        isDailyCommentLoading = true
+        dailyCommentError = nil
+
+        Task {
+            do {
+                let comment = try await generateDietCommentUseCase.executeIgnoringCache(
+                    userId: userId,
+                    date: selectedDate,
+                    mealType: nil,
+                    goalType: currentGoalType,
+                    tdee: Int(currentTDEE)
+                )
+                dailyComment = comment
+                isDailyCommentLoading = false
+            } catch let error as DietCommentError {
+                isDailyCommentLoading = false
+                switch error {
+                case .noFoodRecords:
+                    dailyComment = nil
+                case .rateLimitExceeded:
+                    dailyCommentError = "요청 한도 초과. 잠시 후 다시 시도해주세요."
+                case .networkFailure:
+                    dailyCommentError = "네트워크 연결을 확인해주세요."
+                default:
+                    dailyCommentError = "AI 분석을 불러올 수 없습니다."
+                }
+            } catch {
+                isDailyCommentLoading = false
+                dailyCommentError = "AI 분석을 불러올 수 없습니다."
+            }
+        }
     }
 
     // MARK: - Private Methods
@@ -220,6 +275,9 @@ final class DailyMealViewModel: ObservableObject {
                 mealGroups = groupByMealType(foodRecordsWithFood)
 
                 isLoading = false
+
+                // 식단이 있으면 AI 일일 총평 자동 생성
+                generateDailyComment()
             } catch {
                 handleError(error)
             }

@@ -315,6 +315,17 @@ final class DIContainer {
         return UpdateGoalUseCase(goalRepository: goalRepository)
     }()
 
+    // MARK: - Diet Use Cases
+
+    /// AI 식단 코멘트 생성 Use Case
+    lazy var generateDietCommentUseCase: GenerateDietCommentUseCase = {
+        return GenerateDietCommentUseCase(
+            dietCommentRepository: dietCommentRepository,
+            geminiService: geminiService,
+            foodRecordRepository: foodRecordRepository
+        )
+    }()
+
     // MARK: - Exercise Use Cases
 
     /// 운동 기록 추가 Use Case
@@ -575,10 +586,27 @@ extension DIContainer {
         )
     }
 
-    // TODO: 각 Feature 구현 시 Factory 메서드 추가
-    // func makeOnboardingViewModel() -> OnboardingViewModel
-    // func makeDashboardViewModel() -> DashboardViewModel
-    // func makeFoodLogViewModel() -> FoodLogViewModel
+    // MARK: - Diet ViewModels
+
+    /// DietCommentViewModel 생성
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - goalType: 사용자 목표 (감량/유지/증량)
+    ///   - tdee: 활동대사량 (kcal)
+    /// - Returns: 새로운 DietCommentViewModel 인스턴스
+    @MainActor
+    func makeDietCommentViewModel(
+        userId: UUID,
+        goalType: GoalType,
+        tdee: Int
+    ) -> DietCommentViewModel {
+        return DietCommentViewModel(
+            generateCommentUseCase: generateDietCommentUseCase,
+            userId: userId,
+            userGoalType: goalType,
+            userTDEE: tdee
+        )
+    }
 }
 
 // MARK: - Testing Support

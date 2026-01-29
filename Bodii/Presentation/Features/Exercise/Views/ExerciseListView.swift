@@ -63,6 +63,8 @@ struct ExerciseListView: View {
     @State private var userBMR: Decimal = 1650
     /// 사용자 활동대사량 (kcal)
     @State private var userTDEE: Decimal = 2310
+    /// 사용자 성별
+    @State private var userGender: Gender = .male
 
     // MARK: - Body
 
@@ -97,6 +99,7 @@ struct ExerciseListView: View {
                     viewModel: DIContainer.shared.makeExerciseInputViewModel(
                         userId: viewModel.userId,
                         userWeight: userWeight,
+                        userGender: userGender,
                         userBMR: userBMR,
                         userTDEE: userTDEE
                     ),
@@ -117,6 +120,7 @@ struct ExerciseListView: View {
                         viewModel: DIContainer.shared.makeExerciseInputViewModel(
                             userId: viewModel.userId,
                             userWeight: userWeight,
+                            userGender: userGender,
                             userBMR: userBMR,
                             userTDEE: userTDEE,
                             editingExercise: exercise

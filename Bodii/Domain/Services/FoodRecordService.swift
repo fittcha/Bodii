@@ -263,6 +263,84 @@ final class FoodRecordService: FoodRecordServiceProtocol {
         return try await foodRecordRepository.findByDateAndMealType(date, mealType: mealType, userId: userId)
     }
 
+    // MARK: - Gemini AI Food Record
+
+    func addFoodRecordFromGemini(
+        userId: UUID,
+        foodName: String,
+        date: Date,
+        mealType: MealType,
+        estimatedGrams: Double,
+        calories: Double,
+        carbohydrates: Double,
+        protein: Double,
+        fat: Double,
+        bmr: Int32,
+        tdee: Int32
+    ) async throws -> FoodRecord {
+        // 1. Food 엔티티 조회 또는 생성 (이름 기반)
+        let food: Food
+        let searchResults = try await foodRepository.search(name: foodName)
+        if let existingFood = searchResults.first(where: { $0.name == foodName }) {
+            food = existingFood
+        } else {
+            // AI 분석 결과로 새 Food 엔티티 생성
+            let newFood = Food(context: context)
+            newFood.id = UUID()
+            newFood.name = foodName
+            newFood.calories = Int32((calories / (estimatedGrams / 100.0)).rounded()) // 100g 기준
+            newFood.carbohydrates = NSDecimalNumber(value: carbohydrates / (estimatedGrams / 100.0))
+            newFood.protein = NSDecimalNumber(value: protein / (estimatedGrams / 100.0))
+            newFood.fat = NSDecimalNumber(value: fat / (estimatedGrams / 100.0))
+            newFood.servingSize = NSDecimalNumber(value: estimatedGrams)
+            newFood.servingUnit = "g"
+            newFood.source = FoodSource.userDefined.rawValue
+            newFood.createdAt = Date()
+            food = newFood
+        }
+
+        // 2. FoodRecord 생성 (AI 추정값 직접 사용)
+        let caloriesInt32 = Int32(calories.rounded())
+        let carbsDecimal = Decimal(carbohydrates)
+        let proteinDecimal = Decimal(protein)
+        let fatDecimal = Decimal(fat)
+
+        let foodRecord = FoodRecord(context: context)
+        foodRecord.id = UUID()
+        foodRecord.food = food
+        foodRecord.date = date
+        foodRecord.mealType = mealType.rawValue
+        foodRecord.quantity = NSDecimalNumber(value: estimatedGrams)
+        foodRecord.quantityUnit = QuantityUnit.grams.rawValue
+        foodRecord.calculatedCalories = caloriesInt32
+        foodRecord.calculatedCarbs = NSDecimalNumber(decimal: carbsDecimal)
+        foodRecord.calculatedProtein = NSDecimalNumber(decimal: proteinDecimal)
+        foodRecord.calculatedFat = NSDecimalNumber(decimal: fatDecimal)
+        foodRecord.createdAt = Date()
+
+        let savedFoodRecord = try await foodRecordRepository.save(foodRecord)
+
+        // 3. DailyLog 업데이트
+        let dailyLog = try await dailyLogRepository.getOrCreate(
+            for: date,
+            userId: userId,
+            bmr: bmr,
+            tdee: tdee
+        )
+
+        updateDailyLogWithAddition(
+            dailyLog: dailyLog,
+            calories: caloriesInt32,
+            carbs: carbsDecimal,
+            protein: proteinDecimal,
+            fat: fatDecimal
+        )
+
+        _ = try await dailyLogRepository.update(dailyLog)
+
+        return savedFoodRecord
+    }
+
     // MARK: - Private Helpers
 
     /// Food 정보와 섭취량을 기반으로 실제 영양소 값을 계산합니다.
