@@ -23,6 +23,12 @@ struct ContentView: View {
     // 탭 선택 상태를 추적하여 현재 활성 탭을 기억
     @State private var selectedTab: Tab = .dashboard
 
+    // 📚 학습 포인트: 현재 사용자 데이터
+    // Core Data에서 조회한 실제 사용자 정보
+    // 온보딩에서 입력한 데이터가 여기에 반영됨
+    @State private var currentUserProfile: UserProfile?
+    @State private var currentUserId: UUID?
+
     // 📚 학습 포인트: @StateObject for Sleep Prompt Manager
     // 수면 기록 프롬프트 관리자
     // View의 생명주기 동안 유지되는 ObservableObject
@@ -56,9 +62,10 @@ struct ContentView: View {
         .sheet(isPresented: $sleepPromptManager.shouldShowPrompt) {
             // 📚 학습 포인트: Sleep Input Sheet Integration
             // DIContainer를 통해 ViewModel 생성하고 주입
-            // TODO: Phase 7 - UserProfile.sample 대신 실제 사용자 데이터 사용
+            // 온보딩에서 저장된 실제 사용자 데이터 사용
+            let userId = currentUserId ?? UserProfile.sample.id
             let viewModel = DIContainer.shared.makeSleepInputViewModel(
-                userId: UserProfile.sample.id,
+                userId: userId,
                 defaultHours: 7,
                 defaultMinutes: 0
             )
@@ -75,9 +82,10 @@ struct ContentView: View {
             )
         }
         // 📚 학습 포인트: onAppear Lifecycle Hook
-        // View가 처음 나타날 때 수면 프롬프트 체크
+        // View가 처음 나타날 때 사용자 정보 로드 및 수면 프롬프트 체크
         // 💡 Java 비교: onCreate() 또는 onResume()과 유사
         .onAppear {
+            loadCurrentUser()
             Task {
                 await sleepPromptManager.checkShouldShow()
             }
@@ -102,18 +110,18 @@ struct ContentView: View {
     private var dashboardTab: some View {
         // 📚 학습 포인트: tabItem modifier
         // 탭 바에 표시될 아이콘과 텍스트 정의
-        // TODO: Phase 6 (6.1, 6.2) - DIContainer에서 ViewModel 주입받도록 변경
-        // 현재는 임시로 직접 생성하여 사용
+        // 실제 사용자 데이터 또는 fallback으로 sample 데이터 사용
         let bodyRepository = BodyRepository()
         let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
         let sleepRepository = DIContainer.shared.sleepRepository
         let goalProgressViewModel = DIContainer.shared.makeGoalProgressViewModel()
+        let userId = currentUserId ?? UserProfile.sample.id
 
         return DashboardView(
             metabolismViewModel: metabolismViewModel,
             goalProgressViewModel: goalProgressViewModel,
             sleepRepository: sleepRepository,
-            userId: UserProfile.sample.id,
+            userId: userId,
             onNavigateToBody: {
                 // 📚 학습 포인트: Tab Navigation
                 // 대사율 카드 탭 시 체성분 탭으로 이동
@@ -134,10 +142,10 @@ struct ContentView: View {
     private var bodyTab: some View {
         // 📚 학습 포인트: DIContainer Factory Pattern
         // DIContainer의 factory 메서드를 통해 ViewModel 생성
-        // TODO: Phase 7 - UserProfile을 실제 저장된 사용자 데이터로 교체
-        // 현재는 임시로 sample 데이터 사용
+        // 온보딩에서 저장된 실제 사용자 데이터 사용
+        let userProfile = currentUserProfile ?? UserProfile.sample
         let viewModel = DIContainer.shared.makeBodyCompositionViewModel(
-            userProfile: UserProfile.sample
+            userProfile: userProfile
         )
 
         return BodyCompositionView(viewModel: viewModel)
@@ -163,9 +171,10 @@ struct ContentView: View {
         // 📚 학습 포인트: Exercise Tab with NavigationStack
         // ExerciseListView는 NavigationStack을 포함하지 않으므로 여기서 래핑
         // DIContainer를 통해 ViewModel 생성 및 의존성 주입
-        // TODO: Phase 7 - UserProfile.sample 대신 실제 사용자 데이터 사용
+        // 온보딩에서 저장된 실제 사용자 데이터 사용
+        let userId = currentUserId ?? UserProfile.sample.id
         let viewModel = DIContainer.shared.makeExerciseListViewModel(
-            userId: UserProfile.sample.id
+            userId: userId
         )
 
         return NavigationStack {
@@ -202,6 +211,28 @@ struct ContentView: View {
             Label("설정", systemImage: "gearshape.fill")
         }
         .tag(Tab.settings)
+    }
+
+    // MARK: - Private Methods
+
+    /// 현재 사용자 정보 로드
+    /// 📚 학습 포인트: Core Data에서 사용자 조회
+    /// - 온보딩에서 저장된 User 엔티티를 UserProfile로 변환
+    /// - 사용자가 없으면 nil (fallback으로 sample 사용)
+    private func loadCurrentUser() {
+        do {
+            let userRepository = DIContainer.shared.userRepository
+            currentUserProfile = try userRepository.fetchCurrentUserProfile()
+            currentUserId = try userRepository.fetchCurrentUserId()
+
+            if currentUserProfile != nil {
+                print("✅ 사용자 데이터 로드 완료: \(currentUserProfile!.height)cm")
+            } else {
+                print("⚠️ 저장된 사용자 없음 - sample 데이터 사용")
+            }
+        } catch {
+            print("❌ 사용자 로드 실패: \(error.localizedDescription)")
+        }
     }
 }
 

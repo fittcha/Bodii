@@ -155,17 +155,19 @@ struct DietComment {
 /// 각 등급은 시각적 피드백을 위한 색상 매핑을 제공합니다.
 ///
 /// - Cases:
-///   - great: 우수 (8-10점) - 초록색
-///   - good: 좋음 (5-7점) - 노란색
-///   - needsWork: 개선 필요 (0-4점) - 빨간색
+///   - excellent: 최고 (9-10점) - 파란색
+///   - great: 좋음 (7-8점) - 초록색
+///   - good: 보통 (4-6점) - 노란색
+///   - needsWork: 개선 필요 (0-3점) - 빨간색
 ///
 /// - Example:
 /// ```swift
-/// let score = DietScore.from(score: 8)
-/// print(score.displayName) // "우수"
-/// print(score.color) // Color.green
+/// let score = DietScore.from(score: 9)
+/// print(score.displayName) // "최고"
+/// print(score.color) // Color.blue
 /// ```
 enum DietScore: String, CaseIterable, Codable {
+    case excellent = "excellent"
     case great = "great"
     case good = "good"
     case needsWork = "needsWork"
@@ -173,19 +175,22 @@ enum DietScore: String, CaseIterable, Codable {
     /// 사용자에게 표시할 등급 이름
     var displayName: String {
         switch self {
-        case .great: return "우수"
-        case .good: return "좋음"
+        case .excellent: return "최고"
+        case .great: return "좋음"
+        case .good: return "보통"
         case .needsWork: return "개선 필요"
         }
     }
 
     /// 등급별 색상
     ///
+    /// - excellent: 파란색 (최고의 식단)
     /// - great: 초록색 (건강하고 균형잡힌 식단)
     /// - good: 노란색 (양호하나 개선 여지 있음)
     /// - needsWork: 빨간색 (개선이 필요한 식단)
     var color: Color {
         switch self {
+        case .excellent: return .blue
         case .great: return .green
         case .good: return .yellow
         case .needsWork: return .red
@@ -198,14 +203,17 @@ enum DietScore: String, CaseIterable, Codable {
     /// - Returns: 점수에 해당하는 식단 평가 등급
     ///
     /// 등급 기준:
-    /// - great: 8-10점 (우수)
-    /// - good: 5-7점 (좋음)
-    /// - needsWork: 0-4점 (개선 필요)
+    /// - excellent: 9-10점 (최고)
+    /// - great: 7-8점 (좋음)
+    /// - good: 4-6점 (보통)
+    /// - needsWork: 0-3점 (개선 필요)
     static func from(score: Int) -> DietScore {
         switch score {
-        case 8...10:
+        case 9...10:
+            return .excellent
+        case 7...8:
             return .great
-        case 5...7:
+        case 4...6:
             return .good
         default:
             return .needsWork

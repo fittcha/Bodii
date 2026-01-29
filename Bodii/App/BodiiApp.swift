@@ -50,17 +50,12 @@ struct BodiiApp: App {
     // iOS: 단일 윈도우, macOS: 다중 윈도우 지원
     var body: some Scene {
         WindowGroup {
-            // 📚 학습 포인트: Conditional Root View
-            // 온보딩 완료 여부에 따라 다른 루트 뷰 표시
-            // - 미완료: OnboardingContainerView
-            // - 완료: ContentView (메인 탭)
-            Group {
-                if appState.isOnboardingComplete {
-                    ContentView()
-                } else {
-                    OnboardingContainerView()
-                }
-            }
+            // 📚 학습 포인트: AppRootView
+            // 앱의 모든 진입 흐름을 관리하는 루트 뷰
+            // - 온보딩 미완료 → OnboardingContainerView
+            // - 수면 입력 필요 (새벽 2시~정오) → 수면 입력 팝업
+            // - 그 외 → ContentView (메인 탭)
+            AppRootView()
             // 📚 학습 포인트: Environment
             // managedObjectContext를 View 계층 전체에 주입
             // 하위 뷰에서 @Environment(\.managedObjectContext)로 접근 가능

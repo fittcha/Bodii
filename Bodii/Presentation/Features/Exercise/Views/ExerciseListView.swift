@@ -59,6 +59,8 @@ struct ExerciseListView: View {
     // TODO: 추후 User entity나 AuthenticationService에서 가져오도록 개선
     /// 사용자 체중 (kg) - 칼로리 계산에 사용
     @State private var userWeight: Decimal = 70.0
+    /// 사용자 성별 - 칼로리 보정에 사용
+    @State private var userGender: Gender = .male
     /// 사용자 기초대사량 (kcal)
     @State private var userBMR: Decimal = 1650
     /// 사용자 활동대사량 (kcal)

@@ -94,9 +94,10 @@ final class SleepLocalDataSource {
         )
     }
 
-    /// 새로운 수면 기록을 저장합니다.
-    /// 📚 학습 포인트: Transactional Operation with Side Effects
-    /// - SleepRecord 생성
+    /// 수면 기록을 저장합니다 (Upsert: 같은 날짜 데이터가 있으면 업데이트).
+    /// 📚 학습 포인트: Upsert Pattern
+    /// - 하루에 하나의 수면 기록만 유지
+    /// - 같은 날짜에 기록이 있으면 업데이트, 없으면 생성
     /// - 02:00 경계 로직 적용 (DateUtils.getLogicalDate)
     /// - DailyLog 자동 업데이트 (sleepDuration, sleepStatus)
     /// - 하나의 트랜잭션에서 모두 처리 (원자성 보장)
@@ -129,16 +130,53 @@ final class SleepLocalDataSource {
             // Core Data 모델에서 user relationship이 required이므로 반드시 설정해야 함
             let user = try self.fetchOrCreateCurrentUser(context: context)
 
-            // 📚 학습 포인트: Core Data Entity 직접 생성
-            let sleepRecordEntity = SleepRecord(context: context)
-            sleepRecordEntity.id = UUID()
-            sleepRecordEntity.date = logicalDate
-            sleepRecordEntity.duration = duration
-            sleepRecordEntity.status = self.sleepRecordMapper.int16FromStatus(status)
-            sleepRecordEntity.healthKitId = healthKitId
-            sleepRecordEntity.createdAt = Date()
-            sleepRecordEntity.updatedAt = Date()
-            sleepRecordEntity.user = user
+            // 📚 학습 포인트: Upsert - 같은 날짜 기록 확인
+            // 하루에 하나의 수면 기록만 유지
+            let calendar = Calendar.current
+            let startOfDay = calendar.startOfDay(for: logicalDate)
+            guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
+                throw NSError(
+                    domain: "SleepLocalDataSource",
+                    code: 1001,
+                    userInfo: [NSLocalizedDescriptionKey: "날짜 계산 실패"]
+                )
+            }
+
+            let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+            request.predicate = NSPredicate(
+                format: "date >= %@ AND date < %@",
+                startOfDay as NSDate,
+                endOfDay as NSDate
+            )
+            request.fetchLimit = 1
+
+            let existingRecords = try context.fetch(request)
+
+            let sleepRecordEntity: SleepRecord
+
+            if let existingRecord = existingRecords.first {
+                // 📚 학습 포인트: Update existing record
+                // 같은 날짜에 기록이 있으면 업데이트
+                sleepRecordEntity = existingRecord
+                sleepRecordEntity.duration = duration
+                sleepRecordEntity.status = self.sleepRecordMapper.int16FromStatus(status)
+                sleepRecordEntity.updatedAt = Date()
+                if let healthKitId = healthKitId {
+                    sleepRecordEntity.healthKitId = healthKitId
+                }
+            } else {
+                // 📚 학습 포인트: Create new record
+                // 같은 날짜에 기록이 없으면 새로 생성
+                sleepRecordEntity = SleepRecord(context: context)
+                sleepRecordEntity.id = UUID()
+                sleepRecordEntity.date = logicalDate
+                sleepRecordEntity.duration = duration
+                sleepRecordEntity.status = self.sleepRecordMapper.int16FromStatus(status)
+                sleepRecordEntity.healthKitId = healthKitId
+                sleepRecordEntity.createdAt = Date()
+                sleepRecordEntity.updatedAt = Date()
+                sleepRecordEntity.user = user
+            }
 
             // 📚 학습 포인트: DailyLog Update
             // SleepRecord 저장 시 해당 날짜의 DailyLog를 자동으로 업데이트
@@ -159,7 +197,7 @@ final class SleepLocalDataSource {
                 // Core Data 에러를 더 구체적인 도메인 에러로 변환
                 throw NSError(
                     domain: "SleepLocalDataSource",
-                    code: 1001,
+                    code: 1002,
                     userInfo: [NSLocalizedDescriptionKey: "저장 실패: \(error.localizedDescription)"]
                 )
             }

@@ -78,16 +78,58 @@ final class BodyLocalDataSource {
         let context = persistenceController.newBackgroundContext()
 
         return try await context.perform {
-            // 📚 학습 포인트: Mapper 사용
-            // Domain entity를 Core Data entity로 변환
-            let bodyRecord = self.bodyRecordMapper.toEntity(entry, context: context)
-            let metabolismSnapshot = self.metabolismSnapshotMapper.toEntity(metabolismData, context: context)
+            // 📚 학습 포인트: Upsert - 같은 날짜의 기존 레코드 확인
+            // 하루에 하나의 체성분 데이터만 저장되도록 함
+            let calendar = Calendar.current
+            let startOfDay = calendar.startOfDay(for: entry.date)
+            guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
+                throw NSError(
+                    domain: "BodyLocalDataSource",
+                    code: 1001,
+                    userInfo: [NSLocalizedDescriptionKey: "날짜 계산 실패"]
+                )
+            }
 
-            // 📚 학습 포인트: Core Data Relationship
-            // 두 엔티티 간의 관계 설정
-            // BodyRecord ↔ MetabolismSnapshot (1:1)
-            bodyRecord.metabolismSnapshot = metabolismSnapshot
-            metabolismSnapshot.bodyRecord = bodyRecord
+            let request: NSFetchRequest<BodyRecord> = BodyRecord.fetchRequest()
+            request.predicate = NSPredicate(
+                format: "date >= %@ AND date < %@",
+                startOfDay as NSDate,
+                endOfDay as NSDate
+            )
+            request.fetchLimit = 1
+
+            let existingRecords = try context.fetch(request)
+
+            let bodyRecord: BodyRecord
+            let metabolismSnapshot: MetabolismSnapshot
+
+            if let existingRecord = existingRecords.first {
+                // 기존 레코드 업데이트
+                bodyRecord = existingRecord
+                self.bodyRecordMapper.updateEntity(bodyRecord, from: entry)
+
+                // MetabolismSnapshot 업데이트 또는 생성
+                if let existingSnapshot = existingRecord.metabolismSnapshot {
+                    metabolismSnapshot = existingSnapshot
+                    self.metabolismSnapshotMapper.updateEntity(metabolismSnapshot, from: metabolismData)
+                } else {
+                    metabolismSnapshot = self.metabolismSnapshotMapper.toEntity(metabolismData, context: context)
+                    bodyRecord.metabolismSnapshot = metabolismSnapshot
+                    metabolismSnapshot.bodyRecord = bodyRecord
+                }
+            } else {
+                // 새 레코드 생성
+                // 📚 학습 포인트: Mapper 사용
+                // Domain entity를 Core Data entity로 변환
+                bodyRecord = self.bodyRecordMapper.toEntity(entry, context: context)
+                metabolismSnapshot = self.metabolismSnapshotMapper.toEntity(metabolismData, context: context)
+
+                // 📚 학습 포인트: Core Data Relationship
+                // 두 엔티티 간의 관계 설정
+                // BodyRecord ↔ MetabolismSnapshot (1:1)
+                bodyRecord.metabolismSnapshot = metabolismSnapshot
+                metabolismSnapshot.bodyRecord = bodyRecord
+            }
 
             // 📚 학습 포인트: User Relationship
             // 현재는 단일 사용자 가정, 향후 다중 사용자 지원 시 수정 필요

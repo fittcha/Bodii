@@ -51,6 +51,12 @@ struct SleepInputSheet: View {
     /// - SleepPromptManager에서 건너뛰기 횟수 증가에 사용
     var onSkip: (() -> Void)?
 
+    /// 저장 완료 콜백
+    /// 📚 학습 포인트: Optional Callback
+    /// - 수면 기록이 성공적으로 저장되었을 때 호출
+    /// - AppStateManager에서 상태 전환에 사용
+    var onSave: (() -> Void)?
+
     // MARK: - Initialization
 
     /// SleepInputSheet 초기화
@@ -63,14 +69,17 @@ struct SleepInputSheet: View {
     ///   - viewModel: 수면 입력 ViewModel
     ///   - canSkip: 건너뛰기 가능 여부 (기본값: true)
     ///   - onSkip: 건너뛰기 콜백 (기본값: nil)
+    ///   - onSave: 저장 완료 콜백 (기본값: nil)
     init(
         viewModel: SleepInputViewModel,
         canSkip: Bool = true,
-        onSkip: (() -> Void)? = nil
+        onSkip: (() -> Void)? = nil,
+        onSave: (() -> Void)? = nil
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.canSkip = canSkip
         self.onSkip = onSkip
+        self.onSave = onSave
     }
 
     // MARK: - Body
@@ -124,6 +133,7 @@ struct SleepInputSheet: View {
             // ViewModel의 isCompleted 상태 감지하여 자동으로 Sheet 닫기
             .onChange(of: viewModel.isCompleted) { _, completed in
                 if completed {
+                    onSave?()
                     dismiss()
                 }
             }
