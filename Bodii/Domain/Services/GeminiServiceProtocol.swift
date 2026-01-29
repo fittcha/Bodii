@@ -11,6 +11,10 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 /// Gemini AI 서비스 프로토콜
 ///
 /// 📚 학습 포인트: Domain Service Protocol
@@ -122,6 +126,15 @@ protocol GeminiServiceProtocol {
         goalType: GoalType,
         tdee: Int
     ) async throws -> DietComment
+
+    // MARK: - Food Image Analysis
+
+    /// 음식 사진을 Gemini Multimodal API로 분석하여 영양 정보를 반환합니다.
+    ///
+    /// - Parameter image: 분석할 음식 사진
+    /// - Returns: 인식된 음식 목록
+    /// - Throws: `GeminiServiceError`
+    func analyzeFoodImage(_ image: UIImage) async throws -> [GeminiFoodAnalysis]
 }
 
 // MARK: - GeminiServiceError
@@ -136,6 +149,7 @@ enum GeminiServiceError: LocalizedError {
     case invalidResponse(String)
     case apiError(Error)
     case jsonParsingFailed
+    case imageEncodingFailed
 
     var errorDescription: String? {
         switch self {
@@ -147,6 +161,8 @@ enum GeminiServiceError: LocalizedError {
             return "AI API 호출 실패: \(error.localizedDescription)"
         case .jsonParsingFailed:
             return "AI 응답 형식이 올바르지 않습니다. 다시 시도해주세요."
+        case .imageEncodingFailed:
+            return "이미지를 처리할 수 없습니다. 다른 사진을 시도해주세요."
         }
     }
 }

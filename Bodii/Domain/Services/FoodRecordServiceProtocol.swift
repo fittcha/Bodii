@@ -127,4 +127,38 @@ protocol FoodRecordServiceProtocol {
     /// - Returns: 해당 날짜와 끼니의 식단 기록 목록
     /// - Throws: 조회 중 에러 발생 시
     func getFoodRecords(for date: Date, mealType: MealType, userId: UUID) async throws -> [FoodRecord]
+
+    // MARK: - Gemini AI Food Record
+
+    /// Gemini AI 분석 결과를 식단 기록으로 저장합니다.
+    ///
+    /// AI가 추정한 영양소 값을 직접 사용하여 Food 엔티티를 생성/조회하고
+    /// FoodRecord를 생성한 후 DailyLog를 업데이트합니다.
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - foodName: AI가 인식한 음식 이름
+    ///   - date: 섭취 날짜
+    ///   - mealType: 끼니 종류
+    ///   - estimatedGrams: AI 추정 중량 (g)
+    ///   - calories: AI 추정 칼로리 (kcal)
+    ///   - carbohydrates: AI 추정 탄수화물 (g)
+    ///   - protein: AI 추정 단백질 (g)
+    ///   - fat: AI 추정 지방 (g)
+    ///   - bmr: 기초대사량 (kcal)
+    ///   - tdee: 활동대사량 (kcal)
+    /// - Returns: 생성된 FoodRecord
+    func addFoodRecordFromGemini(
+        userId: UUID,
+        foodName: String,
+        date: Date,
+        mealType: MealType,
+        estimatedGrams: Double,
+        calories: Double,
+        carbohydrates: Double,
+        protein: Double,
+        fat: Double,
+        bmr: Int32,
+        tdee: Int32
+    ) async throws -> FoodRecord
 }

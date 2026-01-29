@@ -96,6 +96,9 @@ final class PhotoRecognitionViewModel: ObservableObject {
     /// 분석된 음식 매칭 결과
     @Published var foodMatches: [FoodMatch] = []
 
+    /// Gemini AI 분석 결과
+    @Published var geminiResults: [GeminiFoodAnalysis] = []
+
     /// 에러 메시지
     @Published var errorMessage: String?
 
@@ -109,6 +112,9 @@ final class PhotoRecognitionViewModel: ObservableObject {
     @Published var daysUntilReset: Int = 0
 
     // MARK: - Private Properties
+
+    /// Gemini AI 서비스 (Multimodal 음식 분석)
+    private let geminiService: GeminiServiceProtocol
 
     /// Vision API 서비스
     ///
@@ -150,16 +156,19 @@ final class PhotoRecognitionViewModel: ObservableObject {
     /// 💡 Java 비교: @Inject constructor
     ///
     /// - Parameters:
-    ///   - visionAPIService: Vision API 서비스
-    ///   - foodLabelMatcher: 음식 라벨 매칭 서비스
+    ///   - geminiService: Gemini AI 서비스 (Multimodal 음식 분석)
+    ///   - visionAPIService: Vision API 서비스 (fallback)
+    ///   - foodLabelMatcher: 음식 라벨 매칭 서비스 (fallback)
     ///   - foodRecordService: 식단 기록 서비스
     ///   - usageTracker: API 사용량 추적기
     init(
+        geminiService: GeminiServiceProtocol,
         visionAPIService: VisionAPIServiceProtocol,
         foodLabelMatcher: FoodLabelMatcherServiceProtocol,
         foodRecordService: FoodRecordServiceProtocol,
         usageTracker: VisionAPIUsageTrackerProtocol
     ) {
+        self.geminiService = geminiService
         self.visionAPIService = visionAPIService
         self.foodLabelMatcher = foodLabelMatcher
         self.foodRecordService = foodRecordService
@@ -238,7 +247,41 @@ final class PhotoRecognitionViewModel: ObservableObject {
     ///
     /// - Throws: VisionAPIError 또는 네트워크 에러
     func analyzeImage(_ image: UIImage) async throws {
-        // 1. API 할당량 확인
+        do {
+            // 1차: Gemini Multimodal 분석 시도
+            state = .analyzing(progress: "AI 음식 분석 중...")
+
+            #if DEBUG
+            print("🤖 Gemini Multimodal 분석 시작...")
+            #endif
+
+            let results = try await geminiService.analyzeFoodImage(image)
+
+            guard !results.isEmpty else {
+                throw GeminiServiceError.invalidResponse("음식이 인식되지 않았습니다.")
+            }
+
+            #if DEBUG
+            print("✅ Gemini 분석 완료: \(results.count)개 음식 인식")
+            results.forEach { food in
+                print("   - \(food.name): \(food.estimatedGrams)g, \(food.calories)kcal")
+            }
+            #endif
+
+            geminiResults = results
+            state = .analyzing(progress: "") // Gemini 결과를 별도 뷰에서 표시
+            return
+
+        } catch {
+            #if DEBUG
+            print("⚠️ Gemini 분석 실패, Vision API fallback: \(error)")
+            #endif
+
+            // Gemini 실패 시 기존 Vision API로 fallback
+            geminiResults = []
+        }
+
+        // 2차 Fallback: Vision API + FoodLabelMatcher
         guard usageTracker.canMakeRequest() else {
             let days = usageTracker.getDaysUntilReset()
             let error = VisionAPIError.quotaExceeded(resetInDays: days)
@@ -247,31 +290,22 @@ final class PhotoRecognitionViewModel: ObservableObject {
         }
 
         do {
-            // 2. Vision API로 라벨 추출
             state = .analyzing(progress: "사진 분석 중...")
 
             let labels = try await visionAPIService.analyzeImage(image)
 
             #if DEBUG
             print("🔍 Vision API 결과: \(labels.count)개 라벨 인식")
-            labels.forEach { label in
-                print("   - \(label.description): \(label.scorePercentage)%")
-            }
             #endif
 
-            // 3. 라벨을 음식과 매칭
             state = .analyzing(progress: "음식 매칭 중...")
 
             let matches = try await foodLabelMatcher.matchLabelsToFoods(labels)
 
             #if DEBUG
             print("✅ 음식 매칭 완료: \(matches.count)개 매칭")
-            matches.forEach { match in
-                print("   - \(match.food.name) (신뢰도: \(match.confidencePercentage)%)")
-            }
             #endif
 
-            // 4. 결과 저장 및 상태 업데이트
             foodMatches = matches
 
             guard !matches.isEmpty else {
@@ -279,8 +313,6 @@ final class PhotoRecognitionViewModel: ObservableObject {
             }
 
             state = .results(matches)
-
-            // 할당량 정보 업데이트 (API 호출 후)
             updateQuotaInfo()
 
         } catch {
@@ -347,6 +379,48 @@ final class PhotoRecognitionViewModel: ObservableObject {
         }
     }
 
+    /// Gemini 분석 결과를 식단 기록으로 저장합니다.
+    ///
+    /// - Parameter selectedItems: 저장할 Gemini 분석 결과 (사용자가 선택/편집한 항목)
+    func saveGeminiResults(_ selectedItems: [GeminiFoodAnalysis]) async throws {
+        guard let userId = currentUserId,
+              let date = currentDate else {
+            throw ServiceError.invalidQuantity
+        }
+
+        state = .analyzing(progress: "저장 중...")
+
+        do {
+            for item in selectedItems {
+                // Gemini 결과를 FoodRecord로 저장
+                // Food 엔티티를 먼저 찾거나 생성해야 함
+                _ = try await foodRecordService.addFoodRecordFromGemini(
+                    userId: userId,
+                    foodName: item.name,
+                    date: date,
+                    mealType: currentMealType,
+                    estimatedGrams: item.estimatedGrams,
+                    calories: item.calories,
+                    carbohydrates: item.carbohydrates,
+                    protein: item.protein,
+                    fat: item.fat,
+                    bmr: currentBMR,
+                    tdee: currentTDEE
+                )
+            }
+
+            #if DEBUG
+            print("✅ Gemini 결과 \(selectedItems.count)개 저장 완료")
+            #endif
+
+            resetState()
+
+        } catch {
+            handleError(error)
+            throw error
+        }
+    }
+
     /// 다시 시도 (재분석)
     ///
     /// 분석 실패 시 같은 이미지로 다시 시도합니다.
@@ -364,6 +438,7 @@ final class PhotoRecognitionViewModel: ObservableObject {
         state = .idle
         capturedImage = nil
         foodMatches = []
+        geminiResults = []
         errorMessage = nil
     }
 
@@ -471,6 +546,11 @@ extension PhotoRecognitionViewModel {
             return true
         }
         return false
+    }
+
+    /// Gemini 분석 결과가 있는지 여부
+    var hasGeminiResults: Bool {
+        return !geminiResults.isEmpty
     }
 
     /// 사진이 선택되었는지 여부

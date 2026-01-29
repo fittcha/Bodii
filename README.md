@@ -8,7 +8,7 @@ Korean health and fitness tracking app with AI-powered diet insights.
 
 Bodii integrates with external APIs. You need to configure API keys before running the app:
 
-1. **Gemini API** (for AI diet comments): See [Gemini API Setup Guide](./docs/GEMINI_API_SETUP.md)
+1. **Gemini API** (for AI diet comments + photo food recognition): See [Gemini API Setup Guide](./docs/GEMINI_API_SETUP.md)
 2. **KFDA API** (Korean food database): Optional for development (uses DEMO_KEY)
 3. **USDA API** (US food database): Optional for development (uses DEMO_KEY)
 
@@ -29,12 +29,15 @@ See detailed setup instructions: [docs/GEMINI_API_SETUP.md](./docs/GEMINI_API_SE
 ## Features
 
 - 📊 Daily diet tracking with macro nutrients
-- 🤖 AI-powered diet comments and recommendations (Gemini API)
+- 📸 AI photo food recognition (Gemini Multimodal) - take a photo, get instant nutrition analysis
+- 🤖 AI-powered diet comments, daily diet score, and recommendations (Gemini API)
 - 🍚 Korean food database integration (KFDA)
 - 🥗 US food database integration (USDA)
-- 💪 Exercise tracking
+- 💪 Exercise tracking with calorie burn calculation
+- 😴 Sleep tracking
 - 🎯 Personalized health goals (weight loss/gain/maintain)
 - 📈 TDEE-based calorie recommendations
+- ⌚ Apple HealthKit integration
 
 ## Architecture
 
@@ -62,7 +65,7 @@ This app follows Clean Architecture principles:
 
 ## Documentation
 
-- [Gemini API Setup](./docs/GEMINI_API_SETUP.md) - Configure AI diet comments
+- [Gemini API Setup](./docs/GEMINI_API_SETUP.md) - Configure AI features (diet comments + photo recognition)
 - [PRD](./docs/01_PRD.md) - Product requirements
 - [Feature Spec](./docs/02_FEATURE_SPEC.md) - Feature specifications
 - [ERD](./docs/04_ERD.md) - Data model

@@ -11,6 +11,10 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 /// Gemini AI 서비스 구현
 ///
 /// 📚 학습 포인트: Domain Service Implementation
@@ -130,7 +134,102 @@ final class GeminiService: GeminiServiceProtocol {
         }
     }
 
+    // MARK: - Food Image Analysis
+
+    func analyzeFoodImage(_ image: UIImage) async throws -> [GeminiFoodAnalysis] {
+        // 1. 이미지를 Base64로 인코딩
+        guard let base64String = image.toBase64String() else {
+            throw GeminiServiceError.imageEncodingFailed
+        }
+
+        // 2. Multimodal 요청 생성
+        let prompt = buildFoodImagePrompt()
+        let request = GeminiRequestDTO(
+            imageBase64: base64String,
+            mimeType: "image/jpeg",
+            prompt: prompt,
+            temperature: 0.3,
+            maxOutputTokens: 2048
+        )
+
+        // 3. Gemini API 호출
+        do {
+            let response = try await geminiAPIService.generateContent(request: request)
+
+            guard let text = response.generatedText else {
+                throw GeminiServiceError.invalidResponse("AI 응답이 비어있습니다.")
+            }
+
+            // 4. JSON 파싱
+            return try parseFoodImageResponse(text)
+
+        } catch let error as GeminiServiceError {
+            throw error
+        } catch {
+            throw GeminiServiceError.apiError(error)
+        }
+    }
+
     // MARK: - Private Helpers
+
+    /// 음식 사진 분석용 프롬프트 생성
+    private func buildFoodImagePrompt() -> String {
+        return """
+        당신은 한국 음식에 정통한 전문 영양사입니다. 이 사진에 있는 음식을 분석해주세요.
+
+        **분석 지침:**
+        1. 사진에 보이는 모든 음식을 개별적으로 식별하세요
+        2. 각 음식의 양(g)을 그릇/접시 크기를 참고하여 추정하세요
+        3. 추정된 양을 기반으로 칼로리와 영양소를 계산하세요
+        4. 한국 음식의 경우 일반적인 1인분 기준을 참고하세요
+
+        **한국 음식 기준 참고:**
+        - 공기밥: 약 210g (약 300kcal)
+        - 김치찌개 1인분: 약 300g (약 150kcal)
+        - 된장찌개 1인분: 약 300g (약 120kcal)
+        - 김치 반찬: 약 50g (약 20kcal)
+        - 불고기 1인분: 약 150g (약 280kcal)
+
+        **출력 형식:**
+        다음 JSON 형식으로만 응답해주세요. 다른 설명이나 텍스트는 포함하지 마세요.
+
+        {
+          "foods": [
+            {
+              "name": "음식 이름 (한국어)",
+              "estimatedGrams": 210,
+              "calories": 300,
+              "carbohydrates": 65.0,
+              "protein": 5.0,
+              "fat": 1.0
+            }
+          ],
+          "confidence": 0.85
+        }
+
+        **제약 조건:**
+        - 모든 음식 이름은 한국어로 작성
+        - 음식이 보이지 않으면 foods를 빈 배열로 반환
+        - confidence는 0.0-1.0 범위 (인식 확실도)
+        - 영양소 값은 소수점 1자리까지
+        """
+    }
+
+    /// 음식 이미지 분석 응답 파싱
+    private func parseFoodImageResponse(_ responseText: String) throws -> [GeminiFoodAnalysis] {
+        let jsonText = extractJSON(from: responseText)
+
+        guard let jsonData = jsonText.data(using: .utf8) else {
+            throw GeminiServiceError.jsonParsingFailed
+        }
+
+        do {
+            let response = try JSONDecoder().decode(GeminiFoodImageResponse.self, from: jsonData)
+            return response.toDomainModels()
+        } catch {
+            throw GeminiServiceError.jsonParsingFailed
+        }
+    }
 
     /// AI 프롬프트 생성
     ///
@@ -391,6 +490,9 @@ final class MockGeminiService: GeminiServiceProtocol {
     /// Mock 응답 데이터
     var mockComment: DietComment?
 
+    /// Mock 음식 분석 결과
+    var mockFoodAnalysis: [GeminiFoodAnalysis] = []
+
     /// 에러 시뮬레이션
     var shouldThrowError: Error?
 
@@ -414,6 +516,13 @@ final class MockGeminiService: GeminiServiceProtocol {
         }
 
         return comment
+    }
+
+    func analyzeFoodImage(_ image: UIImage) async throws -> [GeminiFoodAnalysis] {
+        if let error = shouldThrowError {
+            throw error
+        }
+        return mockFoodAnalysis
     }
 }
 #endif

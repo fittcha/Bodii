@@ -109,6 +109,23 @@ struct DailyMealView: View {
                             .transition(.scale.combined(with: .opacity))
                         }
 
+                        // AI 일일 식단 점수/총평 카드
+                        if viewModel.isDailyCommentLoading || viewModel.dailyComment != nil || viewModel.dailyCommentError != nil {
+                            DailyDietScoreCard(
+                                comment: viewModel.dailyComment,
+                                isLoading: viewModel.isDailyCommentLoading,
+                                errorMessage: viewModel.dailyCommentError,
+                                onTapDetail: {
+                                    viewModel.showAIComment(for: nil)
+                                },
+                                onRetry: {
+                                    viewModel.generateDailyComment()
+                                }
+                            )
+                            .padding(.horizontal)
+                            .transition(.scale.combined(with: .opacity))
+                        }
+
                         // 끼니 섹션들
                         ForEach(MealType.allCases) { mealType in
                             MealSectionView(

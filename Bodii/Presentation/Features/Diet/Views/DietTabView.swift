@@ -113,7 +113,8 @@ struct DietTabView: View {
         _dailyMealViewModel = StateObject(wrappedValue: DailyMealViewModel(
             foodRecordService: foodRecordService,
             dailyLogRepository: dailyLogRepository,
-            foodRepository: foodRepository
+            foodRepository: foodRepository,
+            generateDietCommentUseCase: DIContainer.shared.generateDietCommentUseCase
         ))
 
         _foodSearchViewModel = StateObject(wrappedValue: FoodSearchViewModel(
@@ -139,6 +140,7 @@ struct DietTabView: View {
         )
 
         _photoRecognitionViewModel = StateObject(wrappedValue: PhotoRecognitionViewModel(
+            geminiService: DIContainer.shared.geminiService,
             visionAPIService: visionAPIService,
             foodLabelMatcher: foodLabelMatcher,
             foodRecordService: foodRecordService,
@@ -301,8 +303,33 @@ struct DietTabView: View {
                     // FoodSearchView로 자동 전환 (이미 NavigationStack 내부)
                 }
             )
-            // 📚 학습 포인트: Navigation Destination Based on ViewModel State
-            // ViewModel의 상태에 따라 자동으로 결과 화면으로 전환
+            // Gemini AI 분석 결과 화면
+            .sheet(isPresented: Binding(
+                get: { photoRecognitionViewModel.hasGeminiResults },
+                set: { if !$0 { photoRecognitionViewModel.geminiResults = [] } }
+            )) {
+                GeminiFoodResultsView(
+                    results: photoRecognitionViewModel.geminiResults,
+                    onSave: { selectedItems in
+                        Task {
+                            do {
+                                try await photoRecognitionViewModel.saveGeminiResults(selectedItems)
+                                showingPhotoRecognition = false
+                                showingFoodSearch = false
+                                dailyMealViewModel.refresh()
+                            } catch {
+                                #if DEBUG
+                                print("❌ Gemini 결과 저장 실패: \(error)")
+                                #endif
+                            }
+                        }
+                    },
+                    onCancel: {
+                        photoRecognitionViewModel.geminiResults = []
+                    }
+                )
+            }
+            // Vision API 분석 결과 화면 (Gemini 실패 시 fallback)
             .navigationDestination(isPresented: Binding(
                 get: { photoRecognitionViewModel.hasResults },
                 set: { if !$0 { photoRecognitionViewModel.resetState() } }

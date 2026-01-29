@@ -192,6 +192,73 @@ final class GenerateDietCommentUseCase {
         }
     }
 
+    /// 캐시를 무효화하고 새로운 AI 식단 코멘트를 생성합니다.
+    ///
+    /// 식단이 추가/수정/삭제될 때마다 호출되어 최신 식단 상태를 반영한 코멘트를 생성합니다.
+    /// 기존 캐시를 먼저 삭제한 뒤 새로 생성하여 캐시에 저장합니다.
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - date: 평가 대상 날짜
+    ///   - mealType: 끼니 종류 (nil이면 일일 전체 식단)
+    ///   - goalType: 사용자 목표 (감량/유지/증량)
+    ///   - tdee: 활동대사량 (kcal)
+    /// - Returns: 새로 생성된 DietComment
+    func executeIgnoringCache(
+        userId: UUID,
+        date: Date,
+        mealType: MealType?,
+        goalType: GoalType,
+        tdee: Int
+    ) async throws -> DietComment {
+
+        // 1. 기존 캐시 무효화
+        try? await dietCommentRepository.clearCache(
+            for: date,
+            userId: userId,
+            mealType: mealType
+        )
+
+        // 2. 식단 기록 조회
+        let foodRecords: [FoodRecord]
+        do {
+            foodRecords = try await fetchFoodRecords(
+                date: date,
+                userId: userId,
+                mealType: mealType
+            )
+        } catch {
+            throw DietCommentError.noFoodRecords
+        }
+
+        // 3. 식단 기록 검증
+        guard !foodRecords.isEmpty else {
+            throw DietCommentError.noFoodRecords
+        }
+
+        // 4. AI 코멘트 새로 생성
+        do {
+            let comment = try await geminiService.generateDietComment(
+                foodRecords: foodRecords,
+                mealType: mealType,
+                userId: userId,
+                date: date,
+                goalType: goalType,
+                tdee: tdee
+            )
+
+            // 5. 새 코멘트 캐싱
+            try? await dietCommentRepository.saveComment(comment)
+
+            return comment
+
+        } catch let error as GeminiServiceError {
+            throw mapGeminiServiceError(error)
+        } catch {
+            throw DietCommentError.apiError(error.localizedDescription)
+        }
+    }
+
     // MARK: - Private Helpers
 
     /// 식단 기록 조회
@@ -253,6 +320,9 @@ final class GenerateDietCommentUseCase {
             return .apiError(underlyingError.localizedDescription)
 
         case .jsonParsingFailed:
+            return .invalidResponse
+
+        case .imageEncodingFailed:
             return .invalidResponse
         }
     }

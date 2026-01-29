@@ -278,6 +278,9 @@ final class DietCommentRepositoryImpl: DietCommentRepository {
 
         case .jsonParsingFailed:
             return .invalidResponse
+
+        case .imageEncodingFailed:
+            return .invalidResponse
         }
     }
 
