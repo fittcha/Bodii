@@ -176,7 +176,10 @@ final class DIContainer {
 
     /// DailyLog 서비스
     lazy var dailyLogService: DailyLogService = {
-        return DailyLogService(repository: dailyLogRepository)
+        return DailyLogService(
+            repository: dailyLogRepository,
+            healthKitReadService: healthKitReadService
+        )
     }()
 
     /// User 리포지토리
@@ -211,7 +214,8 @@ final class DIContainer {
         return DietCommentRepositoryImpl(
             geminiService: geminiService,
             cache: dietCommentCache,
-            foodRecordRepository: foodRecordRepository
+            foodRecordRepository: foodRecordRepository,
+            dailyLogLocalDataSource: dailyLogLocalDataSource
         )
     }()
 
@@ -447,6 +451,24 @@ extension DIContainer {
         )
     }
 
+    /// 수면 기록 편집용 SleepInputViewModel 생성
+    @MainActor
+    func makeSleepInputViewModelForEditing(
+        userId: UUID,
+        record: SleepRecord
+    ) -> SleepInputViewModel {
+        let durationMinutes = Int(record.duration)
+        return SleepInputViewModel(
+            recordSleepUseCase: recordSleepUseCase,
+            userId: userId,
+            defaultHours: durationMinutes / 60,
+            defaultMinutes: durationMinutes % 60,
+            sleepRepository: sleepRepository,
+            editingRecordId: record.id,
+            editingDate: record.date
+        )
+    }
+
     /// SleepHistoryViewModel 생성
     /// 📚 학습 포인트: Factory Method Pattern
     /// - 수면 히스토리 리스트를 위한 ViewModel 생성
@@ -593,18 +615,21 @@ extension DIContainer {
     ///   - userId: 사용자 ID
     ///   - goalType: 사용자 목표 (감량/유지/증량)
     ///   - tdee: 활동대사량 (kcal)
+    ///   - targetCalories: 목표 섭취 칼로리 (kcal)
     /// - Returns: 새로운 DietCommentViewModel 인스턴스
     @MainActor
     func makeDietCommentViewModel(
         userId: UUID,
         goalType: GoalType,
-        tdee: Int
+        tdee: Int,
+        targetCalories: Int
     ) -> DietCommentViewModel {
         return DietCommentViewModel(
             generateCommentUseCase: generateDietCommentUseCase,
             userId: userId,
             userGoalType: goalType,
-            userTDEE: tdee
+            userTDEE: tdee,
+            userTargetCalories: targetCalories
         )
     }
 }

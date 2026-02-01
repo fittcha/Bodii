@@ -33,6 +33,9 @@ struct NutritionSummaryCard: View {
     /// 일일 기록
     let dailyLog: DailyLog
 
+    /// 목표 칼로리 (목표 섭취량 또는 TDEE)
+    let targetCalories: Int32
+
     /// 남은 칼로리 (kcal)
     let remainingCalories: Int32
 
@@ -75,7 +78,7 @@ struct NutritionSummaryCard: View {
                     .font(.system(size: 36, weight: .bold))
                     .foregroundColor(.primary)
 
-                Text("/ \(dailyLog.tdee) kcal")
+                Text("/ \(targetCalories) kcal")
                     .font(.title3)
                     .foregroundColor(.secondary)
             }

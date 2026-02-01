@@ -114,7 +114,7 @@ struct AppRootView: View {
                         rootStateManager.completeSleepInput()
                     }
                 )
-                .frame(maxHeight: UIScreen.main.bounds.height * 0.7)
+                .frame(maxHeight: UIScreen.main.bounds.height * 0.95)
                 .background(Color(.systemBackground))
                 .cornerRadius(20, corners: [.topLeft, .topRight])
             }

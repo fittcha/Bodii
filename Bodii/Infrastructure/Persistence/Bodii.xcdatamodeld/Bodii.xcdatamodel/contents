@@ -95,6 +95,7 @@
         <attribute name="startTDEE" optional="YES" attributeType="Decimal"/>
         <attribute name="startWeight" optional="YES" attributeType="Decimal"/>
         <attribute name="targetBodyFatPct" optional="YES" attributeType="Decimal"/>
+        <attribute name="targetDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="targetMuscleMass" optional="YES" attributeType="Decimal"/>
         <attribute name="targetWeight" optional="YES" attributeType="Decimal"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -117,6 +118,7 @@
         <attribute name="proteinRatio" optional="YES" attributeType="Decimal"/>
         <attribute name="sleepDuration" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
         <attribute name="sleepStatus" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="activeCaloriesOut" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="steps" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
         <attribute name="tdee" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="totalCaloriesIn" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -126,6 +128,11 @@
         <attribute name="totalProtein" attributeType="Decimal" defaultValueString="0.0"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="weight" optional="YES" attributeType="Decimal"/>
+        <attribute name="aiCommentSummary" optional="YES" attributeType="String"/>
+        <attribute name="aiCommentScore" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="aiCommentGoodPointsJSON" optional="YES" attributeType="String"/>
+        <attribute name="aiCommentImprovementsJSON" optional="YES" attributeType="String"/>
+        <attribute name="aiCommentGeneratedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="dailyLogs" inverseEntity="User"/>
     </entity>
     <entity name="SleepRecord" representedClassName="SleepRecord" syncable="YES" codeGenerationType="class">

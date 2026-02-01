@@ -54,14 +54,14 @@ struct EditedFoodItem: Identifiable {
     /// 📚 학습 포인트: Quantity Multiplier Calculation
     /// 수량 단위에 따라 영양 정보 계산을 위한 배수를 구합니다.
     private var multiplier: Decimal {
-        let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
-        switch unit {
-        case .serving:
-            // 인분 단위: 수량 그대로 사용
+        if let gramsPerUnit = unit.gramsPerUnit {
+            let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
+            guard servingSize > 0 else { return quantity }
+            let totalGrams = quantity * gramsPerUnit
+            return totalGrams / servingSize
+        } else {
+            // serving, piece: 수량 그대로 사용
             return quantity
-        case .grams:
-            // 그램 단위: (입력 그램 / 1회 제공량 그램) 비율
-            return servingSize > 0 ? quantity / servingSize : quantity
         }
     }
 

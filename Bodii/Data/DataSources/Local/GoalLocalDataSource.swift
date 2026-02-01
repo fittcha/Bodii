@@ -36,6 +36,7 @@ final class GoalLocalDataSource {
         weeklyFatPctRate: Decimal? = nil,
         weeklyMuscleRate: Decimal? = nil,
         dailyCalorieTarget: Int32? = nil,
+        targetDate: Date? = nil,
         startWeight: Decimal? = nil,
         startBodyFatPct: Decimal? = nil,
         startMuscleMass: Decimal? = nil,
@@ -57,6 +58,7 @@ final class GoalLocalDataSource {
             goal.weeklyFatPctRate = weeklyFatPctRate as NSDecimalNumber?
             goal.weeklyMuscleRate = weeklyMuscleRate as NSDecimalNumber?
             goal.dailyCalorieTarget = dailyCalorieTarget ?? 0
+            goal.targetDate = targetDate
             goal.startWeight = startWeight as NSDecimalNumber?
             goal.startBodyFatPct = startBodyFatPct as NSDecimalNumber?
             goal.startMuscleMass = startMuscleMass as NSDecimalNumber?

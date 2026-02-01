@@ -174,7 +174,7 @@ extension TrendPeriodPicker {
 
 #Preview("기본 스타일") {
     struct PreviewWrapper: View {
-        @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .week
+        @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .month
 
         var body: some View {
             VStack(spacing: 20) {
@@ -222,7 +222,7 @@ extension TrendPeriodPicker {
 
 #Preview("전체 너비 스타일") {
     struct PreviewWrapper: View {
-        @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .quarter
+        @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .fourMonths
 
         var body: some View {
             VStack(spacing: 20) {
@@ -241,7 +241,7 @@ extension TrendPeriodPicker {
 
 #Preview("커스텀 레이블") {
     struct PreviewWrapper: View {
-        @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .week
+        @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .month
 
         var body: some View {
             VStack(spacing: 20) {
@@ -263,7 +263,7 @@ extension TrendPeriodPicker {
 
 #Preview("카드 안에 포함") {
     struct PreviewWrapper: View {
-        @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .week
+        @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .month
 
         var body: some View {
             ScrollView {
@@ -337,16 +337,16 @@ extension TrendPeriodPicker {
 
 #Preview("모든 기간 옵션") {
     struct PreviewWrapper: View {
-        @State private var period1: FetchBodyTrendsUseCase.TrendPeriod = .week
-        @State private var period2: FetchBodyTrendsUseCase.TrendPeriod = .month
-        @State private var period3: FetchBodyTrendsUseCase.TrendPeriod = .quarter
+        @State private var period1: FetchBodyTrendsUseCase.TrendPeriod = .month
+        @State private var period2: FetchBodyTrendsUseCase.TrendPeriod = .twoMonths
+        @State private var period3: FetchBodyTrendsUseCase.TrendPeriod = .fourMonths
 
         var body: some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    // 7일 선택
+                    // 30일 선택
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("7일 기간 (주간)")
+                        Text("30일 기간 (월간)")
                             .font(.headline)
 
                         TrendPeriodPicker(selectedPeriod: $period1)
@@ -354,9 +354,9 @@ extension TrendPeriodPicker {
 
                     Divider()
 
-                    // 30일 선택
+                    // 60일 선택
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("30일 기간 (월간)")
+                        Text("60일 기간 (2개월)")
                             .font(.headline)
 
                         TrendPeriodPicker(selectedPeriod: $period2)
@@ -364,9 +364,9 @@ extension TrendPeriodPicker {
 
                     Divider()
 
-                    // 90일 선택
+                    // 120일 선택
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("90일 기간 (분기)")
+                        Text("120일 기간 (4개월)")
                             .font(.headline)
 
                         TrendPeriodPicker(selectedPeriod: $period3)
@@ -387,7 +387,7 @@ extension TrendPeriodPicker {
 /// 기본 사용 (레이블 포함):
 /// ```swift
 /// struct MyView: View {
-///     @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .week
+///     @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .month
 ///
 ///     var body: some View {
 ///         TrendPeriodPicker(selectedPeriod: $selectedPeriod)
@@ -398,7 +398,7 @@ extension TrendPeriodPicker {
 /// 컴팩트 스타일 (레이블 없음):
 /// ```swift
 /// struct MyView: View {
-///     @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .week
+///     @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .month
 ///
 ///     var body: some View {
 ///         TrendPeriodPicker(compactStyle: $selectedPeriod)
@@ -409,7 +409,7 @@ extension TrendPeriodPicker {
 /// 전체 너비 스타일:
 /// ```swift
 /// struct MyView: View {
-///     @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .week
+///     @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .month
 ///
 ///     var body: some View {
 ///         TrendPeriodPicker(fullWidth: $selectedPeriod, label: "차트 기간")
@@ -436,7 +436,7 @@ extension TrendPeriodPicker {
 /// 카드 컴포넌트 안에 사용:
 /// ```swift
 /// struct TrendCard: View {
-///     @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .week
+///     @State private var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .month
 ///
 ///     var body: some View {
 ///         VStack(spacing: 16) {

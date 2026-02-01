@@ -80,32 +80,23 @@ final class DietCommentRepositoryImpl: DietCommentRepository {
     private let cache: DietCommentCache
 
     /// 식단 기록 저장소
-    ///
-    /// 📚 학습 포인트: Cross-Repository Dependency
-    /// 다른 Repository를 의존하여 데이터 조회
-    /// 💡 Java 비교: @Autowired private Repository와 유사
     private let foodRecordRepository: FoodRecordRepositoryProtocol
+
+    /// DailyLog 로컬 데이터 소스 (L2 영구 저장소)
+    private let dailyLogLocalDataSource: DailyLogLocalDataSource
 
     // MARK: - Initialization
 
-    /// DietCommentRepositoryImpl 초기화
-    ///
-    /// 📚 학습 포인트: Constructor Injection
-    /// 모든 의존성을 생성자를 통해 주입받아 테스트와 유연성 향상
-    /// 💡 Java 비교: Constructor-based Dependency Injection
-    ///
-    /// - Parameters:
-    ///   - geminiService: AI 코멘트 생성 서비스
-    ///   - cache: 인메모리 캐시
-    ///   - foodRecordRepository: 식단 기록 저장소
     init(
         geminiService: GeminiServiceProtocol,
         cache: DietCommentCache,
-        foodRecordRepository: FoodRecordRepositoryProtocol
+        foodRecordRepository: FoodRecordRepositoryProtocol,
+        dailyLogLocalDataSource: DailyLogLocalDataSource
     ) {
         self.geminiService = geminiService
         self.cache = cache
         self.foodRecordRepository = foodRecordRepository
+        self.dailyLogLocalDataSource = dailyLogLocalDataSource
     }
 
     // MARK: - Comment Generation
@@ -115,7 +106,8 @@ final class DietCommentRepositoryImpl: DietCommentRepository {
         userId: UUID,
         mealType: MealType?,
         goalType: GoalType,
-        tdee: Int
+        tdee: Int,
+        targetCalories: Int
     ) async throws -> DietComment {
 
         // 1. 식단 데이터 조회
@@ -144,11 +136,13 @@ final class DietCommentRepositoryImpl: DietCommentRepository {
                 userId: userId,
                 date: date,
                 goalType: goalType,
-                tdee: tdee
+                tdee: tdee,
+                targetCalories: targetCalories
             )
 
-            // 4. 생성된 코멘트를 캐시에 저장
+            // 4. 생성된 코멘트를 L1 캐시 + L2 Core Data에 저장
             await cache.set(comment)
+            await persistComment(comment)
 
             return comment
 
@@ -168,23 +162,33 @@ final class DietCommentRepositoryImpl: DietCommentRepository {
         userId: UUID,
         mealType: MealType?
     ) async throws -> DietComment? {
-        // 📚 학습 포인트: Actor Method Call with await
-        // Actor의 메서드는 await로 호출하여 thread-safe 접근
-        // 💡 Java 비교: synchronized method 호출과 유사하지만 더 효율적
-        return await cache.get(
+        // L1: 인메모리 캐시 확인
+        if let cached = await cache.get(
             for: date,
             userId: userId,
             mealType: mealType
-        )
+        ) {
+            return cached
+        }
+
+        // L2: Core Data 확인 (일일 전체 코멘트만 저장됨)
+        if mealType == nil,
+           let persisted = await getPersistedComment(userId: userId, date: date) {
+            // L2 → L1으로 채움
+            await cache.set(persisted)
+            return persisted
+        }
+
+        return nil
     }
 
     // MARK: - Cache Management
 
     func saveComment(_ comment: DietComment) async throws {
-        // 📚 학습 포인트: Cache Population
-        // 생성된 코멘트를 캐시에 저장하여 중복 API 호출 방지
-        // 💡 Java 비교: @CachePut과 유사
+        // L1: 인메모리 캐시 저장
         await cache.set(comment)
+        // L2: Core Data 영구 저장
+        await persistComment(comment)
     }
 
     func clearCache(
@@ -203,10 +207,36 @@ final class DietCommentRepositoryImpl: DietCommentRepository {
     }
 
     func clearAllCache() async throws {
-        // 📚 학습 포인트: Full Cache Clear
-        // 전체 캐시 삭제 (로그아웃, 설정 변경 등)
-        // 💡 Java 비교: @CacheEvict(allEntries=true)와 유사
         await cache.clearAll()
+    }
+
+    // MARK: - Persistent Storage (L2)
+
+    func getPersistedComment(userId: UUID, date: Date) async -> DietComment? {
+        do {
+            return try await dailyLogLocalDataSource.fetchAIComment(for: date, userId: userId)
+        } catch {
+            #if DEBUG
+            print("⚠️ L2 코멘트 조회 실패: \(error)")
+            #endif
+            return nil
+        }
+    }
+
+    func persistComment(_ comment: DietComment) async {
+        // 일일 전체 코멘트(mealType == nil)만 Core Data에 저장
+        guard comment.mealType == nil else { return }
+        do {
+            try await dailyLogLocalDataSource.saveAIComment(
+                comment,
+                for: comment.date,
+                userId: comment.userId
+            )
+        } catch {
+            #if DEBUG
+            print("⚠️ L2 코멘트 저장 실패: \(error)")
+            #endif
+        }
     }
 
     // MARK: - Private Helpers

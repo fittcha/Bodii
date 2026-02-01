@@ -23,7 +23,7 @@ import SwiftUI
 /// - Example:
 /// ```swift
 /// TabView {
-///     DietTabView()
+///     DietTabView(userId: userId)
 ///         .tabItem {
 ///             Label("식단", systemImage: "fork.knife")
 ///         }
@@ -33,17 +33,14 @@ struct DietTabView: View {
 
     // MARK: - Properties
 
-    /// 임시 사용자 ID
-    /// TODO: Phase 7.2에서 사용자 세션 관리로 교체 예정
+    /// 사용자 ID
     private let userId: UUID
 
-    /// 임시 BMR (기초대사량)
-    /// TODO: Phase 7.2에서 실제 사용자 BMR로 교체 예정
-    private let bmr: Int32 = 1650
+    /// BMR (기초대사량)
+    private let bmr: Int32
 
-    /// 임시 TDEE (활동대사량)
-    /// TODO: Phase 7.2에서 실제 사용자 TDEE로 교체 예정
-    private let tdee: Int32 = 2310
+    /// TDEE (활동대사량)
+    private let tdee: Int32
 
     // MARK: - State Objects
 
@@ -55,6 +52,9 @@ struct DietTabView: View {
 
     /// 사진 인식 ViewModel
     @StateObject private var photoRecognitionViewModel: PhotoRecognitionViewModel
+
+    /// 하이브리드 검색 서비스 (API 결과 캐싱용)
+    private let hybridSearchService: HybridFoodSearchService?
 
     // MARK: - State
 
@@ -73,13 +73,18 @@ struct DietTabView: View {
     /// 사진 인식 시트 표시 여부
     @State private var showingPhotoRecognition = false
 
+    /// 수정할 음식 기록 (식단 수정 시트용)
+    @State private var editingFoodRecord: FoodRecordWithFood?
+
+    /// 식단 수정 시트 표시 여부
+    @State private var showingEditFood = false
+
     // MARK: - Initialization
 
-    init() {
-        // 임시 사용자 ID 생성
-        // TODO: Phase 7.2에서 실제 로그인된 사용자 ID로 교체
-        let tempUserId = UUID()
-        self.userId = tempUserId
+    init(userId: UUID, bmr: Int32 = 1650, tdee: Int32 = 2310) {
+        self.userId = userId
+        self.bmr = bmr
+        self.tdee = tdee
 
         // 📚 학습 포인트: Repository 및 Service 초기화
         // Core Data 컨텍스트를 공유하여 일관된 데이터 접근
@@ -109,17 +114,32 @@ struct DietTabView: View {
             foodRepository: foodRepository
         )
 
+        // UnifiedFoodSearchService 초기화 (API 검색 + FoodLabelMatcherService에 필요)
+        let unifiedFoodSearchService = UnifiedFoodSearchService(context: context)
+
+        // HybridFoodSearchService 초기화 (로컬 + API 통합 검색)
+        let hybridService = HybridFoodSearchService(
+            localService: localFoodSearchService,
+            apiService: unifiedFoodSearchService,
+            foodRepository: foodRepository,
+            context: context
+        )
+        self.hybridSearchService = hybridService
+
         // ViewModels 초기화
         _dailyMealViewModel = StateObject(wrappedValue: DailyMealViewModel(
             foodRecordService: foodRecordService,
             dailyLogRepository: dailyLogRepository,
             foodRepository: foodRepository,
-            generateDietCommentUseCase: DIContainer.shared.generateDietCommentUseCase
+            generateDietCommentUseCase: DIContainer.shared.generateDietCommentUseCase,
+            goalRepository: DIContainer.shared.goalRepository
         ))
 
         _foodSearchViewModel = StateObject(wrappedValue: FoodSearchViewModel(
-            foodSearchService: localFoodSearchService,
-            recentFoodsService: recentFoodsService
+            foodSearchService: hybridService,
+            recentFoodsService: recentFoodsService,
+            hybridService: hybridService,
+            foodRepository: foodRepository
         ))
 
         // 📚 학습 포인트: Photo Recognition Services 초기화
@@ -131,9 +151,6 @@ struct DietTabView: View {
             apiConfig: APIConfig.shared,
             usageTracker: VisionAPIUsageTracker.shared
         )
-
-        // UnifiedFoodSearchService 초기화 (FoodLabelMatcherService에 필요)
-        let unifiedFoodSearchService = UnifiedFoodSearchService(context: context)
 
         let foodLabelMatcher = FoodLabelMatcherService(
             unifiedSearchService: unifiedFoodSearchService
@@ -162,11 +179,22 @@ struct DietTabView: View {
                     // 음식 추가 버튼 클릭 시
                     selectedMealType = mealType
                     showingFoodSearch = true
+                },
+                onEditFood: { foodRecordWithFood in
+                    // 식단 수정 버튼 클릭 시
+                    editingFoodRecord = foodRecordWithFood
+                    showingEditFood = true
                 }
             )
             .sheet(isPresented: $showingFoodSearch) {
                 // 음식 검색 화면 (시트로 표시)
                 foodSearchSheet
+            }
+            .sheet(isPresented: $showingEditFood) {
+                // 식단 수정 화면 (시트로 표시)
+                if let editingItem = editingFoodRecord {
+                    editFoodSheet(item: editingItem)
+                }
             }
             .sheet(isPresented: $showingPhotoRecognition) {
                 // 사진 인식 화면 (시트로 표시)
@@ -186,7 +214,13 @@ struct DietTabView: View {
                 viewModel: foodSearchViewModel,
                 userId: userId,
                 mealType: selectedMealType,
-                onSelectFood: { food in
+                onSelectFood: { [hybridSearchService] food in
+                    // 음식 선택 시 API 결과를 로컬 DB에 캐시
+                    if let service = hybridSearchService {
+                        Task {
+                            await service.cacheFood(food)
+                        }
+                    }
                     // 음식 선택 시 상세 화면으로 이동
                     selectedFoodId = food.id
                 },
@@ -256,7 +290,7 @@ struct DietTabView: View {
                 // 저장 완료 시 음식 검색 시트 닫기 및 데이터 새로고침
                 showingFoodSearch = false
                 selectedFoodId = nil
-                dailyMealViewModel.refresh()
+                dailyMealViewModel.refreshAfterDietChange()
             }
         )
     }
@@ -316,7 +350,7 @@ struct DietTabView: View {
                                 try await photoRecognitionViewModel.saveGeminiResults(selectedItems)
                                 showingPhotoRecognition = false
                                 showingFoodSearch = false
-                                dailyMealViewModel.refresh()
+                                dailyMealViewModel.refreshAfterDietChange()
                             } catch {
                                 #if DEBUG
                                 print("❌ Gemini 결과 저장 실패: \(error)")
@@ -345,7 +379,7 @@ struct DietTabView: View {
                             // 모든 시트 닫기 및 데이터 새로고침
                             showingPhotoRecognition = false
                             showingFoodSearch = false
-                            dailyMealViewModel.refresh()
+                            dailyMealViewModel.refreshAfterDietChange()
                         },
                         onAddMoreFoods: {
                             // 추가 음식 검색 (음식 검색 화면 열기)
@@ -365,6 +399,66 @@ struct DietTabView: View {
                             showingPhotoRecognition = false
                         }
                     )
+                }
+            }
+        }
+    }
+
+    /// 식단 수정 시트
+    ///
+    /// 기존 식단 기록을 수정합니다.
+    private func editFoodSheet(item: FoodRecordWithFood) -> some View {
+        NavigationStack {
+            let context = PersistenceController.shared.container.viewContext
+            let dailyLogLocalDataSource = DailyLogLocalDataSource(context: context)
+            let foodRepository = FoodRepository(context: context)
+            let foodRecordRepository = FoodRecordRepository(context: context)
+            let dailyLogRepository = DailyLogRepositoryImpl(localDataSource: dailyLogLocalDataSource)
+            let foodRecordService = FoodRecordService(
+                foodRecordRepository: foodRecordRepository,
+                dailyLogRepository: dailyLogRepository,
+                foodRepository: foodRepository,
+                context: context
+            )
+
+            let viewModel = FoodDetailViewModel(
+                foodRepository: foodRepository,
+                foodRecordService: foodRecordService
+            )
+
+            FoodDetailView(
+                viewModel: viewModel,
+                foodId: item.food.id ?? UUID(),
+                userId: userId,
+                date: item.foodRecord.date ?? dailyMealViewModel.selectedDate,
+                initialMealType: MealType(rawValue: item.foodRecord.mealType) ?? .breakfast,
+                bmr: bmr,
+                tdee: tdee,
+                onSave: {
+                    // 수정 완료 시 시트 닫기 및 데이터 새로고침
+                    showingEditFood = false
+                    editingFoodRecord = nil
+                    dailyMealViewModel.refreshAfterDietChange()
+                }
+            )
+            .onAppear {
+                // 수정 모드로 초기화
+                guard let foodRecordId = item.foodRecord.id else { return }
+                viewModel.onAppearForEdit(
+                    foodRecordId: foodRecordId,
+                    foodRecord: item.foodRecord,
+                    food: item.food,
+                    userId: userId,
+                    bmr: bmr,
+                    tdee: tdee
+                )
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("취소") {
+                        showingEditFood = false
+                        editingFoodRecord = nil
+                    }
                 }
             }
         }
@@ -404,7 +498,7 @@ struct DietTabView: View {
                     // 저장 완료 시 모든 시트 닫기 및 데이터 새로고침
                     showingManualEntry = false
                     showingFoodSearch = false
-                    dailyMealViewModel.refresh()
+                    dailyMealViewModel.refreshAfterDietChange()
                 }
             )
             .toolbar {
@@ -421,5 +515,5 @@ struct DietTabView: View {
 // MARK: - Preview
 
 #Preview {
-    DietTabView()
+    DietTabView(userId: UserProfile.sample.id)
 }

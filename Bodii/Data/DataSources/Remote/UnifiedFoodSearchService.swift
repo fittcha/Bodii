@@ -147,22 +147,30 @@ final class UnifiedFoodSearchService {
     ) async throws -> [Food] {
 
         // 입력 검증
-        guard !query.trimmingCharacters(in: .whitespaces).isEmpty else {
+        let trimmed = query.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else {
             throw FoodSearchError.invalidQuery("검색어가 비어있습니다.")
+        }
+
+        // 한글은 1글자도 의미 있는 검색어 (꿀, 굴, 밥, 빵, 떡 등)
+        // 영문은 너무 짧으면 무의미한 결과가 많으므로 2글자 이상 필요
+        let isKorean = containsKoreanCharacters(trimmed)
+        guard isKorean || trimmed.count >= 2 else {
+            return []
         }
 
         // 검색어 분석: 한글이 포함되어 있는지 확인
         let containsKorean = containsKoreanCharacters(query)
 
+        // offset으로부터 KFDA pageNo 계산 (KFDA는 1-based page)
+        let pageSize = min(limit, Constants.API.KFDA.maxPageSize)
+        let kfdaPageNo = (offset / max(pageSize, 1)) + 1
+
         var allFoods: [Food] = []
 
         if containsKorean {
-            // 📚 학습 포인트: Sequential Search with Fallback
-            // 한글 검색어는 식약처 우선 → USDA 폴백 전략
-            // 💡 Java 비교: Circuit Breaker + Fallback pattern
-
             // 1단계: 식약처 검색 (재시도 포함)
-            let kfdaFoods = await searchKFDA(query: query, limit: limit)
+            let kfdaFoods = await searchKFDA(query: query, limit: limit, pageNo: kfdaPageNo)
 
             // 2단계: 식약처 결과가 충분하면 그대로 반환
             if kfdaFoods.count >= 5 {
@@ -256,15 +264,16 @@ final class UnifiedFoodSearchService {
     private func searchKFDA(
         query: String,
         limit: Int,
+        pageNo: Int = 1,
         retryCount: Int = 0
     ) async -> [Food] {
         do {
-            // KFDA API는 인덱스 범위 사용 (1-based)
-            let endIdx = limit
+            // KFDA API maxPageSize = 100
+            let pageSize = min(limit, Constants.API.KFDA.maxPageSize)
             let response = try await kfdaService.searchFoods(
                 query: query,
-                startIdx: 1,
-                endIdx: endIdx
+                pageNo: pageNo,
+                numOfRows: pageSize
             )
 
             // DTO를 도메인 엔티티로 변환
@@ -288,7 +297,14 @@ final class UnifiedFoodSearchService {
             // 일시적 네트워크 에러는 재시도, 영구적 에러는 즉시 반환
             // 💡 Java 비교: Resilience4j의 retry pattern과 유사
 
-            let maxRetries = Constants.API.KFDA.maxRetries
+            // 서버 에러(500)는 1회만 재시도, 네트워크 에러는 2회 재시도
+            let maxRetries: Int
+            if let networkError = error as? NetworkError,
+               case .httpError(let code, _) = networkError, code >= 500 {
+                maxRetries = 1
+            } else {
+                maxRetries = Constants.API.KFDA.maxRetries
+            }
             let shouldRetry = retryCount < maxRetries && isRetryableError(error)
 
             if shouldRetry {
@@ -338,9 +354,11 @@ final class UnifiedFoodSearchService {
     ) async -> [Food] {
         do {
             // USDA API는 페이지 번호 사용 (1-based)
+            // pageSize는 maxPageSize(200) 이내로 제한
+            let usdaPageSize = min(limit, Constants.API.USDA.maxPageSize)
             let response = try await usdaService.searchFoods(
                 query: query,
-                pageSize: limit,
+                pageSize: usdaPageSize,
                 pageNumber: 1
             )
 
@@ -358,12 +376,22 @@ final class UnifiedFoodSearchService {
             let errorType = classifyError(error)
 
             #if DEBUG
-            print("⚠️ USDA search failed for '\(query)': \(errorType) - \(error.localizedDescription)")
+            print("⚠️ USDA search failed for '\(query)': \(errorType) - \(error)")
             #endif
 
-            // 📚 학습 포인트: Retry Strategy
-            // 일시적 네트워크 에러는 재시도, 영구적 에러는 즉시 반환
-            // 💡 Java 비교: Resilience4j의 retry pattern과 유사
+            // USDAAPIError는 재시도해도 의미없는 경우가 많음
+            if let usdaError = error as? USDAAPIError {
+                switch usdaError {
+                case .rateLimitExceeded, .authenticationFailed, .badRequest, .notFound:
+                    // 재시도 불필요한 에러는 즉시 반환
+                    #if DEBUG
+                    print("❌ USDA non-retryable error, returning empty results")
+                    #endif
+                    return []
+                default:
+                    break
+                }
+            }
 
             let maxRetries = Constants.API.USDA.maxRetries
             let shouldRetry = retryCount < maxRetries && isRetryableError(error)

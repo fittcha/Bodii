@@ -147,7 +147,7 @@ class BodyCompositionViewModel: ObservableObject {
         guard let weight = Decimal(string: weightInput) else {
             return false
         }
-        guard weight >= 20 && weight <= 500 else { return false }
+        guard weight >= 20 && weight <= 200 else { return false }
 
         // 체지방률은 선택 (입력 시 범위 검증)
         if !bodyFatPercentInput.isEmpty {
@@ -252,8 +252,9 @@ class BodyCompositionViewModel: ObservableObject {
 
         do {
             // 📚 학습 포인트: Repository Query
-            // 최근 30일 데이터 조회
-            history = try await bodyRepository.fetchRecent(days: 30)
+            // 최근 30일 데이터 조회 (최신순 정렬)
+            let entries = try await bodyRepository.fetchRecent(days: 30)
+            history = entries.sorted { $0.date > $1.date }
         } catch {
             errorMessage = "히스토리 로드 실패: \(error.localizedDescription)"
             history = []
@@ -311,6 +312,11 @@ class BodyCompositionViewModel: ObservableObject {
         isLoading = false
     }
 
+    /// 사용자 성별 (트렌드 차트 건강 구간에 사용)
+    var userGender: Gender {
+        userProfile.gender
+    }
+
     /// 입력 필드 초기화
     /// 📚 학습 포인트: State Reset
     /// - 저장 후 입력 필드 클리어
@@ -333,8 +339,8 @@ class BodyCompositionViewModel: ObservableObject {
             if let weight = Decimal(string: weightInput) {
                 if weight < 20 {
                     validationMessages.append("체중은 20kg 이상이어야 합니다.")
-                } else if weight > 500 {
-                    validationMessages.append("체중은 500kg 이하여야 합니다.")
+                } else if weight > 200 {
+                    validationMessages.append("체중은 200kg 이하여야 합니다.")
                 }
             } else {
                 validationMessages.append("체중을 올바르게 입력해주세요.")

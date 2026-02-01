@@ -501,8 +501,8 @@ final class SleepLocalDataSource {
                 request.fetchLimit = 1
 
                 if let existingRecord = try context.fetch(request).first {
-                    // 업데이트
-                    let logicalDate = DateUtils.getLogicalDate(for: date)
+                    // 업데이트 — date는 이미 논리적 날짜이므로 getLogicalDate 재적용 안 함
+                    let logicalDate = date
                     existingRecord.date = logicalDate
                     existingRecord.duration = duration
                     existingRecord.status = statusValue
@@ -549,6 +549,8 @@ final class SleepLocalDataSource {
     /// SleepRecord 엔티티를 업데이트합니다 (Repository에서 호출).
     /// 📚 학습 포인트: Entity Update Pattern
     /// - SleepRecord 엔티티의 속성을 사용하여 업데이트
+    /// - ⚠️ sleepRecord.date는 이미 논리적 날짜(getLogicalDate 적용 완료)이므로
+    ///   getLogicalDate를 다시 적용하지 않음 (이중 적용 방지)
     ///
     /// - Parameter sleepRecord: 업데이트할 SleepRecord Core Data 엔티티
     /// - Returns: 업데이트된 SleepRecord Core Data 엔티티
@@ -566,13 +568,43 @@ final class SleepLocalDataSource {
         let duration = sleepRecord.duration
         let statusValue = sleepRecord.status
         let status = SleepStatus(rawValue: statusValue) ?? .soso
+        let context = persistenceController.newBackgroundContext()
 
-        return try await update(
-            id: id,
-            date: date,
-            duration: duration,
-            status: status
-        )
+        return try await context.perform {
+            let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            request.fetchLimit = 1
+
+            let results = try context.fetch(request)
+
+            guard let entity = results.first else {
+                throw NSError(
+                    domain: "SleepLocalDataSource",
+                    code: 1004,
+                    userInfo: [NSLocalizedDescriptionKey: "수정할 기록을 찾을 수 없습니다 (ID: \(id))"]
+                )
+            }
+
+            let user = try self.fetchOrCreateCurrentUser(context: context)
+
+            // date는 이미 논리적 날짜이므로 getLogicalDate 재적용 없이 직접 사용
+            entity.date = date
+            entity.duration = duration
+            entity.status = self.sleepRecordMapper.int16FromStatus(status)
+            entity.updatedAt = Date()
+
+            try self.updateDailyLog(
+                for: date,
+                duration: duration,
+                status: status,
+                user: user,
+                context: context
+            )
+
+            try context.save()
+
+            return entity
+        }
     }
 
     // MARK: - Delete

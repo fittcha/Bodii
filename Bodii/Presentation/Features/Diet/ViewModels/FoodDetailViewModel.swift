@@ -62,6 +62,9 @@ final class FoodDetailViewModel: ObservableObject {
     /// 수량 유효성 검증 에러
     @Published var quantityError: String?
 
+    /// 수정 모드 여부
+    @Published var isEditMode: Bool = false
+
     // MARK: - Private Properties
 
     /// 음식 Repository
@@ -84,6 +87,9 @@ final class FoodDetailViewModel: ObservableObject {
 
     /// 활동대사량 (kcal)
     private var currentTDEE: Int32 = 0
+
+    /// 수정 대상 FoodRecord ID (수정 모드에서 사용)
+    private var editingFoodRecordId: UUID?
 
     // MARK: - Constants
 
@@ -139,6 +145,42 @@ final class FoodDetailViewModel: ObservableObject {
         loadFood()
     }
 
+    /// 수정 모드로 화면에 진입합니다.
+    ///
+    /// 기존 FoodRecord의 정보를 불러와 수정할 수 있도록 초기화합니다.
+    ///
+    /// - Parameters:
+    ///   - foodRecordId: 수정할 FoodRecord ID
+    ///   - foodRecord: FoodRecord 엔티티
+    ///   - food: 관련 Food 엔티티
+    ///   - userId: 사용자 ID
+    ///   - bmr: 기초대사량 (kcal)
+    ///   - tdee: 활동대사량 (kcal)
+    func onAppearForEdit(
+        foodRecordId: UUID,
+        foodRecord: FoodRecord,
+        food: Food,
+        userId: UUID,
+        bmr: Int32,
+        tdee: Int32
+    ) {
+        self.isEditMode = true
+        self.editingFoodRecordId = foodRecordId
+        self.currentFoodId = food.id
+        self.currentUserId = userId
+        self.currentDate = foodRecord.date
+        self.currentBMR = bmr
+        self.currentTDEE = tdee
+
+        // 기존 값으로 초기화
+        self.food = food
+        self.quantity = foodRecord.quantity?.decimalValue ?? Decimal(1)
+        self.quantityUnit = QuantityUnit(rawValue: foodRecord.quantityUnit) ?? .serving
+        if let mealType = MealType(rawValue: foodRecord.mealType) {
+            self.selectedMealType = mealType
+        }
+    }
+
     /// 프리셋 배수로 섭취량을 설정합니다.
     ///
     /// - Parameter multiplier: 배수 (0.25, 0.5, 1.0, 1.5, 2.0 등)
@@ -150,26 +192,33 @@ final class FoodDetailViewModel: ObservableObject {
 
     /// 단위를 변경합니다.
     ///
-    /// 인분 <-> 그램 간 변환 시 현재 섭취량을 유지합니다.
+    /// 현재 섭취량을 새 단위로 환산하여 동일한 양을 유지합니다.
     ///
     /// - Parameter newUnit: 새로운 단위
     func changeUnit(to newUnit: QuantityUnit) {
         guard let food = food else { return }
+        guard quantityUnit != newUnit else { return }
 
-        // 단위 변환 시 현재 섭취량을 유지
         let servingSizeValue = food.servingSize?.decimalValue ?? Decimal(100)
-        if quantityUnit == .serving && newUnit == .grams {
-            // 인분 -> 그램: servings * servingSize
-            quantity = NutritionCalculator.servingsToGrams(
-                servings: quantity,
-                servingSize: servingSizeValue
-            )
-        } else if quantityUnit == .grams && newUnit == .serving {
-            // 그램 -> 인분: grams / servingSize
-            quantity = NutritionCalculator.gramsToServings(
-                grams: quantity,
-                servingSize: servingSizeValue
-            )
+
+        // 현재 단위의 총 그램 수 계산
+        let currentGrams: Decimal
+        if let gramsPerUnit = quantityUnit.gramsPerUnit {
+            currentGrams = quantity * gramsPerUnit
+        } else {
+            // serving/piece → 인분 수 × servingSize = 그램
+            currentGrams = quantity * servingSizeValue
+        }
+
+        // 새 단위로 환산
+        if let newGramsPerUnit = newUnit.gramsPerUnit {
+            // 새 단위가 그램 기반: 총 그램 / 단위당 그램
+            guard newGramsPerUnit > 0 else { return }
+            quantity = currentGrams / newGramsPerUnit
+        } else {
+            // 새 단위가 인분/개: 총 그램 / servingSize
+            guard servingSizeValue > 0 else { return }
+            quantity = currentGrams / servingSizeValue
         }
 
         quantityUnit = newUnit
@@ -193,14 +242,11 @@ final class FoodDetailViewModel: ObservableObject {
 
     /// 식단 기록을 저장합니다.
     ///
+    /// 수정 모드에서는 기존 FoodRecord를 업데이트하고,
+    /// 추가 모드에서는 새 FoodRecord를 생성합니다.
+    ///
     /// - Throws: 유효성 검증 실패 또는 저장 중 에러 발생 시
     func saveFoodRecord() async throws {
-        guard let userId = currentUserId,
-              let foodId = currentFoodId,
-              let date = currentDate else {
-            throw ServiceError.invalidQuantity
-        }
-
         // 섭취량 유효성 검증
         guard validateQuantity() else {
             throw ServiceError.invalidQuantity
@@ -210,17 +256,33 @@ final class FoodDetailViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            // 식단 기록 추가 (DailyLog 자동 업데이트됨)
-            _ = try await foodRecordService.addFoodRecord(
-                userId: userId,
-                foodId: foodId,
-                date: date,
-                mealType: selectedMealType,
-                quantity: quantity,
-                quantityUnit: quantityUnit,
-                bmr: currentBMR,
-                tdee: currentTDEE
-            )
+            if isEditMode, let foodRecordId = editingFoodRecordId {
+                // 수정 모드: 기존 FoodRecord 업데이트
+                _ = try await foodRecordService.updateFoodRecord(
+                    foodRecordId: foodRecordId,
+                    quantity: quantity,
+                    quantityUnit: quantityUnit,
+                    mealType: selectedMealType
+                )
+            } else {
+                // 추가 모드: 새 FoodRecord 생성
+                guard let userId = currentUserId,
+                      let foodId = currentFoodId,
+                      let date = currentDate else {
+                    throw ServiceError.invalidQuantity
+                }
+
+                _ = try await foodRecordService.addFoodRecord(
+                    userId: userId,
+                    foodId: foodId,
+                    date: date,
+                    mealType: selectedMealType,
+                    quantity: quantity,
+                    quantityUnit: quantityUnit,
+                    bmr: currentBMR,
+                    tdee: currentTDEE
+                )
+            }
 
             isSaving = false
         } catch {
@@ -315,14 +377,14 @@ extension FoodDetailViewModel {
         )
     }
 
-    /// 현재 섭취량이 인분 기준인지 여부
+    /// 현재 섭취량이 인분/개수 기준인지 여부
     var isServingBased: Bool {
-        quantityUnit == .serving
+        !quantityUnit.isGramBased
     }
 
-    /// 현재 섭취량이 그램 기준인지 여부
+    /// 현재 섭취량이 그램 기반 단위인지 여부 (g, 큰술, 작은술, ml, 컵)
     var isGramBased: Bool {
-        quantityUnit == .grams
+        quantityUnit.isGramBased
     }
 
     /// 섭취량 표시 문자열
@@ -348,5 +410,15 @@ extension FoodDetailViewModel {
     /// 저장 가능 여부
     var canSave: Bool {
         !isSaving && isFoodLoaded && quantityError == nil
+    }
+
+    /// 저장 버튼 텍스트
+    var saveButtonTitle: String {
+        isEditMode ? "수정 완료" : "식단에 추가"
+    }
+
+    /// 네비게이션 타이틀
+    var navigationTitle: String {
+        isEditMode ? "식단 수정" : "음식 추가"
     }
 }

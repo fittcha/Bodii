@@ -75,17 +75,21 @@ struct SleepTabView: View {
         // 💡 Java 비교: Navigation Component와 유사
         NavigationStack {
             VStack(spacing: 0) {
-                // 📚 학습 포인트: Segmented Picker
-                // iOS 스타일 세그먼트 컨트롤로 탭 전환
-                Picker("보기 모드", selection: $selectedTab) {
-                    ForEach(Tab.allCases, id: \.self) { tab in
-                        Text(tab.rawValue).tag(tab)
+                // 상단 바: 세그먼트 + 추가 버튼
+                HStack {
+                    // 📚 학습 포인트: Segmented Picker
+                    // iOS 스타일 세그먼트 컨트롤로 탭 전환
+                    Picker("보기 모드", selection: $selectedTab) {
+                        ForEach(Tab.allCases, id: \.self) { tab in
+                            Text(tab.rawValue).tag(tab)
+                        }
                     }
+                    .pickerStyle(.segmented)
+
+                    addButton
                 }
-                .pickerStyle(.segmented)
                 .padding(.horizontal, 16)
-                .padding(.top, 8)
-                .padding(.bottom, 12)
+                .padding(.vertical, 8)
 
                 // 구분선
                 Divider()
@@ -96,13 +100,7 @@ struct SleepTabView: View {
                 selectedView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .navigationTitle("수면")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    addButton
-                }
-            }
+            .navigationBarHidden(true)
             // 📚 학습 포인트: Sheet for Input
             // 수면 기록 추가 시트
             .sheet(isPresented: $showInputSheet) {
@@ -137,7 +135,12 @@ struct SleepTabView: View {
             if let historyViewModel = historyViewModel {
                 SleepHistoryContentView(
                     viewModel: historyViewModel,
-                    container: container
+                    container: container,
+                    onEditComplete: {
+                        Task {
+                            await trendsViewModel?.loadStats()
+                        }
+                    }
                 )
             } else {
                 // 로딩 플레이스홀더
@@ -199,6 +202,7 @@ fileprivate struct SleepHistoryContentView: View {
 
     @ObservedObject var viewModel: SleepHistoryViewModel
     let container: DIContainer
+    var onEditComplete: (() -> Void)?
 
     @State private var showAddSheet: Bool = false
 
@@ -220,15 +224,24 @@ fileprivate struct SleepHistoryContentView: View {
         }
         // 📚 학습 포인트: Sheet for Editing Record
         // 레코드 편집 시트
-        .sheet(item: $viewModel.recordToEdit) { record in
+        .sheet(item: $viewModel.recordToEdit, onDismiss: {
+            let wasEdited = viewModel.needsRefreshAfterEdit
+            viewModel.refreshIfNeeded()
+            if wasEdited {
+                onEditComplete?()
+            }
+        }) { record in
+            let userId = (try? DIContainer.shared.userRepository.fetchCurrentUserId()) ?? UserProfile.sample.id
             SleepInputSheet(
-                viewModel: container.makeSleepInputViewModel(
-                    userId: UserProfile.sample.id,
-                    defaultHours: Int(record.duration / 60),
-                    defaultMinutes: Int(record.duration % 60)
+                viewModel: container.makeSleepInputViewModelForEditing(
+                    userId: userId,
+                    record: record
                 ),
                 canSkip: true,
-                onSkip: nil
+                onSkip: nil,
+                onSave: {
+                    viewModel.didFinishEditing()
+                }
             )
         }
         // 📚 학습 포인트: Confirmation Dialog

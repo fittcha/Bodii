@@ -307,36 +307,31 @@ final class DailyLogService {
         }
 
         do {
-            // 📚 학습 포인트: Parallel HealthKit Queries
-            // 걸음 수를 HealthKit에서 조회
-            // 💡 Java 비교: Optional.ofNullable()와 유사
             let steps = try await healthKitService.fetchSteps(for: date)
+            let activeCalories = try await healthKitService.fetchActiveCalories(for: date)
 
-            // steps가 있으면 DailyLog 업데이트
-            if let stepsValue = steps {
-                // 📚 학습 포인트: Fetch-Update Pattern
-                // 1. 현재 DailyLog 조회
-                // 2. steps 필드 업데이트
-                // 3. Repository에 저장
-                // 💡 Java 비교: JPA의 find() + save() 패턴
+            // steps 또는 activeCalories가 있으면 DailyLog 업데이트
+            if steps != nil || activeCalories != nil {
                 if var dailyLog = try await repository.fetch(for: date, userId: userId) {
-                    // Int32로 변환 (DailyLog.steps의 타입)
-                    dailyLog.steps = Int32(truncating: stepsValue as NSNumber)
+                    var needsSave = false
 
-                    // 업데이트된 DailyLog 저장
-                    _ = try await repository.update(dailyLog)
+                    if let stepsValue = steps {
+                        dailyLog.steps = Int32(truncating: stepsValue as NSNumber)
+                        needsSave = true
+                    }
+
+                    if let activeCaloriesValue = activeCalories {
+                        dailyLog.activeCaloriesOut = Int32(truncating: activeCaloriesValue as NSNumber)
+                        needsSave = true
+                    }
+
+                    if needsSave {
+                        dailyLog.updatedAt = Date()
+                        _ = try await repository.update(dailyLog)
+                    }
                 }
             }
-
-            // 📚 학습 포인트: Silent Failure
-            // 백그라운드 작업은 에러가 발생해도 사용자에게 알리지 않음
-            // 단, 로그는 남겨서 디버깅 가능하게 함
-            // 💡 Java 비교: try-catch with logging only
         } catch {
-            // HealthKit 권한이 없거나 데이터가 없는 경우 조용히 실패
-            // 앱의 핵심 기능에는 영향을 주지 않음
-
-            // 개발 중에는 디버그 로그 출력
             #if DEBUG
             print("[DailyLogService] HealthKit sync failed: \(error.localizedDescription)")
             #endif

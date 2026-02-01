@@ -124,8 +124,20 @@ protocol GeminiServiceProtocol {
         userId: UUID,
         date: Date,
         goalType: GoalType,
-        tdee: Int
+        tdee: Int,
+        targetCalories: Int
     ) async throws -> DietComment
+
+    // MARK: - Home Coaching
+
+    /// 홈 화면 종합 AI 코칭 생성
+    ///
+    /// 수면, 식단, 운동 데이터를 종합하여 시간대별 맞춤 코칭 메시지를 생성합니다.
+    ///
+    /// - Parameter context: 홈 코칭에 필요한 종합 데이터
+    /// - Returns: 시간대별 맞춤 코칭 메시지 (1-2문장)
+    /// - Throws: `GeminiServiceError`
+    func generateHomeCoaching(context: HomeCoachingContext) async throws -> String
 
     // MARK: - Food Image Analysis
 
@@ -135,6 +147,48 @@ protocol GeminiServiceProtocol {
     /// - Returns: 인식된 음식 목록
     /// - Throws: `GeminiServiceError`
     func analyzeFoodImage(_ image: UIImage) async throws -> [GeminiFoodAnalysis]
+}
+
+// MARK: - Home Coaching Context
+
+/// 홈 코칭에 필요한 종합 데이터
+struct HomeCoachingContext {
+    let currentHour: Int
+    let goalType: GoalType
+    let tdee: Int
+    let targetCalories: Int
+
+    // 수면
+    let sleepDurationMinutes: Int32?
+    let sleepStatus: SleepStatus?
+
+    // 식단
+    let intakeCalories: Int
+    let totalCarbs: Double
+    let totalProtein: Double
+    let totalFat: Double
+    let mealCount: Int
+
+    // 운동
+    let exerciseCalories: Int
+    let exerciseCount: Int
+    let exerciseNames: [String]
+
+    // 체성분 트렌드 (최근 30일)
+    let currentWeight: Double?
+    let weightChange30d: Double?   // 30일간 체중 변화 (kg, +증가/-감소)
+    let currentBodyFat: Double?
+    let bodyFatChange30d: Double?  // 30일간 체지방률 변화 (%p)
+
+    // 최근 7일 체성분 개별 데이터
+    let recentBodyEntries: [BodyDataPoint]
+}
+
+/// 체성분 개별 데이터 포인트
+struct BodyDataPoint {
+    let date: Date
+    let weight: Double
+    let bodyFat: Double?   // nil이면 미측정
 }
 
 // MARK: - GeminiServiceError

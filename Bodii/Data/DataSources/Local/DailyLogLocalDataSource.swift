@@ -38,6 +38,14 @@ final class DailyLogLocalDataSource {
             }
 
             if let existing = try self.fetchDailyLog(for: date, userId: userId) {
+                // BMR/TDEE가 0인 기존 DailyLog에 유효한 값이 전달되면 업데이트
+                if existing.tdee == 0 && tdee > 0 {
+                    existing.bmr = bmr
+                    existing.tdee = tdee
+                    existing.netCalories = existing.totalCaloriesIn - tdee
+                    existing.updatedAt = Date()
+                    try self.context.save()
+                }
                 return existing
             }
 
@@ -134,6 +142,52 @@ final class DailyLogLocalDataSource {
         }
     }
 
+    // MARK: - AI Comment Persistence
+
+    /// AI 식단 코멘트를 DailyLog에 저장합니다.
+    ///
+    /// - Parameters:
+    ///   - comment: 저장할 DietComment
+    ///   - date: 대상 날짜
+    ///   - userId: 사용자 ID
+    func saveAIComment(_ comment: DietComment, for date: Date, userId: UUID) async throws {
+        try await context.perform { [weak self] in
+            guard let self = self else {
+                throw DataSourceError.contextDeallocated
+            }
+
+            guard let dailyLog = try self.fetchDailyLog(for: date, userId: userId) else {
+                throw DataSourceError.recordNotFound
+            }
+
+            DietCommentSerializer.saveToDailyLog(comment, dailyLog: dailyLog)
+            dailyLog.updatedAt = Date()
+            try self.context.save()
+        }
+    }
+
+    /// DailyLog에 저장된 AI 식단 코멘트를 조회합니다.
+    ///
+    /// - Parameters:
+    ///   - date: 대상 날짜
+    ///   - userId: 사용자 ID
+    /// - Returns: 저장된 DietComment (없으면 nil)
+    func fetchAIComment(for date: Date, userId: UUID) async throws -> DietComment? {
+        return try await context.perform { [weak self] in
+            guard let self = self else {
+                throw DataSourceError.contextDeallocated
+            }
+
+            guard let dailyLog = try self.fetchDailyLog(for: date, userId: userId) else {
+                return nil
+            }
+
+            return DietCommentSerializer.toDietComment(from: dailyLog, userId: userId)
+        }
+    }
+
+    // MARK: - Exercise Updates
+
     /// 운동 수정 시 DailyLog를 업데이트합니다.
     func updateExercise(
         date: Date,
@@ -204,6 +258,7 @@ extension DailyLogLocalDataSource {
         dailyLog.tdee = tdee
         dailyLog.totalCaloriesIn = 0
         dailyLog.totalCaloriesOut = 0
+        dailyLog.activeCaloriesOut = 0
         dailyLog.exerciseMinutes = 0
         dailyLog.exerciseCount = 0
         dailyLog.totalCarbs = 0
@@ -213,14 +268,16 @@ extension DailyLogLocalDataSource {
         dailyLog.createdAt = now
         dailyLog.updatedAt = now
 
-        // User relationship
+        // User relationship (필수)
         let userRequest: NSFetchRequest<User> = User.fetchRequest()
         userRequest.predicate = NSPredicate(format: "id == %@", userId as CVarArg)
         userRequest.fetchLimit = 1
 
-        if let user = try? context.fetch(userRequest).first {
-            dailyLog.user = user
+        guard let user = try context.fetch(userRequest).first else {
+            context.delete(dailyLog)
+            throw DataSourceError.recordNotFound
         }
+        dailyLog.user = user
 
         try context.save()
 

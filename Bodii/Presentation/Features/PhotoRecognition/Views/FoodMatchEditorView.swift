@@ -632,38 +632,39 @@ struct FoodMatchEditorView: View {
         return formattedDecimal(quantity)
     }
 
-    /// 계산된 칼로리
-    ///
-    /// 📚 학습 포인트: Real-time Calculation
-    /// 수량 변경 시 실시간으로 칼로리 재계산
-    private var calculatedCalories: String {
+    /// 수량 배수 계산 (공통)
+    private var calculatedMultiplier: Decimal {
         let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
-        let multiplier = quantityUnit == .serving ? quantity : (servingSize > 0 ? quantity / servingSize : quantity)
-        let calories = Decimal(match.food.calories) * multiplier
+        if let gramsPerUnit = quantityUnit.gramsPerUnit {
+            guard servingSize > 0 else { return quantity }
+            let totalGrams = quantity * gramsPerUnit
+            return totalGrams / servingSize
+        } else {
+            return quantity
+        }
+    }
+
+    /// 계산된 칼로리
+    private var calculatedCalories: String {
+        let calories = Decimal(match.food.calories) * calculatedMultiplier
         return formattedDecimal(calories)
     }
 
     /// 계산된 탄수화물
     private var calculatedCarbohydrates: String {
-        let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
-        let multiplier = quantityUnit == .serving ? quantity : (servingSize > 0 ? quantity / servingSize : quantity)
-        let carbs = (match.food.carbohydrates?.decimalValue ?? Decimal(0)) * multiplier
+        let carbs = (match.food.carbohydrates?.decimalValue ?? Decimal(0)) * calculatedMultiplier
         return formattedDecimal(carbs)
     }
 
     /// 계산된 단백질
     private var calculatedProtein: String {
-        let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
-        let multiplier = quantityUnit == .serving ? quantity : (servingSize > 0 ? quantity / servingSize : quantity)
-        let protein = (match.food.protein?.decimalValue ?? Decimal(0)) * multiplier
+        let protein = (match.food.protein?.decimalValue ?? Decimal(0)) * calculatedMultiplier
         return formattedDecimal(protein)
     }
 
     /// 계산된 지방
     private var calculatedFat: String {
-        let servingSize = match.food.servingSize?.decimalValue ?? Decimal(100)
-        let multiplier = quantityUnit == .serving ? quantity : (servingSize > 0 ? quantity / servingSize : quantity)
-        let fat = (match.food.fat?.decimalValue ?? Decimal(0)) * multiplier
+        let fat = (match.food.fat?.decimalValue ?? Decimal(0)) * calculatedMultiplier
         return formattedDecimal(fat)
     }
 

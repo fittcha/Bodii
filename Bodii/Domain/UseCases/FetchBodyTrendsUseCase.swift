@@ -30,33 +30,52 @@ struct FetchBodyTrendsUseCase {
     /// - 각 케이스가 days 값을 가짐
     /// 💡 Java 비교: Enum with fields와 유사
     enum TrendPeriod: Int, CaseIterable, Codable {
-        /// 최근 7일
-        case week = 7
-
         /// 최근 30일
         case month = 30
 
-        /// 최근 90일
-        case quarter = 90
+        /// 최근 60일
+        case twoMonths = 60
+
+        /// 최근 120일
+        case fourMonths = 120
 
         /// 일수 값
-        /// 📚 학습 포인트: Computed Property
-        /// rawValue를 days로 명시적으로 표현
         var days: Int {
             return self.rawValue
         }
 
         /// 표시 이름
-        /// 📚 학습 포인트: Localization
-        /// UI에 표시할 한글 이름
         var displayName: String {
             switch self {
-            case .week:
-                return "7일"
             case .month:
                 return "30일"
-            case .quarter:
-                return "90일"
+            case .twoMonths:
+                return "60일"
+            case .fourMonths:
+                return "120일"
+            }
+        }
+
+        /// 예측 일수 (미래 추세선)
+        var predictionDays: Int {
+            switch self {
+            case .month: return 20
+            case .twoMonths: return 30
+            case .fourMonths: return 30
+            }
+        }
+
+        /// 차트 총 표시 일수 (과거 + 미래)
+        var totalChartDays: Int {
+            return days + predictionDays
+        }
+
+        /// X축 눈금 간격 (일수)
+        var xAxisStride: Int {
+            switch self {
+            case .month: return 7
+            case .twoMonths: return 15
+            case .fourMonths: return 30
             }
         }
 
@@ -231,6 +250,16 @@ struct FetchBodyTrendsUseCase {
         var bodyFatPercentChange: Decimal? {
             guard let first = dataPoints.first?.bodyFatPercent,
                   let last = dataPoints.last?.bodyFatPercent else {
+                return nil
+            }
+            return last - first
+        }
+
+        /// 근육량 변화량 (kg) - 유효 데이터의 첫 기록과 마지막 기록의 차이
+        var muscleMassChange: Decimal? {
+            let valid = dataPoints.filter { ($0.muscleMass ?? 0) > 0 }
+            guard let first = valid.first?.muscleMass,
+                  let last = valid.last?.muscleMass else {
                 return nil
             }
             return last - first
@@ -451,9 +480,9 @@ struct FetchBodyTrendsUseCase {
 
         // 커스텀 기간을 위해 가장 가까운 TrendPeriod 사용
         let period: TrendPeriod = {
-            if days <= 7 { return .week }
             if days <= 30 { return .month }
-            return .quarter
+            if days <= 60 { return .twoMonths }
+            return .fourMonths
         }()
 
         return Output(
@@ -472,22 +501,22 @@ extension FetchBodyTrendsUseCase {
     /// Use Case의 사용 예시와 테스트를 위한 샘플 데이터
     /// 💡 Java 비교: JUnit의 @Test fixture와 유사
 
-    /// 샘플 입력 - 최근 7일
-    static let sampleInputWeek = Input(period: .week)
+    /// 샘플 입력 - 최근 30일
+    static let sampleInputMonth = Input(period: .month)
 
-    /// 샘플 입력 - 최근 30일 (대사율 데이터 포함)
-    static let sampleInputMonth = Input(
-        period: .month,
+    /// 샘플 입력 - 최근 60일 (대사율 데이터 포함)
+    static let sampleInputTwoMonths = Input(
+        period: .twoMonths,
         includeMetabolismData: true
     )
 
-    /// 샘플 출력 - 7일 데이터
+    /// 샘플 출력 - 30일 데이터
     static func sampleOutput() -> Output {
         let now = Date()
         let dataPoints = [
             TrendDataPoint(
                 id: UUID(),
-                date: Calendar.current.date(byAdding: .day, value: -6, to: now)!,
+                date: Calendar.current.date(byAdding: .day, value: -25, to: now)!,
                 weight: Decimal(72.0),
                 bodyFatPercent: Decimal(20.0),
                 muscleMass: Decimal(31.0),
@@ -496,7 +525,7 @@ extension FetchBodyTrendsUseCase {
             ),
             TrendDataPoint(
                 id: UUID(),
-                date: Calendar.current.date(byAdding: .day, value: -3, to: now)!,
+                date: Calendar.current.date(byAdding: .day, value: -15, to: now)!,
                 weight: Decimal(71.2),
                 bodyFatPercent: Decimal(19.3),
                 muscleMass: Decimal(31.5),
@@ -516,8 +545,8 @@ extension FetchBodyTrendsUseCase {
 
         return Output(
             dataPoints: dataPoints,
-            period: .week,
-            startDate: Calendar.current.date(byAdding: .day, value: -7, to: now)!,
+            period: .month,
+            startDate: Calendar.current.date(byAdding: .day, value: -30, to: now)!,
             endDate: now
         )
     }
@@ -567,7 +596,7 @@ extension FetchBodyTrendsUseCase {
 /// let useCase = FetchBodyTrendsUseCase(bodyRepository: repository)
 ///
 /// // 간단한 조회
-/// let trends = try await useCase.execute(period: .week)
+/// let trends = try await useCase.execute(period: .month)
 ///
 /// // 대사율 데이터 포함 조회
 /// let input = FetchBodyTrendsUseCase.Input(
