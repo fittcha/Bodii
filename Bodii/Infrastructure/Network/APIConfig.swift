@@ -186,13 +186,7 @@ final class APIConfig: APIConfigProtocol {
             return envKey
         }
 
-        // 2. APISecrets 상수에서 읽기 (가장 확실한 방법)
-        let secretsKey = APISecrets.kfdaAPIKey
-        if !secretsKey.isEmpty && secretsKey != "DEMO_KEY" {
-            return secretsKey
-        }
-
-        // 3. Info.plist에서 키 읽기
+        // 2. Info.plist에서 키 읽기
         if let apiKey = Bundle.main.object(forInfoDictionaryKey: "KFDA_API_KEY") as? String,
            !apiKey.isEmpty,
            !apiKey.hasPrefix("$(") {
@@ -241,13 +235,7 @@ final class APIConfig: APIConfigProtocol {
             return envKey
         }
 
-        // 2. APISecrets 상수에서 읽기
-        let secretsKey = APISecrets.usdaAPIKey
-        if !secretsKey.isEmpty && secretsKey != "DEMO_KEY" {
-            return secretsKey
-        }
-
-        // 3. Info.plist에서 키 읽기
+        // 2. Info.plist에서 키 읽기
         if let apiKey = Bundle.main.object(forInfoDictionaryKey: "USDA_API_KEY") as? String,
            !apiKey.isEmpty,
            !apiKey.hasPrefix("$(") {
@@ -298,13 +286,7 @@ final class APIConfig: APIConfigProtocol {
             return envKey
         }
 
-        // 2. APISecrets 상수에서 읽기
-        let secretsKey = APISecrets.geminiAPIKey
-        if !secretsKey.isEmpty {
-            return secretsKey
-        }
-
-        // 3. Info.plist에서 키 읽기
+        // 2. Info.plist에서 키 읽기
         if let apiKey = Bundle.main.object(forInfoDictionaryKey: "GEMINI_API_KEY") as? String,
            !apiKey.isEmpty,
            !apiKey.hasPrefix("$(") {
