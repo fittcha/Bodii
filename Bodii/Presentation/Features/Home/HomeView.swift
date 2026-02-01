@@ -80,18 +80,14 @@ struct HomeView: View {
 
     private var calorieSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("오늘의 칼로리")
-                .font(.headline)
-                .fontWeight(.semibold)
-
             HStack(spacing: 0) {
-                // 섭취 칼로리
+                // 섭취 칼로리 (목표 ±10% 이내: 초록, 이외: 주황)
                 calorieCard(
                     title: "섭취",
                     value: viewModel.intakeCalories,
                     unit: "kcal",
                     icon: "fork.knife",
-                    color: .orange
+                    color: viewModel.isIntakeNearTarget ? .green : .orange
                 )
 
                 // 구분선
@@ -100,7 +96,7 @@ struct HomeView: View {
                     .frame(width: 1)
                     .padding(.vertical, 16)
 
-                // 소모 칼로리
+                // 소모 칼로리 (운동 칼로리만)
                 calorieCard(
                     title: "소모",
                     value: viewModel.burnCalories,
@@ -113,8 +109,8 @@ struct HomeView: View {
             .cornerRadius(16)
             .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
 
-            // 칼로리 밸런스
-            calorieBalanceView
+            // 칼로리 프로그레스 바
+            calorieProgressBar
         }
     }
 
@@ -149,31 +145,88 @@ struct HomeView: View {
         .padding(.vertical, 16)
     }
 
-    /// 칼로리 밸런스 뷰
-    private var calorieBalanceView: some View {
-        let balance = viewModel.calorieBalance
+    /// 칼로리 프로그레스 바
+    private var calorieProgressBar: some View {
+        VStack(spacing: 8) {
+            // 프로그레스 바
+            GeometryReader { geometry in
+                let barWidth = geometry.size.width
+                let target = Double(viewModel.effectiveTarget)
+                let intake = Double(viewModel.intakeCalories)
+                let burn = Double(viewModel.burnCalories)
+                // 프로그레스 바 전체 길이 = 목표 칼로리의 120%
+                let barMax = target * 1.2
+                let intakeWidth = barMax > 0
+                    ? min(CGFloat(intake / barMax) * barWidth, barWidth)
+                    : 0.0
+                let burnWidth = barMax > 0
+                    ? min(CGFloat(burn / barMax) * barWidth, intakeWidth)
+                    : 0.0
+                let targetX = barMax > 0
+                    ? min(CGFloat(target / barMax) * barWidth, barWidth)
+                    : 0.0
+                let barColor: Color = viewModel.isIntakeNearTarget ? .green : .orange
 
-        return HStack {
-            Image(systemName: balance >= 0 ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
-                .foregroundStyle(balance >= 0 ? .red : .green)
+                ZStack(alignment: .leading) {
+                    // 배경 (회색)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color(.systemGray5))
+                        .frame(height: 12)
 
-            Text(balance >= 0 ? "+\(balance) kcal" : "\(balance) kcal")
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundStyle(balance >= 0 ? .red : .green)
+                    // 섭취 바 (조건부 색상)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(barColor)
+                        .frame(width: max(0, intakeWidth), height: 12)
 
-            Spacer()
+                    // 소모 칼로리 빨간색 덧칠 (섭취 바 오른쪽 끝에서 왼쪽으로)
+                    if burn > 0 && intakeWidth > 0 {
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.red)
+                            .frame(width: max(0, burnWidth), height: 12)
+                            .offset(x: max(0, intakeWidth - burnWidth))
+                    }
 
-            Text(balance >= 0 ? "칼로리 초과" : "칼로리 부족")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                    // 목표 점선 (바 높이 내, 진한 회색)
+                    Rectangle()
+                        .fill(Color(.systemGray2))
+                        .frame(width: 1.5, height: 12)
+                        .mask(
+                            VStack(spacing: 2) {
+                                ForEach(0..<4, id: \.self) { _ in
+                                    Rectangle().frame(height: 2)
+                                }
+                            }
+                        )
+                        .offset(x: targetX - 0.75)
+                }
+            }
+            .frame(height: 12)
+
+            // 하단 텍스트: 잔여 왼쪽, 목표 오른쪽
+            HStack {
+                let remaining = viewModel.remainingCalories
+                Text(remaining >= 0
+                    ? "잔여 \(remaining.formatted()) kcal"
+                    : "\(abs(remaining).formatted()) kcal 초과")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(remaining >= 0 ? .secondary : .red)
+
+                Spacer()
+
+                Text("목표 \(viewModel.effectiveTarget.formatted()) kcal")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill((balance >= 0 ? Color.red : Color.green).opacity(0.1))
+                .fill(Color(.systemBackground))
         )
+        .shadow(color: Color.black.opacity(0.03), radius: 4, x: 0, y: 1)
     }
 
     // MARK: - Swipe Card Section
@@ -201,12 +254,13 @@ struct HomeView: View {
 
                 // 체성분 그래프
                 BodyCompositionChartView(
-                    data: viewModel.bodyChartData
+                    data: viewModel.bodyChartData,
+                    gender: viewModel.userGender
                 )
                 .tag(1)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 220)
+            .frame(height: 200)
         }
     }
 
@@ -257,10 +311,14 @@ final class HomeViewModel: ObservableObject {
 
     @Published var intakeCalories: Int = 0
     @Published var burnCalories: Int = 0
+    @Published var activeCaloriesOut: Int = 0
+    @Published var tdee: Int = 2000
+    @Published var dailyCalorieTarget: Int = 0
     @Published var weekData: [DayScore] = []
     @Published var bodyChartData: [BodyChartData] = []
     @Published var aiComment: String?
     @Published var isLoading: Bool = false
+    @Published var userGender: Gender = .male
 
     // MARK: - Private Properties
 
@@ -270,12 +328,63 @@ final class HomeViewModel: ObservableObject {
     private let bodyRepository: BodyRepositoryProtocol
     private let foodRecordRepository: FoodRecordRepositoryProtocol
     private let exerciseRepository: ExerciseRecordRepository
+    private let goalRepository: GoalRepositoryProtocol
+    private let userRepository: UserRepository
+    private let dailyLogRepository: DailyLogRepository
+    private let geminiService: GeminiServiceProtocol
+
+    /// 마지막 코칭 생성 시각의 hour (0-23), 중복 호출 방지용
+    private var lastCoachingHour: Int?
+    /// 코칭 갱신 타이머
+    private var coachingTimer: Timer?
 
     // MARK: - Computed Properties
 
-    /// 칼로리 밸런스 (섭취 - 소모)
-    var calorieBalance: Int {
-        intakeCalories - burnCalories
+    /// 총 소모 칼로리 (수동 운동 + HealthKit 활동 칼로리)
+    var totalBurnCalories: Int {
+        burnCalories + activeCaloriesOut
+    }
+
+    /// 순 섭취 칼로리 (섭취 - 총 소모)
+    var netIntake: Int {
+        max(0, intakeCalories - totalBurnCalories)
+    }
+
+    /// 총 섭취 비율 (주황색 바 길이)
+    var intakeRatio: Double {
+        guard tdee > 0 else { return 0 }
+        return Double(intakeCalories) / Double(tdee)
+    }
+
+    /// 순 섭취 비율 (주황-빨강 경계 위치)
+    var netIntakeRatio: Double {
+        guard tdee > 0 else { return 0 }
+        return Double(netIntake) / Double(tdee)
+    }
+
+    /// 목표 칼로리 위치 비율
+    var targetRatio: Double {
+        guard tdee > 0 else { return 0 }
+        let target = dailyCalorieTarget > 0 ? dailyCalorieTarget : tdee
+        return Double(target) / Double(tdee)
+    }
+
+    /// 실제 사용할 목표 칼로리
+    var effectiveTarget: Int {
+        dailyCalorieTarget > 0 ? dailyCalorieTarget : tdee
+    }
+
+    /// 목표 대비 남은 칼로리 (목표 - 섭취, 소모 합산 안 함)
+    var remainingCalories: Int {
+        effectiveTarget - intakeCalories
+    }
+
+    /// 섭취 칼로리가 목표의 ±10% 이내인지 여부
+    var isIntakeNearTarget: Bool {
+        let target = Double(effectiveTarget)
+        guard target > 0 else { return false }
+        let ratio = Double(intakeCalories) / target
+        return ratio >= 0.9 && ratio <= 1.1
     }
 
     /// 날짜 포맷팅
@@ -312,7 +421,11 @@ final class HomeViewModel: ObservableObject {
         dietCommentRepository: DietCommentRepository,
         bodyRepository: BodyRepositoryProtocol,
         foodRecordRepository: FoodRecordRepositoryProtocol,
-        exerciseRepository: ExerciseRecordRepository
+        exerciseRepository: ExerciseRecordRepository,
+        goalRepository: GoalRepositoryProtocol,
+        userRepository: UserRepository,
+        dailyLogRepository: DailyLogRepository,
+        geminiService: GeminiServiceProtocol
     ) {
         self.userId = userId
         self.sleepRepository = sleepRepository
@@ -320,6 +433,14 @@ final class HomeViewModel: ObservableObject {
         self.bodyRepository = bodyRepository
         self.foodRecordRepository = foodRecordRepository
         self.exerciseRepository = exerciseRepository
+        self.goalRepository = goalRepository
+        self.userRepository = userRepository
+        self.dailyLogRepository = dailyLogRepository
+        self.geminiService = geminiService
+    }
+
+    deinit {
+        coachingTimer?.invalidate()
     }
 
     // MARK: - Public Methods
@@ -329,11 +450,27 @@ final class HomeViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
+        // 성별 먼저 로드 (체성분 그래프 Y축 범위에 필요)
+        loadUserGender()
+
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.loadCalories() }
             group.addTask { await self.loadWeekData() }
             group.addTask { await self.loadBodyChartData() }
-            group.addTask { await self.loadAIComment() }
+        }
+
+        // 칼로리/TDEE 로드 후 코칭 생성 (tdee 값이 필요하므로 순차 실행)
+        await loadAICoaching()
+    }
+
+    /// 사용자 성별 로드
+    private func loadUserGender() {
+        do {
+            if let user = try userRepository.fetchCurrentUser() {
+                userGender = Gender(rawValue: user.gender) ?? .male
+            }
+        } catch {
+            print("❌ 성별 로드 실패: \(error.localizedDescription)")
         }
     }
 
@@ -354,6 +491,24 @@ final class HomeViewModel: ObservableObject {
             let exerciseRecords = try await exerciseRepository.fetchByDate(today, userId: userId)
             burnCalories = exerciseRecords.reduce(0) { sum, record in
                 sum + Int(record.caloriesBurned)
+            }
+
+            // HealthKit 활동 칼로리: DailyLog에서 조회
+            if let dailyLog = try await dailyLogRepository.fetch(for: today, userId: userId) {
+                activeCaloriesOut = Int(dailyLog.activeCaloriesOut)
+            }
+
+            // TDEE: User의 currentTDEE (없으면 기본값 2000 유지)
+            if let user = try userRepository.fetchCurrentUser(),
+               let currentTDEE = user.currentTDEE?.intValue,
+               currentTDEE > 0 {
+                tdee = currentTDEE
+            }
+
+            // 목표 칼로리: 활성 Goal의 dailyCalorieTarget
+            if let activeGoal = try await goalRepository.fetchActiveGoal(),
+               activeGoal.dailyCalorieTarget > 0 {
+                dailyCalorieTarget = Int(activeGoal.dailyCalorieTarget)
             }
         } catch {
             print("❌ 칼로리 로드 실패: \(error.localizedDescription)")
@@ -415,22 +570,23 @@ final class HomeViewModel: ObservableObject {
         weekData = dayScores
     }
 
-    /// 체성분 그래프 데이터 로드
+    /// 체성분 그래프 데이터 로드 (30일)
     private func loadBodyChartData() async {
         do {
             let calendar = Calendar.current
             let today = Date()
-            guard let startDate = calendar.date(byAdding: .day, value: -6, to: today) else {
+            guard let startDate = calendar.date(byAdding: .day, value: -29, to: today) else {
                 return
             }
 
             let entries = try await bodyRepository.fetch(from: startDate, to: today)
 
             bodyChartData = entries.map { entry -> BodyChartData in
+                let fatValue = NSDecimalNumber(decimal: entry.bodyFatPercent).doubleValue
                 return BodyChartData(
                     date: entry.date,
                     weight: NSDecimalNumber(decimal: entry.weight).doubleValue,
-                    bodyFat: NSDecimalNumber(decimal: entry.bodyFatPercent).doubleValue
+                    bodyFat: fatValue > 0 ? fatValue : nil
                 )
             }.sorted { $0.date < $1.date }
         } catch {
@@ -438,24 +594,168 @@ final class HomeViewModel: ObservableObject {
         }
     }
 
-    /// AI 한줄평 로드
-    private func loadAIComment() async {
+    /// AI 코칭 로드 (스케줄 기반)
+    ///
+    /// 규칙:
+    /// - 8시 이전: 호출하지 않음
+    /// - 8시~22시: 홈 진입 시 현재 시각의 정각 기준으로 1회 호출
+    /// - 같은 hour에 이미 생성했으면 캐시 사용
+    /// - 다음 정각에 자동 갱신 타이머 설정
+    private func loadAICoaching() async {
+        let now = Date()
+        let calendar = Calendar.current
+        let currentHour = calendar.component(.hour, from: now)
+
+        // 8시 이전 또는 23시 이후: 호출하지 않음
+        guard currentHour >= 8 && currentHour <= 22 else {
+            return
+        }
+
+        // 같은 hour에 이미 생성했으면 스킵
+        if lastCoachingHour == currentHour && aiComment != nil {
+            scheduleNextCoachingTimer()
+            return
+        }
+
+        await generateCoaching(hour: currentHour)
+        scheduleNextCoachingTimer()
+    }
+
+    /// 종합 데이터를 수집하여 AI 코칭 생성
+    private func generateCoaching(hour: Int) async {
         do {
             let today = Date()
 
-            // 오늘의 일일 전체 식단 코멘트 조회 (캐시에서)
-            if let cachedComment = try await dietCommentRepository.getCachedComment(
-                for: today,
-                userId: userId,
-                mealType: nil
-            ) {
-                aiComment = cachedComment.summary
-            } else {
-                aiComment = nil
+            // 수면 데이터
+            var sleepDuration: Int32?
+            var sleepStatus: SleepStatus?
+            if let sleepRecord = try? await sleepRepository.fetch(for: today) {
+                sleepDuration = sleepRecord.duration
+                sleepStatus = SleepStatus(rawValue: Int16(sleepRecord.status))
             }
+
+            // 식단 데이터
+            let foodRecords = (try? await foodRecordRepository.findByDate(today, userId: userId)) ?? []
+            let totalCalories = foodRecords.reduce(0) { $0 + Int($1.calculatedCalories) }
+            let totalCarbs = foodRecords.reduce(0.0) { $0 + ($1.calculatedCarbs?.doubleValue ?? 0) }
+            let totalProtein = foodRecords.reduce(0.0) { $0 + ($1.calculatedProtein?.doubleValue ?? 0) }
+            let totalFat = foodRecords.reduce(0.0) { $0 + ($1.calculatedFat?.doubleValue ?? 0) }
+            let mealTypes = Set(foodRecords.map { $0.mealType })
+
+            // 운동 데이터
+            let exerciseRecords = (try? await exerciseRepository.fetchByDate(today, userId: userId)) ?? []
+            let exerciseCal = exerciseRecords.reduce(0) { $0 + Int($1.caloriesBurned) }
+            let exerciseNames = exerciseRecords.compactMap { ExerciseType(rawValue: $0.exerciseType)?.displayName }
+
+            // 목표 정보
+            var goalType: GoalType = .maintain
+            var targetCalories = tdee
+            if let activeGoal = try? await goalRepository.fetchActiveGoal() {
+                goalType = GoalType(rawValue: activeGoal.goalType) ?? .maintain
+                if activeGoal.dailyCalorieTarget > 0 {
+                    targetCalories = Int(activeGoal.dailyCalorieTarget)
+                }
+            }
+
+            // 체성분 트렌드 (최근 30일)
+            var currentWeight: Double?
+            var weightChange30d: Double?
+            var currentBodyFat: Double?
+            var bodyFatChange30d: Double?
+            var recentBodyEntries: [BodyDataPoint] = []
+
+            let calendar = Calendar.current
+            if let startDate30 = calendar.date(byAdding: .day, value: -29, to: today) {
+                let entries = (try? await bodyRepository.fetch(from: startDate30, to: today)) ?? []
+                let sorted = entries.sorted { $0.date < $1.date }
+                if let latest = sorted.last {
+                    currentWeight = NSDecimalNumber(decimal: latest.weight).doubleValue
+                    let latestFat = NSDecimalNumber(decimal: latest.bodyFatPercent).doubleValue
+                    if latestFat > 0 { currentBodyFat = latestFat }
+
+                    if let oldest = sorted.first, sorted.count >= 2 {
+                        let oldWeight = NSDecimalNumber(decimal: oldest.weight).doubleValue
+                        weightChange30d = (currentWeight ?? 0) - oldWeight
+
+                        let oldFat = NSDecimalNumber(decimal: oldest.bodyFatPercent).doubleValue
+                        if oldFat > 0 && latestFat > 0 {
+                            bodyFatChange30d = latestFat - oldFat
+                        }
+                    }
+                }
+
+                // 최근 7일 개별 데이터
+                if let startDate7 = calendar.date(byAdding: .day, value: -6, to: today) {
+                    recentBodyEntries = sorted
+                        .filter { $0.date >= startDate7 }
+                        .suffix(7)
+                        .map { entry in
+                            let fat = NSDecimalNumber(decimal: entry.bodyFatPercent).doubleValue
+                            return BodyDataPoint(
+                                date: entry.date,
+                                weight: NSDecimalNumber(decimal: entry.weight).doubleValue,
+                                bodyFat: fat > 0 ? fat : nil
+                            )
+                        }
+                }
+            }
+
+            let context = HomeCoachingContext(
+                currentHour: hour,
+                goalType: goalType,
+                tdee: tdee,
+                targetCalories: targetCalories,
+                sleepDurationMinutes: sleepDuration,
+                sleepStatus: sleepStatus,
+                intakeCalories: totalCalories,
+                totalCarbs: totalCarbs,
+                totalProtein: totalProtein,
+                totalFat: totalFat,
+                mealCount: mealTypes.count,
+                exerciseCalories: exerciseCal,
+                exerciseCount: exerciseRecords.count,
+                exerciseNames: exerciseNames,
+                currentWeight: currentWeight,
+                weightChange30d: weightChange30d,
+                currentBodyFat: currentBodyFat,
+                bodyFatChange30d: bodyFatChange30d,
+                recentBodyEntries: recentBodyEntries
+            )
+
+            let coaching = try await geminiService.generateHomeCoaching(context: context)
+            aiComment = coaching
+            lastCoachingHour = hour
         } catch {
-            print("❌ AI 코멘트 로드 실패: \(error.localizedDescription)")
-            aiComment = nil
+            print("❌ AI 코칭 생성 실패: \(error.localizedDescription)")
+            // 실패해도 기존 코멘트 유지
+        }
+    }
+
+    /// 다음 정각에 코칭을 갱신하는 타이머 설정
+    private func scheduleNextCoachingTimer() {
+        coachingTimer?.invalidate()
+
+        let now = Date()
+        let calendar = Calendar.current
+        let currentHour = calendar.component(.hour, from: now)
+
+        // 22시 이후면 더 이상 타이머 불필요
+        guard currentHour < 22 else { return }
+
+        // 다음 정각 계산
+        guard let nextHour = calendar.date(bySettingHour: currentHour + 1, minute: 0, second: 0, of: now),
+              nextHour > now else { return }
+
+        let interval = nextHour.timeIntervalSince(now)
+
+        coachingTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
+            guard let self = self else { return }
+            Task { @MainActor in
+                let newHour = Calendar.current.component(.hour, from: Date())
+                guard newHour >= 8 && newHour <= 22 else { return }
+                await self.generateCoaching(hour: newHour)
+                self.scheduleNextCoachingTimer()
+            }
         }
     }
 }
@@ -472,7 +772,11 @@ extension DIContainer {
             dietCommentRepository: dietCommentRepository,
             bodyRepository: bodyRepository,
             foodRecordRepository: foodRecordRepository,
-            exerciseRepository: exerciseRepository
+            exerciseRepository: exerciseRepository,
+            goalRepository: goalRepository,
+            userRepository: userRepository,
+            dailyLogRepository: dailyLogRepository,
+            geminiService: geminiService
         )
     }
 }

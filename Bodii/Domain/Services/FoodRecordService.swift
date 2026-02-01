@@ -95,53 +95,26 @@ final class FoodRecordService: FoodRecordServiceProtocol {
             quantityUnit: quantityUnit
         )
 
-        // 3. Upsert: 같은 날짜 + 같은 끼니의 기존 레코드 확인
-        let existingRecords = try await foodRecordRepository.findByDateAndMealType(date, mealType: mealType, userId: userId)
+        // 3. 새 FoodRecord 생성 (한 끼에 여러 음식 추가 가능)
+        let foodRecord = FoodRecord(context: context)
+        foodRecord.id = UUID()
+        foodRecord.food = food
+        foodRecord.date = date
+        foodRecord.mealType = mealType.rawValue
+        foodRecord.quantity = NSDecimalNumber(decimal: quantity)
+        foodRecord.quantityUnit = quantityUnit.rawValue
+        foodRecord.calculatedCalories = nutritionValues.calories
+        foodRecord.calculatedCarbs = NSDecimalNumber(decimal: nutritionValues.carbs)
+        foodRecord.calculatedProtein = NSDecimalNumber(decimal: nutritionValues.protein)
+        foodRecord.calculatedFat = NSDecimalNumber(decimal: nutritionValues.fat)
+        foodRecord.createdAt = Date()
 
-        let foodRecord: FoodRecord
-        var isUpdate = false
-        var oldCalories: Int32 = 0
-        var oldCarbs: Decimal = 0
-        var oldProtein: Decimal = 0
-        var oldFat: Decimal = 0
-
-        if let existingRecord = existingRecords.first {
-            // 기존 레코드 업데이트
-            foodRecord = existingRecord
-            isUpdate = true
-
-            // DailyLog 업데이트를 위해 이전 값 저장
-            oldCalories = existingRecord.calculatedCalories
-            oldCarbs = existingRecord.calculatedCarbs?.decimalValue ?? Decimal(0)
-            oldProtein = existingRecord.calculatedProtein?.decimalValue ?? Decimal(0)
-            oldFat = existingRecord.calculatedFat?.decimalValue ?? Decimal(0)
-
-            // 기존 레코드 업데이트
-            foodRecord.food = food
-            foodRecord.quantity = NSDecimalNumber(decimal: quantity)
-            foodRecord.quantityUnit = quantityUnit.rawValue
-            foodRecord.calculatedCalories = nutritionValues.calories
-            foodRecord.calculatedCarbs = NSDecimalNumber(decimal: nutritionValues.carbs)
-            foodRecord.calculatedProtein = NSDecimalNumber(decimal: nutritionValues.protein)
-            foodRecord.calculatedFat = NSDecimalNumber(decimal: nutritionValues.fat)
-            // updatedAt은 Core Data 엔티티에 있으면 업데이트
-
-        } else {
-            // 새 레코드 생성 (Core Data 엔티티)
-            foodRecord = FoodRecord(context: context)
-            foodRecord.id = UUID()
-            foodRecord.food = food
-            foodRecord.date = date
-            foodRecord.mealType = mealType.rawValue
-            foodRecord.quantity = NSDecimalNumber(decimal: quantity)
-            foodRecord.quantityUnit = quantityUnit.rawValue
-            foodRecord.calculatedCalories = nutritionValues.calories
-            foodRecord.calculatedCarbs = NSDecimalNumber(decimal: nutritionValues.carbs)
-            foodRecord.calculatedProtein = NSDecimalNumber(decimal: nutritionValues.protein)
-            foodRecord.calculatedFat = NSDecimalNumber(decimal: nutritionValues.fat)
-            foodRecord.createdAt = Date()
-
-            // User 연결은 별도로 처리 필요 (UserRepository를 통해)
+        // User 연결 (필수 relationship)
+        let userRequest: NSFetchRequest<User> = User.fetchRequest()
+        userRequest.predicate = NSPredicate(format: "id == %@", userId as CVarArg)
+        userRequest.fetchLimit = 1
+        if let user = try context.fetch(userRequest).first {
+            foodRecord.user = user
         }
 
         let savedFoodRecord = try await foodRecordRepository.save(foodRecord)
@@ -154,18 +127,7 @@ final class FoodRecordService: FoodRecordServiceProtocol {
             tdee: tdee
         )
 
-        // 5. DailyLog 업데이트
-        if isUpdate {
-            // 기존 값 차감 후 새 값 추가
-            updateDailyLogWithDeletion(
-                dailyLog: dailyLog,
-                calories: oldCalories,
-                carbs: oldCarbs,
-                protein: oldProtein,
-                fat: oldFat
-            )
-        }
-
+        // 5. DailyLog에 영양소 추가 (additive)
         updateDailyLogWithAddition(
             dailyLog: dailyLog,
             calories: nutritionValues.calories,
@@ -361,6 +323,14 @@ final class FoodRecordService: FoodRecordServiceProtocol {
         foodRecord.calculatedProtein = NSDecimalNumber(decimal: proteinDecimal)
         foodRecord.calculatedFat = NSDecimalNumber(decimal: fatDecimal)
         foodRecord.createdAt = Date()
+
+        // User 연결 (필수 relationship)
+        let userRequest: NSFetchRequest<User> = User.fetchRequest()
+        userRequest.predicate = NSPredicate(format: "id == %@", userId as CVarArg)
+        userRequest.fetchLimit = 1
+        if let user = try context.fetch(userRequest).first {
+            foodRecord.user = user
+        }
 
         let savedFoodRecord = try await foodRecordRepository.save(foodRecord)
 

@@ -79,7 +79,7 @@ struct BodyCompositionInputCard: View {
                 .font(.title2)
                 .foregroundStyle(.blue)
 
-            Text("신체 구성 입력")
+            Text("신체 데이터")
                 .font(.headline)
                 .fontWeight(.semibold)
 
@@ -151,6 +151,9 @@ struct BodyCompositionInputCard: View {
                     .textFieldStyle(.roundedBorder)
                     .focused($focusedField, equals: field)
                     .disabled(!isEnabled)
+                    .onTapGesture {
+                        focusedField = field
+                    }
                     .onChange(of: value.wrappedValue) { _, _ in
                         onInputChanged?()
                     }
@@ -199,7 +202,7 @@ struct BodyCompositionInputCard: View {
                         .fontWeight(.medium)
                         .foregroundStyle(.secondary)
 
-                    Text("• 체중: 20-500 kg")
+                    Text("• 체중: 20-200 kg")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
 

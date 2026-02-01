@@ -107,12 +107,7 @@ struct FoodRecordRow: View {
         let quantityString = formatter.string(from: quantityNumber) ?? "0"
 
         let unitValue = QuantityUnit(rawValue: foodRecord.quantityUnit) ?? .serving
-        switch unitValue {
-        case .serving:
-            return "\(quantityString)인분"
-        case .grams:
-            return "\(quantityString)g"
-        }
+        return "\(quantityString)\(unitValue.displayName)"
     }
 }
 

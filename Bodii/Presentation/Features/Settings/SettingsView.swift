@@ -57,6 +57,9 @@ struct SettingsView: View {
     /// 프로필 설정 화면 표시 여부
     @State private var showProfileSettings: Bool = false
 
+    /// 목표 설정 화면 표시 여부
+    @State private var showGoalSettings: Bool = false
+
     // MARK: - Body
 
     var body: some View {
@@ -65,17 +68,30 @@ struct SettingsView: View {
                 // 프로필 섹션
                 profileSection
 
+                // 목표 설정 섹션
+                goalSection
+
                 // HealthKit 섹션
                 healthKitSection
 
                 // 앱 정보 섹션
                 appInfoSection
             }
-            .navigationTitle("설정")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             // 프로필 설정 화면
             .sheet(isPresented: $showProfileSettings) {
                 UserProfileSettingsView()
+            }
+            // 목표 설정 화면
+            .sheet(isPresented: $showGoalSettings) {
+                if let userId = try? DIContainer.shared.userRepository.fetchCurrentUserId() {
+                    GoalSettingView(
+                        viewModel: DIContainer.shared.makeGoalSettingViewModel(userId: userId),
+                        onSaveSuccess: {
+                            showGoalSettings = false
+                        }
+                    )
+                }
             }
             // 📚 학습 포인트: Sheet Presentation with ViewModel
             // viewModel.showPermissionView가 true일 때 모달 표시
@@ -158,6 +174,45 @@ struct SettingsView: View {
             Text("내 정보")
         } footer: {
             Text("BMR(기초대사량)과 TDEE(총 일일 에너지 소비량) 계산에 필요한 정보입니다.")
+        }
+    }
+
+    /// 목표 설정 섹션
+    @ViewBuilder
+    private var goalSection: some View {
+        Section {
+            Button {
+                showGoalSettings = true
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "target")
+                        .font(.title3)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.green, .mint],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 32)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("목표 설정")
+                            .font(.body)
+                            .foregroundStyle(.primary)
+
+                        Text("체중, 체지방률, 근육량 목표")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
     }
 

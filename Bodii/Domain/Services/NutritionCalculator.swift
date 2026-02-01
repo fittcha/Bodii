@@ -212,19 +212,18 @@ enum NutritionCalculator {
 
         let multiplier: Decimal
 
-        switch unit {
-        case .serving:
-            // 인분 단위: quantity는 인분 수
-            // 예) quantity=1.5 → 1.5인분
-            multiplier = quantity
-
-        case .grams:
-            // 그램 단위: quantity는 그램 수, servingSize로 나누어 인분 수 계산
-            // 예) quantity=105g, servingSize=210g → 0.5인분
+        if let gramsPerUnit = unit.gramsPerUnit {
+            // 그램 기반 단위 (g, 큰술, 작은술, ml, 컵): 그램으로 변환 후 servingSize로 나눔
+            // 예) 큰술 2 → 30g, servingSize=100g → 0.3인분
             guard servingSize > 0 else {
                 return NutritionValues(calories: 0, carbs: 0, protein: 0, fat: 0)
             }
-            multiplier = quantity / servingSize
+            let totalGrams = quantity * gramsPerUnit
+            multiplier = totalGrams / servingSize
+        } else {
+            // 인분/개 단위: quantity를 직접 인분 수로 사용
+            // 예) quantity=1.5 → 1.5인분
+            multiplier = quantity
         }
 
         // 영양소 계산 (비례)

@@ -79,7 +79,8 @@ final class GeminiService: GeminiServiceProtocol {
         userId: UUID,
         date: Date,
         goalType: GoalType,
-        tdee: Int
+        tdee: Int,
+        targetCalories: Int
     ) async throws -> DietComment {
 
         // 1. 입력 검증
@@ -92,7 +93,8 @@ final class GeminiService: GeminiServiceProtocol {
             foodRecords: foodRecords,
             mealType: mealType,
             goalType: goalType,
-            tdee: tdee
+            tdee: tdee,
+            targetCalories: targetCalories
         )
 
         // 3. Gemini API 호출
@@ -100,7 +102,7 @@ final class GeminiService: GeminiServiceProtocol {
             let responseText = try await geminiAPIService.generateText(
                 prompt: prompt,
                 temperature: 0.7,
-                maxOutputTokens: 1024
+                maxOutputTokens: 2048
             )
 
             guard let text = responseText else {
@@ -132,6 +134,144 @@ final class GeminiService: GeminiServiceProtocol {
             // 기타 에러는 apiError로 래핑
             throw GeminiServiceError.apiError(error)
         }
+    }
+
+    // MARK: - Home Coaching
+
+    func generateHomeCoaching(context: HomeCoachingContext) async throws -> String {
+        let prompt = buildHomeCoachingPrompt(context: context)
+
+        do {
+            let responseText = try await geminiAPIService.generateText(
+                prompt: prompt,
+                temperature: 0.7,
+                maxOutputTokens: 256
+            )
+
+            guard let text = responseText else {
+                throw GeminiServiceError.invalidResponse("AI 응답이 비어있습니다.")
+            }
+
+            // JSON에서 coaching 필드 추출
+            let jsonText = extractJSON(from: text)
+            if let jsonData = jsonText.data(using: .utf8),
+               let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any],
+               let coaching = json["coaching"] as? String,
+               !coaching.isEmpty {
+                return coaching
+            }
+
+            // JSON 파싱 실패 시 원문 텍스트에서 추출 시도
+            let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !cleaned.isEmpty && cleaned.count < 200 {
+                return cleaned
+            }
+
+            throw GeminiServiceError.jsonParsingFailed
+        } catch let error as GeminiServiceError {
+            throw error
+        } catch {
+            throw GeminiServiceError.apiError(error)
+        }
+    }
+
+    /// 홈 코칭 프롬프트 생성
+    private func buildHomeCoachingPrompt(context: HomeCoachingContext) -> String {
+        // 시간대 설명
+        let timeOfDay: String
+        switch context.currentHour {
+        case 8..<12: timeOfDay = "오전"
+        case 12..<14: timeOfDay = "점심"
+        case 14..<18: timeOfDay = "오후"
+        case 18..<22: timeOfDay = "저녁"
+        default: timeOfDay = "밤"
+        }
+
+        // 수면 정보
+        var sleepSection = "수면 기록 없음"
+        if let duration = context.sleepDurationMinutes {
+            let hours = duration / 60
+            let mins = duration % 60
+            let statusText = context.sleepStatus?.displayName ?? "알 수 없음"
+            sleepSection = "\(hours)시간 \(mins)분 (\(statusText))"
+        }
+
+        // 식단 정보
+        let dietSection: String
+        if context.mealCount > 0 {
+            dietSection = "\(context.intakeCalories)kcal (끼니 \(context.mealCount)회, 탄 \(Int(context.totalCarbs))g / 단 \(Int(context.totalProtein))g / 지 \(Int(context.totalFat))g)"
+        } else {
+            dietSection = "기록 없음"
+        }
+
+        // 운동 정보
+        let exerciseSection: String
+        if context.exerciseCount > 0 {
+            let names = context.exerciseNames.prefix(3).joined(separator: ", ")
+            exerciseSection = "\(context.exerciseCalories)kcal 소모 (\(names))"
+        } else {
+            exerciseSection = "기록 없음"
+        }
+
+        // 체성분 트렌드
+        var bodySection = "체성분 기록 없음"
+        if let weight = context.currentWeight {
+            var parts = [String(format: "현재 체중 %.1fkg", weight)]
+            if let change = context.weightChange30d {
+                let sign = change >= 0 ? "+" : ""
+                parts.append(String(format: "30일 변화 %@%.1fkg", sign, change))
+            }
+            if let fat = context.currentBodyFat, fat > 0 {
+                parts.append(String(format: "체지방률 %.1f%%", fat))
+                if let fatChange = context.bodyFatChange30d {
+                    let sign = fatChange >= 0 ? "+" : ""
+                    parts.append(String(format: "30일 변화 %@%.1f%%p", sign, fatChange))
+                }
+            }
+            bodySection = parts.joined(separator: ", ")
+        }
+
+        // 최근 7일 체성분 개별 데이터
+        var recentBodySection = ""
+        if !context.recentBodyEntries.isEmpty {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "M/d"
+            let lines = context.recentBodyEntries.map { entry -> String in
+                let dateStr = dateFormatter.string(from: entry.date)
+                if let fat = entry.bodyFat {
+                    return String(format: "  %@: %.1fkg, 체지방 %.1f%%", dateStr, entry.weight, fat)
+                } else {
+                    return String(format: "  %@: %.1fkg", dateStr, entry.weight)
+                }
+            }
+            recentBodySection = "\n**최근 7일 체성분 기록:**\n" + lines.joined(separator: "\n")
+        }
+
+        // 목표 설명
+        let goalDesc = buildGoalDescription(goalType: context.goalType)
+
+        return """
+        당신은 전문 건강 코치입니다. 사용자의 오늘 건강 데이터를 보고 시간대에 맞는 한마디 코칭을 해주세요.
+
+        **현재 시간대:** \(timeOfDay) (\(context.currentHour)시)
+        **목표:** \(goalDesc)
+        **TDEE:** \(context.tdee)kcal / 목표 섭취: \(context.targetCalories)kcal
+
+        **체성분 트렌드:** \(bodySection)\(recentBodySection)
+        **오늘의 수면:** \(sleepSection)
+        **오늘의 식단:** \(dietSection)
+        **오늘의 운동:** \(exerciseSection)
+
+        **코칭 지침:**
+        - 시간대에 맞는 실용적 조언 1-2문장 (예: 아침이면 오늘 계획, 저녁이면 하루 총평)
+        - 기록된 데이터 기반으로 구체적으로 언급 (체성분 변화 추세도 반영)
+        - 데이터가 없는 항목은 기록을 독려
+        - 격려하는 톤, 한국어, 반말 금지
+        - 이모지 1개만 앞에 사용
+
+        **출력 형식 (JSON만 응답):**
+        {"coaching": "이모지 + 코칭 메시지"}
+        """
     }
 
     // MARK: - Food Image Analysis
@@ -255,8 +395,21 @@ final class GeminiService: GeminiServiceProtocol {
         foodRecords: [FoodRecord],
         mealType: MealType?,
         goalType: GoalType,
-        tdee: Int
+        tdee: Int,
+        targetCalories: Int
     ) -> String {
+
+        // 현재 날짜/시간
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.dateFormat = "yyyy년 M월 d일 (E) HH:mm"
+        let nowString = dateFormatter.string(from: Date())
+
+        // 목표 설명
+        let goalDescription = buildGoalDescription(goalType: goalType)
+
+        // 끼니별 음식 목록 구성
+        let mealSection = buildMealSection(foodRecords: foodRecords, mealType: mealType)
 
         // 총 영양소 계산
         let totalCalories = foodRecords.reduce(0) { $0 + Int($1.calculatedCalories) }
@@ -264,51 +417,47 @@ final class GeminiService: GeminiServiceProtocol {
         let totalProtein = foodRecords.reduce(Decimal(0)) { $0 + ($1.calculatedProtein?.decimalValue ?? 0) }
         let totalFat = foodRecords.reduce(Decimal(0)) { $0 + ($1.calculatedFat?.decimalValue ?? 0) }
 
-        // 끼니 이름
-        let mealName = mealType?.displayName ?? "전체 식단"
-
-        // 목표 설명
-        let goalDescription = buildGoalDescription(goalType: goalType)
-
-        // 목표 칼로리 계산
-        let targetCalories = calculateTargetCalories(tdee: tdee, goalType: goalType)
-
         // 프롬프트 생성
         let prompt = """
-        당신은 한국 음식에 정통한 전문 영양사입니다. 사용자의 식단을 분석하고 개선점을 제안해주세요.
+        당신은 한국 음식 및 세계 음식에 정통한 전문 영양사입니다. 사용자의 식단을 분석하고 개선점을 제안해주세요.
+
+        **현재 시간:** \(nowString)
+        현재 시간 기준으로, 아직 기록되지 않은 끼니는 이후에 먹을 수 있으므로 참고만 하세요.
+        단, 저녁 시간(18시 이후)인데 하루 총 섭취량이 권장량에 크게 부족하면 엄격하게 평가하세요.
 
         **사용자 정보:**
         - 목표: \(goalDescription)
         - 활동대사량(TDEE): \(tdee) kcal
-        - 권장 섭취량: \(targetCalories) kcal
+        - 하루 권장 섭취량: \(targetCalories) kcal
 
-        **\(mealName) 섭취 내역:**
-        - 총 칼로리: \(totalCalories) kcal
-        - 탄수화물: \(totalCarbs)g
-        - 단백질: \(totalProtein)g
-        - 지방: \(totalFat)g
+        **섭취 내역:**
+        \(mealSection)
+
+        **합계:** \(totalCalories) kcal (탄수화물 \(totalCarbs)g / 단백질 \(totalProtein)g / 지방 \(totalFat)g)
 
         **분석 지침:**
-        1. 한국 음식의 특성(나트륨, 발효식품, 찬반 구성 등)을 고려하세요
+        1. 음식의 특성(나트륨, 발효식품, 영양 구성 등)을 고려하세요
         2. 사용자의 목표(\(goalType.displayName))에 맞는 조언을 제공하세요
-        3. TDEE 대비 섭취량을 분석하세요
-        4. 매크로 영양소 균형을 평가하세요
-        5. 구체적이고 실행 가능한 개선점을 제안하세요
+        3. 하루 권장 섭취량(\(targetCalories) kcal) 대비 현재 섭취량을 분석하세요
+        4. 매크로 영양소(탄수화물/단백질/지방) 균형을 평가하세요
+        5. 구체적인 음식명을 언급하며 실행 가능한 개선점을 제안하세요
 
         **출력 형식:**
         다음 JSON 형식으로만 응답해주세요. 다른 설명이나 텍스트는 포함하지 마세요.
 
         {
-          "goodPoints": ["좋은 점 1", "좋은 점 2", "좋은 점 3"],
-          "improvements": ["개선점 1", "개선점 2", "개선점 3"],
-          "summary": "전체 식단에 대한 한 줄 요약",
+          "goodPoints": ["좋은 점 1", "좋은 점 2"],
+          "improvements": ["개선점 1", "개선점 2"],
+          "summary": "전체 식단에 대한 2-3줄 총평",
           "score": 7
         }
 
-        **점수 기준:**
-        - 8-10점: 우수 (목표에 맞고 영양 균형이 훌륭함)
-        - 5-7점: 좋음 (적절하나 개선 여지 있음)
-        - 0-4점: 개선 필요 (목표와 맞지 않거나 영양 불균형)
+        **점수 기준 (엄격하게 적용):**
+        - 9-10점: 최우수 (권장량에 근접하고 영양 균형이 훌륭함)
+        - 7-8점: 우수 (대체로 좋으나 소폭 개선 여지)
+        - 5-6점: 보통 (일부 영양소 불균형 또는 섭취량 편차)
+        - 3-4점: 미흡 (섭취량 크게 부족/초과 또는 영양 불균형 심각)
+        - 0-2점: 매우 부족 (끼니 대부분 누락 또는 극단적 불균형)
 
         **제약 조건:**
         - goodPoints, improvements는 각각 2-4개 항목
@@ -318,6 +467,35 @@ final class GeminiService: GeminiServiceProtocol {
         """
 
         return prompt
+    }
+
+    /// 끼니별 음식 목록 구성
+    private func buildMealSection(foodRecords: [FoodRecord], mealType: MealType?) -> String {
+        if let mealType = mealType {
+            // 특정 끼니만 요청된 경우
+            let foods = foodRecords.map { formatFoodRecord($0) }.joined(separator: "\n")
+            return "**\(mealType.displayName):**\n\(foods)"
+        } else {
+            // 하루 전체 — 끼니별로 그룹핑
+            var sections: [String] = []
+            let allMealTypes: [MealType] = [.breakfast, .lunch, .dinner, .snack]
+
+            for meal in allMealTypes {
+                let records = foodRecords.filter { $0.mealType == Int16(meal.rawValue) }
+                guard !records.isEmpty else { continue }
+                let foods = records.map { formatFoodRecord($0) }.joined(separator: "\n")
+                sections.append("**\(meal.displayName):**\n\(foods)")
+            }
+
+            return sections.joined(separator: "\n\n")
+        }
+    }
+
+    /// 개별 음식 기록 포맷
+    private func formatFoodRecord(_ record: FoodRecord) -> String {
+        let name = record.food?.name ?? "알 수 없는 음식"
+        let cal = record.calculatedCalories
+        return "- \(name) \(cal)kcal"
     }
 
     /// 목표 설명 생성
@@ -335,32 +513,6 @@ final class GeminiService: GeminiServiceProtocol {
         }
     }
 
-    /// 목표 칼로리 계산
-    ///
-    /// 📚 학습 포인트: Goal-Based Calorie Calculation
-    /// 목표에 따라 권장 칼로리 섭취량 계산
-    /// 💡 Java 비교: Strategy 패턴과 유사
-    ///
-    /// **칼로리 조정:**
-    /// - 감량: TDEE - 500 kcal (주당 0.5kg 감량)
-    /// - 유지: TDEE
-    /// - 증량: TDEE + 300 kcal (주당 0.3kg 증량)
-    ///
-    /// - Parameters:
-    ///   - tdee: 활동대사량
-    ///   - goalType: 목표 유형
-    ///
-    /// - Returns: 목표 칼로리
-    private func calculateTargetCalories(tdee: Int, goalType: GoalType) -> Int {
-        switch goalType {
-        case .lose:
-            return tdee - 500  // 주당 약 0.5kg 감량
-        case .maintain:
-            return tdee
-        case .gain:
-            return tdee + 300  // 주당 약 0.3kg 증량
-        }
-    }
 
     /// AI 응답 파싱
     ///
@@ -502,7 +654,8 @@ final class MockGeminiService: GeminiServiceProtocol {
         userId: UUID,
         date: Date,
         goalType: GoalType,
-        tdee: Int
+        tdee: Int,
+        targetCalories: Int
     ) async throws -> DietComment {
 
         // 에러 시뮬레이션
@@ -516,6 +669,16 @@ final class MockGeminiService: GeminiServiceProtocol {
         }
 
         return comment
+    }
+
+    /// Mock 홈 코칭 메시지
+    var mockHomeCoaching: String = "🌟 오늘도 건강한 하루 보내세요!"
+
+    func generateHomeCoaching(context: HomeCoachingContext) async throws -> String {
+        if let error = shouldThrowError {
+            throw error
+        }
+        return mockHomeCoaching
     }
 
     func analyzeFoodImage(_ image: UIImage) async throws -> [GeminiFoodAnalysis] {

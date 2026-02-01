@@ -10,21 +10,8 @@ import Combine
 
 /// 음식 검색 화면의 ViewModel
 ///
-/// 음식 검색, 최근 사용 음식, 자주 사용하는 음식 표시를 담당합니다.
-/// 검색어 입력 시 300ms 디바운스를 적용하여 API 호출을 최적화합니다.
-///
-/// - Note: ObservableObject를 준수하여 SwiftUI View와 바인딩됩니다.
-/// - Note: 검색어가 비어있을 때는 최근/자주 사용하는 음식을 표시합니다.
-///
-/// - Example:
-/// ```swift
-/// let viewModel = FoodSearchViewModel(
-///     foodSearchService: foodSearchService,
-///     recentFoodsService: recentFoodsService
-/// )
-/// viewModel.onAppear(userId: userId, mealType: .breakfast)
-/// viewModel.searchQuery = "닭가슴살"
-/// ```
+/// 음식 검색, 최근 사용 음식, 자주 사용하는 음식, 커스텀 음식 표시를 담당합니다.
+/// 검색 버튼 탭 또는 키보드 Return 시에만 API 검색을 수행합니다.
 @MainActor
 final class FoodSearchViewModel: ObservableObject {
 
@@ -42,6 +29,12 @@ final class FoodSearchViewModel: ObservableObject {
     /// 자주 사용하는 음식 목록
     @Published var frequentFoods: [Food] = []
 
+    /// 커스텀 음식 목록
+    @Published var customFoods: [Food] = []
+
+    /// 선택된 탭
+    @Published var selectedTab: FoodSearchTab = .recent
+
     /// 로딩 상태
     @Published var isLoading: Bool = false
 
@@ -51,6 +44,9 @@ final class FoodSearchViewModel: ObservableObject {
     /// 검색 중 여부
     @Published var isSearching: Bool = false
 
+    /// API 경고 메시지 (외부 API 실패 시)
+    @Published var apiWarning: String?
+
     // MARK: - Private Properties
 
     /// 음식 검색 서비스
@@ -58,6 +54,12 @@ final class FoodSearchViewModel: ObservableObject {
 
     /// 최근 음식 서비스
     private let recentFoodsService: RecentFoodsServiceProtocol
+
+    /// 음식 레포지토리 (커스텀 음식 조회용)
+    private let foodRepository: FoodRepositoryProtocol?
+
+    /// 하이브리드 검색 서비스 (API 경고 관찰용)
+    private weak var hybridService: HybridFoodSearchService?
 
     /// Combine Cancellables
     private var cancellables = Set<AnyCancellable>()
@@ -70,35 +72,36 @@ final class FoodSearchViewModel: ObservableObject {
 
     // MARK: - Initialization
 
-    /// FoodSearchViewModel을 초기화합니다.
-    ///
-    /// - Parameters:
-    ///   - foodSearchService: 음식 검색 서비스
-    ///   - recentFoodsService: 최근 음식 서비스
     init(
         foodSearchService: FoodSearchServiceProtocol,
-        recentFoodsService: RecentFoodsServiceProtocol
+        recentFoodsService: RecentFoodsServiceProtocol,
+        hybridService: HybridFoodSearchService? = nil,
+        foodRepository: FoodRepositoryProtocol? = nil
     ) {
         self.foodSearchService = foodSearchService
         self.recentFoodsService = recentFoodsService
+        self.hybridService = hybridService
+        self.foodRepository = foodRepository
 
-        setupSearchDebounce()
+        observeAPIWarning()
     }
 
     // MARK: - Public Methods
 
     /// 화면 진입 시 호출됩니다.
-    ///
-    /// 최근 사용 음식과 자주 사용하는 음식을 불러옵니다.
-    ///
-    /// - Parameters:
-    ///   - userId: 사용자 ID
-    ///   - mealType: 끼니 타입
     func onAppear(userId: UUID, mealType: MealType) {
         self.currentUserId = userId
         self.currentMealType = mealType
 
+        // 이전 검색 상태 초기화
+        clearSearch()
+
         loadInitialData()
+    }
+
+    /// 검색 버튼 탭 또는 키보드 Return 시 호출됩니다.
+    func searchButtonTapped() {
+        performSearch(query: searchQuery)
     }
 
     /// 검색어를 초기화합니다.
@@ -113,24 +116,32 @@ final class FoodSearchViewModel: ObservableObject {
         loadInitialData()
     }
 
+    /// 커스텀 음식을 삭제합니다.
+    func deleteCustomFood(_ food: Food) async {
+        guard let repository = foodRepository,
+              let foodId = food.id else { return }
+        do {
+            try await repository.delete(foodId)
+            // 로컬 목록에서도 제거
+            customFoods.removeAll { $0.id == foodId }
+        } catch {
+            errorMessage = "삭제 실패: \(error.localizedDescription)"
+        }
+    }
+
     // MARK: - Private Methods
 
-    /// 검색어 디바운스를 설정합니다.
-    ///
-    /// 검색어가 변경되면 300ms 대기 후 검색을 수행합니다.
-    private func setupSearchDebounce() {
-        $searchQuery
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-            .removeDuplicates()
-            .sink { [weak self] query in
-                self?.performSearch(query: query)
+    /// HybridFoodSearchService의 apiWarning을 관찰합니다.
+    private func observeAPIWarning() {
+        hybridService?.$apiWarning
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] warning in
+                self?.apiWarning = warning
             }
             .store(in: &cancellables)
     }
 
     /// 초기 데이터를 로드합니다.
-    ///
-    /// 최근 사용 음식과 자주 사용하는 음식을 병렬로 조회합니다.
     private func loadInitialData() {
         guard let userId = currentUserId else { return }
 
@@ -145,6 +156,11 @@ final class FoodSearchViewModel: ObservableObject {
                 recentFoods = try await recent
                 frequentFoods = try await frequent
 
+                // 커스텀 음식도 로드
+                if let repository = foodRepository {
+                    customFoods = (try? await repository.getUserDefinedFoods(userId: userId)) ?? []
+                }
+
                 isLoading = false
             } catch {
                 handleError(error)
@@ -153,12 +169,9 @@ final class FoodSearchViewModel: ObservableObject {
     }
 
     /// 검색을 수행합니다.
-    ///
-    /// - Parameter query: 검색어
     private func performSearch(query: String) {
         guard let userId = currentUserId else { return }
 
-        // 빈 검색어인 경우 검색 결과를 초기화
         let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedQuery.isEmpty else {
             searchResults = []
@@ -185,13 +198,10 @@ final class FoodSearchViewModel: ObservableObject {
     }
 
     /// 에러를 처리합니다.
-    ///
-    /// - Parameter error: 발생한 에러
     private func handleError(_ error: Error) {
         isLoading = false
         isSearching = false
 
-        // 에러 메시지 설정
         if let repositoryError = error as? RepositoryError {
             errorMessage = repositoryError.localizedDescription
         } else {
@@ -214,19 +224,23 @@ extension FoodSearchViewModel {
         !searchResults.isEmpty
     }
 
-    /// 최근 음식이 있는지 여부
-    var hasRecentFoods: Bool {
-        !recentFoods.isEmpty
-    }
-
-    /// 자주 사용하는 음식이 있는지 여부
-    var hasFrequentFoods: Bool {
-        !frequentFoods.isEmpty
-    }
-
-    /// 검색 상태인지 여부
+    /// 검색 상태인지 여부 (검색이 실행되었거나 진행 중)
     var isInSearchMode: Bool {
-        !searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        isSearching || !searchResults.isEmpty
+    }
+
+    /// 현재 탭에 표시할 음식 목록
+    var currentTabFoods: [Food] {
+        switch selectedTab {
+        case .recent: return recentFoods
+        case .frequent: return frequentFoods
+        case .custom: return customFoods
+        }
+    }
+
+    /// 현재 탭에 음식이 있는지 여부
+    var hasCurrentTabFoods: Bool {
+        !currentTabFoods.isEmpty
     }
 
     /// 표시할 컨텐츠가 없는지 여부
@@ -234,7 +248,25 @@ extension FoodSearchViewModel {
         if isInSearchMode {
             return !hasSearchResults && !isSearching
         } else {
-            return !hasRecentFoods && !hasFrequentFoods && !isLoading
+            return !hasCurrentTabFoods && !isLoading
+        }
+    }
+
+    /// 현재 탭의 빈 상태 메시지
+    var emptyTabMessage: String {
+        switch selectedTab {
+        case .recent: return "최근 먹은 음식이 없습니다"
+        case .frequent: return "자주 먹는 음식이 없습니다"
+        case .custom: return "저장된 커스텀 음식이 없습니다"
+        }
+    }
+
+    /// 현재 탭의 빈 상태 안내 메시지
+    var emptyTabHint: String {
+        switch selectedTab {
+        case .recent: return "음식을 추가하면\n여기에 표시됩니다"
+        case .frequent: return "음식을 자주 추가하면\n여기에 표시됩니다"
+        case .custom: return "음식 직접 입력으로\n커스텀 음식을 만들어보세요"
         }
     }
 }

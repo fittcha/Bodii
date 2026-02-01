@@ -131,13 +131,14 @@ struct FoodWithQuantity {
 
     /// 섭취량 배수 계산
     private var multiplier: Decimal {
-        switch unit {
-        case .serving:
-            return quantity
-        case .grams:
+        if let gramsPerUnit = unit.gramsPerUnit {
             let servingSize = food.servingSize?.decimalValue ?? Decimal(100)
             guard servingSize > 0 else { return Decimal(0) }
-            return quantity / servingSize
+            let totalGrams = quantity * gramsPerUnit
+            return totalGrams / servingSize
+        } else {
+            // serving, piece: 직접 인분 수로 사용
+            return quantity
         }
     }
 

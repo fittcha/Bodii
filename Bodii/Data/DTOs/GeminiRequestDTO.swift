@@ -49,7 +49,7 @@ import Foundation
 ///
 /// **참고:**
 /// - API 문서: https://ai.google.dev/api/rest/v1beta/models/generateContent
-/// - 모델: gemini-1.5-flash (빠른 응답, 무료 티어)
+/// - 모델: gemini-2.5-flash-lite (빠른 응답, 무료 티어)
 struct GeminiRequestDTO: Codable {
 
     // MARK: - Properties

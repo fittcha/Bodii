@@ -43,6 +43,9 @@ struct DailyMealView: View {
     /// 음식 추가 콜백 (끼니 타입 전달)
     let onAddFood: ((MealType) -> Void)?
 
+    /// 음식 수정 콜백 (FoodRecordWithFood 전달)
+    let onEditFood: ((FoodRecordWithFood) -> Void)?
+
     // MARK: - State
 
     /// 성공 토스트 메시지
@@ -58,13 +61,15 @@ struct DailyMealView: View {
         userId: UUID,
         bmr: Int32,
         tdee: Int32,
-        onAddFood: ((MealType) -> Void)? = nil
+        onAddFood: ((MealType) -> Void)? = nil,
+        onEditFood: ((FoodRecordWithFood) -> Void)? = nil
     ) {
         self.viewModel = viewModel
         self.userId = userId
         self.bmr = bmr
         self.tdee = tdee
         self.onAddFood = onAddFood
+        self.onEditFood = onEditFood
     }
 
     // MARK: - Body
@@ -102,6 +107,7 @@ struct DailyMealView: View {
                         if let dailyLog = viewModel.dailyLog {
                             NutritionSummaryCard(
                                 dailyLog: dailyLog,
+                                targetCalories: viewModel.displayTargetCalories,
                                 remainingCalories: viewModel.remainingCalories,
                                 calorieIntakePercentage: viewModel.calorieIntakePercentage
                             )
@@ -141,8 +147,10 @@ struct DailyMealView: View {
                                     }
                                 },
                                 onEditFood: { foodRecordId in
-                                    // TODO: Phase 5에서 식단 수정 화면 구현
-                                    print("Edit food record: \(foodRecordId)")
+                                    // 해당 foodRecordId로 FoodRecordWithFood 찾기
+                                    if let item = viewModel.findFoodRecordWithFood(by: foodRecordId) {
+                                        onEditFood?(item)
+                                    }
                                 },
                                 onGetAIComment: {
                                     viewModel.showAIComment(for: mealType)
@@ -165,7 +173,6 @@ struct DailyMealView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.hasAnyMeals)
             }
         }
-        .navigationTitle("식단")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             // 새로고침 버튼

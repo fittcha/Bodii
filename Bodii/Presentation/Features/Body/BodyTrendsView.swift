@@ -105,6 +105,9 @@ struct BodyTrendsView: View {
 
                         // 체지방률 트렌드 차트
                         bodyFatChartSection
+
+                        // 근육량 트렌드 차트
+                        muscleMassChartSection
                     }
                 }
                 .padding(.horizontal, 16)
@@ -169,11 +172,7 @@ struct BodyTrendsView: View {
     }
 
     /// 통계 카드
-    /// 📚 학습 포인트: Statistics Display Card
-    /// - 여러 통계 지표를 그리드로 표시
-    ///
-    /// - Parameter output: 트렌드 데이터 출력
-    /// - Returns: 통계 카드 뷰
+    /// - 체중 변화와 체지방 변화만 표시 (핵심 트렌드 정보)
     private func statisticsCard(output: FetchBodyTrendsUseCase.Output) -> some View {
         VStack(spacing: 16) {
             // 데이터 기간
@@ -196,31 +195,8 @@ struct BodyTrendsView: View {
 
             Divider()
 
-            // 통계 그리드
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: 16) {
-                // 평균 체중
-                if let avgWeight = output.averageWeight {
-                    statisticItem(
-                        title: "평균 체중",
-                        value: formatWeight(avgWeight),
-                        icon: "scalemass",
-                        color: .blue
-                    )
-                }
-
-                // 평균 체지방률
-                if let avgBodyFat = output.averageBodyFatPercent {
-                    statisticItem(
-                        title: "평균 체지방률",
-                        value: formatBodyFat(avgBodyFat),
-                        icon: "percent",
-                        color: .orange
-                    )
-                }
-
+            // 변화량만 표시 (평균값은 트렌드에서 실용성 낮음)
+            HStack(spacing: 16) {
                 // 체중 변화
                 if let weightChange = output.weightChange {
                     statisticItem(
@@ -238,6 +214,16 @@ struct BodyTrendsView: View {
                         value: formatBodyFatChange(bodyFatChange),
                         icon: bodyFatChange >= 0 ? "arrow.up.right" : "arrow.down.right",
                         color: bodyFatChange >= 0 ? .orange : .blue
+                    )
+                }
+
+                // 근육량 변화
+                if let muscleMassChange = output.muscleMassChange {
+                    statisticItem(
+                        title: "근육량 변화",
+                        value: formatMuscleMassChange(muscleMassChange),
+                        icon: muscleMassChange >= 0 ? "arrow.up.right" : "arrow.down.right",
+                        color: muscleMassChange >= 0 ? .green : .orange
                     )
                 }
             }
@@ -299,7 +285,8 @@ struct BodyTrendsView: View {
                 viewModel: viewModel,
                 goalWeight: goalWeight,
                 isInteractive: true,
-                height: 280
+                height: 280,
+                gender: userGender
             )
             .padding(16)
         }
@@ -320,6 +307,22 @@ struct BodyTrendsView: View {
                 height: 280,
                 gender: userGender,
                 showHealthZones: true
+            )
+            .padding(16)
+        }
+        .background(cardBackground)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+    }
+
+    /// 근육량 차트 섹션
+    private var muscleMassChartSection: some View {
+        VStack(spacing: 0) {
+            MuscleMassTrendChart(
+                viewModel: viewModel,
+                isInteractive: true,
+                height: 280,
+                gender: userGender
             )
             .padding(16)
         }
@@ -501,6 +504,19 @@ struct BodyTrendsView: View {
 
         let number = NSDecimalNumber(decimal: bodyFat)
         return (formatter.string(from: number) ?? "\(bodyFat)") + "%"
+    }
+
+    /// 근육량 변화량 포맷팅
+    private func formatMuscleMassChange(_ change: Decimal) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 1
+        formatter.minimumFractionDigits = 1
+        formatter.positivePrefix = "+"
+        formatter.negativePrefix = "-"
+
+        let number = NSDecimalNumber(decimal: change)
+        return (formatter.string(from: number) ?? "\(change)") + " kg"
     }
 
     /// 체지방률 변화량 포맷팅

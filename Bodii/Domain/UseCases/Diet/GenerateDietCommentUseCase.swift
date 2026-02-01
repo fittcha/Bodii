@@ -135,7 +135,8 @@ final class GenerateDietCommentUseCase {
         date: Date,
         mealType: MealType?,
         goalType: GoalType,
-        tdee: Int
+        tdee: Int,
+        targetCalories: Int
     ) async throws -> DietComment {
 
         // 1. 캐시된 코멘트 확인 (Cache-First Strategy)
@@ -174,7 +175,8 @@ final class GenerateDietCommentUseCase {
                 userId: userId,
                 date: date,
                 goalType: goalType,
-                tdee: tdee
+                tdee: tdee,
+                targetCalories: targetCalories
             )
 
             // 5. 생성된 코멘트 캐싱
@@ -209,7 +211,8 @@ final class GenerateDietCommentUseCase {
         date: Date,
         mealType: MealType?,
         goalType: GoalType,
-        tdee: Int
+        tdee: Int,
+        targetCalories: Int
     ) async throws -> DietComment {
 
         // 1. 기존 캐시 무효화
@@ -244,7 +247,8 @@ final class GenerateDietCommentUseCase {
                 userId: userId,
                 date: date,
                 goalType: goalType,
-                tdee: tdee
+                tdee: tdee,
+                targetCalories: targetCalories
             )
 
             // 5. 새 코멘트 캐싱
@@ -257,6 +261,27 @@ final class GenerateDietCommentUseCase {
         } catch {
             throw DietCommentError.apiError(error.localizedDescription)
         }
+    }
+
+    /// 캐시(L1) 또는 영구 저장소(L2)에서 저장된 코멘트를 조회합니다.
+    ///
+    /// API 호출 없이 기존 저장된 코멘트만 반환합니다.
+    /// 날짜 변경 시 과거 날짜의 코멘트를 로드할 때 사용합니다.
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - date: 조회 날짜
+    /// - Returns: 저장된 DietComment (없으면 nil)
+    func loadCachedOrPersisted(
+        userId: UUID,
+        date: Date
+    ) async -> DietComment? {
+        // getCachedComment가 L1 miss → L2 fallback을 이미 처리
+        return try? await dietCommentRepository.getCachedComment(
+            for: date,
+            userId: userId,
+            mealType: nil
+        )
     }
 
     // MARK: - Private Helpers

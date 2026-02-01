@@ -82,23 +82,10 @@ struct USDAFoodMapper {
             throw MappingError.invalidNutritionData("energy (1008)")
         }
 
-        // 탄수화물 추출 (필수 필드)
-        guard let carbohydrates = extractNutrient(USDANutrientID.carbohydrate, from: nutrients),
-              carbohydrates >= 0 else {
-            throw MappingError.invalidNutritionData("carbohydrate (1005)")
-        }
-
-        // 단백질 추출 (필수 필드)
-        guard let protein = extractNutrient(USDANutrientID.protein, from: nutrients),
-              protein >= 0 else {
-            throw MappingError.invalidNutritionData("protein (1003)")
-        }
-
-        // 지방 추출 (필수 필드)
-        guard let fat = extractNutrient(USDANutrientID.fat, from: nutrients),
-              fat >= 0 else {
-            throw MappingError.invalidNutritionData("fat (1004)")
-        }
+        // 탄수화물/단백질/지방 - 없으면 0으로 처리 (일부 식품에 영양소 누락 가능)
+        let carbohydrates = extractNutrient(USDANutrientID.carbohydrate, from: nutrients) ?? Decimal.zero
+        let protein = extractNutrient(USDANutrientID.protein, from: nutrients) ?? Decimal.zero
+        let fat = extractNutrient(USDANutrientID.fat, from: nutrients) ?? Decimal.zero
 
         // 1회 제공량 추출 및 단위 변환
         let servingSize = parseServingSize(from: dto)

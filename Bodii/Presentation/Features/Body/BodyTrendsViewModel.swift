@@ -31,7 +31,7 @@ class BodyTrendsViewModel: ObservableObject {
     /// - 사용자가 선택한 기간 (7일/30일/90일)
     /// - 변경 시 자동으로 데이터 다시 로드
     /// 💡 Java 비교: LiveData<TrendPeriod>와 유사
-    @Published var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .week
+    @Published var selectedPeriod: FetchBodyTrendsUseCase.TrendPeriod = .month
 
     /// 트렌드 데이터 출력
     /// 📚 학습 포인트: Optional State

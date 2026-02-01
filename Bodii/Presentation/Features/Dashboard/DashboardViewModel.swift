@@ -107,9 +107,19 @@ final class DashboardViewModel {
         dailyLog?.fatRatio as Decimal?
     }
 
-    /// 운동 소모 칼로리
+    /// 운동 소모 칼로리 (수동 입력)
     var totalCaloriesOut: Int32 {
         dailyLog?.totalCaloriesOut ?? 0
+    }
+
+    /// HealthKit 활동 칼로리
+    var activeCaloriesOut: Int32 {
+        dailyLog?.activeCaloriesOut ?? 0
+    }
+
+    /// 총 소모 칼로리 (수동 운동 + HealthKit 활동)
+    var combinedCaloriesOut: Int32 {
+        totalCaloriesOut + activeCaloriesOut
     }
 
     /// 운동 시간 (분)
@@ -471,6 +481,7 @@ private final class MockDailyLogRepository: DailyLogRepository {
         dailyLog.netCalories = -510
         // 운동
         dailyLog.totalCaloriesOut = 450
+        dailyLog.activeCaloriesOut = 280
         dailyLog.exerciseMinutes = 75
         dailyLog.exerciseCount = 2
         dailyLog.steps = 8500
@@ -498,6 +509,7 @@ private final class MockDailyLogRepository: DailyLogRepository {
         dailyLog.tdee = 2310
         dailyLog.netCalories = -2310
         dailyLog.totalCaloriesOut = 0
+        dailyLog.activeCaloriesOut = 0
         dailyLog.exerciseMinutes = 0
         dailyLog.exerciseCount = 0
         dailyLog.steps = 0
@@ -525,6 +537,7 @@ private final class MockDailyLogRepository: DailyLogRepository {
         dailyLog.tdee = 2310
         dailyLog.netCalories = 490
         dailyLog.totalCaloriesOut = 200
+        dailyLog.activeCaloriesOut = 150
         dailyLog.exerciseMinutes = 30
         dailyLog.exerciseCount = 1
         dailyLog.steps = 5000

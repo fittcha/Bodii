@@ -86,29 +86,27 @@ struct SleepBarChart: View {
     }
 
     /// Y축 최소값 (시간 단위)
-    /// 📚 학습 포인트: Chart Scale Calculation
-    /// - 최소 수면 시간보다 약간 작은 값 (여백)
-    /// - 0시간 이하로는 내려가지 않음
+    /// 바 차트는 항상 0에서 시작해야 바 높이가 절대값을 정확히 반영함
     private var yAxisMinimum: Double {
-        guard !isEmpty else { return 0 }
-        let minDuration = dataPoints.map { $0.duration }.min() ?? 0
-        // 분을 시간으로 변환하고 1시간 단위로 내림
-        let minHours = Double(minDuration) / 60.0
-        return max(0, floor(minHours / 1.0) * 1.0)
+        0
     }
 
-    /// Y축 최대값 (시간 단위)
-    /// 📚 학습 포인트: Chart Scale Calculation
-    /// - 최대 수면 시간보다 약간 큰 값 (여백)
-    /// - 평균 수면 시간도 고려
-    private var yAxisMaximum: Double {
-        guard !isEmpty else { return 10 }
-        let maxDuration = dataPoints.map { $0.duration }.max() ?? 480
-        let avgDuration = averageDuration ?? maxDuration
-        let maximum = max(maxDuration, avgDuration)
-        // 분을 시간으로 변환하고 1시간 단위로 올림
-        let maxHours = Double(maximum) / 60.0
-        return ceil(maxHours / 1.0) * 1.0
+    /// Y축 최대값 (시간 단위) — 12시간 고정
+    private var yAxisMaximum: Double { 12 }
+
+    /// X축 시작 날짜 (기간에 따라 today - period days, -12h로 첫 바 잘림 방지)
+    private var xAxisStartDate: Date {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let start = calendar.date(byAdding: .day, value: -(period.days - 1), to: today) ?? today
+        return calendar.date(byAdding: .hour, value: -12, to: start) ?? start
+    }
+
+    /// X축 끝 날짜 (오늘 + 0.5일로 마지막 바가 잘리지 않도록)
+    private var xAxisEndDate: Date {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        return calendar.date(byAdding: .hour, value: 12, to: today) ?? today
     }
 
     /// 수면 시간 변화량 (첫 기록 대비 마지막 기록)
@@ -326,6 +324,7 @@ struct SleepBarChart: View {
             }
         }
         .chartYScale(domain: yAxisMinimum...yAxisMaximum)
+        .chartXScale(domain: xAxisStartDate...xAxisEndDate)
         .chartXSelection(value: $selectedDate)
         .frame(height: height)
         .padding(.vertical, 8)

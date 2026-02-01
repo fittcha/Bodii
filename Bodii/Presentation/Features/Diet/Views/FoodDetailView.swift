@@ -134,7 +134,7 @@ struct FoodDetailView: View {
                 }
             }
         }
-        .navigationTitle("음식 추가")
+        .navigationTitle(viewModel.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
             Button("확인") {
@@ -147,14 +147,17 @@ struct FoodDetailView: View {
         }
         .successToast(message: $successToastMessage)
         .onAppear {
-            viewModel.onAppear(
-                foodId: foodId,
-                userId: userId,
-                date: date,
-                mealType: initialMealType,
-                bmr: bmr,
-                tdee: tdee
-            )
+            // 수정 모드에서는 onAppearForEdit에서 이미 초기화됨
+            if !viewModel.isEditMode {
+                viewModel.onAppear(
+                    foodId: foodId,
+                    userId: userId,
+                    date: date,
+                    mealType: initialMealType,
+                    bmr: bmr,
+                    tdee: tdee
+                )
+            }
         }
     }
 
@@ -266,10 +269,10 @@ struct FoodDetailView: View {
                         .tint(.white)
                         .accessibilityLabel("저장 중")
                 } else {
-                    Image(systemName: "plus.circle.fill")
+                    Image(systemName: viewModel.isEditMode ? "checkmark.circle.fill" : "plus.circle.fill")
                         .font(.title3)
 
-                    Text("식단에 추가")
+                    Text(viewModel.saveButtonTitle)
                         .font(.headline)
                 }
             }
@@ -282,8 +285,8 @@ struct FoodDetailView: View {
         .disabled(!viewModel.canSave)
         .padding(.horizontal)
         .padding(.bottom)
-        .accessibilityLabel("식단에 추가")
-        .accessibilityHint(viewModel.canSave ? "음식을 식단에 추가합니다" : "추가하기 전에 필수 입력값을 확인하세요")
+        .accessibilityLabel(viewModel.saveButtonTitle)
+        .accessibilityHint(viewModel.canSave ? "음식을 식단에 저장합니다" : "저장하기 전에 필수 입력값을 확인하세요")
     }
 
     // MARK: - Actions
@@ -295,7 +298,7 @@ struct FoodDetailView: View {
     private func saveFood() async {
         do {
             try await viewModel.saveFoodRecord()
-            successToastMessage = "식단에 추가되었습니다"
+            successToastMessage = viewModel.isEditMode ? "식단이 수정되었습니다" : "식단에 추가되었습니다"
             // 약간의 지연 후 화면 닫기
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 onSave()

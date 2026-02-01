@@ -81,7 +81,6 @@ struct ExerciseListView: View {
                     contentView
                 }
             }
-            .navigationTitle("운동")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

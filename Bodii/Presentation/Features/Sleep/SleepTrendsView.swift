@@ -337,8 +337,13 @@ struct SleepTrendsView: View {
     /// - Returns: 상태 분포 카드 뷰
     private func statusDistributionCard(statusStats: [FetchSleepStatsUseCase.StatusStats]) -> some View {
         VStack(spacing: 12) {
-            // 상태별 표시
-            ForEach(statusStats) { stat in
+            // 상태별 표시 (매우좋음 → 좋음 → 보통 → 나쁨 → 과다수면 순)
+            ForEach(statusStats.sorted { lhs, rhs in
+                let order: [SleepStatus] = [.excellent, .good, .soso, .bad, .oversleep]
+                let lhsIndex = order.firstIndex(of: lhs.status) ?? order.count
+                let rhsIndex = order.firstIndex(of: rhs.status) ?? order.count
+                return lhsIndex < rhsIndex
+            }) { stat in
                 statusDistributionRow(stat: stat)
             }
 

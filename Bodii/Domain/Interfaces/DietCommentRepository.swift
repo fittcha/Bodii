@@ -115,7 +115,8 @@ protocol DietCommentRepository {
         userId: UUID,
         mealType: MealType?,
         goalType: GoalType,
-        tdee: Int
+        tdee: Int,
+        targetCalories: Int
     ) async throws -> DietComment
 
     // MARK: - Cache Retrieval
@@ -230,6 +231,29 @@ protocol DietCommentRepository {
         userId: UUID,
         mealType: MealType?
     ) async throws
+
+    // MARK: - Persistent Storage (L2)
+
+    /// Core Data에 저장된 AI 코멘트 조회
+    ///
+    /// DailyLog에 영구 저장된 AI 코멘트를 조회합니다.
+    /// 인메모리 캐시(L1) 미스 시 L2 저장소로 사용됩니다.
+    ///
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - date: 조회 날짜
+    /// - Returns: 저장된 DietComment (없으면 nil)
+    func getPersistedComment(userId: UUID, date: Date) async -> DietComment?
+
+    /// AI 코멘트를 Core Data에 영구 저장
+    ///
+    /// DailyLog의 AI 코멘트 필드에 저장합니다.
+    /// Gemini API 응답 후 L1 캐시와 함께 L2에도 저장됩니다.
+    ///
+    /// - Parameter comment: 저장할 DietComment
+    func persistComment(_ comment: DietComment) async
+
+    // MARK: - Full Cache Clear
 
     /// 모든 캐시 삭제
     ///

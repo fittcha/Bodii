@@ -41,9 +41,13 @@ struct BodyCompositionView: View {
     @State private var selectedEntry: BodyCompositionEntry?
 
     /// Pull-to-refresh 트리거
-    /// 📚 학습 포인트: Refresh Control
-    /// - 사용자가 당겨서 새로고침 가능
     @State private var isRefreshing = false
+
+    /// 입력 섹션 아코디언 확장 상태
+    @State private var isInputExpanded = false
+
+    /// 사용자 성별 (Core Data에서 로드)
+    @State private var userGender: Gender?
 
     // MARK: - Initialization
 
@@ -83,8 +87,7 @@ struct BodyCompositionView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 20)
             }
-            .navigationTitle("체성분")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     trendsButton
@@ -116,14 +119,32 @@ struct BodyCompositionView: View {
             // 📚 학습 포인트: Sheet Navigation
             // 트렌드 뷰를 모달로 표시
             .sheet(isPresented: $showTrendsView) {
-                // TODO: DIContainer에서 trendsViewModel을 주입받아 사용
-                // BodyTrendsView(
-                //     viewModel: container.makeBodyTrendsViewModel(),
-                //     userGender: viewModel.userProfile?.gender,
-                //     goalWeight: viewModel.userProfile?.goalWeight,
-                //     goalBodyFat: viewModel.userProfile?.goalBodyFat
-                // )
-                Text("트렌드 뷰 (DIContainer 연결 필요)")
+                BodyTrendsView(
+                    viewModel: DIContainer.shared.makeBodyTrendsViewModel(),
+                    userGender: userGender
+                )
+            }
+            .onChange(of: viewModel.history.count) { _, newCount in
+                // 데이터 없으면 입력 섹션 자동 펼침
+                if newCount == 0 {
+                    isInputExpanded = true
+                }
+            }
+            .onChange(of: viewModel.successMessage) { _, newValue in
+                // 저장 성공 시 입력 섹션 자동 접기
+                if newValue != nil && !viewModel.history.isEmpty {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        isInputExpanded = false
+                    }
+                }
+            }
+            .onAppear {
+                // Core Data에서 사용자 성별 로드
+                if userGender == nil {
+                    if let profile = try? DIContainer.shared.userRepository.fetchCurrentUserProfile() {
+                        userGender = profile.gender
+                    }
+                }
             }
         }
     }
@@ -131,31 +152,126 @@ struct BodyCompositionView: View {
     // MARK: - Subviews
 
     /// 입력 섹션
-    /// 📚 학습 포인트: Extracted View
-    /// - 복잡한 View를 작은 단위로 분리
-    /// - 코드 가독성 및 재사용성 향상
+    /// - 기존 데이터가 있으면 간략 표시 + 아코디언 접힘
+    /// - 펼쳐서 새 데이터 입력 및 저장
     private var inputSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // 섹션 헤더
-            sectionHeader(
-                title: "신체 데이터 입력",
-                icon: "square.and.pencil"
-            )
+        VStack(alignment: .leading, spacing: 16) {
+            // 최근 신체 데이터 간략 표시 (데이터 있을 때만)
+            if let latest = viewModel.history.first {
+                latestBodyDataSummary(entry: latest)
+            }
 
-            // 입력 카드
-            BodyCompositionInputCard(
-                weight: $viewModel.weightInput,
-                bodyFatPercent: $viewModel.bodyFatPercentInput,
-                muscleMass: $viewModel.muscleMassInput,
-                validationMessages: viewModel.validationMessages,
-                isEnabled: !viewModel.isSaving,
-                onInputChanged: {
-                    viewModel.validateInputs()
+            // 접기/펼치기 헤더
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    isInputExpanded.toggle()
                 }
-            )
+            }) {
+                HStack {
+                    sectionHeader(
+                        title: "신체 데이터 입력",
+                        icon: "square.and.pencil"
+                    )
+                    Spacer()
+                    Image(systemName: isInputExpanded ? "chevron.up" : "chevron.down")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .contentShape(Rectangle())
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.plain)
 
-            // 저장 버튼
-            saveButton
+            // 입력 카드 (펼쳐진 경우)
+            if isInputExpanded {
+                VStack(alignment: .leading, spacing: 12) {
+                    BodyCompositionInputCard(
+                        weight: $viewModel.weightInput,
+                        bodyFatPercent: $viewModel.bodyFatPercentInput,
+                        muscleMass: $viewModel.muscleMassInput,
+                        validationMessages: viewModel.validationMessages,
+                        isEnabled: !viewModel.isSaving,
+                        onInputChanged: {
+                            viewModel.validateInputs()
+                        }
+                    )
+
+                    // 저장 버튼
+                    saveButton
+                }
+                .padding(.bottom, 4)
+            }
+        }
+    }
+
+    /// 최근 신체 데이터 간략 표시
+    private func latestBodyDataSummary(entry: BodyCompositionEntry) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                sectionHeader(title: "신체 데이터", icon: "figure.stand")
+                Spacer()
+                Text(formatDateShort(entry.date))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            HStack(spacing: 16) {
+                // 체중
+                summaryItem(
+                    icon: "scalemass",
+                    label: "체중",
+                    value: "\(formatDecimal(entry.weight)) kg",
+                    color: .blue
+                )
+
+                // 체지방률
+                if entry.bodyFatPercent > 0 {
+                    summaryItem(
+                        icon: "percent",
+                        label: "체지방률",
+                        value: "\(formatDecimal(entry.bodyFatPercent))%",
+                        color: .orange
+                    )
+                }
+
+                // 근육량
+                if entry.muscleMass > 0 {
+                    summaryItem(
+                        icon: "figure.strengthtraining.traditional",
+                        label: "근육량",
+                        value: "\(formatDecimal(entry.muscleMass)) kg",
+                        color: .green
+                    )
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color(.systemGray5), lineWidth: 1)
+                )
+        )
+        .shadow(color: Color.black.opacity(0.03), radius: 4, x: 0, y: 1)
+    }
+
+    /// 간략 표시 항목
+    private func summaryItem(icon: String, label: String, value: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption2)
+                    .foregroundStyle(color)
+                Text(label)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            Text(value)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
         }
     }
 
@@ -166,7 +282,7 @@ struct BodyCompositionView: View {
         VStack(alignment: .leading, spacing: 12) {
             // 섹션 헤더
             sectionHeader(
-                title: "최근 대사율",
+                title: "대사율",
                 icon: "flame.fill"
             )
 

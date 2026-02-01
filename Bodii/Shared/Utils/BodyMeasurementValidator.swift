@@ -27,7 +27,7 @@ struct BodyMeasurementValidator {
     /// 체중 유효 범위 (kg)
     /// 📚 학습 포인트: Domain Constants
     /// 비즈니스 규칙을 상수로 명시하여 가독성 향상
-    static let weightRange: ClosedRange<Decimal> = 20...500
+    static let weightRange: ClosedRange<Decimal> = 20...200
 
     /// 체지방률 유효 범위 (%)
     /// 📚 학습 포인트: Percentage Range

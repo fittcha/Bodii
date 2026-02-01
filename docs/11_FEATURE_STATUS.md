@@ -36,8 +36,9 @@
 | **3.3 일일 식단 조회** | 끼니별 그룹핑, 합계 | ✅ 완료 | DailyMealView |
 | **3.4 매크로 시각화** | 탄/단/지 비율 원 그래프 | ✅ 완료 | MacroRatioChart |
 | **3.5 섭취 칼로리 그래프** | 일별 추이 | ✅ 완료 | Dashboard에서 표시 |
-| **3.6 AI 식단 코멘트** | Gemini API 연동 | ✅ 완료 | GeminiService, DietCommentPopupView |
+| **3.6 AI 식단 코멘트** | Gemini API 연동, 목표 칼로리 기반 평가 | ✅ 완료 | GeminiService, DietCommentPopupView |
 | **3.7 DailyLog 연쇄 업데이트** | 음식 추가/삭제 시 | ✅ 완료 | FoodRecordService |
+| **3.8 식단 기록 수정** | 기존 기록 수량/단위/끼니 수정 | ✅ 완료 | FoodDetailView (수정 모드), FoodRecordService.updateFoodRecord |
 
 ### 4. 운동 기록
 
@@ -165,7 +166,7 @@
 |------|----------|------|------|--------|--------|
 | 체성분 관리 | 5 | 5 | 0 | 0 | 100% |
 | BMR/TDEE 계산 | 5 | 5 | 0 | 0 | 100% |
-| 음식 기록 | 7 | 7 | 0 | 0 | 100% |
+| 음식 기록 | 8 | 8 | 0 | 0 | 100% |
 | 운동 기록 | 4 | 4 | 0 | 0 | 100% |
 | HealthKit 연동 | 5 | 5 | 0 | 0 | 100% |
 | 수면 관리 | 7 | 5 | 2 | 0 | ~85% |
@@ -174,7 +175,7 @@
 | 설정 | 4 | 4 | 0 | 0 | 100% |
 | DailyLog 관리 | 3 | 3 | 0 | 0 | 100% |
 | 유틸리티 | 3 | 3 | 0 | 0 | 100% |
-| **Phase 1 합계** | **54** | **51** | **3** | **0** | **~96%** |
+| **Phase 1 합계** | **55** | **52** | **3** | **0** | **~96%** |
 
 ### Phase 2 (AI) 완료 현황
 
@@ -292,6 +293,109 @@ User 생성 + 온보딩 완료 플래그 저장
 
 ---
 
-*문서 버전: 1.0*
-*작성일: 2026-01-20*
+## 변경 이력
+
+### 2026-02-01: 식단 기록 수정 기능 구현
+
+기존에 입력한 식단 기록을 수정할 수 있는 기능을 구현했습니다.
+
+**문제**: 식단 기록 탭 시 `onEditFood` 콜백이 TODO print문으로만 되어 있어 수정 불가
+
+**변경 파일 및 내용**:
+| 파일 | 변경 내용 |
+|------|-----------|
+| `FoodDetailViewModel.swift` | `isEditMode`, `editingFoodRecordId` 프로퍼티 추가, `onAppearForEdit()` 메서드 추가, `saveFoodRecord()`에서 수정/추가 모드 분기 |
+| `FoodDetailView.swift` | 네비게이션 타이틀·버튼·토스트 메시지를 수정 모드에 맞게 동적 변경 |
+| `DailyMealView.swift` | `onEditFood: ((FoodRecordWithFood) -> Void)?` 콜백 추가, TODO 코드 → 실제 콜백 호출로 교체 |
+| `DailyMealViewModel.swift` | `findFoodRecordWithFood(by:)` 헬퍼 메서드 추가 |
+| `DietTabView.swift` | `editingFoodRecord`, `showingEditFood` 상태 추가, `editFoodSheet(item:)` 메서드 추가 |
+
+**동작 흐름**:
+```
+음식 기록 탭 → FoodRecordRow.onEdit → MealSectionView.onEditFood(UUID)
+  → DailyMealView에서 UUID로 FoodRecordWithFood 조회
+    → DietTabView.onEditFood 콜백 → 수정 시트 표시
+      → FoodDetailView (수정 모드) → FoodRecordService.updateFoodRecord()
+        → 시트 닫기 + 데이터 새로고침 + AI 코멘트 재생성
+```
+
+---
+
+### 2026-01-31: AI 식단 분석 개선 및 칼로리 표시 최적화
+
+#### 1. 목표 칼로리(targetCalories) 파라미터 체인 구축
+사용자의 실제 목표 섭취 칼로리가 AI 분석 프롬프트에 정확히 전달되도록 전체 호출 체인을 구축했습니다.
+
+**문제**: AI가 사용자의 목표 섭취량(예: 1500 kcal)이 아닌 TDEE(예: 1958 kcal)를 기준으로 평가하고 있었음
+
+**변경 파일 및 내용**:
+| 파일 | 변경 내용 |
+|------|-----------|
+| `DietCommentRepository.swift` | `generateComment()`에 `targetCalories: Int` 파라미터 추가 |
+| `DietCommentRepositoryImpl.swift` | `targetCalories`를 GeminiService로 전달 |
+| `GenerateDietCommentUseCase.swift` | `execute()`, `executeIgnoringCache()`에 `targetCalories` 파라미터 추가 |
+| `GeminiServiceProtocol.swift` | 프로토콜 메서드에 `targetCalories` 추가 |
+| `GeminiService.swift` | `generateDietComment()`, `buildPrompt()`에 `targetCalories` 반영 |
+| `DietCommentViewModel.swift` | `userTargetCalories` 프로퍼티 추가, init 파라미터 추가 |
+| `DailyMealViewModel.swift` | `goalRepository` 의존성 추가, `loadTargetCalories()` 메서드 추가 |
+| `DIContainer.swift` | `makeDietCommentViewModel()`에 `targetCalories` 파라미터 추가 |
+| `DietTabView.swift` | `DailyMealViewModel` 생성 시 `goalRepository` 전달 |
+
+**호출 체인**:
+```
+Goal Entity (dailyCalorieTarget)
+  → GoalRepository.fetchActiveGoal()
+    → DailyMealViewModel.currentTargetCalories
+      → DietCommentViewModel.userTargetCalories
+        → GenerateDietCommentUseCase.execute(targetCalories:)
+          → DietCommentRepository.generateComment(targetCalories:)
+            → GeminiService.buildPrompt(targetCalories:)
+              → AI 프롬프트: "하루 권장 섭취량: {targetCalories} kcal"
+```
+
+#### 2. 일일 칼로리 표시 변경 (TDEE → 목표 섭취량)
+NutritionSummaryCard 상단의 칼로리 표시를 TDEE 대신 사용자의 목표 섭취량으로 변경했습니다.
+
+**변경 내용**:
+- `DailyMealViewModel.displayTargetCalories`: 목표 섭취량 > 0이면 목표 섭취량, 아니면 TDEE를 반환
+- `remainingCalories`, `calorieIntakePercentage`도 `displayTargetCalories` 기준으로 계산
+- `NutritionSummaryCard`에 `targetCalories: Int32` 파라미터 추가
+
+**동작**:
+- 목표 설정 O → "섭취량 / 목표 섭취량 kcal" 표시
+- 목표 설정 X → "섭취량 / TDEE kcal" 표시 (기존 동작 유지)
+
+#### 3. AI 분석 호출 최적화 (탭 이동 시 재호출 방지)
+탭을 이동할 때마다 AI 분석이 재호출되던 문제를 수정하여, 식단이 실제로 변경된 경우에만 AI 분석을 실행하도록 변경했습니다.
+
+**문제**: `onAppear` → `loadData()` → `generateDailyComment()` 체인으로 인해 탭 전환마다 Gemini API 호출 발생
+
+**변경 내용**:
+| 변경 | 내용 |
+|------|------|
+| `loadData()`에서 `generateDailyComment()` 제거 | 탭 이동 시 AI 재호출 방지 |
+| `refreshAfterDietChange()` 메서드 추가 | `loadData()` + `generateDailyComment()` 결합 |
+| `deleteFoodRecord()` 수정 | 삭제 후 AI 분석 재생성 호출 |
+| `DietTabView` onSave 콜백 4곳 수정 | `refresh()` → `refreshAfterDietChange()` |
+| 날짜 변경 시 AI 결과 초기화 | `dailyComment`, `dailyCommentError`를 nil로 설정 |
+
+**AI 분석이 호출되는 시점 (변경 후)**:
+- 음식 저장 (검색 선택, 수동 입력, 사진 인식)
+- 음식 삭제
+- 사용자가 수동으로 AI 분석 버튼 클릭
+
+**AI 분석이 호출되지 않는 시점 (변경 후)**:
+- 탭 이동 (식단 탭 ↔ 다른 탭)
+- 날짜 변경 (이전/다음 날짜)
+- 새로고침 버튼
+
+#### 4. Gemini API 모델 변경 및 프롬프트 개선 (이전 세션)
+- API 모델: `gemini-2.0-flash` → `gemini-2.5-flash-lite` (비용 최적화)
+- `maxTokensReached` 오류 수정: `maxOutputTokens` 2048 → finish reason 체크 추가
+- 프롬프트 개선: 시간 인식 평가, 음식명 직접 언급, 끼니별 그룹핑, 5단계 엄격 점수 체계
+
+---
+
+*문서 버전: 1.2*
+*최종 수정: 2026-02-01*
 *기준: PRD v2.0, FEATURE_SPEC v2.0*

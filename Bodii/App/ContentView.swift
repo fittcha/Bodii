@@ -28,6 +28,8 @@ struct ContentView: View {
     // 온보딩에서 입력한 데이터가 여기에 반영됨
     @State private var currentUserProfile: UserProfile?
     @State private var currentUserId: UUID?
+    @State private var currentBMR: Int32 = 0
+    @State private var currentTDEE: Int32 = 0
 
     // 📚 학습 포인트: @StateObject for Sleep Prompt Manager
     // 수면 기록 프롬프트 관리자
@@ -108,35 +110,14 @@ struct ContentView: View {
     // MARK: - Tab Views
 
     private var dashboardTab: some View {
-        // 📚 학습 포인트: tabItem modifier
-        // 탭 바에 표시될 아이콘과 텍스트 정의
-        // 실제 사용자 데이터 또는 fallback으로 sample 데이터 사용
-        let bodyRepository = BodyRepository()
-        let metabolismViewModel = MetabolismViewModel(bodyRepository: bodyRepository)
-        let sleepRepository = DIContainer.shared.sleepRepository
-        let goalProgressViewModel = DIContainer.shared.makeGoalProgressViewModel()
         let userId = currentUserId ?? UserProfile.sample.id
+        let viewModel = DIContainer.shared.makeHomeViewModel(userId: userId)
 
-        return DashboardView(
-            metabolismViewModel: metabolismViewModel,
-            goalProgressViewModel: goalProgressViewModel,
-            sleepRepository: sleepRepository,
-            userId: userId,
-            onNavigateToBody: {
-                // 📚 학습 포인트: Tab Navigation
-                // 대사율 카드 탭 시 체성분 탭으로 이동
-                selectedTab = .body
-            },
-            onNavigateToSleep: {
-                // 📚 학습 포인트: Tab Navigation
-                // 수면 카드 탭 시 수면 탭으로 이동
-                selectedTab = .sleep
+        return HomeView(viewModel: viewModel)
+            .tabItem {
+                Label("홈", systemImage: "house.fill")
             }
-        )
-        .tabItem {
-            Label("대시보드", systemImage: "chart.bar.fill")
-        }
-        .tag(Tab.dashboard)
+            .tag(Tab.dashboard)
     }
 
     private var bodyTab: some View {
@@ -160,7 +141,10 @@ struct ContentView: View {
         // DietTabView는 자체적으로 NavigationStack을 포함하고 있음
         // DI가 DietTabView 내부에서 처리됨
         // 💡 Java 비교: Android의 Fragment Container와 유사
-        DietTabView()
+        let userId = currentUserId ?? UserProfile.sample.id
+        let bmr = currentBMR > 0 ? currentBMR : Int32(1650)
+        let tdee = currentTDEE > 0 ? currentTDEE : Int32(2310)
+        return DietTabView(userId: userId, bmr: bmr, tdee: tdee)
             .tabItem {
                 Label("식단", systemImage: "fork.knife")
             }
@@ -225,8 +209,14 @@ struct ContentView: View {
             currentUserProfile = try userRepository.fetchCurrentUserProfile()
             currentUserId = try userRepository.fetchCurrentUserId()
 
+            // User의 currentBMR/currentTDEE 로드
+            if let user = try userRepository.fetchCurrentUser() {
+                currentBMR = user.currentBMR?.int32Value ?? 0
+                currentTDEE = user.currentTDEE?.int32Value ?? 0
+            }
+
             if currentUserProfile != nil {
-                print("✅ 사용자 데이터 로드 완료: \(currentUserProfile!.height)cm")
+                print("✅ 사용자 데이터 로드 완료: \(currentUserProfile!.height)cm, BMR: \(currentBMR), TDEE: \(currentTDEE)")
             } else {
                 print("⚠️ 저장된 사용자 없음 - sample 데이터 사용")
             }

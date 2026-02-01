@@ -86,8 +86,14 @@ final class DailyMealViewModel: ObservableObject {
     /// 현재 목표 타입 (감량/유지/증량)
     private var currentGoalType: GoalType = .maintain
 
+    /// 현재 목표 섭취 칼로리
+    private var currentTargetCalories: Int = 0
+
     /// AI 식단 코멘트 생성 UseCase
     private let generateDietCommentUseCase: GenerateDietCommentUseCase
+
+    /// Goal Repository (목표 칼로리 조회용)
+    private let goalRepository: GoalRepositoryProtocol
 
     /// DI Container (AI comment ViewModel 생성용)
     private let diContainer: DIContainer
@@ -107,12 +113,14 @@ final class DailyMealViewModel: ObservableObject {
         dailyLogRepository: DailyLogRepository,
         foodRepository: FoodRepositoryProtocol,
         generateDietCommentUseCase: GenerateDietCommentUseCase,
+        goalRepository: GoalRepositoryProtocol,
         diContainer: DIContainer = .shared
     ) {
         self.foodRecordService = foodRecordService
         self.dailyLogRepository = dailyLogRepository
         self.foodRepository = foodRepository
         self.generateDietCommentUseCase = generateDietCommentUseCase
+        self.goalRepository = goalRepository
         self.diContainer = diContainer
     }
 
@@ -133,7 +141,15 @@ final class DailyMealViewModel: ObservableObject {
         self.currentTDEE = tdee
         self.currentGoalType = goalType
 
+        // 목표 칼로리 로드
+        Task {
+            await loadTargetCalories()
+        }
+
         loadData()
+
+        // 저장된 AI 일일 총평 로드 (캐시 → Core Data)
+        loadStoredDailyComment()
     }
 
     /// 이전 날짜로 이동합니다.
@@ -143,7 +159,10 @@ final class DailyMealViewModel: ObservableObject {
         }
 
         selectedDate = previousDate
+        dailyComment = nil
+        dailyCommentError = nil
         loadData()
+        loadStoredDailyComment()
     }
 
     /// 다음 날짜로 이동합니다.
@@ -153,7 +172,10 @@ final class DailyMealViewModel: ObservableObject {
         }
 
         selectedDate = nextDate
+        dailyComment = nil
+        dailyCommentError = nil
         loadData()
+        loadStoredDailyComment()
     }
 
     /// 특정 날짜로 이동합니다.
@@ -161,7 +183,10 @@ final class DailyMealViewModel: ObservableObject {
     /// - Parameter date: 이동할 날짜
     func navigateToDate(_ date: Date) {
         selectedDate = date
+        dailyComment = nil
+        dailyCommentError = nil
         loadData()
+        loadStoredDailyComment()
     }
 
     /// 식단 기록을 삭제합니다.
@@ -175,17 +200,24 @@ final class DailyMealViewModel: ObservableObject {
                 // 식단 기록 삭제 (DailyLog 자동 업데이트됨)
                 try await foodRecordService.deleteFoodRecord(foodRecordId: foodRecordId)
 
-                // 데이터 새로고침
-                await loadData()
+                // 데이터 새로고침 + AI 코멘트 재생성
+                loadData()
+                generateDailyComment()
             } catch {
                 handleError(error)
             }
         }
     }
 
-    /// 데이터를 새로고침합니다.
+    /// 데이터를 새로고침합니다 (수동 새로고침 버튼용).
     func refresh() {
         loadData()
+    }
+
+    /// 식단 변경 후 호출 — 데이터 새로고침 + AI 코멘트 재생성
+    func refreshAfterDietChange() {
+        loadData()
+        generateDailyComment()
     }
 
     /// AI 코멘트를 표시합니다.
@@ -196,10 +228,12 @@ final class DailyMealViewModel: ObservableObject {
     func showAIComment(for mealType: MealType?) {
         guard let userId = currentUserId else { return }
 
+        let targetCal = currentTargetCalories > 0 ? currentTargetCalories : Int(currentTDEE)
         dietCommentViewModel = diContainer.makeDietCommentViewModel(
             userId: userId,
             goalType: currentGoalType,
-            tdee: Int(currentTDEE)
+            tdee: Int(currentTDEE),
+            targetCalories: targetCal
         )
 
         selectedMealTypeForComment = mealType
@@ -223,12 +257,14 @@ final class DailyMealViewModel: ObservableObject {
 
         Task {
             do {
+                let targetCal = currentTargetCalories > 0 ? currentTargetCalories : Int(currentTDEE)
                 let comment = try await generateDietCommentUseCase.executeIgnoringCache(
                     userId: userId,
                     date: selectedDate,
                     mealType: nil,
                     goalType: currentGoalType,
-                    tdee: Int(currentTDEE)
+                    tdee: Int(currentTDEE),
+                    targetCalories: targetCal
                 )
                 dailyComment = comment
                 isDailyCommentLoading = false
@@ -251,7 +287,36 @@ final class DailyMealViewModel: ObservableObject {
         }
     }
 
+    /// 저장된 일일 AI 코멘트를 로드합니다 (API 호출 없음).
+    ///
+    /// 날짜 변경 시 호출되어 L1(메모리) 또는 L2(Core Data)에서
+    /// 기존 저장된 코멘트를 불러옵니다.
+    private func loadStoredDailyComment() {
+        guard let userId = currentUserId else { return }
+
+        Task {
+            let stored = await generateDietCommentUseCase.loadCachedOrPersisted(
+                userId: userId,
+                date: selectedDate
+            )
+            dailyComment = stored
+        }
+    }
+
     // MARK: - Private Methods
+
+    /// Goal에서 목표 섭취 칼로리를 불러옵니다.
+    private func loadTargetCalories() async {
+        do {
+            if let activeGoal = try await goalRepository.fetchActiveGoal(),
+               activeGoal.dailyCalorieTarget > 0 {
+                currentTargetCalories = Int(activeGoal.dailyCalorieTarget)
+            }
+        } catch {
+            // 목표 조회 실패 시 TDEE를 fallback으로 사용
+            currentTargetCalories = Int(currentTDEE)
+        }
+    }
 
     /// 선택된 날짜의 데이터를 불러옵니다.
     ///
@@ -276,8 +341,10 @@ final class DailyMealViewModel: ObservableObject {
 
                 isLoading = false
 
-                // 식단이 있으면 AI 일일 총평 자동 생성
-                generateDailyComment()
+                // 식단 기록이 있고 AI 총평이 아직 없으면 자동 생성
+                if hasAnyMeals && dailyComment == nil && !isDailyCommentLoading {
+                    generateDailyComment()
+                }
             } catch {
                 handleError(error)
             }
@@ -410,16 +477,37 @@ extension DailyMealViewModel {
         return mealGroups.values.contains { !$0.isEmpty }
     }
 
-    /// 남은 칼로리 (TDEE - 섭취 칼로리)
-    var remainingCalories: Int32 {
-        guard let log = dailyLog else { return 0 }
-        return log.tdee - log.totalCaloriesIn
+    /// foodRecordId로 FoodRecordWithFood를 찾습니다.
+    ///
+    /// - Parameter foodRecordId: 식단 기록 ID
+    /// - Returns: 해당하는 FoodRecordWithFood (없으면 nil)
+    func findFoodRecordWithFood(by foodRecordId: UUID) -> FoodRecordWithFood? {
+        for items in mealGroups.values {
+            if let item = items.first(where: { $0.foodRecord.id == foodRecordId }) {
+                return item
+            }
+        }
+        return nil
     }
 
-    /// 칼로리 섭취율 (섭취 / TDEE * 100)
+    /// 표시용 목표 칼로리 (목표 섭취량 > 0이면 목표 섭취량, 아니면 TDEE)
+    var displayTargetCalories: Int32 {
+        if currentTargetCalories > 0 {
+            return Int32(currentTargetCalories)
+        }
+        return dailyLog?.tdee ?? currentTDEE
+    }
+
+    /// 남은 칼로리 (목표 섭취량 - 섭취 칼로리)
+    var remainingCalories: Int32 {
+        guard let log = dailyLog else { return 0 }
+        return displayTargetCalories - log.totalCaloriesIn
+    }
+
+    /// 칼로리 섭취율 (섭취 / 목표 섭취량 * 100)
     var calorieIntakePercentage: Double {
-        guard let log = dailyLog, log.tdee > 0 else { return 0 }
-        return Double(log.totalCaloriesIn) / Double(log.tdee) * 100
+        guard let log = dailyLog, displayTargetCalories > 0 else { return 0 }
+        return Double(log.totalCaloriesIn) / Double(displayTargetCalories) * 100
     }
 }
 

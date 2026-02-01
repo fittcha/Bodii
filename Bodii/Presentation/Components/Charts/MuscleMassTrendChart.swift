@@ -1,81 +1,25 @@
 //
-//  BodyFatTrendChart.swift
+//  MuscleMassTrendChart.swift
 //  Bodii
-//
-//  Created by Auto-Claude on 2026-01-12.
 //
 
 import SwiftUI
 import Charts
 
-// MARK: - BodyFatTrendChart
+// MARK: - MuscleMassTrendChart
 
-/// 체지방률 트렌드 라인 차트
+/// 근육량 트렌드 라인 차트
 /// - 실측값 + 5일 이동평균 + 20일 이동평균 + 예측선
-/// - 건강 구간 배경 표시 (선택적)
-/// - 홈 탭 BodyCompositionChartView와 동일한 스타일 기조
-struct BodyFatTrendChart: View {
-
-    // MARK: - Types
-
-    /// 체지방률 건강 구간 (ACE 기준, 남/여 분리)
-    /// 남: 2~5 필수지방 / 6~13 운동선수 / 14~17 피트니스 / 18~24 평균 / 25~ 비만
-    /// 여: 10~13 필수지방 / 14~20 운동선수 / 21~24 피트니스 / 25~31 평균 / 32~ 비만
-    enum BodyFatZone {
-        case essentialFat
-        case athletes
-        case fitness
-        case average
-        case obese
-
-        var color: Color {
-            switch self {
-            case .essentialFat: return .blue
-            case .athletes: return .green
-            case .fitness: return .mint
-            case .average: return .yellow
-            case .obese: return .orange
-            }
-        }
-
-        var displayName: String {
-            switch self {
-            case .essentialFat: return "필수지방"
-            case .athletes: return "운동선수"
-            case .fitness: return "피트니스"
-            case .average: return "평균"
-            case .obese: return "비만"
-            }
-        }
-
-        static func forMale(_ bodyFatPercent: Decimal) -> BodyFatZone {
-            let value = NSDecimalNumber(decimal: bodyFatPercent).doubleValue
-            if value < 6 { return .essentialFat }
-            if value < 14 { return .athletes }
-            if value < 18 { return .fitness }
-            if value < 25 { return .average }
-            return .obese
-        }
-
-        static func forFemale(_ bodyFatPercent: Decimal) -> BodyFatZone {
-            let value = NSDecimalNumber(decimal: bodyFatPercent).doubleValue
-            if value < 14 { return .essentialFat }
-            if value < 21 { return .athletes }
-            if value < 25 { return .fitness }
-            if value < 32 { return .average }
-            return .obese
-        }
-    }
+/// - 체중/체지방률 트렌드 차트와 동일한 스타일 기조
+struct MuscleMassTrendChart: View {
 
     // MARK: - Properties
 
     let dataPoints: [FetchBodyTrendsUseCase.TrendDataPoint]
-    let goalBodyFat: Decimal?
     let period: FetchBodyTrendsUseCase.TrendPeriod
     let isInteractive: Bool
     let height: CGFloat
     let gender: Gender?
-    let showHealthZones: Bool
 
     // MARK: - State
 
@@ -88,25 +32,31 @@ struct BodyFatTrendChart: View {
 
     // MARK: - Computed Properties
 
-    /// 체지방률이 0이 아닌 유효 데이터만 필터링
+    /// 근육량이 nil이 아니고 0보다 큰 유효 데이터만 필터링
     private var validDataPoints: [FetchBodyTrendsUseCase.TrendDataPoint] {
-        dataPoints.filter { $0.bodyFatPercent > 0 }
+        dataPoints.filter { ($0.muscleMass ?? 0) > 0 }
     }
 
     private var isEmpty: Bool { validDataPoints.isEmpty }
 
-    /// Y축 최소값 (0% 고정)
-    private var yAxisMinimum: Double { 0.0 }
+    /// Y축 최소값 (10kg 고정)
+    private var yAxisMinimum: Double { 10.0 }
 
-    /// Y축 최대값 (40% 고정)
-    private var yAxisMaximum: Double { 40.0 }
+    /// Y축 최대값 (50kg 고정)
+    private var yAxisMaximum: Double { 50.0 }
 
-    /// Y축 눈금 (5% 간격, 0~40%)
+    /// Y축 눈금 (5kg 간격)
     private var yAxisTicks: [Double] {
-        stride(from: 0.0, through: 40.0, by: 5.0).map { $0 }
+        var ticks: [Double] = []
+        var value = yAxisMinimum
+        while value <= yAxisMaximum {
+            ticks.append(value)
+            value += 5
+        }
+        return ticks
     }
 
-    /// X축 시작 날짜 (과거 데이터 시작점)
+    /// X축 시작 날짜
     private var xAxisStart: Date {
         Calendar.current.date(byAdding: .day, value: -period.days, to: Date()) ?? Date()
     }
@@ -116,10 +66,10 @@ struct BodyFatTrendChart: View {
         Calendar.current.date(byAdding: .day, value: period.predictionDays, to: Date()) ?? Date()
     }
 
-    /// 체지방률 변화량 (유효 데이터 기준)
-    private var bodyFatChange: Decimal? {
-        guard let first = validDataPoints.first?.bodyFatPercent,
-              let last = validDataPoints.last?.bodyFatPercent else { return nil }
+    /// 근육량 변화량
+    private var muscleMassChange: Decimal? {
+        guard let first = validDataPoints.first?.muscleMass,
+              let last = validDataPoints.last?.muscleMass else { return nil }
         return last - first
     }
 
@@ -133,7 +83,7 @@ struct BodyFatTrendChart: View {
         computeMovingAverage(window: 20)
     }
 
-    /// 예측선 (선형 회귀, 기간에 따라 다른 예측 일수)
+    /// 예측선
     private var predictionLine: [MovingAveragePoint] {
         computePrediction(daysAhead: period.predictionDays)
     }
@@ -147,33 +97,29 @@ struct BodyFatTrendChart: View {
 
     init(
         dataPoints: [FetchBodyTrendsUseCase.TrendDataPoint],
-        goalBodyFat: Decimal? = nil,
         period: FetchBodyTrendsUseCase.TrendPeriod = .month,
         isInteractive: Bool = true,
         height: CGFloat = 280,
-        gender: Gender? = nil,
-        showHealthZones: Bool = true
+        gender: Gender? = nil
     ) {
         self.dataPoints = dataPoints
-        self.goalBodyFat = goalBodyFat
         self.period = period
         self.isInteractive = isInteractive
         self.height = height
         self.gender = gender
-        self.showHealthZones = showHealthZones
     }
 
     // MARK: - Body
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // 헤더 + 범례 (한 줄)
+            // 헤더 + 범례
             HStack {
-                Text("체지방률 트렌드")
+                Text("근육량 트렌드")
                     .font(.headline)
                     .fontWeight(.semibold)
 
-                if let change = bodyFatChange {
+                if let change = muscleMassChange {
                     changeBadge(change)
                 }
 
@@ -181,10 +127,10 @@ struct BodyFatTrendChart: View {
 
                 // 범례
                 HStack(spacing: 10) {
-                    legendItem(color: .orange, label: "실측", style: .solid)
-                    legendItem(color: .yellow.opacity(0.7), label: "5일", style: .solid)
-                    legendItem(color: .red.opacity(0.5), label: "20일", style: .solid)
-                    legendItem(color: .orange.opacity(0.4), label: "예측", style: .dashed)
+                    legendItem(color: .green, label: "실측", style: .solid)
+                    legendItem(color: .teal.opacity(0.7), label: "5일", style: .solid)
+                    legendItem(color: .indigo.opacity(0.6), label: "20일", style: .solid)
+                    legendItem(color: .green.opacity(0.4), label: "예측", style: .dashed)
                 }
             }
 
@@ -193,11 +139,6 @@ struct BodyFatTrendChart: View {
             } else {
                 // 차트
                 chartView
-
-                // 건강 구간 범례 (활성 시)
-                if showHealthZones {
-                    healthZoneLegend
-                }
 
                 // 선택된 포인트 상세
                 if let selected = selectedDataPoint {
@@ -211,24 +152,19 @@ struct BodyFatTrendChart: View {
 
     private var chartView: some View {
         Chart {
-            // 건강 구간 배경
-            if showHealthZones {
-                healthZoneBackgrounds
-            }
-
             // 오늘 기준선 (세로 점선)
             RuleMark(x: .value("오늘", Date()))
                 .foregroundStyle(.gray.opacity(0.3))
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
 
-            // 20일 이동평균
+            // 20일 이동평균 (배경, 먼저 그림)
             ForEach(movingAverage20) { point in
                 LineMark(
                     x: .value("날짜", point.date),
                     y: .value("20일", point.value),
                     series: .value("종류", "MA20")
                 )
-                .foregroundStyle(.red.opacity(0.5))
+                .foregroundStyle(.indigo.opacity(0.6))
                 .lineStyle(StrokeStyle(lineWidth: 1.5))
                 .interpolationMethod(.catmullRom)
             }
@@ -240,31 +176,35 @@ struct BodyFatTrendChart: View {
                     y: .value("5일", point.value),
                     series: .value("종류", "MA5")
                 )
-                .foregroundStyle(.yellow.opacity(0.7))
+                .foregroundStyle(.teal.opacity(0.7))
                 .lineStyle(StrokeStyle(lineWidth: 1.5))
                 .interpolationMethod(.catmullRom)
             }
 
-            // 실측값 라인 (체지방률 > 0인 데이터만)
+            // 실측값 라인
             ForEach(validDataPoints) { point in
-                LineMark(
-                    x: .value("날짜", point.date),
-                    y: .value("체지방률", NSDecimalNumber(decimal: point.bodyFatPercent).doubleValue),
-                    series: .value("종류", "실측")
-                )
-                .foregroundStyle(.orange)
-                .lineStyle(StrokeStyle(lineWidth: 2))
-                .interpolationMethod(.catmullRom)
+                if let mm = point.muscleMass {
+                    LineMark(
+                        x: .value("날짜", point.date),
+                        y: .value("근육량", NSDecimalNumber(decimal: mm).doubleValue),
+                        series: .value("종류", "실측")
+                    )
+                    .foregroundStyle(.green)
+                    .lineStyle(StrokeStyle(lineWidth: 2))
+                    .interpolationMethod(.catmullRom)
+                }
             }
 
-            // 실측값 포인트 (체지방률 > 0인 데이터만)
+            // 실측값 포인트
             ForEach(validDataPoints) { point in
-                PointMark(
-                    x: .value("날짜", point.date),
-                    y: .value("체지방률", NSDecimalNumber(decimal: point.bodyFatPercent).doubleValue)
-                )
-                .foregroundStyle(.orange)
-                .symbolSize(20)
+                if let mm = point.muscleMass {
+                    PointMark(
+                        x: .value("날짜", point.date),
+                        y: .value("근육량", NSDecimalNumber(decimal: mm).doubleValue)
+                    )
+                    .foregroundStyle(.green)
+                    .symbolSize(20)
+                }
             }
 
             // 예측선 (점선)
@@ -274,38 +214,26 @@ struct BodyFatTrendChart: View {
                     y: .value("예측", point.value),
                     series: .value("종류", "예측")
                 )
-                .foregroundStyle(.orange.opacity(0.4))
+                .foregroundStyle(.green.opacity(0.4))
                 .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
                 .interpolationMethod(.catmullRom)
             }
 
-            // 목표선
-            if let goal = goalBodyFat {
-                RuleMark(y: .value("목표", NSDecimalNumber(decimal: goal).doubleValue))
-                    .foregroundStyle(.green.opacity(0.6))
-                    .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 5]))
-                    .annotation(position: .top, alignment: .trailing) {
-                        Text("목표 \(formatBodyFat(goal))")
-                            .font(.system(size: 9))
-                            .foregroundStyle(.green)
-                    }
-            }
-
             // 선택 인디케이터
-            if let selected = selectedDataPoint {
+            if let selected = selectedDataPoint, let mm = selected.muscleMass {
                 RuleMark(x: .value("날짜", selected.date))
                     .foregroundStyle(.gray.opacity(0.3))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
 
                 PointMark(
                     x: .value("날짜", selected.date),
-                    y: .value("체지방률", NSDecimalNumber(decimal: selected.bodyFatPercent).doubleValue)
+                    y: .value("근육량", NSDecimalNumber(decimal: mm).doubleValue)
                 )
                 .foregroundStyle(.white)
                 .symbolSize(80)
                 .symbol {
                     Circle()
-                        .fill(.orange)
+                        .fill(.green)
                         .strokeBorder(.white, lineWidth: 2)
                 }
             }
@@ -317,7 +245,7 @@ struct BodyFatTrendChart: View {
                 AxisGridLine()
                 AxisValueLabel {
                     if let v = value.as(Double.self) {
-                        Text("\(Int(v))%")
+                        Text("\(Int(v))")
                             .font(.system(size: 9))
                             .foregroundStyle(.secondary)
                     }
@@ -343,82 +271,18 @@ struct BodyFatTrendChart: View {
         .disabled(!isInteractive)
     }
 
-    // MARK: - Health Zones
-
-    @ChartContentBuilder
-    private var healthZoneBackgrounds: some ChartContent {
-        let isMale = gender == .male || gender == nil
-        let yMax = yAxisMaximum
-
-        if isMale {
-            // 남성 ACE: ~6 필수지방 / 6~14 운동선수 / 14~18 피트니스 / 18~25 평균 / 25~ 비만
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 0), yEnd: .value("", 6))
-                .foregroundStyle(BodyFatZone.essentialFat.color.opacity(0.08))
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 6), yEnd: .value("", 14))
-                .foregroundStyle(BodyFatZone.athletes.color.opacity(0.08))
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 14), yEnd: .value("", 18))
-                .foregroundStyle(BodyFatZone.fitness.color.opacity(0.08))
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 18), yEnd: .value("", 25))
-                .foregroundStyle(BodyFatZone.average.color.opacity(0.08))
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 25), yEnd: .value("", yMax))
-                .foregroundStyle(BodyFatZone.obese.color.opacity(0.08))
-        } else {
-            // 여성 ACE: ~14 필수지방 / 14~21 운동선수 / 21~25 피트니스 / 25~32 평균 / 32~ 비만
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 0), yEnd: .value("", 14))
-                .foregroundStyle(BodyFatZone.essentialFat.color.opacity(0.08))
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 14), yEnd: .value("", 21))
-                .foregroundStyle(BodyFatZone.athletes.color.opacity(0.08))
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 21), yEnd: .value("", 25))
-                .foregroundStyle(BodyFatZone.fitness.color.opacity(0.08))
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 25), yEnd: .value("", 32))
-                .foregroundStyle(BodyFatZone.average.color.opacity(0.08))
-            RectangleMark(xStart: nil, xEnd: nil, yStart: .value("", 32), yEnd: .value("", yMax))
-                .foregroundStyle(BodyFatZone.obese.color.opacity(0.08))
-        }
-    }
-
-    /// 건강 구간 범례 (컴팩트)
-    private var healthZoneLegend: some View {
-        HStack(spacing: 12) {
-            Text("건강 구간" + (gender != nil ? " (\(gender == .male ? "남" : "여"))" : ""))
-                .font(.system(size: 9))
-                .foregroundStyle(.secondary)
-                .fontWeight(.medium)
-
-            HStack(spacing: 8) {
-                zoneLegendItem(.essentialFat)
-                zoneLegendItem(.athletes)
-                zoneLegendItem(.fitness)
-                zoneLegendItem(.average)
-                zoneLegendItem(.obese)
-            }
-        }
-    }
-
-    private func zoneLegendItem(_ zone: BodyFatZone) -> some View {
-        HStack(spacing: 2) {
-            Rectangle()
-                .fill(zone.color)
-                .frame(width: 8, height: 8)
-                .cornerRadius(1)
-            Text(zone.displayName)
-                .font(.system(size: 8))
-                .foregroundStyle(.secondary)
-        }
-    }
-
     // MARK: - Subviews
 
     /// 변화량 뱃지
     private func changeBadge(_ change: Decimal) -> some View {
         let isIncrease = change > 0
-        let color: Color = isIncrease ? .orange : .blue
+        let color: Color = isIncrease ? .green : .orange
         let icon = isIncrease ? "arrow.up.right" : "arrow.down.right"
 
         return HStack(spacing: 2) {
             Image(systemName: icon)
                 .font(.system(size: 9))
-            Text(formatBodyFatChange(change))
+            Text(formatMuscleMassChange(change))
                 .font(.caption2)
                 .fontWeight(.semibold)
         }
@@ -460,27 +324,14 @@ struct BodyFatTrendChart: View {
 
             Spacer()
 
-            // 체지방률
-            detailItem(label: "체지방률", value: formatBodyFat(point.bodyFatPercent), color: .orange)
+            // 근육량
+            if let mm = point.muscleMass {
+                detailItem(label: "근육량", value: formatMuscleMass(mm), color: .green)
+            }
 
             // 체중
             if point.weight > 0 {
                 detailItem(label: "체중", value: formatWeight(point.weight), color: .blue)
-            }
-
-            // 건강 구간
-            if let g = gender {
-                let zone = g == .male
-                    ? BodyFatZone.forMale(point.bodyFatPercent)
-                    : BodyFatZone.forFemale(point.bodyFatPercent)
-                Text(zone.displayName)
-                    .font(.caption2)
-                    .fontWeight(.medium)
-                    .foregroundStyle(zone.color)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
-                    .background(zone.color.opacity(0.12))
-                    .cornerRadius(4)
             }
 
             Button { selectedDate = nil } label: {
@@ -516,7 +367,7 @@ struct BodyFatTrendChart: View {
                 .font(.system(size: 40))
                 .foregroundStyle(.gray.opacity(0.3))
 
-            Text("체지방률 데이터가 없습니다")
+            Text("근육량 데이터가 없습니다")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
@@ -534,7 +385,7 @@ struct BodyFatTrendChart: View {
 
         for i in (window - 1)..<sorted.count {
             let windowSlice = sorted[(i - window + 1)...i]
-            let avg = windowSlice.reduce(0.0) { $0 + NSDecimalNumber(decimal: $1.bodyFatPercent).doubleValue } / Double(window)
+            let avg = windowSlice.reduce(0.0) { $0 + NSDecimalNumber(decimal: $1.muscleMass ?? 0).doubleValue } / Double(window)
             result.append(MovingAveragePoint(date: sorted[i].date, value: avg))
         }
 
@@ -550,7 +401,7 @@ struct BodyFatTrendChart: View {
 
         let firstDate = sorted.first!.date
         let xs = sorted.map { $0.date.timeIntervalSince(firstDate) / 86400.0 }
-        let ys = sorted.map { NSDecimalNumber(decimal: $0.bodyFatPercent).doubleValue }
+        let ys = sorted.map { NSDecimalNumber(decimal: $0.muscleMass ?? 0).doubleValue }
 
         let xMean = xs.reduce(0, +) / Double(n)
         let yMean = ys.reduce(0, +) / Double(n)
@@ -576,7 +427,7 @@ struct BodyFatTrendChart: View {
             let futureDate = calendar.date(byAdding: .day, value: day, to: lastDate)!
             let futureX = futureDate.timeIntervalSince(firstDate) / 86400.0
             let predicted = a + b * futureX
-            let clamped = max(0, min(60, predicted))
+            let clamped = max(0, min(100, predicted))
             points.append(MovingAveragePoint(date: futureDate, value: clamped))
         }
 
@@ -598,16 +449,16 @@ struct BodyFatTrendChart: View {
         return formatter.string(from: date)
     }
 
-    private func formatBodyFat(_ bodyFat: Decimal) -> String {
+    private func formatMuscleMass(_ value: Decimal) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 1
         formatter.minimumFractionDigits = 1
-        let number = NSDecimalNumber(decimal: bodyFat)
-        return (formatter.string(from: number) ?? "\(bodyFat)") + "%"
+        let number = NSDecimalNumber(decimal: value)
+        return (formatter.string(from: number) ?? "\(value)") + " kg"
     }
 
-    private func formatBodyFatChange(_ change: Decimal) -> String {
+    private func formatMuscleMassChange(_ change: Decimal) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 1
@@ -615,7 +466,7 @@ struct BodyFatTrendChart: View {
         formatter.positivePrefix = "+"
         formatter.negativePrefix = "-"
         let number = NSDecimalNumber(decimal: change)
-        return (formatter.string(from: number) ?? "\(change)") + "%"
+        return (formatter.string(from: number) ?? "\(change)") + " kg"
     }
 
     private func formatWeight(_ weight: Decimal) -> String {
@@ -630,22 +481,18 @@ struct BodyFatTrendChart: View {
 
 // MARK: - Convenience Initializers
 
-extension BodyFatTrendChart {
+extension MuscleMassTrendChart {
     init(
         viewModel: BodyTrendsViewModel,
-        goalBodyFat: Decimal? = nil,
         isInteractive: Bool = true,
         height: CGFloat = 280,
-        gender: Gender? = nil,
-        showHealthZones: Bool = true
+        gender: Gender? = nil
     ) {
         self.dataPoints = viewModel.dataPoints
-        self.goalBodyFat = goalBodyFat
         self.period = viewModel.selectedPeriod
         self.isInteractive = isInteractive
         self.height = height
         self.gender = gender
-        self.showHealthZones = showHealthZones
     }
 }
 
@@ -653,10 +500,10 @@ extension BodyFatTrendChart {
 
 #Preview("30일 데이터") {
     ScrollView {
-        BodyFatTrendChart(
+        MuscleMassTrendChart(
             dataPoints: FetchBodyTrendsUseCase.sampleOutput().dataPoints,
             period: .month,
-            gender: .male
+            gender: .female
         )
         .padding()
     }
@@ -664,7 +511,7 @@ extension BodyFatTrendChart {
 
 #Preview("빈 상태") {
     ScrollView {
-        BodyFatTrendChart(dataPoints: [], period: .month)
+        MuscleMassTrendChart(dataPoints: [], period: .month)
             .padding()
     }
 }

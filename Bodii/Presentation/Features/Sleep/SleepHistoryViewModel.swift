@@ -66,6 +66,10 @@ class SleepHistoryViewModel: ObservableObject {
     /// - SwiftUI의 .sheet(item:) 바인딩에 사용
     @Published var recordToEdit: SleepRecord?
 
+    /// 편집 완료 후 새로고침 필요 여부
+    /// sheet onDismiss에서 체크하여 데이터 리로드
+    var needsRefreshAfterEdit: Bool = false
+
     /// 삭제 확인 대화상자 표시 여부
     /// 📚 학습 포인트: Confirmation Dialog State
     /// - 삭제 전 사용자 확인 받기
@@ -234,12 +238,20 @@ class SleepHistoryViewModel: ObservableObject {
         recordToEdit = record
     }
 
-    /// 레코드 편집 완료
+    /// 레코드 편집 완료 (저장 성공 시 호출)
     /// 📚 학습 포인트: Completion Handler
-    /// - 편집 완료 후 시트를 닫고 데이터 다시 로드
+    /// - needsRefreshAfterEdit 플래그를 설정하여 sheet onDismiss에서 리로드
     func didFinishEditing() {
-        recordToEdit = nil
+        needsRefreshAfterEdit = true
+    }
+
+    /// sheet onDismiss에서 호출 — 편집 후 데이터 새로고침
+    func refreshIfNeeded() {
+        guard needsRefreshAfterEdit else { return }
+        needsRefreshAfterEdit = false
         Task {
+            // 백그라운드 컨텍스트 → 메인 컨텍스트 병합 대기
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
             await loadHistory()
         }
     }

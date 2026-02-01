@@ -61,6 +61,7 @@ protocol GoalRepositoryProtocol {
         weeklyFatPctRate: Decimal?,
         weeklyMuscleRate: Decimal?,
         dailyCalorieTarget: Int32?,
+        targetDate: Date?,
         startWeight: Decimal?,
         startBodyFatPct: Decimal?,
         startMuscleMass: Decimal?,

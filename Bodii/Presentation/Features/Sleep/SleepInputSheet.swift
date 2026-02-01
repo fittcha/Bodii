@@ -91,7 +91,7 @@ struct SleepInputSheet: View {
             // 📚 학습 포인트: ScrollView for Content
             // 키보드가 올라올 때를 대비하여 스크롤 가능하게 구성
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 12) {
                     // 헤더 섹션
                     headerSection
 
@@ -107,14 +107,14 @@ struct SleepInputSheet: View {
                     summaryCard
 
                     Spacer()
-                        .frame(height: 20)
+                        .frame(height: 10)
 
                     // 버튼 섹션
                     buttonSection
                 }
                 .padding()
             }
-            .navigationTitle("수면 기록")
+            .navigationTitle(viewModel.isEditing ? "수면 기록 수정" : "수면 기록")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 // 📚 학습 포인트: Toolbar Item
@@ -151,7 +151,7 @@ struct SleepInputSheet: View {
         }
         // 📚 학습 포인트: Presentation Detents
         // Sheet의 높이를 medium으로 설정 (화면의 약 절반)
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.large])
         // 📚 학습 포인트: Interactive Dismiss Control
         // 강제 입력 모드일 때는 스와이프로 닫기 비활성화
         .interactiveDismissDisabled(!canSkip)
@@ -171,12 +171,12 @@ struct SleepInputSheet: View {
                 .accessibilityHidden(true)
 
             // 제목
-            Text("어젯밤 수면 시간")
+            Text(viewModel.isEditing ? "수면 시간 수정" : "어젯밤 수면 시간")
                 .font(.title2)
                 .fontWeight(.bold)
 
             // 부제목
-            Text("몇 시간 주무셨나요?")
+            Text(viewModel.isEditing ? "수면 시간을 변경해주세요" : "몇 시간 주무셨나요?")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -331,7 +331,7 @@ struct SleepInputSheet: View {
                         .font(.body)
                 }
 
-                Text(viewModel.isSaving ? "저장 중..." : "저장")
+                Text(viewModel.isSaving ? "저장 중..." : (viewModel.isEditing ? "수정" : "저장"))
                     .font(.body)
                     .fontWeight(.semibold)
             }

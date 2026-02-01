@@ -32,8 +32,8 @@ struct WeeklyCalendarView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // 헤더
+        VStack(alignment: .leading, spacing: 8) {
+            // 헤더 + 범례 (한 줄)
             HStack {
                 Text("이번 주")
                     .font(.headline)
@@ -41,9 +41,11 @@ struct WeeklyCalendarView: View {
 
                 Spacer()
 
-                Text(weekRangeText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                // 범례 (헤더 우측)
+                HStack(spacing: 12) {
+                    legendItem(color: .blue, label: "수면")
+                    legendItem(color: .green, label: "식단")
+                }
             }
 
             // 캘린더 그리드
@@ -52,9 +54,7 @@ struct WeeklyCalendarView: View {
                     dayColumn(for: day)
                 }
             }
-
-            // 범례
-            legendView
+            .frame(height: 120)
         }
         .padding(16)
         .background(Color(.systemBackground))
@@ -97,28 +97,15 @@ struct WeeklyCalendarView: View {
         .frame(maxWidth: .infinity)
     }
 
-    /// 범례
-    private var legendView: some View {
-        HStack(spacing: 16) {
-            HStack(spacing: 4) {
-                Circle()
-                    .fill(Color.blue)
-                    .frame(width: 8, height: 8)
-                Text("수면")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-
-            HStack(spacing: 4) {
-                Circle()
-                    .fill(Color.green)
-                    .frame(width: 8, height: 8)
-                Text("식단")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
+    /// 범례 아이템
+    private func legendItem(color: Color, label: String) -> some View {
+        HStack(spacing: 4) {
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
         }
     }
 

@@ -117,13 +117,13 @@ struct ServingSizePicker: View {
                     .textFieldStyle(.roundedBorder)
                     .frame(maxWidth: 120)
 
-                // 단위 선택 (인분 / 그램)
+                // 단위 선택
                 Picker("단위", selection: $quantityUnit) {
                     ForEach(QuantityUnit.allCases) { unit in
                         Text(unit.displayName).tag(unit)
                     }
                 }
-                .pickerStyle(.segmented)
+                .pickerStyle(.menu)
                 .onChange(of: quantityUnit) { oldValue, newValue in
                     if oldValue != newValue {
                         onChangeUnit(newValue)
@@ -173,9 +173,9 @@ struct ServingSizePicker: View {
 
     // MARK: - Helpers
 
-    /// 현재 섭취량이 인분 기준인지 여부
+    /// 현재 섭취량이 인분/개수 기준인지 여부
     private var isServingBased: Bool {
-        quantityUnit == .serving
+        !quantityUnit.isGramBased
     }
 
     /// 배수 값을 포맷팅

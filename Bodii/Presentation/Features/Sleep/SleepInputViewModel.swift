@@ -68,22 +68,21 @@ class SleepInputViewModel: ObservableObject {
     // MARK: - Private Properties
 
     /// 수면 기록 Use Case
-    /// 📚 학습 포인트: Dependency Injection
-    /// - Use Case를 외부에서 주입받아 사용
-    /// - 테스트 시 Mock으로 교체 가능
     private let recordSleepUseCase: RecordSleepUseCase
 
+    /// 수면 데이터 저장소 (편집 시 update 호출용)
+    private let sleepRepository: SleepRepositoryProtocol?
+
     /// 사용자 ID
-    /// 📚 학습 포인트: User Context
-    /// - 수면 기록에 필요한 사용자 식별자
-    /// - TODO: UserRepository에서 조회하도록 개선
     private let userId: UUID
 
+    /// 편집 중인 기존 기록의 ID (nil이면 새 기록 생성 모드)
+    private let editingRecordId: UUID?
+
+    /// 편집 중인 기록의 원본 날짜
+    private let editingDate: Date?
+
     /// Combine 구독 저장소
-    /// 📚 학습 포인트: Combine Framework
-    /// - 비동기 이벤트 스트림 관리
-    /// - 메모리 누수 방지를 위한 구독 관리
-    /// 💡 Java 비교: RxJava의 CompositeDisposable과 유사
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
@@ -103,12 +102,18 @@ class SleepInputViewModel: ObservableObject {
         recordSleepUseCase: RecordSleepUseCase,
         userId: UUID,
         defaultHours: Int = 7,
-        defaultMinutes: Int = 0
+        defaultMinutes: Int = 0,
+        sleepRepository: SleepRepositoryProtocol? = nil,
+        editingRecordId: UUID? = nil,
+        editingDate: Date? = nil
     ) {
         self.recordSleepUseCase = recordSleepUseCase
         self.userId = userId
         self.hours = defaultHours
         self.minutes = defaultMinutes
+        self.sleepRepository = sleepRepository
+        self.editingRecordId = editingRecordId
+        self.editingDate = editingDate
     }
 
     // MARK: - Computed Properties
@@ -163,51 +168,62 @@ class SleepInputViewModel: ObservableObject {
     /// - Use Case를 호출하여 비즈니스 로직 실행
     /// - 성공/실패 처리 및 UI 상태 업데이트
     /// 💡 Java 비교: Kotlin Coroutines의 suspend function과 유사
+    /// 편집 모드 여부
+    var isEditing: Bool {
+        editingRecordId != nil
+    }
+
     func saveSleep() async {
-        // 📚 학습 포인트: Guard Statement
-        // 입력이 유효하지 않으면 조기 리턴
         guard isInputValid else {
             errorMessage = "수면 시간이 유효하지 않습니다."
             return
         }
 
-        // 저장 시작
         isSaving = true
         errorMessage = nil
         successMessage = nil
         isCompleted = false
 
         do {
-            // 📚 학습 포인트: Use Case Execution
-            // 비즈니스 로직은 Use Case에 위임
-            // - 자동으로 SleepStatus 계산
-            // - 02:00 경계 로직 적용
-            // - DailyLog 자동 업데이트
-            let result = try await recordSleepUseCase.execute(
-                userId: userId,
-                date: Date(),
-                hours: hours,
-                minutes: minutes
-            )
+            if let recordId = editingRecordId, let repository = sleepRepository {
+                // 편집 모드: 기존 기록 업데이트
+                guard let existing = try await repository.fetch(by: recordId) else {
+                    errorMessage = "수면 기록을 찾을 수 없습니다."
+                    isSaving = false
+                    return
+                }
 
-            // 성공 처리
-            let (h, m) = result.durationFormatted
-            successMessage = "저장되었습니다. \(h)시간 \(m)분 - \(result.status.displayName)"
+                let newDuration = Int32(hours * 60 + minutes)
+                let newStatus = SleepStatus.from(durationMinutes: newDuration)
+                existing.duration = newDuration
+                existing.status = Int16(newStatus.rawValue)
+                existing.updatedAt = Date()
 
-            // 📚 학습 포인트: Delayed State Change
-            // 성공 메시지를 잠시 보여준 후 완료 상태로 전환
+                _ = try await repository.update(sleepRecord: existing)
+
+                let (h, m) = (Int(newDuration) / 60, Int(newDuration) % 60)
+                successMessage = "수정되었습니다. \(h)시간 \(m)분 - \(newStatus.displayName)"
+            } else {
+                // 생성 모드: 새 기록 생성
+                let result = try await recordSleepUseCase.execute(
+                    userId: userId,
+                    date: Date(),
+                    hours: hours,
+                    minutes: minutes
+                )
+
+                let (h, m) = result.durationFormatted
+                successMessage = "저장되었습니다. \(h)시간 \(m)분 - \(result.status.displayName)"
+            }
+
             Task {
-                try? await Task.sleep(nanoseconds: 1_500_000_000) // 1.5초
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
                 isCompleted = true
             }
 
         } catch let error as RecordSleepUseCase.RecordError {
-            // 📚 학습 포인트: Specific Error Handling
-            // Use Case의 도메인 에러를 사용자 친화적 메시지로 변환
             errorMessage = error.localizedDescription
         } catch {
-            // 📚 학습 포인트: Generic Error Handling
-            // 예상하지 못한 에러 처리
             errorMessage = "저장 중 오류가 발생했습니다: \(error.localizedDescription)"
         }
 

@@ -158,14 +158,13 @@ final class APIConfig: APIConfigProtocol {
     /// 공공데이터포털(data.go.kr)의 식품영양성분 DB API
     ///
     /// - API 문서: https://www.data.go.kr/data/15127578/openapi.do
-    /// - 대체 URL: https://various.foodsafetykorea.go.kr (식품안전나라)
     ///
     /// 📚 학습 포인트: Computed Property
     /// 환경에 따라 다른 URL 반환 가능
     /// 💡 Java 비교: getter 메서드와 동일하지만 더 간결
     var kfdaBaseURL: String {
-        // 식약처 API 기본 URL (공공데이터포털)
-        return "https://apis.data.go.kr/1471000/FoodNtrIrdntInfoService1"
+        // 식약처 API 기본 URL (공공데이터포털) - 식품영양성분DB 정보 조회서비스
+        return "https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02"
     }
 
     /// 식약처(KFDA) API 키
@@ -180,20 +179,30 @@ final class APIConfig: APIConfigProtocol {
     ///
     /// - Warning: Info.plist에 KFDA_API_KEY가 없으면 DEMO_KEY 사용 (제한된 요청 가능)
     var kfdaAPIKey: String {
-        // Info.plist에서 키 읽기
+        // 1. Scheme 환경변수 확인
+        if let envKey = ProcessInfo.processInfo.environment["KFDA_API_KEY"],
+           !envKey.isEmpty,
+           envKey != "DEMO_KEY" {
+            return envKey
+        }
+
+        // 2. APISecrets 상수에서 읽기 (가장 확실한 방법)
+        let secretsKey = APISecrets.kfdaAPIKey
+        if !secretsKey.isEmpty && secretsKey != "DEMO_KEY" {
+            return secretsKey
+        }
+
+        // 3. Info.plist에서 키 읽기
         if let apiKey = Bundle.main.object(forInfoDictionaryKey: "KFDA_API_KEY") as? String,
-           !apiKey.isEmpty {
+           !apiKey.isEmpty,
+           !apiKey.hasPrefix("$(") {
             return apiKey
         }
 
-        // 개발 환경에서는 DEMO_KEY 허용
-        if environment == .development {
-            return "DEMO_KEY"
-        }
-
-        // 프로덕션에서 키가 없으면 경고
-        assertionFailure("⚠️ KFDA API 키가 Info.plist에 설정되지 않았습니다!")
-        return ""
+        #if DEBUG
+        print("⚠️ [APIConfig] KFDA API 키가 설정되지 않아 DEMO_KEY 사용 중")
+        #endif
+        return "DEMO_KEY"
     }
 
     // MARK: - USDA API Configuration
@@ -225,26 +234,30 @@ final class APIConfig: APIConfigProtocol {
     ///
     /// - Note: 프로덕션에서는 반드시 실제 API 키 사용 권장
     var usdaAPIKey: String {
-        // Info.plist에서 키 읽기
-        if let apiKey = Bundle.main.object(forInfoDictionaryKey: "USDA_API_KEY") as? String,
-           !apiKey.isEmpty {
-            return apiKey
-        }
-
-        // 프로세스 환경 변수에서 키 읽기 (CI/CD용)
+        // 1. Scheme 환경변수 확인
         if let envKey = ProcessInfo.processInfo.environment["USDA_API_KEY"],
-           !envKey.isEmpty {
+           !envKey.isEmpty,
+           envKey != "DEMO_KEY" {
             return envKey
         }
 
-        // 개발 환경에서는 DEMO_KEY 허용
-        if environment == .development {
-            return "DEMO_KEY"
+        // 2. APISecrets 상수에서 읽기
+        let secretsKey = APISecrets.usdaAPIKey
+        if !secretsKey.isEmpty && secretsKey != "DEMO_KEY" {
+            return secretsKey
         }
 
-        // 프로덕션에서 키가 없으면 경고
-        assertionFailure("⚠️ USDA API 키가 Info.plist 또는 환경 변수에 설정되지 않았습니다!")
-        return ""
+        // 3. Info.plist에서 키 읽기
+        if let apiKey = Bundle.main.object(forInfoDictionaryKey: "USDA_API_KEY") as? String,
+           !apiKey.isEmpty,
+           !apiKey.hasPrefix("$(") {
+            return apiKey
+        }
+
+        #if DEBUG
+        print("⚠️ [APIConfig] USDA API 키가 설정되지 않아 DEMO_KEY 사용 중")
+        #endif
+        return "DEMO_KEY"
     }
 
     // MARK: - Gemini API Configuration
@@ -254,7 +267,7 @@ final class APIConfig: APIConfigProtocol {
     /// Google의 Gemini AI 모델 API
     ///
     /// - API 문서: https://ai.google.dev/api/rest
-    /// - 모델: gemini-1.5-flash (빠른 응답, 무료 티어)
+    /// - 모델: gemini-2.5-flash-lite (빠른 응답, 무료 티어)
     /// - Rate Limit: 15 requests/minute (무료 티어)
     ///
     /// 📚 학습 포인트: AI API Integration
@@ -279,23 +292,28 @@ final class APIConfig: APIConfigProtocol {
     ///
     /// - Warning: 무료 티어는 15 RPM (requests per minute) 제한
     var geminiAPIKey: String {
-        // Info.plist에서 키 읽기
-        if let apiKey = Bundle.main.object(forInfoDictionaryKey: "GEMINI_API_KEY") as? String,
-           !apiKey.isEmpty {
-            return apiKey
-        }
-
-        // 프로세스 환경 변수에서 키 읽기 (CI/CD용)
+        // 1. Scheme 환경변수 확인
         if let envKey = ProcessInfo.processInfo.environment["GEMINI_API_KEY"],
            !envKey.isEmpty {
             return envKey
         }
 
-        // 개발 환경에서도 Gemini는 실제 키 필요 (DEMO_KEY 미제공)
-        if environment == .development {
-            assertionFailure("⚠️ Gemini API 키가 Info.plist 또는 환경 변수에 설정되지 않았습니다!")
+        // 2. APISecrets 상수에서 읽기
+        let secretsKey = APISecrets.geminiAPIKey
+        if !secretsKey.isEmpty {
+            return secretsKey
         }
 
+        // 3. Info.plist에서 키 읽기
+        if let apiKey = Bundle.main.object(forInfoDictionaryKey: "GEMINI_API_KEY") as? String,
+           !apiKey.isEmpty,
+           !apiKey.hasPrefix("$(") {
+            return apiKey
+        }
+
+        #if DEBUG
+        print("⚠️ [APIConfig] Gemini API 키가 설정되지 않았습니다.")
+        #endif
         return ""
     }
 
@@ -315,79 +333,66 @@ final class APIConfig: APIConfigProtocol {
     ///
     /// - Returns: API 키 문자열 (없으면 빈 문자열)
     var visionAPIKey: String {
-        // Info.plist에서 키 읽기
-        if let apiKey = Bundle.main.object(forInfoDictionaryKey: "VISION_API_KEY") as? String,
-           !apiKey.isEmpty {
-            return apiKey
-        }
-
-        // 프로세스 환경 변수에서 키 읽기 (CI/CD용)
+        // Scheme 환경변수를 우선 확인 (Xcode Launch 시 설정됨)
         if let envKey = ProcessInfo.processInfo.environment["VISION_API_KEY"],
            !envKey.isEmpty {
             return envKey
         }
 
-        // 개발 환경에서도 Vision API는 실제 키 필요
-        if environment == .development {
-            assertionFailure("⚠️ Vision API 키가 Info.plist 또는 환경 변수에 설정되지 않았습니다!")
+        // Info.plist에서 키 읽기
+        if let apiKey = Bundle.main.object(forInfoDictionaryKey: "VISION_API_KEY") as? String,
+           !apiKey.isEmpty,
+           !apiKey.hasPrefix("$(") {
+            return apiKey
         }
+
+        // Vision API 키가 없으면 빈 문자열 반환 (기능 비활성화)
+        #if DEBUG
+        print("⚠️ [APIConfig] Vision API 키가 설정되지 않았습니다.")
+        #endif
 
         return ""
     }
 
     // MARK: - API Endpoints
 
-    /// 식약처 API 엔드포인트
+    /// 식약처 API 엔드포인트 (FoodNtrCpntDbInfo02)
     enum KFDAEndpoint {
         /// 식품 영양 성분 정보 조회 (검색)
         ///
         /// - Parameter query: 검색어 (식품명)
-        /// - Parameter startIdx: 시작 인덱스 (페이징)
-        /// - Parameter endIdx: 종료 인덱스 (페이징)
-        ///
-        /// - Returns: API 경로
-        ///
-        /// - Example:
-        /// ```swift
-        /// let path = KFDAEndpoint.search(query: "김치찌개", startIdx: 1, endIdx: 10)
-        /// let url = "\(APIConfig.shared.kfdaBaseURL)\(path)"
-        /// ```
-        case search(query: String, startIdx: Int, endIdx: Int)
+        /// - Parameter pageNo: 페이지 번호 (1부터 시작)
+        /// - Parameter numOfRows: 한 페이지 결과 수
+        case search(query: String, pageNo: Int, numOfRows: Int)
 
-        /// 식품 상세 정보 조회
+        /// 식품 코드로 상세 정보 조회
         ///
         /// - Parameter foodCode: 식품 코드
-        ///
-        /// - Returns: API 경로
         case detail(foodCode: String)
 
         /// API 경로 생성
         var path: String {
             switch self {
-            case .search:
-                return "/getFoodNtrItdntList1"
-            case .detail:
-                return "/getFoodNtrItdntList1"
+            case .search, .detail:
+                return "/getFoodNtrCpntDbInq02"
             }
         }
 
         /// 쿼리 파라미터 생성
-        ///
-        /// 📚 학습 포인트: URLQueryItem
-        /// URL 쿼리 파라미터를 타입 안전하게 생성
-        /// 💡 Java 비교: HttpUrl.Builder.addQueryParameter()와 유사
         var queryItems: [URLQueryItem] {
             switch self {
-            case .search(let query, let startIdx, let endIdx):
+            case .search(let query, let pageNo, let numOfRows):
                 return [
-                    URLQueryItem(name: "desc_kor", value: query),
-                    URLQueryItem(name: "startIdx", value: "\(startIdx)"),
-                    URLQueryItem(name: "endIdx", value: "\(endIdx)"),
+                    URLQueryItem(name: "FOOD_NM_KR", value: query),
+                    URLQueryItem(name: "pageNo", value: "\(pageNo)"),
+                    URLQueryItem(name: "numOfRows", value: "\(numOfRows)"),
                     URLQueryItem(name: "type", value: "json")
                 ]
             case .detail(let foodCode):
                 return [
-                    URLQueryItem(name: "food_cd", value: foodCode),
+                    URLQueryItem(name: "FOOD_CD", value: foodCode),
+                    URLQueryItem(name: "numOfRows", value: "1"),
+                    URLQueryItem(name: "pageNo", value: "1"),
                     URLQueryItem(name: "type", value: "json")
                 ]
             }
@@ -459,18 +464,18 @@ final class APIConfig: APIConfigProtocol {
     enum GeminiEndpoint {
         /// 텍스트 생성 (Diet Comment 생성용)
         ///
-        /// - Parameter model: 사용할 Gemini 모델 (기본: gemini-1.5-flash)
+        /// - Parameter model: 사용할 Gemini 모델 (기본: gemini-2.5-flash-lite)
         ///
         /// - Returns: API 경로
         ///
         /// - Example:
         /// ```swift
-        /// let endpoint = GeminiEndpoint.generateContent(model: "gemini-1.5-flash")
+        /// let endpoint = GeminiEndpoint.generateContent(model: "gemini-2.5-flash-lite")
         /// let url = APIConfig.shared.buildGeminiURL(endpoint: endpoint)
         /// ```
         ///
-        /// - Note: gemini-1.5-flash는 빠른 응답과 무료 티어 제공
-        case generateContent(model: String = "gemini-1.5-flash")
+        /// - Note: gemini-2.5-flash-lite는 빠른 응답과 무료 티어 제공
+        case generateContent(model: String = "gemini-2.5-flash-lite")
 
         /// API 경로 생성
         var path: String {
@@ -512,20 +517,37 @@ extension APIConfig {
     /// - Example:
     /// ```swift
     /// let url = APIConfig.shared.buildKFDAURL(
-    ///     endpoint: .search(query: "김치찌개", startIdx: 1, endIdx: 10)
+    ///     endpoint: .search(query: "김치찌개", pageNo: 1, numOfRows: 10)
     /// )
     /// ```
     func buildKFDAURL(endpoint: KFDAEndpoint) -> URL? {
-        var components = URLComponents(string: kfdaBaseURL + endpoint.path)
+        let apiKey = kfdaAPIKey
+
+        #if DEBUG
+        let maskedKey = apiKey.count > 8 ? String(apiKey.prefix(4)) + "..." + String(apiKey.suffix(4)) : "***"
+        print("🔑 [APIConfig] KFDA API Key: \(maskedKey) (length: \(apiKey.count))")
+        #endif
+
+        // serviceKey는 percent-encoding 없이 전달해야 함 (공공데이터포털 요구사항)
+        let baseURLString = kfdaBaseURL + endpoint.path
+        var components = URLComponents(string: baseURLString)
 
         // 쿼리 파라미터 추가
-        var queryItems = endpoint.queryItems
-        // API 키 추가
-        queryItems.append(URLQueryItem(name: "serviceKey", value: kfdaAPIKey))
+        components?.queryItems = endpoint.queryItems
 
-        components?.queryItems = queryItems
+        // URLComponents가 자동으로 percent-encoding하므로,
+        // serviceKey는 수동으로 추가하여 이중 인코딩 방지
+        guard var urlString = components?.url?.absoluteString else { return nil }
+        let separator = urlString.contains("?") ? "&" : "?"
+        urlString += "\(separator)serviceKey=\(apiKey)"
 
-        return components?.url
+        #if DEBUG
+        // URL에서 키 마스킹 후 출력
+        let maskedURL = urlString.replacingOccurrences(of: apiKey, with: maskedKey)
+        print("🌐 [APIConfig] KFDA URL: \(maskedURL)")
+        #endif
+
+        return URL(string: urlString)
     }
 
     /// USDA API URL 생성 헬퍼
@@ -554,6 +576,16 @@ extension APIConfig {
 
         components?.queryItems = queryItems
 
+        #if DEBUG
+        let key = usdaAPIKey
+        let maskedKey = key.count > 8 ? String(key.prefix(4)) + "..." + String(key.suffix(4)) : "***"
+        print("🔑 [APIConfig] USDA API Key: \(maskedKey) (length: \(key.count))")
+        if let url = components?.url {
+            let maskedURL = url.absoluteString.replacingOccurrences(of: key, with: maskedKey)
+            print("🌐 [APIConfig] USDA URL: \(maskedURL)")
+        }
+        #endif
+
         return components?.url
     }
 
@@ -570,7 +602,7 @@ extension APIConfig {
     /// - Example:
     /// ```swift
     /// let url = APIConfig.shared.buildGeminiURL(
-    ///     endpoint: .generateContent(model: "gemini-1.5-flash")
+    ///     endpoint: .generateContent(model: "gemini-2.5-flash-lite")
     /// )
     /// ```
     ///

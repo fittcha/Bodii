@@ -81,59 +81,80 @@ enum GoalValidationService {
     /// 목표의 유효성을 검증합니다.
     ///
     /// 모든 검증 규칙을 순차적으로 적용하여 목표가 유효한지 확인합니다.
-    /// 검증 실패 시 구체적인 에러 메시지와 함께 GoalValidationError를 throw합니다.
+    /// 주간 변화율은 자동 계산되므로 경고만 반환하고 저장을 차단하지 않습니다.
     ///
     /// - Parameter goal: 검증할 목표
-    ///
-    /// - Throws: GoalValidationError
-    ///   - `.noTargetsSet`: 최소 1개 목표가 설정되지 않음
-    ///   - `.unrealisticRate`: 주간 변화율이 권장 범위를 벗어남
-    ///   - `.inconsistentGoalType`: 목표 유형과 목표값이 일치하지 않음
-    ///   - `.physicallyImpossible`: 물리적으로 불가능한 목표 조합
-    ///   - `.invalidTargetDate`: 목표 달성 기간이 비현실적임
-    ///   - `.missingStartValues`: 시작 값이 없어 검증 불가
-    ///
-    /// - Example:
-    /// ```swift
-    /// // 성공 케이스
-    /// let validGoal = Goal(
-    ///     goalType: .lose,
-    ///     targetWeight: Decimal(65.0),
-    ///     weeklyWeightRate: Decimal(-0.5),
-    ///     startWeight: Decimal(70.0)
-    /// )
-    /// try GoalValidationService.validate(goal: validGoal) // ✅ 성공
-    ///
-    /// // 실패 케이스: 목표 없음
-    /// let noTargets = Goal(goalType: .lose)
-    /// try GoalValidationService.validate(goal: noTargets)
-    /// // ❌ throws .noTargetsSet
-    ///
-    /// // 실패 케이스: 물리적으로 불가능
-    /// let impossible = Goal(
-    ///     goalType: .lose,
-    ///     targetWeight: Decimal(53.0),
-    ///     targetBodyFatPct: Decimal(18.0),
-    ///     targetMuscleMass: Decimal(45.0)  // 제지방량(43.5kg)보다 많음
-    /// )
-    /// try GoalValidationService.validate(goal: impossible)
-    /// // ❌ throws .physicallyImpossible("제지방량(43.46kg)보다 근육량이 많을 수 없습니다")
-    /// ```
+    /// - Throws: GoalValidationError (목표 없음, 일관성, 물리적 정합성만 차단)
     static func validate(goal: Goal) throws {
         // 1. 최소 1개 목표 설정 확인
         try validateHasTargets(goal: goal)
 
-        // 2. 주간 변화율 현실성 검증
-        try validateWeeklyRates(goal: goal)
+        // 2. 주간 변화율은 경고만 (checkRateWarnings 사용)
+        // validateWeeklyRates는 더 이상 throw하지 않음
 
         // 3. 목표 유형 일관성 검증
         try validateGoalTypeConsistency(goal: goal)
 
         // 4. 복수 목표 물리적 정합성 검증
         try validatePhysicalConsistency(goal: goal)
+    }
 
-        // 5. 목표 달성 기간 검증
-        try validateTargetDate(goal: goal)
+    /// 주간 변화율 경고를 반환합니다 (저장은 허용).
+    ///
+    /// 자동 계산된 주간 변화율이 권장 범위를 벗어나면 경고 메시지를 반환합니다.
+    /// 저장을 차단하지 않으며, UI에서 경고만 표시합니다.
+    ///
+    /// - Parameter goal: 검증할 목표
+    /// - Returns: 경고 메시지 배열 (빈 배열이면 경고 없음)
+    static func checkRateWarnings(goal: Goal) -> [String] {
+        var warnings: [String] = []
+
+        if let rateNS = goal.weeklyWeightRate {
+            let rate = rateNS.decimalValue
+            if !recommendedWeightRateRange.contains(rate) {
+                warnings.append(
+                    "체중 변화율(주당 \(rate.rounded(to: 1))kg)이 권장 범위(±2.0kg)를 벗어났습니다."
+                )
+            }
+        }
+
+        if let rateNS = goal.weeklyFatPctRate {
+            let rate = rateNS.decimalValue
+            if !recommendedFatPctRateRange.contains(rate) {
+                warnings.append(
+                    "체지방률 변화율(주당 \(rate.rounded(to: 1))%)이 권장 범위(±3.0%)를 벗어났습니다."
+                )
+            }
+        }
+
+        if let rateNS = goal.weeklyMuscleRate {
+            let rate = rateNS.decimalValue
+            if !recommendedMuscleRateRange.contains(rate) {
+                warnings.append(
+                    "근육량 변화율(주당 \(rate.rounded(to: 1))kg)이 권장 범위(±1.0kg)를 벗어났습니다."
+                )
+            }
+        }
+
+        return warnings
+    }
+
+    /// 목표 달성일이 유효한 범위인지 검증합니다.
+    ///
+    /// - Parameter targetDate: 사용자가 선택한 목표 달성일
+    /// - Returns: 에러 메시지 (nil이면 유효)
+    static func validateTargetDateRange(_ targetDate: Date) -> String? {
+        let calendar = Calendar.current
+        let daysBetween = calendar.dateComponents([.day], from: calendar.startOfDay(for: Date()), to: targetDate).day ?? 0
+        let weeks = daysBetween / 7
+
+        if weeks < minimumWeeksForGoal {
+            return "목표 달성일이 너무 가깝습니다. 최소 \(minimumWeeksForGoal)주 이후로 설정하세요."
+        }
+        if weeks > maximumWeeksForGoal {
+            return "목표 달성일이 너무 멉니다. 최대 \(maximumWeeksForGoal)주(약 2년) 이내로 설정하세요."
+        }
+        return nil
     }
 
     // MARK: - Validation Methods
@@ -156,61 +177,6 @@ enum GoalValidationService {
 
         guard hasWeight || hasBodyFat || hasMuscle else {
             throw GoalValidationError.noTargetsSet
-        }
-    }
-
-    /// 주간 변화율이 현실적인 범위 내에 있는지 검증합니다.
-    ///
-    /// 건강하지 않은 급격한 변화를 방지하기 위해 권장 범위를 벗어나면 경고합니다.
-    ///
-    /// - Parameter goal: 검증할 목표
-    /// - Throws: GoalValidationError.unrealisticRate
-    ///
-    /// - Example:
-    /// ```swift
-    /// let tooFast = Goal(
-    ///     targetWeight: Decimal(60.0),
-    ///     weeklyWeightRate: Decimal(-3.0),  // 주당 3kg 감량 (너무 빠름)
-    ///     startWeight: Decimal(80.0)
-    /// )
-    /// try GoalValidationService.validateWeeklyRates(goal: tooFast)
-    /// // ❌ throws .unrealisticRate("체중 변화율(주당 -3.0kg)이 권장 범위를 벗어났습니다...")
-    /// ```
-    private static func validateWeeklyRates(goal: Goal) throws {
-        // 체중 변화율 검증
-        if let rateNS = goal.weeklyWeightRate {
-            let rate = rateNS.decimalValue
-            if !recommendedWeightRateRange.contains(rate) {
-                throw GoalValidationError.unrealisticRate(
-                    "체중 변화율(주당 \(rate)kg)이 권장 범위를 벗어났습니다. " +
-                    "건강한 변화를 위해 주당 \(recommendedWeightRateRange.lowerBound)kg ~ " +
-                    "\(recommendedWeightRateRange.upperBound)kg를 권장합니다."
-                )
-            }
-        }
-
-        // 체지방률 변화율 검증
-        if let rateNS = goal.weeklyFatPctRate {
-            let rate = rateNS.decimalValue
-            if !recommendedFatPctRateRange.contains(rate) {
-                throw GoalValidationError.unrealisticRate(
-                    "체지방률 변화율(주당 \(rate)%)이 권장 범위를 벗어났습니다. " +
-                    "건강한 변화를 위해 주당 \(recommendedFatPctRateRange.lowerBound)% ~ " +
-                    "\(recommendedFatPctRateRange.upperBound)%를 권장합니다."
-                )
-            }
-        }
-
-        // 근육량 변화율 검증
-        if let rateNS = goal.weeklyMuscleRate {
-            let rate = rateNS.decimalValue
-            if !recommendedMuscleRateRange.contains(rate) {
-                throw GoalValidationError.unrealisticRate(
-                    "근육량 변화율(주당 \(rate)kg)이 권장 범위를 벗어났습니다. " +
-                    "현실적인 변화를 위해 주당 \(recommendedMuscleRateRange.lowerBound)kg ~ " +
-                    "\(recommendedMuscleRateRange.upperBound)kg를 권장합니다."
-                )
-            }
         }
     }
 
@@ -412,68 +378,6 @@ enum GoalValidationService {
         }
     }
 
-    /// 목표 달성 기간이 현실적인지 검증합니다.
-    ///
-    /// 주간 변화율을 기반으로 목표 달성까지 걸리는 기간을 계산하고,
-    /// 너무 짧거나 너무 긴 기간인지 확인합니다.
-    ///
-    /// - Parameter goal: 검증할 목표
-    /// - Throws: GoalValidationError.invalidTargetDate, GoalValidationError.missingStartValues
-    ///
-    /// - Example:
-    /// ```swift
-    /// let goal = Goal(
-    ///     targetWeight: Decimal(60.0),
-    ///     weeklyWeightRate: Decimal(-0.5),
-    ///     startWeight: Decimal(70.0)
-    /// )
-    /// // 예상 기간: (70 - 60) / 0.5 = 20주
-    /// try GoalValidationService.validateTargetDate(goal: goal) // ✅ 성공 (1주 ~ 104주 범위)
-    /// ```
-    private static func validateTargetDate(goal: Goal) throws {
-        // 체중 목표가 있는 경우 기간 검증
-        if let targetWeightNS = goal.targetWeight,
-           let weeklyRateNS = goal.weeklyWeightRate,
-           let startWeightNS = goal.startWeight {
-
-            let targetWeight = targetWeightNS.decimalValue
-            let weeklyRate = weeklyRateNS.decimalValue
-            let startWeight = startWeightNS.decimalValue
-
-            guard weeklyRate != 0 else {
-                throw GoalValidationError.invalidTargetDate(
-                    "주간 변화율이 0입니다. 목표 달성 기간을 계산할 수 없습니다."
-                )
-            }
-
-            // 예상 소요 주수 계산
-            let difference = targetWeight - startWeight
-            let weeksToGoal = abs(difference / weeklyRate)
-
-            // 부호 확인 (목표와 변화율 방향이 일치하는지)
-            if (difference > 0 && weeklyRate < 0) || (difference < 0 && weeklyRate > 0) {
-                throw GoalValidationError.invalidTargetDate(
-                    "목표 방향과 변화율이 일치하지 않습니다. " +
-                    "목표 체중(\(targetWeight)kg)에 도달하려면 주간 변화율의 부호를 확인하세요."
-                )
-            }
-
-            // 기간 범위 검증
-            if weeksToGoal < Decimal(minimumWeeksForGoal) {
-                throw GoalValidationError.invalidTargetDate(
-                    "목표 달성 기간이 너무 짧습니다 (\(weeksToGoal.rounded(to: 1))주). " +
-                    "최소 \(minimumWeeksForGoal)주 이상의 기간을 설정하세요."
-                )
-            }
-
-            if weeksToGoal > Decimal(maximumWeeksForGoal) {
-                throw GoalValidationError.invalidTargetDate(
-                    "목표 달성 기간이 너무 깁니다 (\(weeksToGoal.rounded(to: 1))주). " +
-                    "최대 \(maximumWeeksForGoal)주 이내의 기간을 설정하세요."
-                )
-            }
-        }
-    }
 }
 
 // MARK: - GoalValidationError

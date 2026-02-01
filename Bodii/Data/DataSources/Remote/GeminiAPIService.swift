@@ -26,7 +26,7 @@ import Foundation
 ///
 /// **API 정보:**
 /// - Provider: Google Generative AI
-/// - Model: gemini-1.5-flash
+/// - Model: gemini-2.5-flash-lite
 /// - API 문서: https://ai.google.dev/api/rest
 /// - Rate Limit: 15 requests/minute (무료 티어)
 ///
@@ -108,7 +108,7 @@ final class GeminiAPIService {
     ///
     /// - Parameters:
     ///   - request: Gemini API 요청 DTO
-    ///   - model: 사용할 Gemini 모델 (기본값: gemini-1.5-flash)
+    ///   - model: 사용할 Gemini 모델 (기본값: gemini-2.5-flash-lite)
     ///
     /// - Returns: AI 응답 DTO
     ///
@@ -130,8 +130,13 @@ final class GeminiAPIService {
     /// ```
     func generateContent(
         request: GeminiRequestDTO,
-        model: String = "gemini-1.5-flash"
+        model: String = "gemini-2.5-flash-lite"
     ) async throws -> GeminiResponseDTO {
+
+        // API 키 확인 (키가 없으면 호출 불가)
+        guard !apiConfig.geminiAPIKey.isEmpty else {
+            throw GeminiAPIError.authenticationFailed
+        }
 
         // 요청 유효성 검증
         guard request.isValid else {
@@ -399,7 +404,7 @@ final class MockGeminiAPIService {
     /// 생성 메서드 Mock
     func generateContent(
         request: GeminiRequestDTO,
-        model: String = "gemini-1.5-flash"
+        model: String = "gemini-2.5-flash-lite"
     ) async throws -> GeminiResponseDTO {
 
         rateLimiterCalled = true

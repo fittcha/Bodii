@@ -83,6 +83,9 @@ final class DietCommentViewModel: ObservableObject {
     /// 사용자 활동대사량 (TDEE)
     private let userTDEE: Int
 
+    /// 사용자 목표 섭취 칼로리
+    private let userTargetCalories: Int
+
     // MARK: - Initialization
 
     /// DietCommentViewModel 초기화
@@ -92,16 +95,19 @@ final class DietCommentViewModel: ObservableObject {
     ///   - userId: 사용자 ID
     ///   - userGoalType: 사용자 목표 (감량/유지/증량)
     ///   - userTDEE: 사용자 활동대사량 (kcal)
+    ///   - userTargetCalories: 사용자 목표 섭취 칼로리 (kcal)
     init(
         generateCommentUseCase: GenerateDietCommentUseCase,
         userId: UUID,
         userGoalType: GoalType,
-        userTDEE: Int
+        userTDEE: Int,
+        userTargetCalories: Int
     ) {
         self.generateCommentUseCase = generateCommentUseCase
         self.userId = userId
         self.userGoalType = userGoalType
         self.userTDEE = userTDEE
+        self.userTargetCalories = userTargetCalories
     }
 
     // MARK: - Public Methods
@@ -157,7 +163,8 @@ final class DietCommentViewModel: ObservableObject {
                 date: date,
                 mealType: mealType,
                 goalType: userGoalType,
-                tdee: userTDEE
+                tdee: userTDEE,
+                targetCalories: userTargetCalories
             )
 
             // 3. 성공 - 코멘트 표시
