@@ -200,12 +200,69 @@ final class FoodRepository: FoodRepositoryProtocol {
                 throw FoodRepositoryError.contextDeallocated
             }
 
-            let fetchRequest: NSFetchRequest<Food> = Food.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "name CONTAINS[cd] %@", name)
-            fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { return [] }
 
-            return try self.context.fetch(fetchRequest)
+            let fetchRequest: NSFetchRequest<Food> = Food.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "name CONTAINS[cd] %@", trimmed)
+            // 결과 제한 (대량 데이터에서 메모리 보호)
+            fetchRequest.fetchLimit = 200
+
+            let results = try self.context.fetch(fetchRequest)
+
+            // 연관성 점수 기반 정렬
+            let query = trimmed.lowercased()
+            let sorted = results.sorted { food1, food2 in
+                let score1 = self.relevanceScore(food: food1, query: query)
+                let score2 = self.relevanceScore(food: food2, query: query)
+                if score1 != score2 {
+                    return score1 > score2
+                }
+                // 점수가 같으면 이름 길이 짧은 것 우선 (더 구체적)
+                let len1 = food1.name?.count ?? 0
+                let len2 = food2.name?.count ?? 0
+                return len1 < len2
+            }
+
+            // 상위 50개만 반환
+            return Array(sorted.prefix(50))
         }
+    }
+
+    /// 음식의 검색 연관성 점수를 계산합니다.
+    ///
+    /// 점수 체계:
+    /// - 100: 정확히 일치 ("꿀" == "꿀")
+    /// - 80: 이름이 검색어로 시작 ("꿀떡" starts with "꿀")
+    /// - 60: 단어 경계에서 일치 ("생꿀" contains " 꿀" or "(꿀")
+    /// - 40: 부분 일치 ("아카시아꿀" contains "꿀")
+    /// - +10: 검색 횟수가 높은 음식 보너스
+    private func relevanceScore(food: Food, query: String) -> Int {
+        guard let foodName = food.name?.lowercased() else { return 0 }
+
+        var score = 0
+
+        if foodName == query {
+            // 정확히 일치
+            score = 100
+        } else if foodName.hasPrefix(query) {
+            // 접두사 일치
+            score = 80
+        } else {
+            // 부분 일치 — 단어 경계 확인
+            let separators: [Character] = [" ", "(", ")", ",", "/", "_", "-"]
+            let isWordBoundary = separators.contains(where: { char in
+                foodName.contains("\(char)\(query)")
+            })
+            score = isWordBoundary ? 60 : 40
+        }
+
+        // 검색 횟수 보너스 (자주 조회된 음식 우선)
+        if food.searchCount > 0 {
+            score += min(Int(food.searchCount), 10)
+        }
+
+        return score
     }
 
     // MARK: - Recent & Frequent Foods

@@ -106,16 +106,19 @@ struct DietTabView: View {
             context: context
         )
 
+        // UnifiedFoodSearchService 초기화 (API 검색 + FoodLabelMatcherService에 공유)
+        let unifiedFoodSearchService = UnifiedFoodSearchService(context: context)
+        let foodLocalDataSource = FoodLocalDataSourceImpl(persistenceController: .shared)
+
         let localFoodSearchService = LocalFoodSearchService(
-            foodRepository: foodRepository
+            foodRepository: foodRepository,
+            apiSearchService: unifiedFoodSearchService,
+            cacheDataSource: foodLocalDataSource
         )
 
         let recentFoodsService = RecentFoodsService(
             foodRepository: foodRepository
         )
-
-        // UnifiedFoodSearchService 초기화 (API 검색 + FoodLabelMatcherService에 필요)
-        let unifiedFoodSearchService = UnifiedFoodSearchService(context: context)
 
         // HybridFoodSearchService 초기화 (로컬 + API 통합 검색)
         let hybridService = HybridFoodSearchService(
