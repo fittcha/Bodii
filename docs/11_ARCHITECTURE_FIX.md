@@ -213,6 +213,38 @@ sampleFood.calories = NSDecimalNumber(value: 52)
 |------|------|
 | `Presentation/Components/BodyCompositionInputCard.swift` | 체성분 입력 카드 UI 컴포넌트 |
 
+### 3.7 KFDA 음식 데이터 로컬 검색 시스템 (2026-02-04~05)
+
+KFDA API의 검색 품질 문제 (예: "꿀" 검색 시 1000번째 이후에야 관련 결과 반환)를 해결하기 위해,
+전체 KFDA 음식 데이터를 앱 번들에 JSON으로 포함하고 로컬에서 연관성 기반 검색하는 시스템 구축.
+
+| 파일 | 수정/생성 | 내용 |
+|------|-----------|------|
+| `scripts/download_kfda_foods.py` | 생성 | KFDA API v2에서 전체 250,110개 음식 데이터 다운로드 스크립트 |
+| `Bodii/Resources/kfda_foods.json` | 생성 | 250,110개 KFDA 음식 데이터 (63.9MB, .gitignore에 추가) |
+| `Data/DataSources/Local/KFDAFoodImporter.swift` | 생성 | 번들 JSON → Core Data 배치 임포트 (500개 단위, 버전 기반 시딩) |
+| `Infrastructure/Persistence/PersistenceController.swift` | 수정 | 앱 시작 시 KFDAFoodImporter 호출, SampleFoods 폴백 |
+| `Data/Repositories/FoodRepository.swift` | 수정 | 연관성 점수 기반 검색 (정확일치 100 > 접두사 80 > 단어경계 60 > 부분일치 40) |
+| `Domain/Services/LocalFoodSearchService.swift` | 수정 | stable sort로 FoodRepository 연관성 순서 보존 |
+| `.gitignore` | 수정 | `Bodii/Resources/kfda_foods.json` 추가 (63.9MB는 git에 부적합) |
+
+**데이터 흐름**:
+```
+앱 첫 실행 → PersistenceController → KFDAFoodImporter
+  → Bundle.main의 kfda_foods.json (250,110개)
+  → Core Data 배치 삽입 (500개/배치, 백그라운드 컨텍스트)
+
+검색 "꿀" → LocalFoodSearchService → FoodRepository.search()
+  → Core Data CONTAINS[cd] 쿼리 (fetchLimit 200)
+  → 연관성 점수 정렬 → 상위 50개 반환
+  → (결과 5개 이상이면 API 폴백 생략)
+```
+
+**JSON 재생성 방법**:
+```bash
+python3 scripts/download_kfda_foods.py --api-key <KFDA_API_KEY> --all
+```
+
 ---
 
 ## 4. 남은 수정 필요 사항
@@ -308,5 +340,5 @@ find Bodii -name "Food*.swift"
 
 ---
 
-*문서 버전: 1.0*
-*최종 수정: 2026-01-19*
+*문서 버전: 1.1*
+*최종 수정: 2026-02-05*

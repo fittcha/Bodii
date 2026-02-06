@@ -297,13 +297,59 @@ final class PersistenceController {
             // 백그라운드 컨텍스트의 변경사항을 viewContext에 자동 반영
             self?.container.viewContext.automaticallyMergesChangesFromParent = true
 
-            // 초기 음식 데이터 시딩 (Food 테이블이 비어있을 때만)
-            self?.seedFoodDataIfNeeded()
+            // 기본 음식 데이터 시딩 (최초 1회)
+            if !inMemory {
+                self?.seedDefaultFoodsIfNeeded()
+            }
 
             #if DEBUG
             // 📚 학습 포인트: Core Data 모델 검증
             // 앱 시작 시 모든 엔티티가 정상적으로 로드되었는지 확인
             self?.verifyModelLoaded()
+            #endif
+        }
+    }
+
+    // MARK: - Data Seeding
+
+    /// KFDA 번들 음식 데이터를 백그라운드에서 임포트합니다 (최초 1회만 실행).
+    ///
+    /// `kfda_foods.json` 번들 파일이 있으면 전체 KFDA 데이터를 임포트하고,
+    /// 없으면 SampleFoods의 기본 22개 음식만 시딩합니다.
+    private func seedDefaultFoodsIfNeeded() {
+        let importer = KFDAFoodImporter(persistenceController: self)
+
+        Task {
+            let importedCount = await importer.importIfNeeded()
+
+            if importedCount > 0 {
+                #if DEBUG
+                print("✅ [PersistenceController] KFDA 음식 데이터 \(importedCount)개 임포트 완료")
+                #endif
+            } else {
+                // KFDA JSON이 없거나 이미 임포트된 경우, SampleFoods 시딩 시도
+                self.seedSampleFoodsIfNeeded()
+            }
+        }
+    }
+
+    /// SampleFoods 기본 데이터를 시딩합니다 (KFDA JSON이 없을 때 폴백).
+    private func seedSampleFoodsIfNeeded() {
+        let seedKey = "hasSeededDefaultFoods"
+        guard !UserDefaults.standard.bool(forKey: seedKey) else { return }
+
+        let context = container.viewContext
+        SampleFoods.createAllFoods(in: context)
+
+        do {
+            try context.save()
+            UserDefaults.standard.set(true, forKey: seedKey)
+            #if DEBUG
+            print("✅ [PersistenceController] 기본 음식 데이터 \(SampleFoods.allFoodData.count)개 시딩 완료")
+            #endif
+        } catch {
+            #if DEBUG
+            print("⚠️ [PersistenceController] 기본 음식 데이터 시딩 실패: \(error.localizedDescription)")
             #endif
         }
     }
@@ -324,30 +370,6 @@ final class PersistenceController {
             // 프로덕션에서는 사용자에게 알리거나 로깅 필요
             let nsError = error as NSError
             assertionFailure("Failed to save context: \(nsError), \(nsError.userInfo)")
-        }
-    }
-
-    // MARK: - Food Data Seeding
-
-    /// Food 테이블이 비어있으면 샘플 음식 데이터를 시딩합니다.
-    private func seedFoodDataIfNeeded() {
-        let context = container.viewContext
-        let request: NSFetchRequest<Food> = Food.fetchRequest()
-        request.fetchLimit = 1
-
-        do {
-            let count = try context.count(for: request)
-            if count == 0 {
-                SampleFoods.createAllFoods(in: context)
-                try context.save()
-                #if DEBUG
-                print("✅ [Core Data] 샘플 음식 데이터 시딩 완료 (\(SampleFoods.allFoodData.count)개)")
-                #endif
-            }
-        } catch {
-            #if DEBUG
-            print("❌ [Core Data] 음식 데이터 시딩 실패: \(error.localizedDescription)")
-            #endif
         }
     }
 

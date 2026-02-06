@@ -190,8 +190,36 @@ final class DIContainer {
         return UserRepository()
     }()
 
+    /// Food 리포지토리 (음식 데이터 CRUD)
+    lazy var foodRepository: FoodRepositoryProtocol = {
+        return FoodRepository(context: PersistenceController.shared.container.viewContext)
+    }()
+
+    /// Food 로컬 캐시 데이터 소스
+    lazy var foodLocalDataSource: FoodLocalDataSource = {
+        return FoodLocalDataSourceImpl(persistenceController: .shared)
+    }()
+
+    /// 통합 식품 검색 API 서비스 (KFDA + USDA)
+    lazy var unifiedFoodSearchService: UnifiedFoodSearchService = {
+        return UnifiedFoodSearchService(context: PersistenceController.shared.container.viewContext)
+    }()
+
+    /// 음식 검색 서비스 (로컬 DB 우선 + API 폴백)
+    lazy var foodSearchService: FoodSearchServiceProtocol = {
+        return LocalFoodSearchService(
+            foodRepository: foodRepository,
+            apiSearchService: unifiedFoodSearchService,
+            cacheDataSource: foodLocalDataSource
+        )
+    }()
+
+    /// 최근/자주 사용 음식 서비스
+    lazy var recentFoodsService: RecentFoodsServiceProtocol = {
+        return RecentFoodsService(foodRepository: foodRepository)
+    }()
+
     /// FoodRecord 리포지토리
-    /// 📚 학습 포인트: Food Record Data Access
     /// - 식단 기록 CRUD
     /// - 날짜별 식단 조회
     lazy var foodRecordRepository: FoodRecordRepositoryProtocol = {
@@ -609,6 +637,15 @@ extension DIContainer {
     }
 
     // MARK: - Diet ViewModels
+
+    /// FoodSearchViewModel 생성
+    @MainActor
+    func makeFoodSearchViewModel() -> FoodSearchViewModel {
+        return FoodSearchViewModel(
+            foodSearchService: foodSearchService,
+            recentFoodsService: recentFoodsService
+        )
+    }
 
     /// DietCommentViewModel 생성
     /// - Parameters:
