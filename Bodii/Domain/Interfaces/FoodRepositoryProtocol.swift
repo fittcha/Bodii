@@ -102,4 +102,16 @@ protocol FoodRepositoryProtocol {
     /// - Returns: 해당 출처의 음식 목록
     /// - Throws: Core Data 조회 중 발생한 에러
     func findBySource(_ source: FoodSource) async throws -> [Food]
+
+    // MARK: - Search Ranking
+
+    /// 음식의 검색 횟수를 증가시킵니다 (개인화 랭킹용).
+    ///
+    /// 사용자가 검색 결과에서 음식을 선택할 때 호출하여
+    /// searchCount를 1 증가시킵니다. 높은 searchCount를 가진 음식은
+    /// 검색 결과에서 더 높은 순위를 받습니다.
+    ///
+    /// - Parameter id: 검색 횟수를 증가시킬 음식 ID
+    /// - Throws: Core Data 저장 중 발생한 에러
+    func incrementSearchCount(_ id: UUID) async throws
 }

@@ -204,9 +204,23 @@ final class FoodRepository: FoodRepositoryProtocol {
             guard !trimmed.isEmpty else { return [] }
 
             let fetchRequest: NSFetchRequest<Food> = Food.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "name CONTAINS[cd] %@", trimmed)
-            // 결과 제한 (대량 데이터에서 메모리 보호)
-            fetchRequest.fetchLimit = 200
+
+            // 복합어 검색: 2글자 이상 단위로 분리하여 OR 검색
+            // 예: "팥도너츠" → "팥도너츠" OR "팥" OR "도너츠"
+            var predicates: [NSPredicate] = [
+                NSPredicate(format: "name CONTAINS[cd] %@", trimmed)
+            ]
+
+            // 검색어가 3글자 이상이면 부분 단어로 분리 검색
+            if trimmed.count >= 3 {
+                let subwords = self.extractSubwords(from: trimmed)
+                for subword in subwords {
+                    predicates.append(NSPredicate(format: "name CONTAINS[cd] %@", subword))
+                }
+            }
+
+            fetchRequest.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+            fetchRequest.fetchLimit = 500
 
             let results = try self.context.fetch(fetchRequest)
 
@@ -224,37 +238,83 @@ final class FoodRepository: FoodRepositoryProtocol {
                 return len1 < len2
             }
 
-            // 상위 50개만 반환
-            return Array(sorted.prefix(50))
+            return Array(sorted.prefix(200))
         }
+    }
+
+    /// 복합 검색어를 부분 단어로 분리합니다.
+    /// 예: "팥도너츠" → ["팥", "도너츠"], "치킨샐러드" → ["치킨", "샐러드"]
+    private func extractSubwords(from query: String) -> [String] {
+        // 한국어 복합어 분리: 2글자 이상의 유의미한 단위로 분리
+        var subwords: [String] = []
+
+        // 공백/특수문자로 분리
+        let spaceSplit = query.components(separatedBy: CharacterSet.whitespaces.union(.punctuationCharacters))
+            .filter { $0.count >= 2 }
+        if spaceSplit.count > 1 {
+            subwords.append(contentsOf: spaceSplit)
+        }
+
+        // 한국어 복합어 패턴 분리 (2~3글자 단위)
+        // "팥도너츠" → 앞 1글자 + 뒤, 앞 2글자 + 뒤 등
+        if query.count >= 3 && spaceSplit.count <= 1 {
+            let chars = Array(query)
+            for splitAt in 1..<chars.count {
+                let front = String(chars[0..<splitAt])
+                let back = String(chars[splitAt..<chars.count])
+                if front.count >= 1 && back.count >= 2 {
+                    subwords.append(back)
+                }
+                if front.count >= 2 && back.count >= 1 {
+                    subwords.append(front)
+                }
+            }
+        }
+
+        // 중복 제거 및 원본 쿼리 제외
+        let queryLower = query.lowercased()
+        return Array(Set(subwords)).filter { $0.lowercased() != queryLower }
     }
 
     /// 음식의 검색 연관성 점수를 계산합니다.
     ///
     /// 점수 체계:
     /// - 100: 정확히 일치 ("꿀" == "꿀")
-    /// - 80: 이름이 검색어로 시작 ("꿀떡" starts with "꿀")
-    /// - 60: 단어 경계에서 일치 ("생꿀" contains " 꿀" or "(꿀")
-    /// - 40: 부분 일치 ("아카시아꿀" contains "꿀")
+    /// - 90: 이름이 검색어로 시작 ("꿀떡" starts with "꿀")
+    /// - 85: 원재료 (이름에 _ 없음 + 짧은 이름, 전체 쿼리 포함)
+    /// - 70: 단어 경계에서 일치
+    /// - 50: 전체 검색어를 포함 (긴 이름)
+    /// - 30: 검색어 일부만 포함 (복합어 분리 검색 결과)
     /// - +10: 검색 횟수가 높은 음식 보너스
     private func relevanceScore(food: Food, query: String) -> Int {
         guard let foodName = food.name?.lowercased() else { return 0 }
 
         var score = 0
+        let containsFullQuery = foodName.contains(query)
 
         if foodName == query {
-            // 정확히 일치
             score = 100
         } else if foodName.hasPrefix(query) {
-            // 접두사 일치
-            score = 80
+            score = 90
+        } else if containsFullQuery {
+            // 전체 검색어 포함
+            let isSimpleName = !foodName.contains("_")
+            let isShort = foodName.count <= query.count + 5
+
+            if isSimpleName && isShort {
+                // 원재료 가능성 높음 (예: "생꿀", "참꿀")
+                score = 85
+            } else {
+                // 단어 경계 확인
+                let separators: [Character] = [" ", "(", ")", ",", "/", "_", "-"]
+                let isWordBoundary = separators.contains(where: { char in
+                    foodName.contains("\(char)\(query)")
+                })
+                score = isWordBoundary ? 70 : 50
+            }
         } else {
-            // 부분 일치 — 단어 경계 확인
-            let separators: [Character] = [" ", "(", ")", ",", "/", "_", "-"]
-            let isWordBoundary = separators.contains(where: { char in
-                foodName.contains("\(char)\(query)")
-            })
-            score = isWordBoundary ? 60 : 40
+            // 전체 검색어는 포함하지 않지만 부분 단어로 매칭됨 (복합어 분리)
+            score = 30
         }
 
         // 검색 횟수 보너스 (자주 조회된 음식 우선)
@@ -379,6 +439,25 @@ final class FoodRepository: FoodRepositoryProtocol {
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
 
             return try self.context.fetch(fetchRequest)
+        }
+    }
+
+    func incrementSearchCount(_ id: UUID) async throws {
+        try await context.perform { [weak self] in
+            guard let self = self else {
+                throw FoodRepositoryError.contextDeallocated
+            }
+
+            let fetchRequest: NSFetchRequest<Food> = Food.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            fetchRequest.fetchLimit = 1
+
+            guard let food = try self.context.fetch(fetchRequest).first else {
+                return
+            }
+
+            food.searchCount += 1
+            try self.context.save()
         }
     }
 

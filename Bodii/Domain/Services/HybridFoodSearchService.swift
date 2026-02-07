@@ -62,9 +62,9 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
         }
 
         // 3. 결과 병합 (로컬 우선, API 추가, 중복 제거, 관련도순 정렬)
-        // API에서 넉넉하게 가져왔으므로 관련도 상위 30개만 반환
+        // API에서 넉넉하게 가져왔으므로 관련도 상위 50개만 반환
         let merged = mergeResults(local: local, api: api, query: trimmed)
-        return Array(merged.prefix(30))
+        return Array(merged.prefix(50))
     }
 
     func getRecentFoods(userId: UUID) async throws -> [Food] {
@@ -111,22 +111,57 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
     private func fetchAPIResults(query: String) async -> [Food] {
         do {
             // 짧은 검색어는 원재료를 찾기 위해 더 많은 결과 필요
-            // KFDA API: maxPageSize=100, 짧은 검색어 시 10페이지 병렬 요청 → 최대 1000개
             let fetchLimit = query.count <= 2 ? 1000 : 100
-            let results = try await apiService.searchFoods(query: query, limit: fetchLimit)
-            // 검색 성공 시 경고 초기화
+            var results = try await apiService.searchFoods(query: query, limit: fetchLimit)
+
+            // 결과가 부족하면 동의어로 재검색
+            if results.count < 5 {
+                let syns = synonyms(for: query)
+                for syn in syns where syn != query {
+                    let extra = (try? await apiService.searchFoods(query: syn, limit: 50)) ?? []
+                    results.append(contentsOf: extra)
+                }
+            }
+
+            // 결과가 여전히 부족하고 3글자 이상 복합어면 분리 검색
+            if results.count < 5 && query.count >= 3 {
+                let subwords = extractSearchSubwords(from: query)
+                for subword in subwords {
+                    let extra = (try? await apiService.searchFoods(query: subword, limit: 50)) ?? []
+                    results.append(contentsOf: extra)
+                }
+            }
+
             await MainActor.run { apiWarning = nil }
             return results
         } catch {
             #if DEBUG
             print("⚠️ API search failed, using local results only: \(error.localizedDescription)")
             #endif
-            // API 실패 경고를 UI에 전달
             await MainActor.run {
                 apiWarning = "외부 검색 서버 연결 실패. 저장된 음식만 표시됩니다."
             }
             return []
         }
+    }
+
+    /// 복합 검색어를 API 검색용 부분 단어로 분리합니다.
+    /// 예: "팥도너츠" → ["팥", "도너츠"], "치킨샐러드" → ["치킨", "샐러드"]
+    private func extractSearchSubwords(from query: String) -> [String] {
+        var subwords: [String] = []
+        let chars = Array(query)
+
+        for splitAt in 1..<chars.count {
+            let front = String(chars[0..<splitAt])
+            let back = String(chars[splitAt..<chars.count])
+            // 앞뒤 모두 2글자 이상인 경우만 유의미한 분리
+            if front.count >= 2 && back.count >= 2 {
+                subwords.append(front)
+                subwords.append(back)
+            }
+        }
+
+        return Array(Set(subwords))
     }
 
     /// 로컬 + API 결과를 병합, 중복 제거, 관련도순 정렬합니다.
@@ -193,7 +228,19 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
     /// 음식 이름과 검색어의 관련도 점수
     ///
     /// KFDA 복합 식품명 ("카테고리_제품명")을 분석하여,
-    /// 카테고리 자체가 검색어와 관련 있는 식품을 우선합니다.
+    /// 원재료(짧고 단순한 이름)를 가공식품보다 우선합니다.
+    ///
+    /// 점수 체계:
+    /// - 100: 정확 일치 ("꿀" == "꿀")
+    /// - 90: 접두사 일치 ("꿀물" starts with "꿀")
+    /// - 85: 단순명 + 매우 짧은 이름 (≤ query+5자, 원재료 가능성 높음)
+    /// - 70: 단순명 + 짧은 이름 (≤ query+15자)
+    /// - 65: 복합명 카테고리 매칭 + 짧은 제품명 (≤15자)
+    /// - 60: 복합명 카테고리 매칭 + 긴 제품명
+    /// - 45: 복합명 제품명이 검색어로 시작
+    /// - 40: 단순명 + 긴 이름
+    /// - 20: 복합명 제품명에 검색어 포함
+    /// - 15: 슬래시 포함 복합명
     private func relevanceScore(name: String, query: String) -> Int {
         // 검색어의 동의어 목록 (검색어 자체 포함)
         let queries = synonyms(for: query)
@@ -203,9 +250,9 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
             return 100
         }
 
-        // 이름이 검색어로 시작 (예: "요거트, 플레인" / "요거트 드링크")
+        // 이름이 검색어로 시작 (예: "꿀물", "요거트 드링크")
         if queries.contains(where: { name.hasPrefix($0) }) {
-            return 80
+            return 90
         }
 
         // 복합 식품명 분석 (KFDA 형식: "카테고리_제품명")
@@ -214,18 +261,16 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
             let productName = String(name[name.index(after: underscoreIndex)...])
 
             // 카테고리가 검색어(동의어 포함)를 포함 → 해당 식품 종류
-            // 예: 검색어 "요거트" → "요구르트(액상)_플레인요거트" 카테고리에 "요구르트" 매칭
             if queries.contains(where: { category.contains($0) }) {
-                // 카테고리 매칭 + 제품명이 짧으면 원물에 가까움
                 if productName.count <= 15 {
-                    return 75
+                    return 65
                 }
-                return 70
+                return 60
             }
 
             // 제품명이 검색어로 시작 (예: "아이스크림_요거트 젤라또")
             if queries.contains(where: { productName.hasPrefix($0) }) {
-                return 50
+                return 45
             }
 
             // 제품명에 검색어 포함하지만 카테고리 무관 (예: "케이크_블루베리요거트")
@@ -241,16 +286,20 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
         let hasSlash = name.contains("/")
 
         if queries.contains(where: { name.contains($0) }) {
+            if !hasSlash && name.count <= query.count + 5 {
+                // 단순 이름 + 매우 짧음 → 원재료 가능성 높음 (예: "생꿀", "참꿀")
+                return 85
+            }
             if !hasSlash && name.count <= query.count + 15 {
-                // 단순 이름 + 검색어 포함 + 짧은 이름 → 원물 가능성 높음
-                return 60
+                // 단순 이름 + 짧은 이름 (예: "아카시아꿀")
+                return 70
             }
             if !hasSlash {
                 // 이름에 포함되지만 긴 이름
                 return 40
             }
             // 슬래시 포함 복합명
-            return 20
+            return 15
         }
 
         return 0
@@ -258,6 +307,7 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
 
     /// 검색어의 한국어 동의어 목록을 반환합니다.
     /// KFDA 데이터에서 같은 식품이 다른 표기로 등록된 경우를 처리합니다.
+    /// 복합어인 경우 각 부분의 동의어도 포함합니다.
     private func synonyms(for query: String) -> [String] {
         // 한국어 식품명 동의어 매핑
         let synonymMap: [[String]] = [
@@ -273,12 +323,30 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
         ]
 
         var result = [query]
+
+        // 정확히 일치하는 동의어 그룹 찾기
         for group in synonymMap {
             if group.contains(where: { $0 == query }) {
                 result = group
-                break
+                return result
             }
         }
+
+        // 복합어에서 동의어 부분 매칭
+        // 예: "팥도너츠" → query에 "도너츠"가 포함 → "도넛", "도나쓰" 등도 매칭 가능
+        for group in synonymMap {
+            for synonym in group {
+                if query.contains(synonym) {
+                    for altSynonym in group where altSynonym != synonym {
+                        let replaced = query.replacingOccurrences(of: synonym, with: altSynonym)
+                        if !result.contains(replaced) {
+                            result.append(replaced)
+                        }
+                    }
+                }
+            }
+        }
+
         return result
     }
 

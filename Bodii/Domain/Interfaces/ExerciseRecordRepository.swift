@@ -127,6 +127,17 @@ protocol ExerciseRecordRepository {
     /// - Returns: 운동 기록 배열 (없으면 빈 배열)
     func fetchAll(userId: UUID) async throws -> [ExerciseRecord]
 
+    /// HealthKit ID로 운동 기록을 조회합니다.
+    ///
+    /// HealthKit에서 가져온 운동의 중복 여부를 확인할 때 사용합니다.
+    ///
+    /// - Parameters:
+    ///   - healthKitId: HealthKit 원본 데이터 ID
+    ///   - userId: 사용자 ID
+    /// - Throws: 조회 실패 시 에러
+    /// - Returns: 조회된 운동 기록, 없으면 nil
+    func fetchByHealthKitId(_ healthKitId: String, userId: UUID) async throws -> ExerciseRecord?
+
     // MARK: - Update
 
     /// 기존 운동 기록을 수정합니다.

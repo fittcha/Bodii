@@ -103,36 +103,50 @@ final class ExerciseListViewModel {
     /// 일일 집계 저장소
     private let dailyLogRepository: DailyLogRepository
 
+    /// 운동 기록 저장소 (HealthKit 동기화용)
+    private let exerciseRepository: ExerciseRecordRepository
+
+    /// HealthKit 읽기 서비스
+    private let healthKitReadService: HealthKitReadService
+
+    /// HealthKit 인증 서비스
+    private let healthKitAuthService: HealthKitAuthorizationService
+
     /// 사용자 ID (private, but exposed via getter)
     private let _userId: UUID
 
     /// 사용자 ID를 공개적으로 노출
-    ///
-    /// ExerciseInputViewModel 생성 시 필요하므로 public getter 제공
     var userId: UUID {
         _userId
     }
 
+    /// HealthKit 동기화 중 여부
+    var isSyncingHealthKit: Bool = false
+
+    /// HealthKit 동기화 완료 메시지
+    var healthKitSyncMessage: String?
+
+    /// 마지막 동기화 날짜 키
+    private static let lastExerciseSyncDateKey = "lastExerciseSyncDate"
+
     // MARK: - Initialization
 
-    /// ExerciseListViewModel 초기화
-    ///
-    /// - Parameters:
-    ///   - getExerciseRecordsUseCase: 운동 기록 조회 유스케이스
-    ///   - deleteExerciseRecordUseCase: 운동 기록 삭제 유스케이스
-    ///   - dailyLogRepository: 일일 집계 저장소
-    ///   - userId: 사용자 ID
-    ///   - selectedDate: 초기 선택 날짜 (기본값: 오늘)
     init(
         getExerciseRecordsUseCase: GetExerciseRecordsUseCase,
         deleteExerciseRecordUseCase: DeleteExerciseRecordUseCase,
         dailyLogRepository: DailyLogRepository,
+        exerciseRepository: ExerciseRecordRepository,
+        healthKitReadService: HealthKitReadService,
+        healthKitAuthService: HealthKitAuthorizationService,
         userId: UUID,
         selectedDate: Date = Date()
     ) {
         self.getExerciseRecordsUseCase = getExerciseRecordsUseCase
         self.deleteExerciseRecordUseCase = deleteExerciseRecordUseCase
         self.dailyLogRepository = dailyLogRepository
+        self.exerciseRepository = exerciseRepository
+        self.healthKitReadService = healthKitReadService
+        self.healthKitAuthService = healthKitAuthService
         self._userId = userId
         self.selectedDate = selectedDate
     }
@@ -152,6 +166,7 @@ final class ExerciseListViewModel {
     @MainActor
     func onAppear() {
         Task {
+            await syncHealthKitWorkoutsIfNeeded()
             await loadData()
         }
     }
@@ -345,6 +360,87 @@ final class ExerciseListViewModel {
 
         } catch {
             errorMessage = "운동 기록 삭제 실패: \(error.localizedDescription)"
+        }
+    }
+
+    // MARK: - HealthKit Sync
+
+    /// HealthKit 운동 동기화 (하루 1회 제한)
+    @MainActor
+    func syncHealthKitWorkoutsIfNeeded() async {
+        // 권한 확인
+        guard healthKitAuthService.isHealthDataAvailable(),
+              healthKitAuthService.isAuthorizedForWorkouts else {
+            return
+        }
+
+        // 하루 1회 제한 확인
+        if let lastSync = UserDefaults.standard.object(forKey: Self.lastExerciseSyncDateKey) as? Date,
+           Calendar.current.isDateInToday(lastSync) {
+            return
+        }
+
+        await syncHealthKitWorkouts()
+    }
+
+    /// HealthKit 운동 강제 동기화
+    @MainActor
+    func syncHealthKitWorkouts() async {
+        guard !isSyncingHealthKit else { return }
+
+        isSyncingHealthKit = true
+        defer { isSyncingHealthKit = false }
+
+        do {
+            let calendar = Calendar.current
+            let endDate = Date()
+            guard let startDate = calendar.date(byAdding: .day, value: -7, to: endDate) else { return }
+
+            // HealthKit에서 운동 가져오기
+            let workouts = try await healthKitReadService.fetchWorkouts(from: startDate, to: endDate)
+
+            var importedCount = 0
+            let mapper = HealthKitMapper()
+
+            for workoutData in workouts {
+                let dto = mapper.mapToExerciseDataDTO(from: workoutData)
+                let healthKitId = dto.healthKitId ?? workoutData.healthKitId.uuidString
+
+                // 중복 체크
+                if let _ = try? await exerciseRepository.fetchByHealthKitId(healthKitId, userId: _userId) {
+                    continue
+                }
+
+                // 새로운 운동 기록 저장
+                _ = try await exerciseRepository.createRecord(
+                    userId: _userId,
+                    date: dto.date,
+                    exerciseType: dto.exerciseType,
+                    duration: dto.duration,
+                    intensity: dto.intensity,
+                    caloriesBurned: dto.caloriesBurned,
+                    note: nil,
+                    fromHealthKit: true,
+                    healthKitId: healthKitId
+                )
+                importedCount += 1
+            }
+
+            // 마지막 동기화 시간 저장
+            UserDefaults.standard.set(Date(), forKey: Self.lastExerciseSyncDateKey)
+
+            if importedCount > 0 {
+                healthKitSyncMessage = "Apple 건강에서 \(importedCount)개 운동을 가져왔습니다"
+                await loadData()
+
+                // 3초 후 메시지 제거
+                Task {
+                    try? await Task.sleep(nanoseconds: 3_000_000_000)
+                    healthKitSyncMessage = nil
+                }
+            }
+        } catch {
+            print("❌ HealthKit 운동 동기화 실패: \(error.localizedDescription)")
         }
     }
 }

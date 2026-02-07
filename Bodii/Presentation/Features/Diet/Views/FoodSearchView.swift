@@ -206,7 +206,29 @@ struct FoodSearchView: View {
 
     @ViewBuilder
     private var searchContent: some View {
-        if viewModel.isSearching {
+        if viewModel.hasSearchResults {
+            ScrollView {
+                VStack(spacing: 0) {
+                    // API 검색 중 인디케이터 (검색 버튼 탭 시에만)
+                    if viewModel.isSearching {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .tint(.accentColor)
+                            Text("추가 검색 중...")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                    }
+
+                    searchResultsSection
+                        .padding(.vertical)
+                }
+            }
+        } else if viewModel.isSearching {
+            // 결과 없이 API 검색 중 (첫 검색)
             Spacer()
             VStack(spacing: 16) {
                 ProgressView()
@@ -217,11 +239,6 @@ struct FoodSearchView: View {
                     .foregroundColor(.secondary)
             }
             Spacer()
-        } else if viewModel.hasSearchResults {
-            ScrollView {
-                searchResultsSection
-                    .padding(.vertical)
-            }
         } else {
             // 검색 결과 없음
             VStack(spacing: 16) {
@@ -231,10 +248,24 @@ struct FoodSearchView: View {
                 Text("검색 결과가 없습니다")
                     .font(.headline)
                     .foregroundColor(.primary)
-                Text("다른 검색어를 입력하거나\n수동으로 음식을 추가해보세요")
+                Text("검색 버튼을 눌러 더 많은 결과를 찾거나\n수동으로 음식을 추가해보세요")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
+
+                Button(action: onManualEntry) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus.circle")
+                        Text("직접 입력하기")
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Color.accentColor)
+                    .cornerRadius(8)
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding()
@@ -305,10 +336,16 @@ struct FoodSearchView: View {
     /// 검색 결과 섹션
     private var searchResultsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("검색 결과")
-                .font(.headline)
-                .foregroundColor(.primary)
-                .padding(.horizontal)
+            HStack {
+                Text("검색 결과")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Text("\(viewModel.searchResults.count)건")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal)
 
             foodListView(foods: viewModel.searchResults)
         }
@@ -329,7 +366,10 @@ struct FoodSearchView: View {
     private func foodListView(foods: [Food]) -> some View {
         VStack(spacing: 0) {
             ForEach(foods) { food in
-                Button(action: { onSelectFood(food) }) {
+                Button(action: {
+                    viewModel.onFoodSelected(food)
+                    onSelectFood(food)
+                }) {
                     FoodSearchResultRow(food: food)
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -350,7 +390,10 @@ struct FoodSearchView: View {
             ForEach(foods) { food in
                 HStack {
                     // 탭: 식단에 추가
-                    Button(action: { onSelectFood(food) }) {
+                    Button(action: {
+                        viewModel.onFoodSelected(food)
+                        onSelectFood(food)
+                    }) {
                         FoodSearchResultRow(food: food)
                     }
                     .buttonStyle(PlainButtonStyle())
