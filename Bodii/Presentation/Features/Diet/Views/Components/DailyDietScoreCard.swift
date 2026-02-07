@@ -52,17 +52,52 @@ struct DailyDietScoreCard: View {
                 // 점수 원형 배지
                 scoreBadge(comment.dietScore, score: comment.score)
 
-                // 요약 텍스트
+                // 요약 텍스트 + 마이크로 인디케이터
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("오늘의 식단 총평")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 6) {
+                        Text("오늘의 식단 총평")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        // 점수 등급 라벨
+                        Text(comment.dietScore.displayName)
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(comment.dietScore.color)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 1)
+                            .background(comment.dietScore.color.opacity(0.12))
+                            .cornerRadius(3)
+                    }
 
                     Text(comment.summary)
                         .font(.subheadline)
                         .foregroundStyle(.primary)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
+
+                    // 잘한 점 / 개선점 마이크로 인디케이터
+                    HStack(spacing: 10) {
+                        if !comment.goodPoints.isEmpty {
+                            HStack(spacing: 3) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.green)
+                                Text("\(comment.goodPoints.count)개 잘함")
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        if !comment.improvements.isEmpty {
+                            HStack(spacing: 3) {
+                                Image(systemName: "arrow.up.circle.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.orange)
+                                Text("\(comment.improvements.count)개 개선")
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
                 }
 
                 Spacer(minLength: 4)

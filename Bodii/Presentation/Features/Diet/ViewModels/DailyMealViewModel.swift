@@ -477,6 +477,11 @@ extension DailyMealViewModel {
         return mealGroups.values.contains { !$0.isEmpty }
     }
 
+    /// 하루 전체 음식 기록 수
+    var totalFoodRecordCount: Int {
+        return mealGroups.values.reduce(0) { $0 + $1.count }
+    }
+
     /// foodRecordId로 FoodRecordWithFood를 찾습니다.
     ///
     /// - Parameter foodRecordId: 식단 기록 ID

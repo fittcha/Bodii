@@ -23,6 +23,9 @@ struct BodyCompositionInputCard: View {
     /// 근육량 입력 바인딩 (kg)
     @Binding var muscleMass: String
 
+    /// 입력 날짜 바인딩
+    @Binding var date: Date
+
     // MARK: - Optional Properties
 
     /// 검증 에러 메시지 배열
@@ -52,6 +55,9 @@ struct BodyCompositionInputCard: View {
         VStack(alignment: .leading, spacing: 16) {
             // 카드 헤더
             cardHeader
+
+            // 날짜 선택
+            datePickerSection
 
             // 입력 필드 섹션
             inputFieldsSection
@@ -85,6 +91,18 @@ struct BodyCompositionInputCard: View {
 
             Spacer()
         }
+    }
+
+    /// 날짜 선택 섹션
+    private var datePickerSection: some View {
+        DatePicker(
+            "측정일",
+            selection: $date,
+            in: ...Date(),
+            displayedComponents: .date
+        )
+        .datePickerStyle(.compact)
+        .disabled(!isEnabled)
     }
 
     /// 입력 필드 섹션
@@ -236,11 +254,13 @@ extension BodyCompositionInputCard {
     init(
         weight: Binding<String>,
         bodyFatPercent: Binding<String>,
-        muscleMass: Binding<String>
+        muscleMass: Binding<String>,
+        date: Binding<Date>
     ) {
         self._weight = weight
         self._bodyFatPercent = bodyFatPercent
         self._muscleMass = muscleMass
+        self._date = date
         self.validationMessages = nil
         self.isEnabled = true
         self.onInputChanged = nil
@@ -254,6 +274,7 @@ extension BodyCompositionInputCard {
         @State private var weight = ""
         @State private var bodyFatPercent = ""
         @State private var muscleMass = ""
+        @State private var date = Date()
 
         var body: some View {
             ScrollView {
@@ -261,7 +282,8 @@ extension BodyCompositionInputCard {
                     BodyCompositionInputCard(
                         weight: $weight,
                         bodyFatPercent: $bodyFatPercent,
-                        muscleMass: $muscleMass
+                        muscleMass: $muscleMass,
+                        date: $date
                     )
                 }
                 .padding()

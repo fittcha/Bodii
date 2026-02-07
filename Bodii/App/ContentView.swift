@@ -21,7 +21,7 @@ struct ContentView: View {
     // 📚 학습 포인트: @State
     // View 내부에서 변경 가능한 상태를 관리
     // 탭 선택 상태를 추적하여 현재 활성 탭을 기억
-    @State private var selectedTab: Tab = .dashboard
+    @State private var selectedTab: Tab = .home
 
     // 📚 학습 포인트: 현재 사용자 데이터
     // Core Data에서 조회한 실제 사용자 정보
@@ -50,7 +50,7 @@ struct ContentView: View {
         // selection 바인딩을 통해 프로그래밍적으로 탭 전환 가능
         // 💡 Java 비교: ViewPager + TabLayout 조합과 유사
         TabView(selection: $selectedTab) {
-            dashboardTab
+            homeTab
             bodyTab
             dietTab
             exerciseTab
@@ -109,15 +109,16 @@ struct ContentView: View {
 
     // MARK: - Tab Views
 
-    private var dashboardTab: some View {
+    private var homeTab: some View {
         let userId = currentUserId ?? UserProfile.sample.id
         let viewModel = DIContainer.shared.makeHomeViewModel(userId: userId)
+        let goalProgressViewModel = DIContainer.shared.makeGoalProgressViewModel()
 
-        return HomeView(viewModel: viewModel)
+        return HomeView(viewModel: viewModel, goalProgressViewModel: goalProgressViewModel)
             .tabItem {
                 Label("홈", systemImage: "house.fill")
             }
-            .tag(Tab.dashboard)
+            .tag(Tab.home)
     }
 
     private var bodyTab: some View {
@@ -232,7 +233,7 @@ struct ContentView: View {
 // 📚 학습 포인트: Hashable protocol
 // 탭 선택에서 각 탭을 고유하게 식별하기 위해 필요
 private enum Tab: Hashable {
-    case dashboard
+    case home
     case body
     case diet
     case exercise

@@ -141,12 +141,14 @@ enum Constants {
     // MARK: - Diet Score Ranges
 
     enum DietScore {
+        static let excellentMin: Int = 9
+        static let excellentMax: Int = 10
         static let greatMin: Int = 8
-        static let greatMax: Int = 10
-        static let goodMin: Int = 5
+        static let greatMax: Int = 8
+        static let goodMin: Int = 6
         static let goodMax: Int = 7
         static let needsWorkMin: Int = 0
-        static let needsWorkMax: Int = 4
+        static let needsWorkMax: Int = 5
     }
 
     // MARK: - API Limits

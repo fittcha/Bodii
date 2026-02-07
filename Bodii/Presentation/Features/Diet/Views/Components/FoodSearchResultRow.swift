@@ -34,11 +34,16 @@ struct FoodSearchResultRow: View {
     var body: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
-                // 음식 이름
-                Text(food.name ?? "알 수 없는 음식")
-                    .font(.body)
-                    .fontWeight(.medium)
-                    .foregroundColor(.primary)
+                // 음식 이름 + 유형 배지
+                HStack(spacing: 6) {
+                    Text(displayName)
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+
+                    foodTypeBadge
+                }
 
                 // 1회 제공량 정보
                 Text(servingSizeText)
@@ -74,6 +79,51 @@ struct FoodSearchResultRow: View {
         }
         .padding()
         .contentShape(Rectangle())
+    }
+
+    // MARK: - Food Type
+
+    /// 원재료 여부 (이름에 '_' 없음 + 10자 이하)
+    private var isRawIngredient: Bool {
+        guard let name = food.name else { return false }
+        return !name.contains("_") && name.count <= 10
+    }
+
+    /// 가공식품 여부 (이름에 '_' 포함 = KFDA 복합명)
+    private var isProcessedFood: Bool {
+        guard let name = food.name else { return false }
+        return name.contains("_")
+    }
+
+    /// 표시용 이름 (카테고리_제품명 → 제품명만 표시)
+    private var displayName: String {
+        guard let name = food.name else { return "알 수 없는 음식" }
+        if let underscoreIndex = name.firstIndex(of: "_") {
+            return String(name[name.index(after: underscoreIndex)...])
+        }
+        return name
+    }
+
+    /// 음식 유형 배지
+    @ViewBuilder
+    private var foodTypeBadge: some View {
+        if isRawIngredient {
+            Text("원재료")
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundColor(.green)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 2)
+                .background(Color.green.opacity(0.12))
+                .cornerRadius(3)
+        } else if isProcessedFood {
+            Text("가공식품")
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundColor(.orange)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 2)
+                .background(Color.orange.opacity(0.12))
+                .cornerRadius(3)
+        }
     }
 
     // MARK: - Helpers

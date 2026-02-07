@@ -21,14 +21,22 @@ struct HomeView: View {
     // MARK: - Properties
 
     @StateObject private var viewModel: HomeViewModel
+    @StateObject private var goalProgressViewModel: GoalProgressViewModel
 
     /// 현재 선택된 카드 인덱스 (0: 캘린더, 1: 그래프)
     @State private var selectedCardIndex: Int = 0
 
+    /// 목표 진행상황 화면 표시 여부
+    @State private var showGoalProgress = false
+
+    /// 목표 설정 화면 표시 여부
+    @State private var showGoalSetting = false
+
     // MARK: - Initialization
 
-    init(viewModel: HomeViewModel) {
+    init(viewModel: HomeViewModel, goalProgressViewModel: GoalProgressViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self._goalProgressViewModel = StateObject(wrappedValue: goalProgressViewModel)
     }
 
     // MARK: - Body
@@ -45,6 +53,9 @@ struct HomeView: View {
                 // 스와이프 카드 (주간 캘린더 | 체성분 그래프)
                 swipeCardSection
 
+                // 목표 진행상황
+                goalSection
+
                 // AI 한줄평
                 aiCommentSection
             }
@@ -54,9 +65,33 @@ struct HomeView: View {
         .background(Color(.systemGroupedBackground))
         .task {
             await viewModel.loadData()
+            await goalProgressViewModel.loadProgress()
         }
         .refreshable {
             await viewModel.loadData()
+            await goalProgressViewModel.loadProgress()
+        }
+        .sheet(isPresented: $showGoalProgress) {
+            let goalProgressVM = DIContainer.shared.makeGoalProgressViewModel()
+            GoalProgressView(
+                viewModel: goalProgressVM,
+                onEditGoal: {
+                    showGoalProgress = false
+                    showGoalSetting = true
+                }
+            )
+        }
+        .sheet(isPresented: $showGoalSetting) {
+            let goalSettingVM = DIContainer.shared.makeGoalSettingViewModel(userId: viewModel.userId)
+            GoalSettingView(
+                viewModel: goalSettingVM,
+                onSaveSuccess: {
+                    showGoalSetting = false
+                    Task {
+                        await goalProgressViewModel.loadProgress()
+                    }
+                }
+            )
         }
     }
 
@@ -264,6 +299,222 @@ struct HomeView: View {
         }
     }
 
+    // MARK: - Goal Section
+
+    private var goalSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if goalProgressViewModel.isLoading {
+                // 로딩 상태
+                goalLoadingCard
+            } else if goalProgressViewModel.hasNoActiveGoal {
+                // 활성 목표 없음 - CTA 표시
+                goalEmptyCard
+            } else if goalProgressViewModel.hasGoal {
+                // 활성 목표 있음 - 진행상황 요약 표시
+                goalProgressCard
+            }
+        }
+    }
+
+    /// 목표 로딩 카드
+    private var goalLoadingCard: some View {
+        VStack(spacing: 12) {
+            ProgressView()
+            Text("목표 정보를 불러오는 중...")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 24)
+        .background(Color(.systemBackground))
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+    }
+
+    /// 목표 비어있음 카드
+    private var goalEmptyCard: some View {
+        Button {
+            showGoalSetting = true
+        } label: {
+            HStack {
+                Image(systemName: "target")
+                    .font(.title3)
+                    .foregroundStyle(.blue)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("목표 설정하기")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+
+                    Text("목표를 설정하고 진행상황을 추적하세요")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(16)
+            .background(Color(.systemBackground))
+            .cornerRadius(16)
+            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// 목표 진행상황 카드
+    private var goalProgressCard: some View {
+        Button {
+            showGoalProgress = true
+        } label: {
+            VStack(alignment: .leading, spacing: 12) {
+                // 헤더
+                HStack {
+                    Image(systemName: "target")
+                        .font(.title3)
+                        .foregroundStyle(.blue)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("목표 진행상황")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.primary)
+
+                        if let goalTypeRaw = goalProgressViewModel.currentGoal?.goalType,
+                           let goalType = GoalType(rawValue: goalTypeRaw) {
+                            Text(goalType.displayName)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    Spacer()
+
+                    // 진행률 배지
+                    HStack(spacing: 4) {
+                        let overallProgress = goalProgressViewModel.overallProgress
+                        Text("\(NSDecimalNumber(decimal: overallProgress).intValue)%")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.blue)
+
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                // 프로그레스 바
+                GeometryReader { geometry in
+                    let overallProgress = goalProgressViewModel.overallProgress
+                    let progressValue = min(NSDecimalNumber(decimal: overallProgress).doubleValue / 100.0, 1.0)
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color(.systemGray5))
+                            .frame(height: 8)
+
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(goalProgressGradient(for: overallProgress))
+                            .frame(width: geometry.size.width * progressValue, height: 8)
+                    }
+                }
+                .frame(height: 8)
+
+                // 목표별 요약
+                HStack(spacing: 12) {
+                    if let weightProgress = goalProgressViewModel.weightProgress {
+                        goalMetricPill(
+                            icon: "scalemass",
+                            value: "\(NSDecimalNumber(decimal: weightProgress.percentage).intValue)%",
+                            label: "체중",
+                            color: .blue
+                        )
+                    }
+
+                    if let bodyFatProgress = goalProgressViewModel.bodyFatProgress {
+                        goalMetricPill(
+                            icon: "percent",
+                            value: "\(NSDecimalNumber(decimal: bodyFatProgress.percentage).intValue)%",
+                            label: "체지방",
+                            color: .orange
+                        )
+                    }
+
+                    if let muscleProgress = goalProgressViewModel.muscleProgress {
+                        goalMetricPill(
+                            icon: "figure.strengthtraining.traditional",
+                            value: "\(NSDecimalNumber(decimal: muscleProgress.percentage).intValue)%",
+                            label: "근육량",
+                            color: .green
+                        )
+                    }
+                }
+            }
+            .padding(16)
+            .background(Color(.systemBackground))
+            .cornerRadius(16)
+            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// 목표 지표 필
+    private func goalMetricPill(
+        icon: String,
+        value: String,
+        label: String,
+        color: Color
+    ) -> some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption2)
+                    .foregroundStyle(color)
+
+                Text(value)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(color)
+            }
+
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 6)
+        .background(color.opacity(0.1))
+        .cornerRadius(8)
+    }
+
+    /// 진행률 그래디언트
+    private func goalProgressGradient(for progress: Decimal) -> LinearGradient {
+        let value = NSDecimalNumber(decimal: progress).doubleValue
+        let startColor: Color
+        let endColor: Color
+
+        if value < 33 {
+            startColor = .red
+            endColor = .orange
+        } else if value < 66 {
+            startColor = .orange
+            endColor = .yellow
+        } else {
+            startColor = .yellow
+            endColor = .green
+        }
+
+        return LinearGradient(
+            colors: [startColor, endColor],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
     // MARK: - AI Comment Section
 
     private var aiCommentSection: some View {
@@ -322,7 +573,7 @@ final class HomeViewModel: ObservableObject {
 
     // MARK: - Private Properties
 
-    private let userId: UUID
+    let userId: UUID
     private let sleepRepository: SleepRepositoryProtocol
     private let dietCommentRepository: DietCommentRepository
     private let bodyRepository: BodyRepositoryProtocol

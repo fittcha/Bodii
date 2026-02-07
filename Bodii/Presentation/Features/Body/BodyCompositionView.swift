@@ -189,6 +189,7 @@ struct BodyCompositionView: View {
                         weight: $viewModel.weightInput,
                         bodyFatPercent: $viewModel.bodyFatPercentInput,
                         muscleMass: $viewModel.muscleMassInput,
+                        date: $viewModel.inputDate,
                         validationMessages: viewModel.validationMessages,
                         isEnabled: !viewModel.isSaving,
                         onInputChanged: {

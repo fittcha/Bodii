@@ -154,6 +154,10 @@ final class ExerciseRecordRepositoryImpl: ExerciseRecordRepository {
         return try await localDataSource.fetchAll(userId: userId)
     }
 
+    func fetchByHealthKitId(_ healthKitId: String, userId: UUID) async throws -> ExerciseRecord? {
+        return try await localDataSource.fetchByHealthKitId(healthKitId, userId: userId)
+    }
+
     // MARK: - Update
 
     /// 기존 운동 기록을 수정합니다.

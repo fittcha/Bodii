@@ -411,19 +411,74 @@ final class GeminiService: GeminiServiceProtocol {
         // 끼니별 음식 목록 구성
         let mealSection = buildMealSection(foodRecords: foodRecords, mealType: mealType)
 
-        // 총 영양소 계산
+        // 총 영양소 계산 (매크로 + 미량 영양소)
         let totalCalories = foodRecords.reduce(0) { $0 + Int($1.calculatedCalories) }
         let totalCarbs = foodRecords.reduce(Decimal(0)) { $0 + ($1.calculatedCarbs?.decimalValue ?? 0) }
         let totalProtein = foodRecords.reduce(Decimal(0)) { $0 + ($1.calculatedProtein?.decimalValue ?? 0) }
         let totalFat = foodRecords.reduce(Decimal(0)) { $0 + ($1.calculatedFat?.decimalValue ?? 0) }
+
+        // 미량 영양소
+        let totalSodium = foodRecords.reduce(Decimal(0)) { $0 + ($1.food?.sodium?.decimalValue ?? 0) }
+        let totalFiber = foodRecords.reduce(Decimal(0)) { $0 + ($1.food?.fiber?.decimalValue ?? 0) }
+        let totalSugar = foodRecords.reduce(Decimal(0)) { $0 + ($1.food?.sugar?.decimalValue ?? 0) }
+
+        // 끼니별 칼로리 분배 계산
+        let allMealTypes: [MealType] = [.breakfast, .lunch, .dinner, .snack]
+        var mealCalorieBreakdown: [String] = []
+        for meal in allMealTypes {
+            let mealCals = foodRecords
+                .filter { $0.mealType == Int16(meal.rawValue) }
+                .reduce(0) { $0 + Int($1.calculatedCalories) }
+            if mealCals > 0 {
+                let percentage = totalCalories > 0 ? Int(Double(mealCals) / Double(totalCalories) * 100) : 0
+                mealCalorieBreakdown.append("- \(meal.displayName): \(mealCals) kcal (\(percentage)%)")
+            }
+        }
+        let mealBreakdownText = mealCalorieBreakdown.isEmpty ? "없음" : mealCalorieBreakdown.joined(separator: "\n")
+
+        // 현재 시간 컴포넌트 (시간대별 평가용)
+        let currentHour = Calendar.current.component(.hour, from: Date())
+
+        // 시간대별 평가 지침
+        let timeBasedGuideline: String
+        if currentHour < 10 {
+            timeBasedGuideline = """
+            현재 아침 시간입니다. 아직 하루가 시작되었으므로 기록된 식사만으로 판단하되, \
+            아침 식사의 영양 균형을 중점 평가하세요. 아직 기록되지 않은 끼니는 이후에 먹을 수 있으므로 \
+            총 칼로리 부족에 대해 감점하지 마세요.
+            """
+        } else if currentHour < 14 {
+            timeBasedGuideline = """
+            현재 점심 시간대입니다. 아침과 점심 기록을 중심으로 평가하세요. \
+            아직 저녁 식사를 하지 않았을 수 있으므로 총 칼로리 부족에 대해 크게 감점하지 마세요. \
+            다만 아침을 거른 경우 개선점으로 언급해도 좋습니다.
+            """
+        } else if currentHour < 18 {
+            timeBasedGuideline = """
+            현재 오후 시간입니다. 아침과 점심 기록을 중심으로 평가하되, \
+            저녁 식사를 아직 하지 않았을 수 있습니다. \
+            현재까지 섭취량이 권장량의 50% 미만이면 개선점으로 언급하세요.
+            """
+        } else if currentHour < 21 {
+            timeBasedGuideline = """
+            현재 저녁 시간입니다. 하루 대부분의 식사가 완료되었을 것으로 판단합니다. \
+            총 칼로리가 권장량에 크게 부족하거나 초과하면 엄격하게 평가하세요. \
+            끼니를 거른 경우 감점 요소입니다.
+            """
+        } else {
+            timeBasedGuideline = """
+            현재 밤 시간입니다. 하루 식사가 거의 완료되었으므로 엄격하게 평가하세요. \
+            총 칼로리와 영양소 균형을 종합적으로 판단하세요. \
+            야식이 포함된 경우 체중 관리 관점에서 개선점을 제안하세요.
+            """
+        }
 
         // 프롬프트 생성
         let prompt = """
         당신은 한국 음식 및 세계 음식에 정통한 전문 영양사입니다. 사용자의 식단을 분석하고 개선점을 제안해주세요.
 
         **현재 시간:** \(nowString)
-        현재 시간 기준으로, 아직 기록되지 않은 끼니는 이후에 먹을 수 있으므로 참고만 하세요.
-        단, 저녁 시간(18시 이후)인데 하루 총 섭취량이 권장량에 크게 부족하면 엄격하게 평가하세요.
+        \(timeBasedGuideline)
 
         **사용자 정보:**
         - 목표: \(goalDescription)
@@ -433,14 +488,25 @@ final class GeminiService: GeminiServiceProtocol {
         **섭취 내역:**
         \(mealSection)
 
-        **합계:** \(totalCalories) kcal (탄수화물 \(totalCarbs)g / 단백질 \(totalProtein)g / 지방 \(totalFat)g)
+        **매크로 합계:** \(totalCalories) kcal (탄수화물 \(totalCarbs)g / 단백질 \(totalProtein)g / 지방 \(totalFat)g)
+
+        **미량 영양소 합계:**
+        - 나트륨: \(totalSodium)mg (권장 2000mg 이하)
+        - 식이섬유: \(totalFiber)g (권장 25-30g)
+        - 당류: \(totalSugar)g (권장 50g 이하)
+
+        **끼니별 칼로리 분배:**
+        \(mealBreakdownText)
+        이상적 분배: 아침 20-25% / 점심 35-40% / 저녁 30-35% / 간식 5-10%
 
         **분석 지침:**
         1. 음식의 특성(나트륨, 발효식품, 영양 구성 등)을 고려하세요
         2. 사용자의 목표(\(goalType.displayName))에 맞는 조언을 제공하세요
         3. 하루 권장 섭취량(\(targetCalories) kcal) 대비 현재 섭취량을 분석하세요
         4. 매크로 영양소(탄수화물/단백질/지방) 균형을 평가하세요
-        5. 구체적인 음식명을 언급하며 실행 가능한 개선점을 제안하세요
+        5. 끼니별 칼로리 분배가 적절한지 평가하세요 (한 끼에 몰아먹기 주의)
+        6. 나트륨, 식이섬유, 당류 섭취량을 평가하세요
+        7. 구체적인 음식명을 언급하며 실행 가능한 개선점을 제안하세요
 
         **출력 형식:**
         다음 JSON 형식으로만 응답해주세요. 다른 설명이나 텍스트는 포함하지 마세요.
@@ -452,18 +518,18 @@ final class GeminiService: GeminiServiceProtocol {
           "score": 7
         }
 
-        **점수 기준 (엄격하게 적용):**
-        - 9-10점: 최우수 (권장량에 근접하고 영양 균형이 훌륭함)
-        - 7-8점: 우수 (대체로 좋으나 소폭 개선 여지)
-        - 5-6점: 보통 (일부 영양소 불균형 또는 섭취량 편차)
-        - 3-4점: 미흡 (섭취량 크게 부족/초과 또는 영양 불균형 심각)
-        - 0-2점: 매우 부족 (끼니 대부분 누락 또는 극단적 불균형)
+        **점수 기준 (매우 까다롭게 적용 — 9점 이상은 정말 뛰어난 식단에만 부여):**
+        - 9-10점: 매우 좋음 — 권장 칼로리 ±5% 이내, 3대 영양소 균형 완벽, 나트륨/식이섬유/당류 모두 적정, 끼니 분배 균등
+        - 8점: 좋음 — 권장 칼로리 ±10% 이내, 영양소 대체로 균형, 사소한 개선점 1-2개
+        - 6-7점: 보통 — 칼로리 ±20% 이내이나 일부 영양소 불균형, 또는 끼니 분배 치우침
+        - 4-5점: 미흡 — 칼로리 ±30% 이상 편차, 또는 2개 이상 영양소 심각한 불균형
+        - 0-3점: 매우 부족 — 끼니 대부분 누락, 극단적 칼로리 과잉/부족, 또는 영양소 극도 편향
 
         **제약 조건:**
         - goodPoints, improvements는 각각 2-4개 항목
         - 모든 텍스트는 한국어로 작성
         - 구체적이고 실행 가능한 조언 제공
-        - 긍정적이고 격려하는 톤 유지
+        - 긍정적이고 격려하는 톤 유지하되, 점수는 엄격하게
         """
 
         return prompt

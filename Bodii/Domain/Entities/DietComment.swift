@@ -155,10 +155,10 @@ struct DietComment {
 /// 각 등급은 시각적 피드백을 위한 색상 매핑을 제공합니다.
 ///
 /// - Cases:
-///   - excellent: 최고 (9-10점) - 파란색
-///   - great: 좋음 (7-8점) - 초록색
-///   - good: 보통 (4-6점) - 노란색
-///   - needsWork: 개선 필요 (0-3점) - 빨간색
+///   - excellent: 매우 좋음 (9-10점) - 파란색
+///   - great: 좋음 (8점) - 초록색
+///   - good: 보통 (6-7점) - 노란색
+///   - needsWork: 개선 필요 (0-5점) - 빨간색
 ///
 /// - Example:
 /// ```swift
@@ -175,7 +175,7 @@ enum DietScore: String, CaseIterable, Codable {
     /// 사용자에게 표시할 등급 이름
     var displayName: String {
         switch self {
-        case .excellent: return "최고"
+        case .excellent: return "매우 좋음"
         case .great: return "좋음"
         case .good: return "보통"
         case .needsWork: return "개선 필요"
@@ -203,17 +203,17 @@ enum DietScore: String, CaseIterable, Codable {
     /// - Returns: 점수에 해당하는 식단 평가 등급
     ///
     /// 등급 기준:
-    /// - excellent: 9-10점 (최고)
-    /// - great: 7-8점 (좋음)
-    /// - good: 4-6점 (보통)
-    /// - needsWork: 0-3점 (개선 필요)
+    /// - excellent: 9-10점 (매우 좋음)
+    /// - great: 8점 (좋음)
+    /// - good: 6-7점 (보통)
+    /// - needsWork: 0-5점 (개선 필요)
     static func from(score: Int) -> DietScore {
         switch score {
         case 9...10:
             return .excellent
-        case 7...8:
+        case 8:
             return .great
-        case 4...6:
+        case 6...7:
             return .good
         default:
             return .needsWork

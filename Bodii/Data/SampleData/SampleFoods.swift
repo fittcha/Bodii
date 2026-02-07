@@ -82,7 +82,42 @@ enum SampleFoods {
         sweetPotatoData,
         bananaData,
         appleData,
-        avocadoData
+        avocadoData,
+
+        // 유제품 (Dairy)
+        milkData,
+        yogurtData,
+        cheeseData,
+
+        // 원재료 (Raw Ingredients)
+        honeyData,
+        butterData,
+        oliveOilData,
+        sugarData,
+        saltData,
+        flourData,
+
+        // 빵/디저트 (Bread & Desserts)
+        breadData,
+        donutData,
+
+        // 음료 (Beverages)
+        orangeJuiceData,
+        coffeeLatteData,
+
+        // 추가 단백질 (More Protein)
+        porkBellyData,
+        beefData,
+        salmonData,
+        shrimpData,
+
+        // 추가 채소/과일 (More Vegetables & Fruits)
+        tomatoData,
+        cucumberData,
+        carrotData,
+        spinachData,
+        grapesData,
+        watermelonData
     ]
 
     // MARK: - Rice & Grains (밥류)
@@ -427,6 +462,363 @@ enum SampleFoods {
         apiCode: "KR022"
     )
 
+    // MARK: - Dairy (유제품)
+
+    /// 우유 (200ml, 1컵)
+    static let milkData = FoodData(
+        name: "우유",
+        calories: 130,
+        carbohydrates: Decimal(10.0),
+        protein: Decimal(6.4),
+        fat: Decimal(7.4),
+        sodium: Decimal(100.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(10.0),
+        servingSize: Decimal(200.0),
+        servingUnit: "1컵",
+        apiCode: "KR023"
+    )
+
+    /// 요거트 (100g, 1개)
+    static let yogurtData = FoodData(
+        name: "요거트",
+        calories: 60,
+        carbohydrates: Decimal(7.0),
+        protein: Decimal(3.5),
+        fat: Decimal(1.5),
+        sodium: Decimal(46.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(7.0),
+        servingSize: Decimal(100.0),
+        servingUnit: "1개",
+        apiCode: "KR024"
+    )
+
+    /// 치즈 (20g, 1장)
+    static let cheeseData = FoodData(
+        name: "치즈",
+        calories: 68,
+        carbohydrates: Decimal(0.4),
+        protein: Decimal(4.2),
+        fat: Decimal(5.5),
+        sodium: Decimal(174.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(0.1),
+        servingSize: Decimal(20.0),
+        servingUnit: "1장",
+        apiCode: "KR025"
+    )
+
+    // MARK: - Raw Ingredients (원재료)
+
+    /// 꿀 (15g, 1큰술)
+    static let honeyData = FoodData(
+        name: "꿀",
+        calories: 46,
+        carbohydrates: Decimal(12.4),
+        protein: Decimal(0.0),
+        fat: Decimal(0.0),
+        sodium: Decimal(1.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(12.3),
+        servingSize: Decimal(15.0),
+        servingUnit: "1큰술",
+        apiCode: "KR026"
+    )
+
+    /// 버터 (10g, 1큰술)
+    static let butterData = FoodData(
+        name: "버터",
+        calories: 72,
+        carbohydrates: Decimal(0.0),
+        protein: Decimal(0.1),
+        fat: Decimal(8.1),
+        sodium: Decimal(82.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(0.0),
+        servingSize: Decimal(10.0),
+        servingUnit: "1큰술",
+        apiCode: "KR027"
+    )
+
+    /// 올리브오일 (14g, 1큰술)
+    static let oliveOilData = FoodData(
+        name: "올리브오일",
+        calories: 119,
+        carbohydrates: Decimal(0.0),
+        protein: Decimal(0.0),
+        fat: Decimal(14.0),
+        sodium: Decimal(0.3),
+        fiber: Decimal(0.0),
+        sugar: Decimal(0.0),
+        servingSize: Decimal(14.0),
+        servingUnit: "1큰술",
+        apiCode: "KR028"
+    )
+
+    /// 설탕 (10g, 1큰술)
+    static let sugarData = FoodData(
+        name: "설탕",
+        calories: 39,
+        carbohydrates: Decimal(10.0),
+        protein: Decimal(0.0),
+        fat: Decimal(0.0),
+        sodium: Decimal(0.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(10.0),
+        servingSize: Decimal(10.0),
+        servingUnit: "1큰술",
+        apiCode: "KR029"
+    )
+
+    /// 소금 (5g, 1작은술)
+    static let saltData = FoodData(
+        name: "소금",
+        calories: 0,
+        carbohydrates: Decimal(0.0),
+        protein: Decimal(0.0),
+        fat: Decimal(0.0),
+        sodium: Decimal(1938.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(0.0),
+        servingSize: Decimal(5.0),
+        servingUnit: "1작은술",
+        apiCode: "KR030"
+    )
+
+    /// 밀가루 (100g)
+    static let flourData = FoodData(
+        name: "밀가루",
+        calories: 364,
+        carbohydrates: Decimal(76.0),
+        protein: Decimal(10.3),
+        fat: Decimal(1.0),
+        sodium: Decimal(2.0),
+        fiber: Decimal(2.7),
+        sugar: Decimal(0.3),
+        servingSize: Decimal(100.0),
+        servingUnit: "100g",
+        apiCode: "KR031"
+    )
+
+    // MARK: - Bread & Desserts (빵/디저트)
+
+    /// 식빵 (30g, 1장)
+    static let breadData = FoodData(
+        name: "식빵",
+        calories: 80,
+        carbohydrates: Decimal(14.0),
+        protein: Decimal(3.0),
+        fat: Decimal(1.3),
+        sodium: Decimal(130.0),
+        fiber: Decimal(0.7),
+        sugar: Decimal(2.0),
+        servingSize: Decimal(30.0),
+        servingUnit: "1장",
+        apiCode: "KR032"
+    )
+
+    /// 도넛 (50g, 1개)
+    static let donutData = FoodData(
+        name: "도넛",
+        calories: 195,
+        carbohydrates: Decimal(23.0),
+        protein: Decimal(2.3),
+        fat: Decimal(10.5),
+        sodium: Decimal(180.0),
+        fiber: Decimal(0.5),
+        sugar: Decimal(10.0),
+        servingSize: Decimal(50.0),
+        servingUnit: "1개",
+        apiCode: "KR033"
+    )
+
+    // MARK: - Beverages (음료)
+
+    /// 오렌지주스 (200ml, 1컵)
+    static let orangeJuiceData = FoodData(
+        name: "오렌지주스",
+        calories: 89,
+        carbohydrates: Decimal(20.8),
+        protein: Decimal(1.4),
+        fat: Decimal(0.4),
+        sodium: Decimal(2.0),
+        fiber: Decimal(0.4),
+        sugar: Decimal(17.0),
+        servingSize: Decimal(200.0),
+        servingUnit: "1컵",
+        apiCode: "KR034"
+    )
+
+    /// 카페라떼 (350ml, 1잔)
+    static let coffeeLatteData = FoodData(
+        name: "카페라떼",
+        calories: 150,
+        carbohydrates: Decimal(12.0),
+        protein: Decimal(8.0),
+        fat: Decimal(8.0),
+        sodium: Decimal(100.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(12.0),
+        servingSize: Decimal(350.0),
+        servingUnit: "1잔",
+        apiCode: "KR035"
+    )
+
+    // MARK: - More Protein (추가 단백질)
+
+    /// 삼겹살 (100g)
+    static let porkBellyData = FoodData(
+        name: "삼겹살",
+        calories: 331,
+        carbohydrates: Decimal(0.0),
+        protein: Decimal(17.0),
+        fat: Decimal(29.0),
+        sodium: Decimal(50.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(0.0),
+        servingSize: Decimal(100.0),
+        servingUnit: "100g",
+        apiCode: "KR036"
+    )
+
+    /// 소고기 (100g)
+    static let beefData = FoodData(
+        name: "소고기",
+        calories: 250,
+        carbohydrates: Decimal(0.0),
+        protein: Decimal(26.0),
+        fat: Decimal(15.0),
+        sodium: Decimal(72.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(0.0),
+        servingSize: Decimal(100.0),
+        servingUnit: "100g",
+        apiCode: "KR037"
+    )
+
+    /// 연어 (100g)
+    static let salmonData = FoodData(
+        name: "연어",
+        calories: 208,
+        carbohydrates: Decimal(0.0),
+        protein: Decimal(20.0),
+        fat: Decimal(13.0),
+        sodium: Decimal(59.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(0.0),
+        servingSize: Decimal(100.0),
+        servingUnit: "100g",
+        apiCode: "KR038"
+    )
+
+    /// 새우 (100g)
+    static let shrimpData = FoodData(
+        name: "새우",
+        calories: 85,
+        carbohydrates: Decimal(0.2),
+        protein: Decimal(20.0),
+        fat: Decimal(0.5),
+        sodium: Decimal(566.0),
+        fiber: Decimal(0.0),
+        sugar: Decimal(0.0),
+        servingSize: Decimal(100.0),
+        servingUnit: "100g",
+        apiCode: "KR039"
+    )
+
+    // MARK: - More Vegetables & Fruits (추가 채소/과일)
+
+    /// 토마토 (150g, 1개)
+    static let tomatoData = FoodData(
+        name: "토마토",
+        calories: 27,
+        carbohydrates: Decimal(5.8),
+        protein: Decimal(1.3),
+        fat: Decimal(0.3),
+        sodium: Decimal(8.0),
+        fiber: Decimal(1.8),
+        sugar: Decimal(3.9),
+        servingSize: Decimal(150.0),
+        servingUnit: "1개",
+        apiCode: "KR040"
+    )
+
+    /// 오이 (100g)
+    static let cucumberData = FoodData(
+        name: "오이",
+        calories: 12,
+        carbohydrates: Decimal(2.2),
+        protein: Decimal(0.6),
+        fat: Decimal(0.1),
+        sodium: Decimal(3.0),
+        fiber: Decimal(0.7),
+        sugar: Decimal(1.4),
+        servingSize: Decimal(100.0),
+        servingUnit: "100g",
+        apiCode: "KR041"
+    )
+
+    /// 당근 (100g)
+    static let carrotData = FoodData(
+        name: "당근",
+        calories: 36,
+        carbohydrates: Decimal(8.2),
+        protein: Decimal(0.7),
+        fat: Decimal(0.2),
+        sodium: Decimal(58.0),
+        fiber: Decimal(2.4),
+        sugar: Decimal(4.5),
+        servingSize: Decimal(100.0),
+        servingUnit: "100g",
+        apiCode: "KR042"
+    )
+
+    /// 시금치 (100g)
+    static let spinachData = FoodData(
+        name: "시금치",
+        calories: 23,
+        carbohydrates: Decimal(3.6),
+        protein: Decimal(2.9),
+        fat: Decimal(0.4),
+        sodium: Decimal(79.0),
+        fiber: Decimal(2.2),
+        sugar: Decimal(0.4),
+        servingSize: Decimal(100.0),
+        servingUnit: "100g",
+        apiCode: "KR043"
+    )
+
+    /// 포도 (100g)
+    static let grapesData = FoodData(
+        name: "포도",
+        calories: 67,
+        carbohydrates: Decimal(17.2),
+        protein: Decimal(0.6),
+        fat: Decimal(0.4),
+        sodium: Decimal(2.0),
+        fiber: Decimal(0.9),
+        sugar: Decimal(16.0),
+        servingSize: Decimal(100.0),
+        servingUnit: "100g",
+        apiCode: "KR044"
+    )
+
+    /// 수박 (200g, 1조각)
+    static let watermelonData = FoodData(
+        name: "수박",
+        calories: 60,
+        carbohydrates: Decimal(15.2),
+        protein: Decimal(1.2),
+        fat: Decimal(0.3),
+        sodium: Decimal(2.0),
+        fiber: Decimal(0.8),
+        sugar: Decimal(12.4),
+        servingSize: Decimal(200.0),
+        servingUnit: "1조각",
+        apiCode: "KR045"
+    )
+
     // MARK: - Core Data Creation Methods
 
     /// 모든 샘플 음식을 Core Data context에 생성합니다.
@@ -486,11 +878,19 @@ enum SampleFoods {
         case .mainDish:
             return [bulgogiData, bibimbapData, kimbapData, tteokbokkiData, ramyeonData, friedChickenData]
         case .protein:
-            return [chickenBreastData, eggData, tofuData]
+            return [chickenBreastData, eggData, tofuData, porkBellyData, beefData, salmonData, shrimpData]
         case .vegetable:
-            return [kimchiData]
+            return [kimchiData, tomatoData, cucumberData, carrotData, spinachData]
         case .snack:
-            return [sweetPotatoData, bananaData, appleData, avocadoData]
+            return [sweetPotatoData, bananaData, appleData, avocadoData, grapesData, watermelonData]
+        case .dairy:
+            return [milkData, yogurtData, cheeseData]
+        case .ingredient:
+            return [honeyData, butterData, oliveOilData, sugarData, saltData, flourData]
+        case .bread:
+            return [breadData, donutData]
+        case .beverage:
+            return [orangeJuiceData, coffeeLatteData]
         }
     }
 
@@ -520,6 +920,10 @@ enum FoodCategory {
     case protein     // 단백질 식품
     case vegetable   // 채소/김치
     case snack       // 간식/과일
+    case dairy       // 유제품
+    case ingredient  // 원재료
+    case bread       // 빵/디저트
+    case beverage    // 음료
 
     var displayName: String {
         switch self {
@@ -529,6 +933,10 @@ enum FoodCategory {
         case .protein: return "단백질 식품"
         case .vegetable: return "채소/김치"
         case .snack: return "간식/과일"
+        case .dairy: return "유제품"
+        case .ingredient: return "원재료"
+        case .bread: return "빵/디저트"
+        case .beverage: return "음료"
         }
     }
 }

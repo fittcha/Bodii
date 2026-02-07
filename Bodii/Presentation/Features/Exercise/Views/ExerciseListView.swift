@@ -54,6 +54,9 @@ struct ExerciseListView: View {
     /// 삭제할 운동 기록 (확인 다이얼로그용)
     @State private var exerciseToDelete: ExerciseRecord?
 
+    /// 캘린더 DatePicker 표시 상태
+    @State private var showDatePicker = false
+
     // 📚 학습 포인트: User Data State
     // ExerciseInputViewModel 생성 시 필요한 사용자 데이터
     // TODO: 추후 User entity나 AuthenticationService에서 가져오도록 개선
@@ -70,17 +73,24 @@ struct ExerciseListView: View {
 
     var body: some View {
         NavigationStack {
-            // 📚 학습 포인트: ZStack으로 레이어 구성
-            // Empty State와 Content를 겹쳐서 조건부 렌더링
-            ZStack {
+            VStack(spacing: 0) {
+                // 날짜 네비게이션 헤더 (항상 표시)
+                dateNavigationHeader
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+
+                // 콘텐츠 영역
                 if viewModel.isLoading {
+                    Spacer()
                     loadingView
+                    Spacer()
                 } else if viewModel.isEmpty {
                     emptyStateView
                 } else {
-                    contentView
+                    exerciseListContent
                 }
             }
+            .background(Color(.systemGroupedBackground))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -100,7 +110,8 @@ struct ExerciseListView: View {
                         userWeight: userWeight,
                         userGender: userGender,
                         userBMR: userBMR,
-                        userTDEE: userTDEE
+                        userTDEE: userTDEE,
+                        selectedDate: viewModel.selectedDate
                     ),
                     onSaveSuccess: {
                         isShowingAddSheet = false
@@ -122,7 +133,8 @@ struct ExerciseListView: View {
                             userGender: userGender,
                             userBMR: userBMR,
                             userTDEE: userTDEE,
-                            editingExercise: exercise
+                            editingExercise: exercise,
+                            selectedDate: viewModel.selectedDate
                         ),
                         onSaveSuccess: {
                             isShowingEditSheet = false
@@ -164,6 +176,9 @@ struct ExerciseListView: View {
                     Text(errorMessage)
                 }
             }
+            .sheet(isPresented: $showDatePicker) {
+                calendarDatePicker
+            }
         }
     }
 
@@ -187,8 +202,8 @@ struct ExerciseListView: View {
     /// 빈 상태 뷰
     private var emptyStateView: some View {
         VStack(spacing: 24) {
-            // 📚 학습 포인트: SF Symbols
-            // iOS 시스템 아이콘 라이브러리
+            Spacer()
+
             Image(systemName: "figure.run")
                 .font(.system(size: 80))
                 .foregroundStyle(.secondary)
@@ -198,7 +213,7 @@ struct ExerciseListView: View {
                     .font(.title3)
                     .fontWeight(.semibold)
 
-                Text("오늘 운동을 기록해보세요!")
+                Text(viewModel.isToday ? "오늘 운동을 기록해보세요!" : "이 날짜에 운동을 추가해보세요!")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -211,97 +226,81 @@ struct ExerciseListView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+
+            Spacer()
         }
         .padding()
     }
 
-    /// 메인 컨텐츠 뷰
-    private var contentView: some View {
-        VStack(spacing: 0) {
-            // 날짜 네비게이션 헤더
-            dateNavigationHeader
-                .padding(.horizontal)
-                .padding(.top, 8)
+    /// 운동 기록 리스트 (날짜 헤더 제외)
+    private var exerciseListContent: some View {
+        List {
+            // 일일 요약 섹션
+            Section {
+                dailySummarySection
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+            }
 
-            // 📚 학습 포인트: List with Pull-to-Refresh
-            // refreshable modifier로 간단하게 구현 가능
-            // 💡 Java 비교: SwipeRefreshLayout과 유사
-            List {
-                // 일일 요약 섹션
-                Section {
-                    dailySummarySection
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                }
-
-                // 운동 기록 리스트 섹션
-                Section {
-                    ForEach(viewModel.exerciseRecords) { exercise in
-                        ExerciseCardView(
-                            exercise: exercise,
-                            onDelete: {
-                                // 📚 학습 포인트: Confirmation Before Delete
-                                // 실수로 삭제하는 것을 방지하기 위한 확인 다이얼로그
-                                // 💡 Java 비교: AlertDialog.Builder().show()와 유사
-                                exerciseToDelete = exercise
-                            }
-                        )
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
-                        // 📚 학습 포인트: Loading State During Delete
-                        // 삭제 중인 카드는 반투명 처리 + 로딩 인디케이터 표시
-                        // 💡 Java 비교: ViewHolder에 ProgressBar 표시와 유사
-                        .opacity(viewModel.isDeletingId == exercise.id ? 0.5 : 1.0)
-                        .overlay {
-                            if viewModel.isDeletingId == exercise.id {
-                                ProgressView()
-                                    .scaleEffect(1.5)
-                            }
+            // 운동 기록 리스트 섹션
+            Section {
+                ForEach(viewModel.exerciseRecords) { exercise in
+                    ExerciseCardView(
+                        exercise: exercise,
+                        onDelete: {
+                            exerciseToDelete = exercise
                         }
-                        // 📚 학습 포인트: Tap Gesture for Edit
-                        // 운동 카드를 탭하면 편집 모드로 진입
-                        // 💡 Java 비교: RecyclerView Item Click Listener와 유사
-                        .onTapGesture {
-                            selectedExercise = exercise
-                            isShowingEditSheet = true
+                    )
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .opacity(viewModel.isDeletingId == exercise.id ? 0.5 : 1.0)
+                    .overlay {
+                        if viewModel.isDeletingId == exercise.id {
+                            ProgressView()
+                                .scaleEffect(1.5)
                         }
                     }
-                } header: {
-                    if !viewModel.exerciseRecords.isEmpty {
-                        Text("운동 기록")
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                            .textCase(nil)
+                    .onTapGesture {
+                        selectedExercise = exercise
+                        isShowingEditSheet = true
                     }
                 }
+            } header: {
+                if !viewModel.exerciseRecords.isEmpty {
+                    Text("운동 기록")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .textCase(nil)
+                }
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .background(Color(.systemGroupedBackground))
-            .refreshable {
-                // 📚 학습 포인트: async/await with SwiftUI
-                // refreshable modifier는 자동으로 async 함수 지원
-                await viewModel.refresh()
-            }
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .refreshable {
+            await viewModel.refresh()
         }
     }
 
     /// 날짜 네비게이션 헤더
     private var dateNavigationHeader: some View {
-        HStack(spacing: 16) {
+        HStack {
             // 이전 날짜 버튼
-            Button(action: viewModel.goToPreviousDay) {
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    viewModel.goToPreviousDay()
+                }
+            }) {
                 Image(systemName: "chevron.left")
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                    .font(.title2)
                     .foregroundStyle(.primary)
                     .frame(width: 44, height: 44)
-                    .background(Color(.systemGray6))
-                    .clipShape(Circle())
             }
+            .accessibilityLabel("이전 날짜")
 
-            // 날짜 표시
+            Spacer()
+
+            // 날짜 표시 (탭하면 캘린더 오픈)
             VStack(spacing: 4) {
                 Text(viewModel.formattedSelectedDate)
                     .font(.headline)
@@ -309,29 +308,68 @@ struct ExerciseListView: View {
 
                 if viewModel.isToday {
                     Text("오늘")
-                        .font(.caption2)
-                        .foregroundStyle(.blue)
-                        .fontWeight(.semibold)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
-            .frame(maxWidth: .infinity)
+            .onTapGesture {
+                showDatePicker = true
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(viewModel.isToday ? "오늘, \(viewModel.formattedSelectedDate)" : viewModel.formattedSelectedDate)
+            .accessibilityHint("탭하여 캘린더에서 날짜를 선택하세요")
+
+            Spacer()
 
             // 다음 날짜 버튼
-            // 📚 학습 포인트: Conditional Styling
-            // 미래 날짜는 비활성화 처리
-            Button(action: viewModel.goToNextDay) {
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    viewModel.goToNextDay()
+                }
+            }) {
                 Image(systemName: "chevron.right")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(viewModel.isFuture ? .secondary : .primary)
+                    .font(.title2)
+                    .foregroundStyle(.primary)
                     .frame(width: 44, height: 44)
-                    .background(Color(.systemGray6))
-                    .clipShape(Circle())
             }
             .disabled(viewModel.isFuture)
-            .opacity(viewModel.isFuture ? 0.5 : 1.0)
+            .opacity(viewModel.isFuture ? 0.3 : 1.0)
+            .accessibilityLabel("다음 날짜")
+            .accessibilityHint(viewModel.isFuture ? "미래 날짜는 볼 수 없습니다" : "다음 날 운동 보기")
         }
-        .padding(.vertical, 12)
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(Color(.systemBackground))
+    }
+
+    /// 캘린더 날짜 선택 시트
+    private var calendarDatePicker: some View {
+        NavigationStack {
+            DatePicker(
+                "날짜 선택",
+                selection: Binding(
+                    get: { viewModel.selectedDate },
+                    set: { newDate in
+                        viewModel.selectDate(newDate)
+                        showDatePicker = false
+                    }
+                ),
+                in: ...Date(),
+                displayedComponents: .date
+            )
+            .datePickerStyle(.graphical)
+            .padding()
+            .navigationTitle("날짜 선택")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("닫기") {
+                        showDatePicker = false
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
     }
 
     /// 일일 요약 섹션
@@ -339,7 +377,7 @@ struct ExerciseListView: View {
         VStack(spacing: 16) {
             // 제목
             HStack {
-                Text("오늘의 운동")
+                Text(viewModel.isToday ? "오늘의 운동" : viewModel.formattedSelectedDate)
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()

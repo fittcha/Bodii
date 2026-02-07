@@ -170,7 +170,20 @@ final class UnifiedFoodSearchService {
 
         if containsKorean {
             // 1단계: 식약처 검색 (재시도 포함)
-            let kfdaFoods = await searchKFDA(query: query, limit: limit, pageNo: kfdaPageNo)
+            // limit이 maxPageSize(100)을 초과하면 여러 페이지 요청
+            var kfdaFoods: [Food] = []
+            let kfdaMaxPage = Constants.API.KFDA.maxPageSize
+            let totalPages = max(1, (limit + kfdaMaxPage - 1) / kfdaMaxPage)
+
+            for page in 1...min(totalPages, 5) {
+                let pageFoods = await searchKFDA(query: query, limit: kfdaMaxPage, pageNo: page)
+                kfdaFoods.append(contentsOf: pageFoods)
+
+                // 결과가 pageSize보다 적으면 더 이상 페이지 없음
+                if pageFoods.count < kfdaMaxPage {
+                    break
+                }
+            }
 
             // 2단계: 식약처 결과가 충분하면 그대로 반환
             if kfdaFoods.count >= 5 {

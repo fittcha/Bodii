@@ -39,6 +39,9 @@ class BodyCompositionViewModel: ObservableObject {
     /// 근육량 입력 값 (kg)
     @Published var muscleMassInput: String = ""
 
+    /// 입력 날짜 (과거 날짜 데이터 입력 지원)
+    @Published var inputDate: Date = Date()
+
     // MARK: - Published Properties (View State)
 
     /// 로딩 상태
@@ -204,6 +207,7 @@ class BodyCompositionViewModel: ObservableObject {
             // 📚 학습 포인트: Use Case Execution
             // 비즈니스 로직은 Use Case에 위임
             let result = try await recordBodyCompositionUseCase.execute(
+                date: inputDate,
                 weight: weight,
                 bodyFatPercent: bodyFatPercent,
                 muscleMass: muscleMass,
@@ -324,6 +328,7 @@ class BodyCompositionViewModel: ObservableObject {
         weightInput = ""
         bodyFatPercentInput = ""
         muscleMassInput = ""
+        inputDate = Date()
         validationMessages = []
     }
 
