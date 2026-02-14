@@ -145,15 +145,15 @@ final class LocalFoodSearchService: FoodSearchServiceProtocol {
     func getRecentFoods(userId: UUID) async throws -> [Food] {
         let recentFoods = try await foodRepository.getRecentFoods(userId: userId)
 
-        // 최대 10개로 제한
-        return Array(recentFoods.prefix(10))
+        // 최대 20개로 제한
+        return Array(recentFoods.prefix(20))
     }
 
     func getFrequentFoods(userId: UUID) async throws -> [Food] {
         let frequentFoods = try await foodRepository.getFrequentFoods(userId: userId)
 
-        // 최대 10개로 제한
-        return Array(frequentFoods.prefix(10))
+        // 최대 20개로 제한
+        return Array(frequentFoods.prefix(20))
     }
 
     // MARK: - Private Helpers

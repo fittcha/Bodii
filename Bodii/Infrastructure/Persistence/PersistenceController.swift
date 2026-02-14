@@ -334,18 +334,35 @@ final class PersistenceController {
     }
 
     /// SampleFoods 기본 데이터를 시딩합니다 (KFDA JSON이 없을 때 폴백).
+    /// 버전 관리: 새 음식이 추가되면 sampleFoodSeedVersion을 증가시켜 재시딩합니다.
     private func seedSampleFoodsIfNeeded() {
-        let seedKey = "hasSeededDefaultFoods"
-        guard !UserDefaults.standard.bool(forKey: seedKey) else { return }
+        let versionKey = "sampleFoodSeedVersion"
+        let currentVersion = 2 // v1: 22개, v2: 45개 (원재료/유제품/음료 추가)
+        let savedVersion = UserDefaults.standard.integer(forKey: versionKey)
+        guard savedVersion < currentVersion else { return }
 
         let context = container.viewContext
-        SampleFoods.createAllFoods(in: context)
+
+        // 기존 샘플 데이터의 apiCode 목록 확인하여 중복 방지
+        let existingCodes = Set(
+            (try? context.fetch(Food.fetchRequest()))?.compactMap(\.apiCode) ?? []
+        )
+
+        var addedCount = 0
+        for data in SampleFoods.allFoodData {
+            if !existingCodes.contains(data.apiCode) {
+                SampleFoods.createFood(from: data, in: context)
+                addedCount += 1
+            }
+        }
 
         do {
-            try context.save()
-            UserDefaults.standard.set(true, forKey: seedKey)
+            if addedCount > 0 {
+                try context.save()
+            }
+            UserDefaults.standard.set(currentVersion, forKey: versionKey)
             #if DEBUG
-            print("✅ [PersistenceController] 기본 음식 데이터 \(SampleFoods.allFoodData.count)개 시딩 완료")
+            print("✅ [PersistenceController] 기본 음식 데이터 \(addedCount)개 추가 시딩 완료 (v\(currentVersion), 총 \(SampleFoods.allFoodData.count)개)")
             #endif
         } catch {
             #if DEBUG

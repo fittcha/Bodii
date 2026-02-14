@@ -253,6 +253,25 @@ final class ExerciseRecordLocalDataSource {
         }
     }
 
+    /// HealthKit ID로 운동 기록을 조회합니다.
+    func fetchByHealthKitId(_ healthKitId: String, userId: UUID) async throws -> ExerciseRecord? {
+        return try await context.perform { [weak self] in
+            guard let self = self else {
+                throw DataSourceError.contextDeallocated
+            }
+
+            let request: NSFetchRequest<ExerciseRecord> = ExerciseRecord.fetchRequest()
+            request.predicate = NSPredicate(
+                format: "healthKitId == %@ AND user.id == %@",
+                healthKitId as CVarArg,
+                userId as CVarArg
+            )
+            request.fetchLimit = 1
+
+            return try self.context.fetch(request).first
+        }
+    }
+
     // MARK: - Update
 
     /// 기존 운동 기록을 수정합니다.

@@ -34,6 +34,7 @@ class SleepPromptManager: ObservableObject {
     private enum Keys {
         static let skipCountPrefix = "sleep_skip_count_"
         static let lastPromptDate = "sleep_last_prompt_date"
+        static let lastPromptCheckDate = "sleep_last_prompt_check_date"
     }
 
     /// 최대 건너뛰기 횟수
@@ -116,44 +117,34 @@ class SleepPromptManager: ObservableObject {
     /// - 앱 시작 시 (BodiiApp.onAppear)
     /// - 앱이 포그라운드로 돌아올 때 (onReceive ScenePhase)
     func checkShouldShow() async {
-        // 📚 학습 포인트: Time-based Check
         // 02:00 이전에는 프롬프트 표시 안 함
         guard DateUtils.shouldShowSleepPopup() else {
             shouldShowPrompt = false
             return
         }
 
-        // 📚 학습 포인트: Data-based Check
-        // 오늘 수면 기록이 이미 있으면 프롬프트 표시 안 함
+        // 오늘 수면 기록이 이미 있으면 무조건 프롬프트 표시 안 함
         do {
             let todayRecord = try await sleepRepository.fetch(for: today)
             if todayRecord != nil {
                 shouldShowPrompt = false
-                // 기록이 있으면 건너뛰기 횟수 초기화
-                resetSkipCount()
                 return
             }
         } catch {
-            // 📚 학습 포인트: Error Handling
-            // 조회 실패 시에도 프롬프트 표시 (보수적 접근)
             print("⚠️ Failed to fetch today's sleep record: \(error.localizedDescription)")
         }
 
-        // 📚 학습 포인트: Skip Count Check
-        // 건너뛰기 횟수에 따라 프롬프트 표시 여부 결정
-        // PRD 요구사항: "3회 스킵 후 더 이상 팝업 안 뜸"
-        let skipCount = getSkipCount(for: today)
-
-        // 3회 이상 스킵했으면 더 이상 팝업 표시 안 함
-        if skipCount >= Self.maxSkipCount {
-            isForceEntry = true
-            shouldShowPrompt = false
-            print("ℹ️ Sleep prompt hidden - max skip count (\(Self.maxSkipCount)) reached for today")
+        // 오늘 이미 프롬프트를 띄운 적 있으면 다시 표시하지 않음 (하루 한 번만)
+        let todayString = logicalDateString(for: today)
+        let lastCheckDate = userDefaults.string(forKey: Keys.lastPromptCheckDate)
+        if lastCheckDate == todayString {
             return
         }
 
+        // 오늘 첫 체크 기록
+        userDefaults.set(todayString, forKey: Keys.lastPromptCheckDate)
+
         isForceEntry = false
-        // 프롬프트 표시
         shouldShowPrompt = true
     }
 
@@ -256,10 +247,14 @@ class SleepPromptManager: ObservableObject {
     /// - Parameter date: 대상 날짜
     /// - Returns: UserDefaults 키 (예: "sleep_skip_count_2026-01-14")
     private func skipCountKey(for date: Date) -> String {
+        return Keys.skipCountPrefix + logicalDateString(for: date)
+    }
+
+    /// 논리적 날짜를 ISO8601 문자열로 변환합니다.
+    private func logicalDateString(for date: Date) -> String {
         let dateFormatter = ISO8601DateFormatter()
         dateFormatter.formatOptions = [.withFullDate]
-        let dateString = dateFormatter.string(from: date)
-        return Keys.skipCountPrefix + dateString
+        return dateFormatter.string(from: date)
     }
 
     /// 오래된 건너뛰기 횟수 정리

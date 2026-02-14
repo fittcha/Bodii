@@ -205,13 +205,24 @@ final class DIContainer {
         return UnifiedFoodSearchService(context: PersistenceController.shared.container.viewContext)
     }()
 
-    /// 음식 검색 서비스 (로컬 DB 우선 + API 폴백)
-    lazy var foodSearchService: FoodSearchServiceProtocol = {
-        return LocalFoodSearchService(
+    /// 하이브리드 음식 검색 서비스 (로컬 + API 병렬 검색)
+    lazy var hybridFoodSearchService: HybridFoodSearchService = {
+        let localService = LocalFoodSearchService(
             foodRepository: foodRepository,
             apiSearchService: unifiedFoodSearchService,
             cacheDataSource: foodLocalDataSource
         )
+        return HybridFoodSearchService(
+            localService: localService,
+            apiService: unifiedFoodSearchService,
+            foodRepository: foodRepository,
+            context: PersistenceController.shared.container.viewContext
+        )
+    }()
+
+    /// 음식 검색 서비스 (검색 버튼 탭 시 사용)
+    lazy var foodSearchService: FoodSearchServiceProtocol = {
+        return hybridFoodSearchService
     }()
 
     /// 최근/자주 사용 음식 서비스
@@ -604,7 +615,8 @@ extension DIContainer {
         userGender: Gender,
         userBMR: Decimal,
         userTDEE: Decimal,
-        editingExercise: ExerciseRecord? = nil
+        editingExercise: ExerciseRecord? = nil,
+        selectedDate: Date = Date()
     ) -> ExerciseInputViewModel {
         return ExerciseInputViewModel(
             addExerciseRecordUseCase: addExerciseRecordUseCase,
@@ -614,7 +626,8 @@ extension DIContainer {
             userGender: userGender,
             userBMR: userBMR,
             userTDEE: userTDEE,
-            editingExercise: editingExercise
+            editingExercise: editingExercise,
+            selectedDate: selectedDate
         )
     }
 
@@ -632,6 +645,9 @@ extension DIContainer {
             getExerciseRecordsUseCase: getExerciseRecordsUseCase,
             deleteExerciseRecordUseCase: deleteExerciseRecordUseCase,
             dailyLogRepository: dailyLogRepository,
+            exerciseRepository: exerciseRepository,
+            healthKitReadService: healthKitReadService,
+            healthKitAuthService: healthKitAuthService,
             userId: userId
         )
     }
@@ -643,7 +659,9 @@ extension DIContainer {
     func makeFoodSearchViewModel() -> FoodSearchViewModel {
         return FoodSearchViewModel(
             foodSearchService: foodSearchService,
-            recentFoodsService: recentFoodsService
+            recentFoodsService: recentFoodsService,
+            hybridService: hybridFoodSearchService,
+            foodRepository: foodRepository
         )
     }
 
