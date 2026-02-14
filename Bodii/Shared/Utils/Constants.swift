@@ -158,7 +158,7 @@ enum Constants {
         enum KFDA {
             static let timeout: TimeInterval = 30
             static let maxRetries: Int = 2
-            static let defaultPageSize: Int = 10
+            static let defaultPageSize: Int = 100
             static let maxPageSize: Int = 100
         }
 
@@ -176,6 +176,12 @@ enum Constants {
             static let timeout: TimeInterval = 60
             static let maxRetries: Int = 2
             static let rateLimitWindow: TimeInterval = 60 // 1 minute in seconds
+        }
+
+        /// Open Food Facts API configuration
+        enum OpenFoodFacts {
+            static let timeout: TimeInterval = 15
+            static let defaultPageSize: Int = 50
         }
 
         /// Google Cloud Vision API limits

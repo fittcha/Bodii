@@ -64,7 +64,7 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
         // 3. 결과 병합 (로컬 우선, API 추가, 중복 제거, 관련도순 정렬)
         // API에서 넉넉하게 가져왔으므로 관련도 상위 50개만 반환
         let merged = mergeResults(local: local, api: api, query: trimmed)
-        return Array(merged.prefix(50))
+        return Array(merged.prefix(100))
     }
 
     func getRecentFoods(userId: UUID) async throws -> [Food] {
@@ -198,15 +198,6 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
     /// 검색 결과를 검색어 관련도순으로 정렬합니다.
     ///
     /// KFDA 식품명 형식: "카테고리_제품명" (예: "요구르트(액상)_플레인요거트")
-    ///
-    /// 정렬 우선순위:
-    /// 1. 정확히 일치하는 이름 (100)
-    /// 2. 이름이 검색어로 시작 (80)
-    /// 3. 복합명에서 카테고리가 검색어와 관련 (70) — 예: "요구르트(액상)_플레인요거트"
-    /// 4. 단순 이름에 검색어 포함, 짧은 이름 (60) — 원물 가능성
-    /// 5. 단순 이름에 검색어 포함, 긴 이름 (40)
-    /// 6. 복합명에서 카테고리 무관, 제품명에 검색어 포함 (20) — 예: "케이크_블루베리요거트"
-    /// 7. 나머지 (0)
     private func sortByRelevance(_ foods: [Food], query: String) -> [Food] {
         let q = query.trimmingCharacters(in: .whitespaces).lowercased()
 
@@ -228,21 +219,24 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
     /// 음식 이름과 검색어의 관련도 점수
     ///
     /// KFDA 복합 식품명 ("카테고리_제품명")을 분석하여,
-    /// 원재료(짧고 단순한 이름)를 가공식품보다 우선합니다.
+    /// 제품명 직접 매칭이 카테고리 매칭보다 항상 높도록 설계.
     ///
     /// 점수 체계:
-    /// - 100: 정확 일치 ("꿀" == "꿀")
-    /// - 90: 접두사 일치 ("꿀물" starts with "꿀")
-    /// - 85: 단순명 + 매우 짧은 이름 (≤ query+5자, 원재료 가능성 높음)
-    /// - 70: 단순명 + 짧은 이름 (≤ query+15자)
-    /// - 65: 복합명 카테고리 매칭 + 짧은 제품명 (≤15자)
-    /// - 60: 복합명 카테고리 매칭 + 긴 제품명
-    /// - 45: 복합명 제품명이 검색어로 시작
-    /// - 40: 단순명 + 긴 이름
-    /// - 20: 복합명 제품명에 검색어 포함
-    /// - 15: 슬래시 포함 복합명
+    /// - 100: 정확 일치 (name == query)
+    /// -  95: 이름이 검색어로 시작 (접두사)
+    /// -  90: 단순명 + 매우 짧음 (≤ query+3자) → 원재료
+    /// -  85: 복합명: 제품명이 검색어와 정확 일치
+    /// -  80: 복합명: 제품명이 검색어로 시작
+    /// -  75: 단순명 + 짧음 (≤ query+8자)
+    /// -  70: 복합명: 카테고리가 검색어 매칭 + 짧은 제품명 (≤15자)
+    /// -  65: 복합명: 카테고리가 검색어 매칭 + 긴 제품명
+    /// -  60: 단순명, 검색어 포함, 중간 길이 (≤ query+15자)
+    /// -  50: 복합명: 제품명에 검색어 포함 (시작X)
+    /// -  40: 단순명, 검색어 포함, 긴 이름
+    /// -  30: 복합명: 카테고리에 부분 매칭
+    /// -  15: 슬래시 포함 복합명
+    /// -   0: 매칭 없음
     private func relevanceScore(name: String, query: String) -> Int {
-        // 검색어의 동의어 목록 (검색어 자체 포함)
         let queries = synonyms(for: query)
 
         // 정확히 일치
@@ -250,9 +244,9 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
             return 100
         }
 
-        // 이름이 검색어로 시작 (예: "꿀물", "요거트 드링크")
+        // 이름이 검색어로 시작
         if queries.contains(where: { name.hasPrefix($0) }) {
-            return 90
+            return 95
         }
 
         // 복합 식품명 분석 (KFDA 형식: "카테고리_제품명")
@@ -260,42 +254,52 @@ final class HybridFoodSearchService: FoodSearchServiceProtocol, ObservableObject
             let category = String(name[name.startIndex..<underscoreIndex])
             let productName = String(name[name.index(after: underscoreIndex)...])
 
-            // 카테고리가 검색어(동의어 포함)를 포함 → 해당 식품 종류
-            if queries.contains(where: { category.contains($0) }) {
-                if productName.count <= 15 {
-                    return 65
-                }
-                return 60
+            // 제품명이 검색어와 정확 일치
+            if queries.contains(productName) {
+                return 85
             }
 
-            // 제품명이 검색어로 시작 (예: "아이스크림_요거트 젤라또")
+            // 제품명이 검색어로 시작 (제품명 직접 매칭 > 카테고리 매칭)
             if queries.contains(where: { productName.hasPrefix($0) }) {
-                return 45
+                return 80
             }
 
-            // 제품명에 검색어 포함하지만 카테고리 무관 (예: "케이크_블루베리요거트")
+            // 카테고리가 검색어를 포함
+            if queries.contains(where: { category.contains($0) }) {
+                return productName.count <= 15 ? 70 : 65
+            }
+
+            // 제품명에 검색어 포함 (시작X)
             if queries.contains(where: { productName.contains($0) }) {
-                return 20
+                return 50
             }
 
-            // 카테고리에도 제품명에도 검색어 없음
+            // 카테고리에 부분 매칭 (동의어 부분 일치)
+            if queries.contains(where: { category.contains($0) || $0.contains(category) }) {
+                return 30
+            }
+
             return 0
         }
 
-        // "/" 구분자 처리 (예: "비스킷/쿠키/크래커_...")
+        // 단순 이름 (언더스코어 없음)
         let hasSlash = name.contains("/")
 
         if queries.contains(where: { name.contains($0) }) {
-            if !hasSlash && name.count <= query.count + 5 {
-                // 단순 이름 + 매우 짧음 → 원재료 가능성 높음 (예: "생꿀", "참꿀")
-                return 85
+            if !hasSlash && name.count <= query.count + 3 {
+                // 매우 짧음 → 원재료 가능성 높음 (예: "생꿀", "참꿀")
+                return 90
+            }
+            if !hasSlash && name.count <= query.count + 8 {
+                // 짧은 이름 (예: "아카시아꿀")
+                return 75
             }
             if !hasSlash && name.count <= query.count + 15 {
-                // 단순 이름 + 짧은 이름 (예: "아카시아꿀")
-                return 70
+                // 중간 길이
+                return 60
             }
             if !hasSlash {
-                // 이름에 포함되지만 긴 이름
+                // 긴 이름
                 return 40
             }
             // 슬래시 포함 복합명

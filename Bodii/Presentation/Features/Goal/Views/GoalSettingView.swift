@@ -66,6 +66,9 @@ struct GoalSettingView: View {
                     // 근육량 목표 입력
                     muscleTargetSection
 
+                    // 목표 기간 설정 (목표 모드)
+                    goalPeriodSection
+
                     // 일일 칼로리 목표 (선택사항)
                     calorieTargetSection
 
@@ -92,6 +95,9 @@ struct GoalSettingView: View {
                     onSaveSuccess?()
                     dismiss()
                 }
+            }
+            .task {
+                await viewModel.loadCurrentBodyData()
             }
             .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
                 Button("확인") {
@@ -373,6 +379,102 @@ struct GoalSettingView: View {
                 .fill(Color(.systemBackground))
         )
         .animation(.easeInOut(duration: 0.2), value: viewModel.isMuscleEnabled)
+    }
+
+    /// 목표 기간 설정 섹션 (목표 모드용)
+    @ViewBuilder
+    private var goalPeriodSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                sectionHeader(
+                    title: "목표 기간",
+                    icon: "clock.badge.checkmark",
+                    isOptional: true
+                )
+
+                Spacer()
+
+                Toggle("", isOn: $viewModel.isPeriodEnabled)
+                    .labelsHidden()
+            }
+
+            if viewModel.isPeriodEnabled {
+                VStack(spacing: 16) {
+                    // 시작일
+                    DatePicker(
+                        "시작일",
+                        selection: $viewModel.goalPeriodStart,
+                        displayedComponents: .date
+                    )
+                    .font(.subheadline)
+
+                    // 종료일
+                    DatePicker(
+                        "종료일",
+                        selection: $viewModel.goalPeriodEnd,
+                        in: periodMinEndDate...periodMaxEndDate,
+                        displayedComponents: .date
+                    )
+                    .font(.subheadline)
+
+                    // 기간 검증 결과
+                    let validation = GoalModeService.validatePeriod(
+                        start: viewModel.goalPeriodStart,
+                        end: viewModel.goalPeriodEnd
+                    )
+
+                    if validation.isValid, case .valid(let days) = validation {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                                .font(.caption)
+                            Text("\(days)일 (\(days / 7)주)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                    } else if let message = validation.message {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                                .font(.caption)
+                            Text(message)
+                                .font(.caption)
+                                .foregroundStyle(.orange)
+                            Spacer()
+                        }
+                    }
+
+                    // 목표 모드 안내
+                    HStack(spacing: 8) {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.blue)
+                            .font(.caption)
+
+                        Text("기간을 설정하면 설정에서 목표 모드를 활성화할 수 있어요")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+        )
+        .animation(.easeInOut(duration: 0.2), value: viewModel.isPeriodEnabled)
+    }
+
+    /// 목표 기간 최소 종료일 (시작일 + 7일)
+    private var periodMinEndDate: Date {
+        Calendar.current.date(byAdding: .day, value: 7, to: viewModel.goalPeriodStart) ?? viewModel.goalPeriodStart
+    }
+
+    /// 목표 기간 최대 종료일 (시작일 + 182일)
+    private var periodMaxEndDate: Date {
+        Calendar.current.date(byAdding: .day, value: 182, to: viewModel.goalPeriodStart) ?? viewModel.goalPeriodStart
     }
 
     /// 일일 칼로리 목표 섹션 (선택사항)

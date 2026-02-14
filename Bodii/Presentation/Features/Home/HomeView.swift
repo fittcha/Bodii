@@ -951,6 +951,30 @@ final class HomeViewModel: ObservableObject {
                 }
             }
 
+            // 목표 모드 데이터
+            var isGoalModeActive = false
+            var dDay: Int?
+            var goalUrgency: GoalUrgency?
+            var periodProgressPercent: Double?
+            var goalTargetWeight: Double?
+            var goalTargetBodyFat: Double?
+            var goalTargetMuscle: Double?
+
+            if let activeGoal = try? await goalRepository.fetchActiveGoal() {
+                isGoalModeActive = GoalModeService.isGoalModeActive(goal: activeGoal)
+                if isGoalModeActive {
+                    dDay = GoalModeService.calculateDDay(from: activeGoal.goalPeriodEnd)
+                    if let start = activeGoal.goalPeriodStart, let end = activeGoal.goalPeriodEnd {
+                        let progress = GoalModeService.periodProgress(start: start, end: end)
+                        periodProgressPercent = progress * 100
+                        goalUrgency = GoalModeService.urgencyLevel(periodProgress: progress)
+                    }
+                    goalTargetWeight = activeGoal.targetWeight?.doubleValue
+                    goalTargetBodyFat = activeGoal.targetBodyFatPct?.doubleValue
+                    goalTargetMuscle = activeGoal.targetMuscleMass?.doubleValue
+                }
+            }
+
             let context = HomeCoachingContext(
                 currentHour: hour,
                 goalType: goalType,
@@ -970,7 +994,14 @@ final class HomeViewModel: ObservableObject {
                 weightChange30d: weightChange30d,
                 currentBodyFat: currentBodyFat,
                 bodyFatChange30d: bodyFatChange30d,
-                recentBodyEntries: recentBodyEntries
+                recentBodyEntries: recentBodyEntries,
+                isGoalModeActive: isGoalModeActive,
+                dDay: dDay,
+                goalUrgency: goalUrgency,
+                periodProgressPercent: periodProgressPercent,
+                targetWeight: goalTargetWeight,
+                targetBodyFat: goalTargetBodyFat,
+                targetMuscle: goalTargetMuscle
             )
 
             let coaching = try await geminiService.generateHomeCoaching(context: context)

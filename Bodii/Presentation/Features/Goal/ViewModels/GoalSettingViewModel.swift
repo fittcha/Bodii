@@ -71,10 +71,38 @@ final class GoalSettingViewModel: ObservableObject {
     /// 비현실적 변화율 경고 메시지 목록
     @Published var rateWarnings: [String] = []
 
+    // MARK: - Goal Mode Properties
+
+    /// 목표 기간 시작일 (기본값: 오늘)
+    @Published var goalPeriodStart: Date = Calendar.current.startOfDay(for: Date())
+
+    /// 목표 기간 종료일 (기본값: 3개월 후)
+    @Published var goalPeriodEnd: Date = Calendar.current.date(byAdding: .month, value: 3, to: Date()) ?? Date()
+
+    /// 목표 기간 설정 여부
+    @Published var isPeriodEnabled: Bool = false
+
+    /// 목표 모드 활성화 여부
+    @Published var isGoalModeActive: Bool = false
+
+    // MARK: - Current Body Data (loaded from BodyRepository)
+
+    /// 현재 체중 (BodyRepository에서 로드)
+    @Published private(set) var currentWeight: Decimal?
+
+    /// 현재 체지방률 (BodyRepository에서 로드)
+    @Published private(set) var currentBodyFat: Decimal?
+
+    /// 현재 근육량 (BodyRepository에서 로드)
+    @Published private(set) var currentMuscle: Decimal?
+
     // MARK: - Private Dependencies
 
     /// 목표 설정 유스케이스
     private let setGoalUseCase: SetGoalUseCase
+
+    /// 체성분 데이터 저장소
+    private let bodyRepository: BodyRepositoryProtocol
 
     /// 사용자 ID
     private let userId: UUID
@@ -86,10 +114,27 @@ final class GoalSettingViewModel: ObservableObject {
 
     init(
         setGoalUseCase: SetGoalUseCase,
+        bodyRepository: BodyRepositoryProtocol,
         userId: UUID
     ) {
         self.setGoalUseCase = setGoalUseCase
+        self.bodyRepository = bodyRepository
         self.userId = userId
+    }
+
+    // MARK: - Load Current Body Data
+
+    /// BodyRepository에서 현재 체성분 데이터를 로드합니다.
+    func loadCurrentBodyData() async {
+        do {
+            if let latest = try await bodyRepository.fetchLatest() {
+                currentWeight = latest.weight
+                currentBodyFat = latest.bodyFatPercent
+                currentMuscle = latest.muscleMass
+            }
+        } catch {
+            print("Failed to load current body data: \(error)")
+        }
     }
 
     // MARK: - Computed Properties
@@ -223,9 +268,11 @@ final class GoalSettingViewModel: ObservableObject {
         Calendar.current.date(byAdding: .weekOfYear, value: 1, to: Date()) ?? Date()
     }
 
-    /// DatePicker 최대 날짜 (104주 = 약 2년 후)
+    /// DatePicker 최대 날짜
+    /// 목표 모드 활성 시 26주(6개월), 그 외 104주(2년)
     var maximumTargetDate: Date {
-        Calendar.current.date(byAdding: .weekOfYear, value: 104, to: Date()) ?? Date()
+        let weeks = isPeriodEnabled ? 26 : 104
+        return Calendar.current.date(byAdding: .weekOfYear, value: weeks, to: Date()) ?? Date()
     }
 
     // MARK: - Public Methods
@@ -250,7 +297,10 @@ final class GoalSettingViewModel: ObservableObject {
                 targetBodyFatPct: isBodyFatEnabled ? parsedTargetBodyFat : nil,
                 targetMuscleMass: isMuscleEnabled ? parsedTargetMuscle : nil,
                 targetDate: isMaintainGoal ? nil : targetDate,
-                dailyCalorieTarget: parsedDailyCalorieTarget
+                dailyCalorieTarget: parsedDailyCalorieTarget,
+                goalPeriodStart: isPeriodEnabled ? goalPeriodStart : nil,
+                goalPeriodEnd: isPeriodEnabled ? goalPeriodEnd : nil,
+                isGoalModeActive: isPeriodEnabled && isGoalModeActive
             )
 
             isSaveSuccess = true
@@ -380,17 +430,16 @@ final class GoalSettingViewModel: ObservableObject {
         return formatter.string(from: number) ?? "\(value)"
     }
 
-    // TODO: BodyRepository 연동 필요
     private func getCurrentWeight() -> Decimal? {
-        return Decimal(70.0)
+        return currentWeight
     }
 
     private func getCurrentBodyFat() -> Decimal? {
-        return Decimal(22.0)
+        return currentBodyFat
     }
 
     private func getCurrentMuscle() -> Decimal? {
-        return Decimal(30.0)
+        return currentMuscle
     }
 }
 

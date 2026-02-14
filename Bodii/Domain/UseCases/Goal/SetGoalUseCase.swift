@@ -86,7 +86,10 @@ struct SetGoalUseCase {
         targetBodyFatPct: Decimal? = nil,
         targetMuscleMass: Decimal? = nil,
         targetDate: Date? = nil,
-        dailyCalorieTarget: Int32? = nil
+        dailyCalorieTarget: Int32? = nil,
+        goalPeriodStart: Date? = nil,
+        goalPeriodEnd: Date? = nil,
+        isGoalModeActive: Bool = false
     ) async throws -> Goal {
 
         // Step 1: 최신 체성분 기록 조회하여 시작값 스냅샷 생성
@@ -155,7 +158,10 @@ struct SetGoalUseCase {
                 startBodyFatPct: currentBodyFatPct,
                 startMuscleMass: currentMuscleMass,
                 startBMR: metabolismData?.bmr,
-                startTDEE: metabolismData?.tdee
+                startTDEE: metabolismData?.tdee,
+                goalPeriodStart: goalPeriodStart,
+                goalPeriodEnd: goalPeriodEnd,
+                isGoalModeActive: isGoalModeActive
             )
         } catch {
             throw SetGoalError.saveFailed(error)

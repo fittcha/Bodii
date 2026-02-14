@@ -182,6 +182,71 @@ struct HomeCoachingContext {
 
     // 최근 7일 체성분 개별 데이터
     let recentBodyEntries: [BodyDataPoint]
+
+    // 목표 모드 (Phase 4)
+    let isGoalModeActive: Bool
+    let dDay: Int?                     // D-Day 카운트 (양수 = 남은 일)
+    let goalUrgency: GoalUrgency?      // 긴박도 레벨
+    let periodProgressPercent: Double?  // 기간 진행률 (0~100)
+    let targetWeight: Double?
+    let targetBodyFat: Double?
+    let targetMuscle: Double?
+
+    init(
+        currentHour: Int,
+        goalType: GoalType,
+        tdee: Int,
+        targetCalories: Int,
+        sleepDurationMinutes: Int32?,
+        sleepStatus: SleepStatus?,
+        intakeCalories: Int,
+        totalCarbs: Double,
+        totalProtein: Double,
+        totalFat: Double,
+        mealCount: Int,
+        exerciseCalories: Int,
+        exerciseCount: Int,
+        exerciseNames: [String],
+        currentWeight: Double?,
+        weightChange30d: Double?,
+        currentBodyFat: Double?,
+        bodyFatChange30d: Double?,
+        recentBodyEntries: [BodyDataPoint],
+        isGoalModeActive: Bool = false,
+        dDay: Int? = nil,
+        goalUrgency: GoalUrgency? = nil,
+        periodProgressPercent: Double? = nil,
+        targetWeight: Double? = nil,
+        targetBodyFat: Double? = nil,
+        targetMuscle: Double? = nil
+    ) {
+        self.currentHour = currentHour
+        self.goalType = goalType
+        self.tdee = tdee
+        self.targetCalories = targetCalories
+        self.sleepDurationMinutes = sleepDurationMinutes
+        self.sleepStatus = sleepStatus
+        self.intakeCalories = intakeCalories
+        self.totalCarbs = totalCarbs
+        self.totalProtein = totalProtein
+        self.totalFat = totalFat
+        self.mealCount = mealCount
+        self.exerciseCalories = exerciseCalories
+        self.exerciseCount = exerciseCount
+        self.exerciseNames = exerciseNames
+        self.currentWeight = currentWeight
+        self.weightChange30d = weightChange30d
+        self.currentBodyFat = currentBodyFat
+        self.bodyFatChange30d = bodyFatChange30d
+        self.recentBodyEntries = recentBodyEntries
+        self.isGoalModeActive = isGoalModeActive
+        self.dDay = dDay
+        self.goalUrgency = goalUrgency
+        self.periodProgressPercent = periodProgressPercent
+        self.targetWeight = targetWeight
+        self.targetBodyFat = targetBodyFat
+        self.targetMuscle = targetMuscle
+    }
 }
 
 /// 체성분 개별 데이터 포인트

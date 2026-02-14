@@ -138,4 +138,16 @@ protocol DailyLogRepository {
         oldDuration: Int32,
         newDuration: Int32
     ) async throws
+
+    // MARK: - Date Range Query
+
+    /// 날짜 범위로 일일 집계 목록을 조회합니다.
+    ///
+    /// - Parameters:
+    ///   - startDate: 시작 날짜 (포함)
+    ///   - endDate: 종료 날짜 (포함)
+    ///   - userId: 사용자 ID
+    /// - Returns: 날짜 범위 내의 일일 집계 목록 (날짜 오름차순)
+    /// - Throws: 조회 중 발생한 에러
+    func findByDateRange(startDate: Date, endDate: Date, userId: UUID) async throws -> [DailyLog]
 }

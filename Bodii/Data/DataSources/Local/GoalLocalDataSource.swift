@@ -41,7 +41,10 @@ final class GoalLocalDataSource {
         startBodyFatPct: Decimal? = nil,
         startMuscleMass: Decimal? = nil,
         startBMR: Decimal? = nil,
-        startTDEE: Decimal? = nil
+        startTDEE: Decimal? = nil,
+        goalPeriodStart: Date? = nil,
+        goalPeriodEnd: Date? = nil,
+        isGoalModeActive: Bool = false
     ) async throws -> Goal {
         let context = persistenceController.newBackgroundContext()
 
@@ -64,6 +67,9 @@ final class GoalLocalDataSource {
             goal.startMuscleMass = startMuscleMass as NSDecimalNumber?
             goal.startBMR = startBMR as NSDecimalNumber?
             goal.startTDEE = startTDEE as NSDecimalNumber?
+            goal.goalPeriodStart = goalPeriodStart
+            goal.goalPeriodEnd = goalPeriodEnd
+            goal.isGoalModeActive = isGoalModeActive
             goal.isActive = true
             goal.createdAt = now
             goal.updatedAt = now
@@ -159,6 +165,48 @@ final class GoalLocalDataSource {
             goal.updatedAt = Date()
             try context.save()
             return goal
+        }
+    }
+
+    /// 활성 목표의 목표 모드를 설정합니다.
+    func setGoalModeActive(_ isActive: Bool) async throws {
+        let context = persistenceController.newBackgroundContext()
+
+        try await context.perform {
+            let request: NSFetchRequest<Goal> = Goal.fetchRequest()
+            request.predicate = NSPredicate(format: "isActive == YES")
+            request.fetchLimit = 1
+
+            guard let goal = try context.fetch(request).first else {
+                throw DataSourceError.recordNotFound
+            }
+
+            goal.isGoalModeActive = isActive
+            goal.updatedAt = Date()
+
+            try context.save()
+        }
+    }
+
+    /// 활성 목표의 목표 기간을 설정합니다.
+    func setGoalPeriod(start: Date, end: Date) async throws {
+        let context = persistenceController.newBackgroundContext()
+
+        try await context.perform {
+            let request: NSFetchRequest<Goal> = Goal.fetchRequest()
+            request.predicate = NSPredicate(format: "isActive == YES")
+            request.fetchLimit = 1
+
+            guard let goal = try context.fetch(request).first else {
+                throw DataSourceError.recordNotFound
+            }
+
+            goal.goalPeriodStart = start
+            goal.goalPeriodEnd = end
+            goal.targetDate = end
+            goal.updatedAt = Date()
+
+            try context.save()
         }
     }
 

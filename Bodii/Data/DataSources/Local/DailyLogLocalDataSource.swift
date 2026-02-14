@@ -219,6 +219,32 @@ final class DailyLogLocalDataSource {
             try self.context.save()
         }
     }
+
+    // MARK: - Date Range Query
+
+    /// 날짜 범위의 DailyLog를 조회합니다.
+    func fetchByDateRange(startDate: Date, endDate: Date, userId: UUID) async throws -> [DailyLog] {
+        return try await context.perform { [weak self] in
+            guard let self = self else {
+                throw DataSourceError.contextDeallocated
+            }
+
+            let calendar = Calendar.current
+            let start = calendar.startOfDay(for: startDate)
+            let end = calendar.startOfDay(for: endDate)
+
+            let request: NSFetchRequest<DailyLog> = DailyLog.fetchRequest()
+            request.predicate = NSPredicate(
+                format: "date >= %@ AND date <= %@ AND user.id == %@",
+                start as CVarArg,
+                end as CVarArg,
+                userId as CVarArg
+            )
+            request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+
+            return try self.context.fetch(request)
+        }
+    }
 }
 
 // MARK: - Private Helpers

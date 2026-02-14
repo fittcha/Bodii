@@ -66,6 +66,12 @@ final class UnifiedFoodSearchService {
     /// USDA DTO to Domain 매퍼
     private let usdaMapper: USDAFoodMapper
 
+    /// Open Food Facts API 서비스
+    private let offService: OpenFoodFactsAPIService
+
+    /// Open Food Facts DTO to Domain 매퍼
+    private let offMapper: OpenFoodFactsMapper
+
     /// Core Data context
     ///
     /// 📚 학습 포인트: Core Data Context Injection
@@ -91,14 +97,18 @@ final class UnifiedFoodSearchService {
         context: NSManagedObjectContext,
         kfdaService: KFDAFoodAPIService = KFDAFoodAPIService(),
         usdaService: USDAFoodAPIService = USDAFoodAPIService(),
+        offService: OpenFoodFactsAPIService = OpenFoodFactsAPIService(),
         kfdaMapper: KFDAFoodMapper = KFDAFoodMapper(),
-        usdaMapper: USDAFoodMapper = USDAFoodMapper()
+        usdaMapper: USDAFoodMapper = USDAFoodMapper(),
+        offMapper: OpenFoodFactsMapper = OpenFoodFactsMapper()
     ) {
         self.context = context
         self.kfdaService = kfdaService
         self.usdaService = usdaService
+        self.offService = offService
         self.kfdaMapper = kfdaMapper
         self.usdaMapper = usdaMapper
+        self.offMapper = offMapper
     }
 
     // MARK: - Public Methods
@@ -169,79 +179,41 @@ final class UnifiedFoodSearchService {
         var allFoods: [Food] = []
 
         if containsKorean {
-            // 1단계: 식약처 검색 (재시도 포함)
-            // limit이 maxPageSize(100)을 초과하면 여러 페이지 요청
-            var kfdaFoods: [Food] = []
-            let kfdaMaxPage = Constants.API.KFDA.maxPageSize
-            let totalPages = max(1, (limit + kfdaMaxPage - 1) / kfdaMaxPage)
-
-            for page in 1...min(totalPages, 5) {
-                let pageFoods = await searchKFDA(query: query, limit: kfdaMaxPage, pageNo: page)
-                kfdaFoods.append(contentsOf: pageFoods)
-
-                // 결과가 pageSize보다 적으면 더 이상 페이지 없음
-                if pageFoods.count < kfdaMaxPage {
-                    break
-                }
-            }
-
-            // 2단계: 식약처 결과가 충분하면 그대로 반환
-            if kfdaFoods.count >= 5 {
-                allFoods = kfdaFoods
-
-                #if DEBUG
-                print("✅ Korean query: Sufficient KFDA results (\(kfdaFoods.count) items)")
-                #endif
-
-            } else {
-                // 3단계: 결과가 부족하면 USDA도 검색하여 추가
-                #if DEBUG
-                print("⚠️ Korean query: Insufficient KFDA results (\(kfdaFoods.count) items), searching USDA as fallback")
-                #endif
-
-                let usdaFoods = await searchUSDA(query: query, limit: limit - kfdaFoods.count)
-
-                // 4단계: 한국 음식 먼저, 외국 음식 나중에
-                allFoods = kfdaFoods + usdaFoods
-
-                #if DEBUG
-                if kfdaFoods.isEmpty && usdaFoods.isEmpty {
-                    print("❌ Both KFDA and USDA search failed - returning empty results")
-                } else {
-                    print("✅ Fallback successful: \(kfdaFoods.count) KFDA + \(usdaFoods.count) USDA = \(allFoods.count) total")
-                }
-                #endif
-            }
-
-        } else {
-            // 📚 학습 포인트: Parallel Search for Performance
-            // 영문 검색어는 양쪽 API를 병렬로 검색하여 성능 최적화
-            // 💡 Java 비교: CompletableFuture.allOf()와 유사
-
+            // KFDA + USDA + OFF 3개 API 병렬 검색
             #if DEBUG
-            print("🔄 English query: Searching KFDA and USDA in parallel")
+            print("🔄 Korean query: Searching KFDA, USDA, and OFF in parallel")
             #endif
 
-            // 병렬 검색 (async let으로 동시 실행)
-            async let kfdaFoodsTask = searchKFDA(query: query, limit: limit)
-            async let usdaFoodsTask = searchUSDA(query: query, limit: limit)
+            async let kfdaTask = searchKFDAMultiPage(query: query, limit: limit)
+            async let usdaTask = searchUSDA(query: query, limit: limit)
+            async let offTask = searchOFF(query: query, limit: Constants.API.OpenFoodFacts.defaultPageSize)
 
-            let (kfdaFoods, usdaFoods) = await (kfdaFoodsTask, usdaFoodsTask)
+            let (kfdaFoods, usdaFoods, offFoods) = await (kfdaTask, usdaTask, offTask)
 
-            // 📚 학습 포인트: Result Merging Strategy
-            // 영문 검색어의 경우 USDA 결과가 더 정확할 가능성이 높음
-            // 따라서 USDA 결과를 먼저 배치하되, 한국 음식도 포함
-            // 💡 Java 비교: Stream.concat() + distinct()
-
-            // USDA 먼저, 식약처 나중에 (외국 음식 우선)
-            allFoods = usdaFoods + kfdaFoods
+            // 한국 정부 DB → OFF 브랜드 제품 → USDA
+            allFoods = kfdaFoods + offFoods + usdaFoods
 
             #if DEBUG
-            if kfdaFoods.isEmpty && usdaFoods.isEmpty {
-                print("❌ Both KFDA and USDA search failed for English query")
-            } else {
-                print("✅ Parallel search successful: \(usdaFoods.count) USDA + \(kfdaFoods.count) KFDA = \(allFoods.count) total")
-            }
+            print("✅ Parallel search: \(kfdaFoods.count) KFDA + \(offFoods.count) OFF + \(usdaFoods.count) USDA = \(allFoods.count) total")
+            #endif
+
+        } else {
+            // 영문: KFDA + USDA + OFF 3개 API 병렬 검색
+            #if DEBUG
+            print("🔄 English query: Searching KFDA, USDA, and OFF in parallel")
+            #endif
+
+            async let kfdaFoodsTask = searchKFDA(query: query, limit: limit)
+            async let usdaFoodsTask = searchUSDA(query: query, limit: limit)
+            async let offFoodsTask = searchOFF(query: query, limit: Constants.API.OpenFoodFacts.defaultPageSize)
+
+            let (kfdaFoods, usdaFoods, offFoods) = await (kfdaFoodsTask, usdaFoodsTask, offFoodsTask)
+
+            // USDA → OFF → KFDA (영문은 USDA 우선)
+            allFoods = usdaFoods + offFoods + kfdaFoods
+
+            #if DEBUG
+            print("✅ Parallel search: \(usdaFoods.count) USDA + \(offFoods.count) OFF + \(kfdaFoods.count) KFDA = \(allFoods.count) total")
             #endif
         }
 
@@ -258,6 +230,46 @@ final class UnifiedFoodSearchService {
     }
 
     // MARK: - Private Methods
+
+    /// 식약처 API 멀티 페이지 검색
+    ///
+    /// limit이 maxPageSize(100)을 초과하면 여러 페이지를 순차 요청합니다.
+    private func searchKFDAMultiPage(query: String, limit: Int) async -> [Food] {
+        var kfdaFoods: [Food] = []
+        let kfdaMaxPage = Constants.API.KFDA.maxPageSize
+        let totalPages = max(1, (limit + kfdaMaxPage - 1) / kfdaMaxPage)
+
+        for page in 1...min(totalPages, 5) {
+            let pageFoods = await searchKFDA(query: query, limit: kfdaMaxPage, pageNo: page)
+            kfdaFoods.append(contentsOf: pageFoods)
+
+            // 결과가 pageSize보다 적으면 더 이상 페이지 없음
+            if pageFoods.count < kfdaMaxPage {
+                break
+            }
+        }
+
+        return kfdaFoods
+    }
+
+    /// Open Food Facts API 검색 (에러 시 빈 배열 반환)
+    private func searchOFF(query: String, limit: Int) async -> [Food] {
+        do {
+            let response = try await offService.searchProducts(query: query, pageSize: limit)
+            let foods = offMapper.toDomainArray(from: response.products, context: context)
+
+            #if DEBUG
+            print("✅ OFF search success: \(foods.count) foods found for '\(query)'")
+            #endif
+
+            return foods
+        } catch {
+            #if DEBUG
+            print("⚠️ OFF search failed for '\(query)': \(error.localizedDescription)")
+            #endif
+            return []
+        }
+    }
 
     /// 식약처 API 검색 (에러 처리 및 재시도 포함)
     ///

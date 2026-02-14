@@ -70,7 +70,10 @@ final class GoalRepository: GoalRepositoryProtocol {
         startBodyFatPct: Decimal?,
         startMuscleMass: Decimal?,
         startBMR: Decimal?,
-        startTDEE: Decimal?
+        startTDEE: Decimal?,
+        goalPeriodStart: Date? = nil,
+        goalPeriodEnd: Date? = nil,
+        isGoalModeActive: Bool = false
     ) async throws -> Goal {
         do {
             return try await localDataSource.create(
@@ -88,7 +91,10 @@ final class GoalRepository: GoalRepositoryProtocol {
                 startBodyFatPct: startBodyFatPct,
                 startMuscleMass: startMuscleMass,
                 startBMR: startBMR,
-                startTDEE: startTDEE
+                startTDEE: startTDEE,
+                goalPeriodStart: goalPeriodStart,
+                goalPeriodEnd: goalPeriodEnd,
+                isGoalModeActive: isGoalModeActive
             )
         } catch {
             throw RepositoryError.saveFailed(error.localizedDescription)
@@ -256,6 +262,26 @@ final class GoalRepository: GoalRepositoryProtocol {
                 throw RepositoryError.notFoundWithId(id)
             }
             throw RepositoryError.deleteFailed(error.localizedDescription)
+        }
+    }
+
+    // MARK: - Goal Mode
+
+    /// 활성 목표의 목표 모드를 설정합니다.
+    func setGoalModeActive(_ isActive: Bool) async throws {
+        do {
+            try await localDataSource.setGoalModeActive(isActive)
+        } catch {
+            throw RepositoryError.updateFailed(error.localizedDescription)
+        }
+    }
+
+    /// 활성 목표의 목표 기간을 설정합니다.
+    func setGoalPeriod(start: Date, end: Date) async throws {
+        do {
+            try await localDataSource.setGoalPeriod(start: start, end: end)
+        } catch {
+            throw RepositoryError.updateFailed(error.localizedDescription)
         }
     }
 

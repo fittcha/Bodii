@@ -54,7 +54,8 @@ struct KFDAFoodMapper {
         food.fiber = fiber.map { NSDecimalNumber(decimal: $0) }
         food.sugar = sugar.map { NSDecimalNumber(decimal: $0) }
         food.servingSize = NSDecimalNumber(decimal: servingSize)
-        food.servingUnit = nil
+        // 서빙 단위 파싱 시도 (예: "1봉지(120g)")
+        food.servingUnit = parseServingUnit(from: dto)
         food.source = FoodSource.governmentAPI.rawValue
         food.apiCode = dto.foodCd
         food.createdAt = Date()
@@ -87,6 +88,33 @@ struct KFDAFoodMapper {
         }
         // 기본값: 100g
         return Decimal(100)
+    }
+
+    /// 서빙 단위 텍스트를 파싱합니다.
+    /// 예: "1봉지(120g)" → "1봉지", "100g" → nil, "1컵(200ml)" → "1컵"
+    private func parseServingUnit(from dto: KFDAFoodDTO) -> String? {
+        guard let servingText = dto.servingSize,
+              !servingText.isEmpty else { return nil }
+
+        let text = servingText.trimmingCharacters(in: .whitespaces)
+
+        // 패턴: 숫자+한글 단위 + (숫자g/ml)
+        // 예: "1봉지(120g)", "2조각(50g)", "1공기(210g)"
+        let pattern = #"(\d+(?:\.\d+)?\s*[가-힣]+)\s*\("#
+        if let regex = try? NSRegularExpression(pattern: pattern),
+           let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+           let unitRange = Range(match.range(at: 1), in: text) {
+            return String(text[unitRange])
+        }
+
+        // 순수 숫자+g/ml 패턴은 서빙 단위 없음 (예: "100g")
+        let simplePattern = #"^\d+(?:\.\d+)?\s*(?:g|ml|kcal)$"#
+        if let simpleRegex = try? NSRegularExpression(pattern: simplePattern, options: .caseInsensitive),
+           simpleRegex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)) != nil {
+            return nil
+        }
+
+        return nil
     }
 }
 

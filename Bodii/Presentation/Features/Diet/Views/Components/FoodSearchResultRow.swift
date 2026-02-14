@@ -34,7 +34,7 @@ struct FoodSearchResultRow: View {
     var body: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
-                // 음식 이름 + 유형 배지
+                // 음식 이름 + 유형 배지 + 소스 배지
                 HStack(spacing: 6) {
                     Text(displayName)
                         .font(.body)
@@ -43,6 +43,15 @@ struct FoodSearchResultRow: View {
                         .lineLimit(1)
 
                     foodTypeBadge
+                    sourceBadge
+                }
+
+                // 카테고리 서브타이틀 (복합명인 경우)
+                if let category = categoryName {
+                    Text(category)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
                 }
 
                 // 1회 제공량 정보
@@ -102,6 +111,54 @@ struct FoodSearchResultRow: View {
             return String(name[name.index(after: underscoreIndex)...])
         }
         return name
+    }
+
+    /// 카테고리 이름 (복합명에서 카테고리 부분 추출)
+    private var categoryName: String? {
+        guard let name = food.name,
+              let underscoreIndex = name.firstIndex(of: "_") else { return nil }
+        let category = String(name[name.startIndex..<underscoreIndex])
+        return category.isEmpty ? nil : category
+    }
+
+    /// 데이터 소스 배지
+    @ViewBuilder
+    private var sourceBadge: some View {
+        let source = FoodSource(rawValue: food.source) ?? .userDefined
+        switch source {
+        case .governmentAPI:
+            Text("KFDA")
+                .font(.system(size: 8, weight: .bold))
+                .foregroundColor(.green)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1)
+                .background(Color.green.opacity(0.12))
+                .cornerRadius(3)
+        case .usda:
+            Text("USDA")
+                .font(.system(size: 8, weight: .bold))
+                .foregroundColor(.blue)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1)
+                .background(Color.blue.opacity(0.12))
+                .cornerRadius(3)
+        case .openFoodFacts:
+            Text("OFF")
+                .font(.system(size: 8, weight: .bold))
+                .foregroundColor(.orange)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1)
+                .background(Color.orange.opacity(0.12))
+                .cornerRadius(3)
+        case .userDefined:
+            Text("직접")
+                .font(.system(size: 8, weight: .bold))
+                .foregroundColor(.purple)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1)
+                .background(Color.purple.opacity(0.12))
+                .cornerRadius(3)
+        }
     }
 
     /// 음식 유형 배지
