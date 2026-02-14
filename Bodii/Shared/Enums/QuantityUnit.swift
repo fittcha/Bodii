@@ -28,6 +28,12 @@ enum QuantityUnit: Int16, CaseIterable, Codable {
     case ml = 4
     case piece = 5
     case cup = 6
+    case pack = 7       // 봉지/팩
+    case can = 8        // 캔
+    case bottle = 9     // 병
+    case slice = 10     // 조각/쪽
+    case plate = 11     // 접시
+    case bowl = 12      // 공기/그릇
 
     /// 사용자에게 표시할 단위 이름
     var displayName: String {
@@ -39,23 +45,22 @@ enum QuantityUnit: Int16, CaseIterable, Codable {
         case .ml: return "ml"
         case .piece: return "개"
         case .cup: return "컵"
+        case .pack: return "봉지"
+        case .can: return "캔"
+        case .bottle: return "병"
+        case .slice: return "조각"
+        case .plate: return "접시"
+        case .bowl: return "공기"
         }
     }
 
-    /// 단위당 그램 환산값 (nil이면 그램 환산 불가 - serving, piece)
+    /// 단위당 그램 환산값 (nil이면 그램 환산 불가 - 개수 기반 단위)
     ///
     /// 영양소 계산 시 그램으로 변환하여 servingSize 기반 비례 계산에 사용합니다.
-    /// - serving: nil (인분 수를 직접 곱셈)
-    /// - piece: nil (개수를 직접 곱셈, serving과 동일하게 취급)
-    /// - grams: 1.0
-    /// - tablespoon: 15.0
-    /// - teaspoon: 5.0
-    /// - ml: 1.0 (물 기준, 대부분의 액체에 근사)
-    /// - cup: 240.0
     var gramsPerUnit: Decimal? {
         switch self {
-        case .serving, .piece:
-            return nil // 인분/개 단위는 직접 곱셈
+        case .serving, .piece, .pack, .can, .bottle, .slice, .plate, .bowl:
+            return nil // 개수 기반 단위는 직접 곱셈
         case .grams:
             return Decimal(1)
         case .tablespoon:

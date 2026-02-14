@@ -250,13 +250,51 @@ final class GeminiService: GeminiServiceProtocol {
         // 목표 설명
         let goalDesc = buildGoalDescription(goalType: context.goalType)
 
+        // 목표 모드 컨텍스트
+        var goalModeSection = ""
+        var goalModeToneGuide = ""
+        if context.isGoalModeActive {
+            var goalModeParts: [String] = []
+            if let dDay = context.dDay {
+                goalModeParts.append("D-Day: D-\(dDay)")
+            }
+            if let urgency = context.goalUrgency {
+                goalModeParts.append("긴박도: \(urgency.displayName)")
+            }
+            if let progress = context.periodProgressPercent {
+                goalModeParts.append(String(format: "기간 진행률: %.0f%%", progress))
+            }
+            var targetParts: [String] = []
+            if let tw = context.targetWeight { targetParts.append(String(format: "체중 %.1fkg", tw)) }
+            if let tf = context.targetBodyFat { targetParts.append(String(format: "체지방 %.1f%%", tf)) }
+            if let tm = context.targetMuscle { targetParts.append(String(format: "근육량 %.1fkg", tm)) }
+            if !targetParts.isEmpty {
+                goalModeParts.append("목표값: \(targetParts.joined(separator: ", "))")
+            }
+            goalModeSection = "\n**[목표 모드 활성]** \(goalModeParts.joined(separator: " | "))"
+
+            // 긴박도별 톤 가이드
+            switch context.goalUrgency {
+            case .relaxed:
+                goalModeToneGuide = "\n- 톤: 격려하고 장기 관점에서 조언. 차분하고 안정적인 어조."
+            case .steady:
+                goalModeToneGuide = "\n- 톤: 집중하되 부담 없이. 구체적 실천 제안."
+            case .intense:
+                goalModeToneGuide = "\n- 톤: 적극적 동기 부여. 구체적 행동 제안과 D-Day 언급."
+            case .critical:
+                goalModeToneGuide = "\n- 톤: 긴급하지만 긍정적. 마지막 스퍼트 독려. D-Day 강조."
+            case .none:
+                break
+            }
+        }
+
         return """
         당신은 전문 건강 코치입니다. 사용자의 오늘 건강 데이터를 보고 시간대에 맞는 한마디 코칭을 해주세요.
 
         **현재 시간대:** \(timeOfDay) (\(context.currentHour)시)
         **목표:** \(goalDesc)
         **TDEE:** \(context.tdee)kcal / 목표 섭취: \(context.targetCalories)kcal
-
+        \(goalModeSection)
         **체성분 트렌드:** \(bodySection)\(recentBodySection)
         **오늘의 수면:** \(sleepSection)
         **오늘의 식단:** \(dietSection)
@@ -265,7 +303,7 @@ final class GeminiService: GeminiServiceProtocol {
         **코칭 지침:**
         - 시간대에 맞는 실용적 조언 1-2문장 (예: 아침이면 오늘 계획, 저녁이면 하루 총평)
         - 기록된 데이터 기반으로 구체적으로 언급 (체성분 변화 추세도 반영)
-        - 데이터가 없는 항목은 기록을 독려
+        - 데이터가 없는 항목은 기록을 독려\(goalModeToneGuide)
         - 격려하는 톤, 한국어, 반말 금지
         - 이모지 1개만 앞에 사용
 

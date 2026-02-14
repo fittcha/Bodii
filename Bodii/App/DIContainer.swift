@@ -558,6 +558,7 @@ extension DIContainer {
     func makeGoalSettingViewModel(userId: UUID) -> GoalSettingViewModel {
         return GoalSettingViewModel(
             setGoalUseCase: setGoalUseCase,
+            bodyRepository: bodyRepository,
             userId: userId
         )
     }
@@ -572,6 +573,36 @@ extension DIContainer {
     @MainActor
     func makeGoalProgressViewModel() -> GoalProgressViewModel {
         return GoalProgressViewModel(getGoalProgressUseCase: getGoalProgressUseCase)
+    }
+
+    /// GoalModeSettingsViewModel 생성
+    ///
+    /// - Returns: 새로운 GoalModeSettingsViewModel 인스턴스
+    @MainActor
+    func makeGoalModeSettingsViewModel() -> GoalModeSettingsViewModel {
+        return GoalModeSettingsViewModel(goalRepository: goalRepository)
+    }
+
+    /// GoalExerciseStatsViewModel 생성
+    @MainActor
+    func makeGoalExerciseStatsViewModel() -> GoalExerciseStatsViewModel {
+        return GoalExerciseStatsViewModel(exerciseRepository: exerciseRepository)
+    }
+
+    /// GoalDietStatsViewModel 생성
+    @MainActor
+    func makeGoalDietStatsViewModel() -> GoalDietStatsViewModel {
+        return GoalDietStatsViewModel(dailyLogRepository: dailyLogRepository)
+    }
+
+    /// WeeklyReportViewModel 생성
+    @MainActor
+    func makeWeeklyReportViewModel() -> WeeklyReportViewModel {
+        return WeeklyReportViewModel(
+            exerciseRepository: exerciseRepository,
+            dailyLogRepository: dailyLogRepository,
+            bodyRepository: bodyRepository
+        )
     }
 
     // MARK: - Managers

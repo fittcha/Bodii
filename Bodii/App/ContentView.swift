@@ -37,6 +37,15 @@ struct ContentView: View {
     // 💡 Java 비교: ViewModel과 유사한 역할
     @StateObject private var sleepPromptManager = DIContainer.shared.makeSleepPromptManager()
 
+    /// 목표 모드 상태 관리 (홈 탭 전환용)
+    @StateObject private var goalModeViewModel = DIContainer.shared.makeGoalModeSettingsViewModel()
+
+    /// 운동 탭 목표 기간 통계
+    @StateObject private var goalExerciseStatsVM = DIContainer.shared.makeGoalExerciseStatsViewModel()
+
+    /// 식단 탭 목표 기간 통계
+    @StateObject private var goalDietStatsVM = DIContainer.shared.makeGoalDietStatsViewModel()
+
     // 📚 학습 포인트: @Environment(\.scenePhase)
     // 앱의 생명주기 상태를 추적 (active, inactive, background)
     // 앱이 포그라운드로 돌아올 때 수면 프롬프트 체크
@@ -57,6 +66,9 @@ struct ContentView: View {
             sleepTab
             settingsTab
         }
+        .tint(goalModeViewModel.isGoalModeEnabled
+            ? (goalModeViewModel.urgencyLevel?.color ?? .blue)
+            : .blue)
         // 📚 학습 포인트: Sheet Presentation for Sleep Prompt
         // 아침 수면 기록 프롬프트를 모달 시트로 표시
         // shouldShowPrompt가 true일 때 자동으로 표시됨
@@ -90,6 +102,7 @@ struct ContentView: View {
             loadCurrentUser()
             Task {
                 await sleepPromptManager.checkShouldShow()
+                await goalModeViewModel.loadActiveGoal()
             }
         }
         // 📚 학습 포인트: Scene Phase Observer
@@ -105,20 +118,48 @@ struct ContentView: View {
                 }
             }
         }
+        // 목표 기간 만료 결과 팝업
+        .sheet(isPresented: $goalModeViewModel.showCompletionResult) {
+            if let expiredGoal = goalModeViewModel.expiredGoal {
+                let progressVM = DIContainer.shared.makeGoalProgressViewModel()
+                GoalCompletionResultSheet(
+                    goal: expiredGoal,
+                    progressViewModel: progressVM,
+                    onDismiss: {
+                        goalModeViewModel.dismissCompletionResult()
+                    }
+                )
+            }
+        }
     }
 
     // MARK: - Tab Views
 
+    @ViewBuilder
     private var homeTab: some View {
         let userId = currentUserId ?? UserProfile.sample.id
         let viewModel = DIContainer.shared.makeHomeViewModel(userId: userId)
         let goalProgressViewModel = DIContainer.shared.makeGoalProgressViewModel()
 
-        return HomeView(viewModel: viewModel, goalProgressViewModel: goalProgressViewModel)
-            .tabItem {
-                Label("홈", systemImage: "house.fill")
+        Group {
+            if goalModeViewModel.isGoalModeEnabled {
+                GoalDashboardView(
+                    viewModel: viewModel,
+                    goalProgressViewModel: goalProgressViewModel,
+                    goalModeViewModel: goalModeViewModel,
+                    weeklyReportViewModel: DIContainer.shared.makeWeeklyReportViewModel()
+                )
+            } else {
+                HomeView(viewModel: viewModel, goalProgressViewModel: goalProgressViewModel)
             }
-            .tag(Tab.home)
+        }
+        .tabItem {
+            Label(
+                goalModeViewModel.isGoalModeEnabled ? "목표" : "홈",
+                systemImage: goalModeViewModel.isGoalModeEnabled ? "flame.fill" : "house.fill"
+            )
+        }
+        .tag(Tab.home)
     }
 
     private var bodyTab: some View {
@@ -131,6 +172,9 @@ struct ContentView: View {
         )
 
         return BodyCompositionView(viewModel: viewModel)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                goalMiniBanner(message: goalModeBodyMessage)
+            }
             .tabItem {
                 Label("체성분", systemImage: "figure.stand")
             }
@@ -138,14 +182,13 @@ struct ContentView: View {
     }
 
     private var dietTab: some View {
-        // 📚 학습 포인트: Diet Tab Container View
-        // DietTabView는 자체적으로 NavigationStack을 포함하고 있음
-        // DI가 DietTabView 내부에서 처리됨
-        // 💡 Java 비교: Android의 Fragment Container와 유사
         let userId = currentUserId ?? UserProfile.sample.id
         let bmr = currentBMR > 0 ? currentBMR : Int32(1650)
         let tdee = currentTDEE > 0 ? currentTDEE : Int32(2310)
         return DietTabView(userId: userId, bmr: bmr, tdee: tdee)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                dietTabBanner
+            }
             .tabItem {
                 Label("식단", systemImage: "fork.knife")
             }
@@ -153,10 +196,6 @@ struct ContentView: View {
     }
 
     private var exerciseTab: some View {
-        // 📚 학습 포인트: Exercise Tab with NavigationStack
-        // ExerciseListView는 NavigationStack을 포함하지 않으므로 여기서 래핑
-        // DIContainer를 통해 ViewModel 생성 및 의존성 주입
-        // 온보딩에서 저장된 실제 사용자 데이터 사용
         let userId = currentUserId ?? UserProfile.sample.id
         let viewModel = DIContainer.shared.makeExerciseListViewModel(
             userId: userId
@@ -164,6 +203,9 @@ struct ContentView: View {
 
         return NavigationStack {
             ExerciseListView(viewModel: viewModel)
+        }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            exerciseTabBanner
         }
         .tabItem {
             Label("운동", systemImage: "figure.run")
@@ -190,12 +232,92 @@ struct ContentView: View {
         // 💡 Java 비교: Android의 SettingsActivity와 유사
         SettingsView(
             authService: DIContainer.shared.healthKitAuthService,
-            syncService: DIContainer.shared.healthKitSyncService
+            syncService: DIContainer.shared.healthKitSyncService,
+            goalModeViewModel: DIContainer.shared.makeGoalModeSettingsViewModel()
         )
         .tabItem {
             Label("설정", systemImage: "gearshape.fill")
         }
         .tag(Tab.settings)
+    }
+
+    // MARK: - Goal Mini Banner
+
+    /// 목표 모드 미니 배너 (비활성 시 빈 뷰)
+    @ViewBuilder
+    private func goalMiniBanner(message: String) -> some View {
+        if goalModeViewModel.isGoalModeEnabled {
+            GoalMiniBannerView(
+                dDayText: goalModeViewModel.dDayText ?? "D-?",
+                message: message,
+                urgency: goalModeViewModel.urgencyLevel ?? .relaxed
+            )
+            .padding(.top, 4)
+            .padding(.bottom, 4)
+        }
+    }
+
+    /// 체성분 탭 목표 메시지
+    private var goalModeBodyMessage: String {
+        goalModeViewModel.goalSummaryText ?? "목표 진행 중"
+    }
+
+    // MARK: - Exercise Tab Banner
+
+    /// 운동 탭 배너: 목표 모드 시 통계 배너, 비활성 시 빈 뷰
+    @ViewBuilder
+    private var exerciseTabBanner: some View {
+        if goalModeViewModel.isGoalModeEnabled,
+           let goal = goalModeViewModel.activeGoal,
+           let start = goal.goalPeriodStart,
+           let end = goal.goalPeriodEnd {
+            GoalExerciseStatsBannerView(
+                dDayText: goalModeViewModel.dDayText ?? "D-?",
+                urgency: goalModeViewModel.urgencyLevel ?? .relaxed,
+                viewModel: goalExerciseStatsVM
+            )
+            .padding(.top, 4)
+            .padding(.bottom, 4)
+            .task(id: goalModeViewModel.isGoalModeEnabled) {
+                let userId = currentUserId ?? UserProfile.sample.id
+                await goalExerciseStatsVM.loadStats(
+                    userId: userId,
+                    periodStart: start,
+                    periodEnd: end
+                )
+            }
+        }
+    }
+
+    // MARK: - Diet Tab Banner
+
+    /// 식단 탭 배너: 목표 모드 시 통계 배너, 비활성 시 빈 뷰
+    @ViewBuilder
+    private var dietTabBanner: some View {
+        if goalModeViewModel.isGoalModeEnabled,
+           let goal = goalModeViewModel.activeGoal,
+           let start = goal.goalPeriodStart,
+           let end = goal.goalPeriodEnd {
+            let calorieTarget = Int(goal.dailyCalorieTarget)
+            GoalDietStatsBannerView(
+                dDayText: goalModeViewModel.dDayText ?? "D-?",
+                urgency: goalModeViewModel.urgencyLevel ?? .relaxed,
+                dailyCalorieTarget: calorieTarget > 0 ? calorieTarget : Int(currentTDEE),
+                viewModel: goalDietStatsVM
+            )
+            .padding(.top, 4)
+            .padding(.bottom, 4)
+            .task(id: goalModeViewModel.isGoalModeEnabled) {
+                let userId = currentUserId ?? UserProfile.sample.id
+                let target = calorieTarget > 0 ? Int32(calorieTarget) : currentTDEE
+                await goalDietStatsVM.loadStats(
+                    userId: userId,
+                    periodStart: start,
+                    periodEnd: end,
+                    dailyCalorieTarget: target
+                )
+            }
+        }
     }
 
     // MARK: - Private Methods

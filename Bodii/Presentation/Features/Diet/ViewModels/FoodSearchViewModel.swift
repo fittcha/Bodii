@@ -47,6 +47,9 @@ final class FoodSearchViewModel: ObservableObject {
     /// API 경고 메시지 (외부 API 실패 시)
     @Published var apiWarning: String?
 
+    /// 현재 화면에 표시할 결과 수 (더보기 지원)
+    @Published var displayedResultCount: Int = 20
+
     // MARK: - Private Properties
 
     /// 음식 검색 서비스 (HybridFoodSearchService — 로컬+API 병렬)
@@ -204,8 +207,12 @@ final class FoodSearchViewModel: ObservableObject {
         guard !trimmedQuery.isEmpty else {
             searchResults = []
             isSearching = false
+            displayedResultCount = 20
             return
         }
+
+        // 새 검색 시 표시 수 리셋
+        displayedResultCount = 20
 
         // 이전 검색 취소
         searchTask?.cancel()
@@ -257,6 +264,21 @@ extension FoodSearchViewModel {
     /// 검색 결과가 있는지 여부
     var hasSearchResults: Bool {
         !searchResults.isEmpty
+    }
+
+    /// 화면에 표시할 검색 결과 (더보기 지원)
+    var displayedResults: [Food] {
+        Array(searchResults.prefix(displayedResultCount))
+    }
+
+    /// 더 보기가 가능한지 여부
+    var hasMoreResults: Bool {
+        displayedResultCount < searchResults.count
+    }
+
+    /// 더 보기 실행 (20개씩 추가)
+    func loadMoreResults() {
+        displayedResultCount += 20
     }
 
     /// 검색 상태인지 여부 (검색어 입력 중이거나 결과가 있는 경우)

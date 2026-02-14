@@ -341,13 +341,40 @@ struct FoodSearchView: View {
                     .font(.headline)
                     .foregroundColor(.primary)
 
-                Text("\(viewModel.searchResults.count)건")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                if viewModel.hasMoreResults {
+                    Text("\(viewModel.displayedResults.count)/\(viewModel.searchResults.count)건")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                } else {
+                    Text("\(viewModel.searchResults.count)건")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
             }
             .padding(.horizontal)
 
-            foodListView(foods: viewModel.searchResults)
+            foodListView(foods: viewModel.displayedResults)
+
+            // 더 보기 버튼
+            if viewModel.hasMoreResults {
+                Button(action: {
+                    viewModel.loadMoreResults()
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.down.circle")
+                        Text("더 보기 (\(viewModel.searchResults.count - viewModel.displayedResults.count)건)")
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.accentColor)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .padding(.horizontal)
+            }
         }
     }
 

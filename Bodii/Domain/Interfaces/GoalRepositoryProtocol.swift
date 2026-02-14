@@ -66,7 +66,10 @@ protocol GoalRepositoryProtocol {
         startBodyFatPct: Decimal?,
         startMuscleMass: Decimal?,
         startBMR: Decimal?,
-        startTDEE: Decimal?
+        startTDEE: Decimal?,
+        goalPeriodStart: Date?,
+        goalPeriodEnd: Date?,
+        isGoalModeActive: Bool
     ) async throws -> Goal
 
     /// 기존 목표를 저장합니다.
@@ -192,6 +195,22 @@ protocol GoalRepositoryProtocol {
     ///
     /// 성능: <0.5초 (전체 레코드 삭제)
     func deleteAll() async throws
+
+    // MARK: - Goal Mode
+
+    /// 활성 목표의 목표 모드를 설정합니다.
+    ///
+    /// - Parameter isActive: 목표 모드 활성화 여부
+    /// - Throws: RepositoryError - 업데이트 실패 시
+    func setGoalModeActive(_ isActive: Bool) async throws
+
+    /// 활성 목표의 목표 기간을 설정합니다.
+    ///
+    /// - Parameters:
+    ///   - start: 기간 시작일
+    ///   - end: 기간 종료일
+    /// - Throws: RepositoryError - 업데이트 실패 시
+    func setGoalPeriod(start: Date, end: Date) async throws
 }
 
 // MARK: - Documentation

@@ -54,6 +54,9 @@ struct SettingsView: View {
     /// - ViewModel 내부에 있지만 HealthKitPermissionView에 전달 필요
     let authService: HealthKitAuthorizationService
 
+    /// 목표 모드 설정 ViewModel
+    @StateObject private var goalModeViewModel: GoalModeSettingsViewModel
+
     /// 프로필 설정 화면 표시 여부
     @State private var showProfileSettings: Bool = false
 
@@ -89,6 +92,10 @@ struct SettingsView: View {
                         viewModel: DIContainer.shared.makeGoalSettingViewModel(userId: userId),
                         onSaveSuccess: {
                             showGoalSettings = false
+                            // 목표 저장 후 목표 모드 상태 새로고침
+                            Task {
+                                await goalModeViewModel.loadActiveGoal()
+                            }
                         }
                     )
                 }
@@ -177,10 +184,11 @@ struct SettingsView: View {
         }
     }
 
-    /// 목표 설정 섹션
+    /// 목표 관리 섹션
     @ViewBuilder
     private var goalSection: some View {
         Section {
+            // 목표 설정 버튼
             Button {
                 showGoalSettings = true
             } label: {
@@ -201,9 +209,15 @@ struct SettingsView: View {
                             .font(.body)
                             .foregroundStyle(.primary)
 
-                        Text("체중, 체지방률, 근육량 목표")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        if let summary = goalModeViewModel.goalSummaryText {
+                            Text(summary)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Text("체중, 체지방률, 근육량 목표")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
 
                     Spacer()
@@ -212,6 +226,89 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+            }
+
+            // 목표 모드 토글
+            Toggle(isOn: $goalModeViewModel.isGoalModeEnabled) {
+                HStack(spacing: 12) {
+                    Image(systemName: "flame.fill")
+                        .font(.title3)
+                        .foregroundStyle(
+                            goalModeViewModel.isGoalModeEnabled
+                                ? LinearGradient(
+                                    colors: [.orange, .red],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                                : LinearGradient(
+                                    colors: [.gray, .gray],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                        )
+                        .frame(width: 32)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("목표 모드")
+                            .font(.body)
+
+                        if goalModeViewModel.isGoalModeEnabled {
+                            if let dDay = goalModeViewModel.dDayText,
+                               let summary = goalModeViewModel.goalSummaryText {
+                                Text("\(dDay) | \(summary)")
+                                    .font(.caption)
+                                    .foregroundStyle(goalModeViewModel.urgencyLevel?.color ?? .secondary)
+                            }
+                        } else {
+                            Text(goalModeViewModel.goalModeStatusMessage)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .disabled(!goalModeViewModel.canEnableGoalMode)
+            .onChange(of: goalModeViewModel.isGoalModeEnabled) { _, newValue in
+                Task {
+                    await goalModeViewModel.toggleGoalMode(newValue)
+                }
+            }
+
+            // 목표 기간 표시 (목표 모드 활성 시)
+            if goalModeViewModel.isGoalModeEnabled,
+               let periodText = goalModeViewModel.goalPeriodText {
+                HStack(spacing: 12) {
+                    Image(systemName: "calendar.badge.clock")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 32)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("목표 기간")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+
+                        Text(periodText)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+                }
+            }
+        } header: {
+            Text("목표 관리")
+        }
+        .task {
+            await goalModeViewModel.loadActiveGoal()
+        }
+        .alert("알림", isPresented: .constant(goalModeViewModel.errorMessage != nil)) {
+            Button("확인") {
+                goalModeViewModel.clearError()
+            }
+        } message: {
+            if let error = goalModeViewModel.errorMessage {
+                Text(error)
             }
         }
     }
@@ -395,17 +492,17 @@ struct SettingsView: View {
     ///   - syncService: HealthKit 동기화 서비스
     init(
         authService: HealthKitAuthorizationService,
-        syncService: HealthKitSyncService
+        syncService: HealthKitSyncService,
+        goalModeViewModel: GoalModeSettingsViewModel
     ) {
         self.authService = authService
 
-        // 📚 학습 포인트: @StateObject Initialization
-        // _viewModel을 사용하여 StateObject 초기화
-        // 💡 Java 비교: by viewModels() 팩토리 함수와 유사
         _viewModel = StateObject(wrappedValue: HealthKitSettingsViewModel(
             authService: authService,
             syncService: syncService
         ))
+
+        _goalModeViewModel = StateObject(wrappedValue: goalModeViewModel)
     }
 }
 
@@ -428,7 +525,8 @@ struct SettingsView: View {
 
     return SettingsView(
         authService: authService,
-        syncService: syncService
+        syncService: syncService,
+        goalModeViewModel: DIContainer.shared.makeGoalModeSettingsViewModel()
     )
 }
 
@@ -445,7 +543,8 @@ struct SettingsView: View {
 
     return SettingsView(
         authService: authService,
-        syncService: syncService
+        syncService: syncService,
+        goalModeViewModel: DIContainer.shared.makeGoalModeSettingsViewModel()
     )
     .preferredColorScheme(.dark)
 }

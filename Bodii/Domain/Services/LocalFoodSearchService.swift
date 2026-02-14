@@ -78,7 +78,7 @@ final class LocalFoodSearchService: FoodSearchServiceProtocol {
             do {
                 let apiResults = try await apiService.searchFoods(
                     query: query,
-                    limit: 20,
+                    limit: 100,
                     offset: 0
                 )
 

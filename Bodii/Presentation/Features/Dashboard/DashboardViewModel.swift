@@ -462,6 +462,10 @@ private final class MockDailyLogRepository: DailyLogRepository {
         // No-op for preview
     }
 
+    func findByDateRange(startDate: Date, endDate: Date, userId: UUID) async throws -> [DailyLog] {
+        return []
+    }
+
     /// Preview용 샘플 DailyLog 생성 (데이터 있음)
     func makeSampleDailyLog(userId: UUID) -> DailyLog {
         let dailyLog = DailyLog(context: context)

@@ -26,6 +26,7 @@ enum FoodSource: Int16, CaseIterable, Codable {
     case governmentAPI = 0
     case usda = 1
     case userDefined = 2
+    case openFoodFacts = 3
 
     /// 사용자에게 표시할 출처 이름
     var displayName: String {
@@ -33,6 +34,7 @@ enum FoodSource: Int16, CaseIterable, Codable {
         case .governmentAPI: return "정부 공공 데이터 API"
         case .usda: return "USDA 데이터베이스"
         case .userDefined: return "사용자 정의"
+        case .openFoodFacts: return "Open Food Facts"
         }
     }
 }
