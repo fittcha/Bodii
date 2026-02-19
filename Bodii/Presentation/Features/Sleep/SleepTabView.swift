@@ -104,8 +104,9 @@ struct SleepTabView: View {
             // 📚 학습 포인트: Sheet for Input
             // 수면 기록 추가 시트
             .sheet(isPresented: $showInputSheet) {
+                let userId = (try? DIContainer.shared.userRepository.fetchCurrentUserId()) ?? UserProfile.sample.id
                 SleepInputSheet(
-                    viewModel: container.makeSleepInputViewModel(userId: UserProfile.sample.id),
+                    viewModel: container.makeSleepInputViewModel(userId: userId),
                     canSkip: true,
                     onSkip: nil
                 )

@@ -92,9 +92,13 @@ struct SettingsView: View {
                         viewModel: DIContainer.shared.makeGoalSettingViewModel(userId: userId),
                         onSaveSuccess: {
                             showGoalSettings = false
-                            // 목표 저장 후 목표 모드 상태 새로고침
+                            // 목표 저장 후 목표 모드 상태 새로고침 및 자동 활성화
                             Task {
                                 await goalModeViewModel.loadActiveGoal()
+                                // 기간이 설정된 목표라면 자동으로 목표 모드 활성화
+                                if goalModeViewModel.canEnableGoalMode && !goalModeViewModel.isGoalModeEnabled {
+                                    await goalModeViewModel.toggleGoalMode(true)
+                                }
                             }
                         }
                     )

@@ -147,11 +147,17 @@ final class GoalModeSettingsViewModel: ObservableObject {
 
     /// 목표 모드를 토글합니다.
     func toggleGoalMode(_ enabled: Bool) async {
+        // 로딩 중이면 중복 요청 방지
+        guard !isLoading else { return }
+
         guard canEnableGoalMode || !enabled else {
             errorMessage = goalModeStatusMessage
             isGoalModeEnabled = false
             return
         }
+
+        isLoading = true
+        defer { isLoading = false }
 
         do {
             try await goalRepository.setGoalModeActive(enabled)

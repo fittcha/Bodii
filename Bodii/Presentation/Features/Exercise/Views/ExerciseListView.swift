@@ -59,7 +59,7 @@ struct ExerciseListView: View {
 
     // 📚 학습 포인트: User Data State
     // ExerciseInputViewModel 생성 시 필요한 사용자 데이터
-    // TODO: 추후 User entity나 AuthenticationService에서 가져오도록 개선
+    // Core Data에서 로드하여 실제 사용자 데이터 반영
     /// 사용자 체중 (kg) - 칼로리 계산에 사용
     @State private var userWeight: Decimal = 70.0
     /// 사용자 성별 - 칼로리 보정에 사용
@@ -99,6 +99,7 @@ struct ExerciseListView: View {
             }
             .onAppear {
                 viewModel.onAppear()
+                loadUserData()
             }
             .sheet(isPresented: $isShowingAddSheet) {
                 // 📚 학습 포인트: Modal Sheet with DI (Add Mode)
@@ -498,6 +499,23 @@ struct ExerciseListView: View {
             }
         } else {
             return "\(minutes)분"
+        }
+    }
+
+    // MARK: - User Data Loading
+
+    /// Core Data에서 실제 사용자 데이터를 로드합니다.
+    private func loadUserData() {
+        do {
+            let userRepository = DIContainer.shared.userRepository
+            if let user = try userRepository.fetchCurrentUser() {
+                userWeight = user.weight?.decimalValue ?? 70.0
+                userGender = Gender(rawValue: user.gender) ?? .male
+                userBMR = user.currentBMR?.decimalValue ?? 1650
+                userTDEE = user.currentTDEE?.decimalValue ?? 2310
+            }
+        } catch {
+            print("❌ 운동 탭: 사용자 데이터 로드 실패 - 기본값 사용: \(error.localizedDescription)")
         }
     }
 }

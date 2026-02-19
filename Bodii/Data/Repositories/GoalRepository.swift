@@ -235,9 +235,7 @@ final class GoalRepository: GoalRepositoryProtocol {
     /// - Throws: RepositoryError - 업데이트 실패 시
     func deactivateAllGoals(for userId: UUID) async throws {
         do {
-            // 현재 LocalDataSource는 userId 필터 없이 모든 활성 목표를 비활성화
-            // TODO: LocalDataSource에 사용자별 비활성화 메서드 추가
-            try await localDataSource.deactivateAllGoals()
+            try await localDataSource.deactivateAllGoals(for: userId)
         } catch {
             throw RepositoryError.updateFailed(error.localizedDescription)
         }
