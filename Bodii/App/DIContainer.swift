@@ -575,12 +575,20 @@ extension DIContainer {
         return GoalProgressViewModel(getGoalProgressUseCase: getGoalProgressUseCase)
     }
 
-    /// GoalModeSettingsViewModel 생성
-    ///
-    /// - Returns: 새로운 GoalModeSettingsViewModel 인스턴스
+    /// GoalModeSettingsViewModel 공유 인스턴스
+    /// 📚 학습 포인트: 목표 모드 상태는 앱 전역에서 동기화 필요
+    /// ContentView와 SettingsView가 동일 인스턴스를 공유해야 토글 상태가 즉시 반영됨
+    @MainActor
+    private var _goalModeSettingsViewModel: GoalModeSettingsViewModel?
+
     @MainActor
     func makeGoalModeSettingsViewModel() -> GoalModeSettingsViewModel {
-        return GoalModeSettingsViewModel(goalRepository: goalRepository)
+        if let existing = _goalModeSettingsViewModel {
+            return existing
+        }
+        let vm = GoalModeSettingsViewModel(goalRepository: goalRepository)
+        _goalModeSettingsViewModel = vm
+        return vm
     }
 
     /// GoalExerciseStatsViewModel 생성

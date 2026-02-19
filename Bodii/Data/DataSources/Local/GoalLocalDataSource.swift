@@ -229,6 +229,29 @@ final class GoalLocalDataSource {
         }
     }
 
+    /// 특정 사용자의 모든 활성 목표를 비활성화합니다.
+    func deactivateAllGoals(for userId: UUID) async throws {
+        let context = persistenceController.newBackgroundContext()
+
+        try await context.perform {
+            let request: NSFetchRequest<Goal> = Goal.fetchRequest()
+            request.predicate = NSPredicate(
+                format: "isActive == YES AND user.id == %@",
+                userId as CVarArg
+            )
+
+            let results = try context.fetch(request)
+
+            for goal in results {
+                goal.isActive = false
+                goal.isGoalModeActive = false
+                goal.updatedAt = Date()
+            }
+
+            try context.save()
+        }
+    }
+
     // MARK: - Delete
 
     /// 특정 목표를 삭제합니다.

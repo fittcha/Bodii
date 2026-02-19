@@ -233,7 +233,7 @@ struct ContentView: View {
         SettingsView(
             authService: DIContainer.shared.healthKitAuthService,
             syncService: DIContainer.shared.healthKitSyncService,
-            goalModeViewModel: DIContainer.shared.makeGoalModeSettingsViewModel()
+            goalModeViewModel: goalModeViewModel
         )
         .tabItem {
             Label("설정", systemImage: "gearshape.fill")
